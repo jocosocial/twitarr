@@ -6,7 +6,7 @@ class API::V2::ForumsController < ApplicationController
   before_filter :fetch_forum, :except => [:index, :create, :show, :rc_forums, :rc_forum]
 
   def index
-    page_size = (params[:limit] || 20).to_i
+    page_size = (params[:limit] || POST_COUNT).to_i
     page = (params[:page] || 0).to_i
 
     query = Forum.all.desc(:last_post_time).offset(page * page_size).limit(page_size)

@@ -1,0 +1,7 @@
+<button class="btn" {{action 'create_forum'}}>Create Forum</button>
+{{#if has_prev_page}}
+    <button class="btn" {{action 'prev_page'}}>More Recent</button>
+{{/if}}
+{{#if has_next_page}}
+    <button class="btn" {{action 'next_page'}}>Older</button>
+{{/if}}

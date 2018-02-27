@@ -1,4 +1,4 @@
-<button class="btn" {{action 'create_forum'}}>Create Forum</button>
+<button {{bind-attr class="logged_in::hidden btn"}} {{action 'create_forum'}}>Create Forum</button>
 {{#if has_prev_page}}
     <button class="btn" {{action 'prev_page'}}>More Recent</button>
 {{/if}}

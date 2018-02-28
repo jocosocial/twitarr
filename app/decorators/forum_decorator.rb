@@ -15,7 +15,7 @@ class ForumDecorator < Draper::Decorator
     unless user.nil?
       count = post_count_since(user.last_forum_view(id.to_s))
       ret[:new_posts] = count if count > 0
-      ret[:last_post_page] = count / 20 if count > 0
+      ret[:last_post_page] = (post_count - count) / 20
     end
     ret
   end

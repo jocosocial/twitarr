@@ -119,6 +119,7 @@ Twitarr::Application.routes.draw do
       get 'stream/:id/like', to: 'stream#show_likes'
       get 'stream/rc/posts', to: 'stream#rc_posts'
 
+      post 'user/new', to: 'user#new'
       get 'user/new_seamail', to: 'user#new_seamail'
       delete 'user/mentions', to:'user#reset_mentions'
       get 'user/mentions', to:'user#mentions'

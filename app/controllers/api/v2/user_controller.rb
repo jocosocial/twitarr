@@ -7,6 +7,37 @@ class API::V2::UserController < ApplicationController
     head :unauthorized unless logged_in? || valid_key?(params[:key])
   end
 
+  def new
+    if logged_in?
+      render_json errors: ["already logged in - log out before creating a new account"]
+      return
+    end
+    new_username = params[:new_username].downcase
+    user = User.new username: new_username, display_name: new_username,
+                     is_admin: false, status: User::ACTIVE_STATUS, email: params[:email],
+                     security_question: params[:security_question], security_answer: params[:security_answer]
+    if !user.valid?
+      render_json errors: ['user is not valid - probably missing required fields']
+      return
+    else
+      if User.where(username: new_username).exists?
+        user.errors.add :username, 'already exists'
+      end
+      if params[:new_password].length < 6
+        user.errors.add :password, 'must be at least six characters long'
+      end
+    end
+
+    if user.errors.count > 0
+      render_json errors: user.errors.full_messages
+      return
+    else
+      user.set_password params[:new_password]
+      user.update_last_login.save
+      login_user user
+      render json: { :status => 'ok', :key => build_key(user.username), user: UserDecorator.decorate(user).self_hash }
+    end
+  end
 
   def auth
     login_result = validate_login params[:username], params[:password]

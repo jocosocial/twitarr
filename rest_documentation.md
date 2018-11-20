@@ -457,6 +457,24 @@ Perform a search against the database for results.  Will search for Stream and F
 
 ## User information
 
+### POST /api/v2/user/new
+
+Create a new user account. This will trow an error if it is called while logged in.
+
+#### Query Params
+
+All parameters are required. If any are missing, an error will be returned. 
+
+* new_username - Username of the new user. If it is in use, an error will be returned.
+* new_password - Password of the new user. Must be at least 6 characters. If it is less, an error will be returned.
+* email - The user's email address.
+* security_question - A prompt used in the forgot password process.
+* security_answer - The answer to the security prompt.
+
+#### Returns
+
+If the user is successfully created, a JSON object will be returned with the authentication 'key' of the logged in user (see /api/v2/user/auth) along with the new user's profile information.
+
 ### GET /api/v2/user/auth
 
 Log in user, returning a 'key' that can be used in each /api/v2 request that requires authentication.  This can be used

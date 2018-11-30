@@ -126,7 +126,7 @@ html {
   margin-right: auto;
   margin-left: auto;
   max-width: 1000px;
-  margin-top: 50px;
+  margin-top: 80px;
   padding: 1em;
 }
 
@@ -172,13 +172,14 @@ html {
 
 .btn {
   border: none;
+  border-radius: 3px;
   padding: 4px 7px;
-  background-color: #547d92;
-  color: white;
+  background-color: #f4f4c6;;
+  color: #003752;
 
   &:hover, &:focus {
     outline: none;
-    background-color: #6e96ab;
+    background-color: #f5f5ea;
     text-decoration: none;
   }
 }
@@ -196,16 +197,20 @@ html {
 }
 
 body {
-  background-color: #f5f5eb;
+  background-color: #ffffff;
+  background-image: url("/img/background.png");
+  background-size: 100%;
 }
 
 #top-bar {
-  background-color: #052F45;
+  background-color: #ffffff;
+  background-image: url("/img/header-waves.png");
   border-bottom: 1px solid #042333;
-  height: 50px;
+  height: 80px;
   position: fixed;
   left: 0;
   top: 0;
+  padding-top: 20px;
   position: fixed;
   width: 100%;
   z-index: 999;
@@ -227,6 +232,10 @@ body {
       margin-bottom: 4px;
       width: 22px;
     }
+  }
+
+  .header-search {
+    color: #ffffff;
   }
 
   .menu-brand {
@@ -260,7 +269,7 @@ body {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 20%;
+    margin-top: 30%;
   }
 }
 
@@ -327,9 +336,9 @@ body {
     position: fixed;
     left: 0;
     bottom: 0;
-    top: 50px;
+    top: 80px;
     width: 250px;
-    background-color: #052F45;
+    background-color: #063953;
     border-right: 1px solid #042333;
     overflow-x: hidden;
     overflow-y: auto;
@@ -337,7 +346,7 @@ body {
     z-index: 1000;
 
     #login-info {
-      color: #ccc;
+      color: #fff;
       padding: 10px;
     }
 
@@ -347,7 +356,7 @@ body {
 
       li {
         .glyphicon {
-          color: #aaa;
+          color: #fff;
           margin-right: 0.6em;
         }
 
@@ -355,7 +364,7 @@ body {
           padding: 10px;
           display: block;
           font-size: 12pt;
-          color: #f5f5eb;
+          color: #fff;
 
           &:focus {
             text-decoration: none;

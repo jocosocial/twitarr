@@ -9,7 +9,7 @@
     <div class="card-section section-with-photo">
       <div class="section-photo">
         {{#link-to 'user' user.username}}
-          {{unbound user_picture user.username user.last_photo_updated}}
+          {{unbound user_picture user.username user.last_photo_updated api_path}}
         {{/link-to}}
       </div>
       <span class="title">

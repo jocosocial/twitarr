@@ -23,8 +23,8 @@ Ember.Handlebars.helper 'pretty_timespan', (start_time, end_time) ->
     new Ember.Handlebars.SafeString("<span class='timestamp'>#{moment(start_time).format('LT')}</span>")
 
 
-Ember.Handlebars.helper 'user_picture', (username, last_time) ->
-  new Ember.Handlebars.SafeString("<img class='profile_photo' src='/api/v2/user/photo/#{username}?bust=#{last_time}'/>")
+Ember.Handlebars.helper 'user_picture', (username, last_time, api_path) ->
+  new Ember.Handlebars.SafeString("<img class='profile_photo' src='#{api_path}/user/photo/#{username}?bust=#{last_time}'/>")
 
 Ember.Handlebars.helper 'signup_string', (signups) ->
   # return 'Nobody' unless signups and signups.length > 0

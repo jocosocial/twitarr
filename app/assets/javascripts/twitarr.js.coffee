@@ -22,6 +22,9 @@ Twitarr.ControllerMixin = Ember.Mixin.create
   login_admin: (->
     @get('controllers.application.login_admin')
   ).property('controllers.application.login_admin')
+  api_path: (->
+    @get('controllers.application.api_path')
+  ).property('controllers.application.api_path')
 
 Twitarr.ArrayController = Ember.ArrayController.extend Twitarr.ControllerMixin
 Twitarr.Controller = Ember.Controller.extend Twitarr.ControllerMixin

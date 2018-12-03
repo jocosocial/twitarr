@@ -1,5 +1,5 @@
 Twitarr.UserController = Twitarr.ObjectController.extend
-  photo_path: (-> "/api/v2/user/photo/#{@get('username')}?full=true").property("username")
+  photo_path: (-> "#{@get('api_path')}/user/photo/#{@get('username')}?full=true").property("username")
 
   actions:
     star: ->

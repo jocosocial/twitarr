@@ -1,7 +1,7 @@
 <div {{bind-attr class="first_unread:scroll_to :card-section :section-with-photo"}}>
   <div class="section-photo">
     {{#link-to 'user' author}}
-      {{unbound user_picture author author_last_photo_updated api_path}}
+      {{unbound user_picture author author_last_photo_updated}}
     {{/link-to}}
   </div>
 

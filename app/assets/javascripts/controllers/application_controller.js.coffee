@@ -5,7 +5,6 @@ Twitarr.ApplicationController = Ember.Controller.extend
   display_name: null
   read_only: false
   uploads_pending: 0
-  api_path: '/api/v2'
 
   has_uploads_pending: (->
     @get('uploads_pending')
@@ -93,7 +92,7 @@ Twitarr.ApplicationController.reopenClass
 Twitarr.PhotoViewController = Twitarr.ObjectController.extend
   photo_path: (->
     if @get('model').get('constructor').toString() == 'Twitarr.User'
-      "#{get('api_path')}/user/photo/#{@get('username')}?full=true"
+      "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true"
     else
       if(@get('animated'))
         Twitarr.ApplicationController.full_photo_path(@get('id'))
@@ -104,7 +103,7 @@ Twitarr.PhotoViewController = Twitarr.ObjectController.extend
   actions:
     open_full: ->
       if @get('model').get('constructor').toString() == 'Twitarr.User'
-        window.open "#{get('api_path')}/user/photo/#{@get('username')}?full=true"
+        window.open "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true"
       else
         window.open Twitarr.ApplicationController.full_photo_path(@get('id'))
 
@@ -120,10 +119,9 @@ Twitarr.ProfileController = Twitarr.ObjectController.extend
   needs: ['application']
 
   count: 0
-  api_path: Twitarr.ApplicationController.api_path
 
   profile_pic: (->
-    "#{@get('api_path')}/user/photo/#{@get('username')}?bust=#{@get('count')}"
+    "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
   ).property('username', 'count')
 
   actions:

@@ -57,6 +57,7 @@ Ember.FEATURES['ember-routing-drop-deprecated-action-style'] = true
 window.Twitarr = Ember.Application.create
 #  LOG_TRANSITIONS: true
 #  LOG_BINDINGS: true
+  api_path: "/api/v2"
   ready: ->
     $("#app-loading").remove()
 

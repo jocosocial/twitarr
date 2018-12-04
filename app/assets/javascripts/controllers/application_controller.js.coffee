@@ -139,8 +139,6 @@ Twitarr.ProfileController = Twitarr.ObjectController.extend
     file_uploaded: ->
       @incrementProperty('count')
 
-Twitarr.UserController = Twitarr.Controller.extend()
-
 Twitarr.AlertsController = Twitarr.ObjectController.extend
   reset_alerts: (->
     @set 'controllers.application.alerts', false

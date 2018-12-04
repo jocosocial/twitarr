@@ -41,7 +41,9 @@ Twitarr.Router.map ()->
     @route 'today', { path: 'today' }
     @route 'day', { path: 'day/:date' }
 
-  @route 'user', { path: 'user/:username' }
+  @resource 'user', ->
+    @route 'profile', { path: 'profile/:username' }
+
   @route 'tag', { path: 'tag/:tag_name' }
   @route 'alerts'
   @route 'profile'

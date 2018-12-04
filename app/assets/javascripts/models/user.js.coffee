@@ -24,14 +24,14 @@ Twitarr.UserMeta = Ember.Object.extend
     "#{Twitarr.api_path}/user/profile/#{@get('username')}/vcf"
   ).property()
 
-Twitarr.User = Twitarr.UserMeta.extend
+Twitarr.UserProfile = Twitarr.UserMeta.extend
   recent_tweets: []
 
   objectize: (->
     @set('recent_tweets', Ember.A(Twitarr.StreamPost.create(tweet)) for tweet in @get('recent_tweets'))
   ).on('init')
 
-Twitarr.User.reopenClass
+Twitarr.UserProfile.reopenClass
   get: (username) ->
     $.getJSON("#{Twitarr.api_path}/user/profile/#{username}").then (data) =>
       alert(data.status) unless data.status is 'ok'

@@ -124,6 +124,10 @@ Twitarr.ProfileController = Twitarr.ObjectController.extend
     "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
   ).property('username', 'count')
 
+  profile_pic_upload_url: (->
+    "#{Twitarr.api_path}/user/photo"
+  ).property()
+
   actions:
     save: ->
       @get('model').save().then (response) =>

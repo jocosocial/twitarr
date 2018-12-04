@@ -61,7 +61,7 @@ Twitarr.UserRoute = Ember.Route.extend
 
 Twitarr.TagRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("api/v2/stream/h/#{params.tag_name}").then (data) ->
+    $.getJSON("#{Twitarr.api_path}/stream/h/#{params.tag_name}").then (data) ->
       data.tag_name = params.tag_name
       data
 

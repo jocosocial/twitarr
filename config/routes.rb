@@ -128,8 +128,12 @@ Twitarr::Application.routes.draw do
       get 'user/whoami', to: 'user#whoami'
       get 'user/profile', to: 'user#whoami'
       post 'user/profile', to: 'user#update_profile'
+      get 'user/profile/:username', to: 'user#show'
+      get 'user/profile/:username/star', to: 'user#star'
+      get 'user/profile/:username/vcf', to: 'user#vcard', format: false
       get 'user/autocomplete/:username', to: 'user#autocomplete'
       get 'user/view/:username', to: 'user#show'
+      get 'user/starred', to: 'user#starred'
       get 'user/photo/:username', to: 'user#get_photo'
       post 'user/photo', to: 'user#update_photo'
       delete 'user/photo', to: 'user#reset_photo'

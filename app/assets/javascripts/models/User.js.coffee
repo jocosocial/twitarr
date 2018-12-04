@@ -14,11 +14,15 @@ Twitarr.UserMeta = Ember.Object.extend
 #  location_timestamp: null
 
   star: ->
-    $.getJSON("user/profile/#{@get('username')}/star").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/user/profile/#{@get('username')}/star").then (data) =>
       if(data.status == 'ok')
         @set('starred', data.starred)
       else
         alert data.status
+  
+  vcard_url: (->
+    "#{Twitarr.api_path}/user/profile/#{@get('username')}/vcf"
+  ).property()
 
 Twitarr.User = Twitarr.UserMeta.extend
   recent_tweets: []
@@ -29,6 +33,6 @@ Twitarr.User = Twitarr.UserMeta.extend
 
 Twitarr.User.reopenClass
   get: (username) ->
-    $.getJSON("user/profile/#{username}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/user/profile/#{username}").then (data) =>
       alert(data.status) unless data.status is 'ok'
-      @create data.user
+      @create data.user 

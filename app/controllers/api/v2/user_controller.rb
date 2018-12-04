@@ -67,10 +67,63 @@ class API::V2::UserController < ApplicationController
   def show
     user = User.get params[:username]
     if user.nil?
-      render status: :not_found, json: { status: 'Not found', error: "User #{params[:username]} is not found." }
+      render status: :ok, json: { status: "User #{params[:username]} does not exist."}
       return
     end
-    render status: :ok, json: { status: 'Found', user: UserDecorator.decorate(user).public_hash }
+    hash = user.decorate.public_hash.merge(
+      {
+          recent_tweets: StreamPost.where(author: user.username).desc(:timestamp).limit(10).map { |x| x.decorate.to_hash(current_username) }
+      })
+    hash[:starred] = current_user.starred_users.include?(user.username) if logged_in? 
+    render status: :ok, json: { status: 'ok', user: hash }
+  end
+
+  def vcard
+    # I apologize for this mess. It's not clean but it works.
+    user = User.get params[:username]
+    render body: 'User has vcard disabled', content_type: 'text/plain' and return unless user.is_vcard_public?
+    formatted_name = (user.real_name if user.real_name?) || (user.display_name if user.display_name?) || user.username
+    photo = Base64.encode64(open(user.profile_picture_path) { |io| io.read }).tr("\n", "")
+
+    card_string = "BEGIN:VCARD\n"
+    card_string << "VERSION:4.0\n"
+    card_string << "FN:#{formatted_name}\n"
+    card_string << "PHOTO;JPEG;ENCODING=BASE64:#{photo}\n"
+    card_string << "EMAIL:#{user.email}\n" if user.email? and user.is_email_public?
+    card_string << "NOTE:Room Number: #{user.room_number}\n" if user.room_number?
+    card_string << "SOURCE:#{request.original_url}\n"
+    # We should probably add more fields for users to fill out for this stuff :)
+    card_string << "END:VCARD"
+    headers['Content-Disposition'] = "inline; filename=\"#{user.username}.vcf\""
+
+    render body: card_string, content_type: 'text/vcard', layout: false 
+  end
+
+  def star
+    return unless logged_in!
+    show_username = User.format_username params[:username]
+    user = User.get show_username
+    render_json status: 'User does not exist.' and return unless User.exist?(params[:username])
+    starred = current_user.starred_users.include? show_username
+    if starred
+      current_user.starred_users.delete show_username
+    else
+      current_user.starred_users << show_username
+    end
+    current_user.save
+    render_json status: 'ok', starred: !starred
+  end
+
+  def starred
+    return unless logged_in!
+    users = User.where(:username.in => current_user.starred_users)
+    hash = users.map do |u|
+      username = User.format_username u.username
+      uu = u.decorate.gui_hash
+      uu.merge!({comment: current_user.personal_comments[username]})
+      uu
+    end
+    render_json status: 'ok', users: hash
   end
 
   def update_profile

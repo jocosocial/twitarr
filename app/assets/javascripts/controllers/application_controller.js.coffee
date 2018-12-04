@@ -92,7 +92,7 @@ Twitarr.ApplicationController.reopenClass
 Twitarr.PhotoViewController = Twitarr.ObjectController.extend
   photo_path: (->
     if @get('model').get('constructor').toString() == 'Twitarr.User'
-      "/api/v2/user/photo/#{@get('username')}?full=true"
+      "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true"
     else
       if(@get('animated'))
         Twitarr.ApplicationController.full_photo_path(@get('id'))
@@ -103,7 +103,7 @@ Twitarr.PhotoViewController = Twitarr.ObjectController.extend
   actions:
     open_full: ->
       if @get('model').get('constructor').toString() == 'Twitarr.User'
-        window.open "/api/v2/user/photo/#{@get('username')}?full=true"
+        window.open "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true"
       else
         window.open Twitarr.ApplicationController.full_photo_path(@get('id'))
 
@@ -121,8 +121,12 @@ Twitarr.ProfileController = Twitarr.ObjectController.extend
   count: 0
 
   profile_pic: (->
-    "/api/v2/user/photo/#{@get('username')}?bust=#{@get('count')}"
+    "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
   ).property('username', 'count')
+
+  profile_pic_upload_url: (->
+    "#{Twitarr.api_path}/user/photo"
+  ).property()
 
   actions:
     save: ->

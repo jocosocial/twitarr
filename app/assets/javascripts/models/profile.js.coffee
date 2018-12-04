@@ -12,5 +12,5 @@ Twitarr.Profile = Ember.Object.extend
 
 Twitarr.Profile.reopenClass
   get: ->
-    $.getJSON("api/v2/user/whoami").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/user/whoami").then (data) =>
       @create(data.user)

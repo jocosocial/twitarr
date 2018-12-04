@@ -39,7 +39,7 @@
       </div>
     </div>
     {{#if vcard_public? }}
-      <a href="/user/profile/{{unbound username}}/vcf">Download user as contact</a>
+      <a {{bind-attr href=vcard_url}}>Download user as contact</a>
     {{/if}}
   </div>
 </div>

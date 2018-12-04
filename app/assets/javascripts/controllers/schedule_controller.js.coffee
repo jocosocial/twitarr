@@ -51,7 +51,7 @@ Twitarr.ScheduleDetailController = Twitarr.ObjectController.extend
         r=@get('model').delete()
         @transitionToRoute 'schedule' if r
     ical: ->
-      window.location.replace("/api/v2/event/#{@get('id')}/ical")
+      window.location.replace("#{Twitarr.api_path}/event/#{@get('id')}/ical")
 
 Twitarr.ScheduleNewController = Twitarr.Controller.extend
   init: ->

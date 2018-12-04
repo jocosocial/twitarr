@@ -11,7 +11,7 @@
       Click to change profile photo
     {{/if}}
   </div>
-  <input id="profile-photo-upload" type="file" name="file" data-url="/api/v2/user/photo" accept="image/*" style="display: none;">
+  <input id="profile-photo-upload" type="file" name="file" {{bind-attr data-url=profile_pic_upload_url}} accept="image/*" style="display: none;">
 
   <div class="body" style="padding: 1em;">
     <div class="row" style="margin: 1em 0;">

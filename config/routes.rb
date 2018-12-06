@@ -18,8 +18,6 @@ Twitarr::Application.routes.draw do
   get 'search_events/:text', to: 'search#search_events'
 
   get 'user/username'
-  get 'user/new', to: 'user#create_user'
-  post 'user/new', to: 'user#new'
   get 'user/forgot_password'
   post 'user/forgot_password', to: 'user#security_question'
   get 'user/security_answer'

@@ -57,7 +57,7 @@
       </div>
       <div {{bind-attr class="logged_in:hidden"}}>
         <li><a href="#" {{action 'login'}}>Login</a></li>
-        <li><a href="#" {{action 'signup'}}>Sign up</a></li>
+        <li>{{#link-to "user.new"}}Sign up{{/link-to}}</li>
       </div>
       <div {{bind-attr class="login_admin::hidden"}}>
         <li>---</li>

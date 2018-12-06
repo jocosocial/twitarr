@@ -12,7 +12,7 @@ class API::V2::UserController < ApplicationController
       render_json errors: ["already logged in - log out before creating a new account"]
       return
     end
-    new_username = params[:new_username].downcase
+    new_username = params[:new_username].downcase unless params[:new_username].blank?
     user = User.new username: new_username, display_name: new_username,
                      is_admin: false, status: User::ACTIVE_STATUS, email: params[:email],
                      security_question: params[:security_question], security_answer: params[:security_answer]

@@ -38,9 +38,6 @@ Twitarr.ApplicationController = Ember.Controller.extend
     login: ->
       window.location = '/login'
 
-    signup: ->
-      window.location = '/user/new'
-
 
   menu_toggle: ->
     $('#side-menu').animate { width: 'toggle' }, 100

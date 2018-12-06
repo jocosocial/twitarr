@@ -63,3 +63,27 @@ Twitarr.UserProfile.reopenClass
     $.getJSON("#{Twitarr.api_path}/user/profile/#{username}").then (data) =>
       alert(data.status) unless data.status is 'ok'
       @create data.user 
+
+Twitarr.UserNew = Ember.Object.extend
+  username: null
+  email: null
+  new_password: null
+  new_password2: null
+  security_question: null
+  security_answer: null
+
+Twitarr.UserNew.reopenClass
+  save: (new_username, email, new_password, new_password2, security_question, security_answer) -> 
+    if new_password != new_password2
+      alert "Password and Confirm Password do not match!"
+      return
+
+    post_data = { 
+      new_username: new_username, 
+      email: email, 
+      new_password: new_password,
+      security_question: security_question, 
+      security_answer: security_answer
+    }
+
+    return $.post("#{Twitarr.api_path}/user/new", post_data)

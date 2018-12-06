@@ -43,8 +43,9 @@ Twitarr.Router.map ()->
 
   @resource 'user', ->
     @route 'profile', { path: 'profile/:username' }
+    @route 'new', { path: 'new' }
 
-  @route 'tag', { path: 'tag/:tag_name' }
+  @route 'tag', { path: 'tag/:tag_name', model: Twitarr.UserNew }
   @route 'alerts'
   @route 'starred'
   @route 'time'

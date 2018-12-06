@@ -31,3 +31,23 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
   actions:
     star: ->
       @get('model').star()
+
+Twitarr.UserNewController = Twitarr.ObjectController.extend
+  needs: ['application']
+
+  actions:
+    save: ->
+      self = this
+      Twitarr.UserNew.save(
+        @get('new_username'), 
+        @get('email'), 
+        @get('new_password'), 
+        @get('new_password2'), 
+        @get('security_question'), 
+        @get('security_answer')
+      ).then (response) -> 
+        if response.status is 'ok'
+          self.get('controllers.application').login(response.user)
+          self.transitionToRoute('stream')
+        else
+          alert(response.errors)  

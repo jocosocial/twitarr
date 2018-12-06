@@ -133,7 +133,7 @@ class API::V2::UserController < ApplicationController
 
     if params[:new_password] && params[:current_password]
       unless current_user.correct_password(params[:current_password])
-        render status: :ok, json: { status: 'Current password does not match.' }
+        render status: :unauthorized, json: { status: 'Current password is incorrect.' }
         return
       end
       current_user.set_password params[:new_password]

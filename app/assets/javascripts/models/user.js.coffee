@@ -1,14 +1,24 @@
 Twitarr.User = Ember.Object.extend
   save: ->
-    post_data = { display_name: @get('display_name'), email: @get('email'), room_number: @get('room_number'), "email_public?": @get('email_public?'), real_name: @get('real_name'), home_location: @get('home_location'), "vcard_public?": @get('vcard_public?') }
+    post_data = { 
+      display_name: @get('display_name'), 
+      email: @get('email'), 
+      room_number: @get('room_number'), 
+      "email_public?": @get('email_public?'), 
+      real_name: @get('real_name'), 
+      home_location: @get('home_location'), 
+      "vcard_public?": @get('vcard_public?') 
+    }
+
     if @get('current_password') and @get('new_password') and @get('confirm_password')
       if @get('new_password') != @get('confirm_password')
-        alert "Current password and confirm password do not match!"
+        alert "New Password and Confirm New Password do not match!"
         return
       post_data["current_password"] = @get('current_password')
       post_data["new_password"] = @get('new_password')
 
-    $.post("#{Twitarr.api_path}/user/profile", post_data)
+    $.post("#{Twitarr.api_path}/user/profile", post_data).fail (response) -> 
+      alert JSON.parse(response.responseText).status;
 
 Twitarr.User.reopenClass
   get: ->

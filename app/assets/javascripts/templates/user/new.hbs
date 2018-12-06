@@ -1,0 +1,68 @@
+<div>
+  <h4>Unpleasant but neccessary stuff that hopefully will not be needed:</h4>
+
+  <p>
+    By signing up and using this system, you agree to abide by the JCCC convention / harassment policy that you were
+    required to sign. Basically: follow Wheaton's Law and please don't try to ruin this for someone else.
+  </p>
+
+  <p>
+    Having said this, if someone on Twit-arr is behaving in a manner that does NOT follow the harassment policy, then
+    please seek out any of the fine helper monkeys and they can assist. Helper monkeys should seek assistance from @kvort
+    on anything technical that needs doing re: Harassment.
+  </p>
+
+</div>
+
+{{#if errors}}
+  <div>
+      <ul class="alert alert-warning" style="padding-left: 2em;">
+        {{#each error in errors}}
+          <li>{{error}}</li>
+        {{/each}}
+      </ul>
+  </div>
+{{/if}}
+
+<div class="form-group">
+  <label for="new_username">Username</label>
+  {{ input class="input" value=new_username name="new_username"}}
+</div>
+<div class="form-group">
+  <label for="email">Email - only visible to administrators.</label>
+  {{ input class="input" value=email name="email"}}
+</div>
+<div style="margin-top: 1em;">
+  <p>
+    Due to technical restrictions, the security available on the ship is akin to
+    <span style="font-weight: bold;">writing your password on a post-it and placing the post-it on your forehead.</span>
+    At least, it is to anyone skilled and motivated to do such things. (I think we left those people on shore, but just to be safe...)
+  </p>
+  <h4>
+    DO NOT USE the same password or security question/answer that you have used for ANYTHING ELSE.
+  </h4>
+
+  <p>Really not kidding here. Please don't do it.</p>
+</div>
+<div class="form-group">
+  <label for="new_password">Password</label>
+  {{ input type="password" value=new_password class='input' name="new_password" }}
+</div>
+<div class="form-group">
+  <label for="new_password2">Confirm Password</label>
+  {{ input type="password" value=new_password2 class='input' name="new_password2" }}
+</div>
+<div style="margin-top: 1em;">
+  This password reset question and answer will be asked in case you lose your password
+</div>
+<div class="form-group">
+  <label for="security_question">Security Question</label>
+  {{ input class="input" value=security_question name="security_question"}}
+</div>
+<div class="form-group">
+  <label for="security_answer">Security Answer</label>
+  {{ input class="input" value=security_answer name="security_answer"}}
+</div>
+<div style="margin-top: 1em;">
+  <button class="btn btn-primary" {{action 'save'}}>Create</button>
+</div>

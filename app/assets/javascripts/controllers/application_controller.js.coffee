@@ -15,7 +15,7 @@ Twitarr.ApplicationController = Ember.Controller.extend
       if data.status is 'ok'
         @login data.user
         if data.need_password_change
-          @transitionToRoute('profile')
+          @transitionToRoute('user')
           alert('You need to change your password before you continue')
     # this reloads the page once per day - may solve some javascript issues
     Ember.run.later ->
@@ -37,9 +37,6 @@ Twitarr.ApplicationController = Ember.Controller.extend
 
     login: ->
       window.location = '/login'
-
-    signup: ->
-      window.location = '/user/new'
 
 
   menu_toggle: ->
@@ -114,32 +111,6 @@ Twitarr.PhotoMiniController = Twitarr.ObjectController.extend
     else
       Twitarr.ApplicationController.sm_photo_path @get('id')
   ).property('photo')
-
-Twitarr.ProfileController = Twitarr.ObjectController.extend
-  needs: ['application']
-
-  count: 0
-
-  profile_pic: (->
-    "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
-  ).property('username', 'count')
-
-  profile_pic_upload_url: (->
-    "#{Twitarr.api_path}/user/photo"
-  ).property()
-
-  actions:
-    save: ->
-      @get('model').save().then (response) =>
-        if response.status is 'ok'
-          alert 'Profile was saved.'
-        else
-          alert response.status
-
-    file_uploaded: ->
-      @incrementProperty('count')
-
-Twitarr.UserController = Twitarr.Controller.extend()
 
 Twitarr.AlertsController = Twitarr.ObjectController.extend
   reset_alerts: (->

@@ -51,13 +51,13 @@
           {{/link-to}}
         </li>
         <li>{{#link-to "starred"}}<span class="glyphicon glyphicon-star"></span>My Starred Users{{/link-to}}</li>
-        <li>{{#link-to "profile"}}<span class="glyphicon glyphicon-user"></span>{{ display_name }}{{/link-to}}</li>
+        <li>{{#link-to "user"}}<span class="glyphicon glyphicon-user"></span>{{ display_name }}{{/link-to}}</li>
         <li>---</li>
         <li {{bind-attr class="logged_in::hidden"}}><a tabindex='-1' href='#' {{ action 'logout' }}>Logout</a></li>
       </div>
       <div {{bind-attr class="logged_in:hidden"}}>
         <li><a href="#" {{action 'login'}}>Login</a></li>
-        <li><a href="#" {{action 'signup'}}>Sign up</a></li>
+        <li>{{#link-to "user.new"}}Sign up{{/link-to}}</li>
       </div>
       <div {{bind-attr class="login_admin::hidden"}}>
         <li>---</li>

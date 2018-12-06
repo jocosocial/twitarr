@@ -8,7 +8,7 @@
 <div class="display_card">
   <div class="card-section">
     {{#each user in users}}
-      {{#link-to 'user' user.username}}
+      {{#link-to 'user.profile' user.username}}
         <span class="pull-left" style="padding: 0.5em;">
               {{unbound pretty_username user.username user.display_name}}
           <div style="text-align: center;">

@@ -41,10 +41,12 @@ Twitarr.Router.map ()->
     @route 'today', { path: 'today' }
     @route 'day', { path: 'day/:date' }
 
-  @route 'user', { path: 'user/:username' }
-  @route 'tag', { path: 'tag/:tag_name' }
+  @resource 'user', ->
+    @route 'profile', { path: 'profile/:username' }
+    @route 'new', { path: 'new' }
+
+  @route 'tag', { path: 'tag/:tag_name', model: Twitarr.UserNew }
   @route 'alerts'
-  @route 'profile'
   @route 'starred'
   @route 'time'
   @route 'help'

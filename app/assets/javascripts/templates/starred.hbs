@@ -8,12 +8,12 @@
   <div class="display_card">
     <div class="card-section section-with-photo">
       <div class="section-photo">
-        {{#link-to 'user' user.username}}
+        {{#link-to 'user.profile' user.username}}
           {{unbound user_picture user.username user.last_photo_updated}}
         {{/link-to}}
       </div>
       <span class="title">
-        {{#link-to 'user' user.username}}
+        {{#link-to 'user.profile' user.username}}
           {{unbound pretty_username user.username user.display_name}}
         {{/link-to}}
       </span>

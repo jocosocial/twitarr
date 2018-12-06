@@ -29,17 +29,13 @@ Twitarr.ApplicationRoute = Ember.Route.extend
     display_tweet: (id) ->
       @transitionTo('stream.view', id)
     display_user: (username) ->
-      @transitionTo('user', username)
+      @transitionTo('user.profile', username)
     display_event: (id) ->
       @transitionTo('schedule.detail', id)
 
 Twitarr.IndexRoute = Ember.Route.extend
   redirect: ->
     @transitionTo 'stream.index'
-
-Twitarr.ProfileRoute = Ember.Route.extend
-  model: ->
-    Twitarr.Profile.get()
 
 Twitarr.AlertsRoute = Ember.Route.extend
   model: ->
@@ -50,14 +46,6 @@ Twitarr.AlertsRoute = Ember.Route.extend
   actions:
     reload: ->
       @refresh()
-
-
-Twitarr.UserRoute = Ember.Route.extend
-  model: (params) ->
-    params
-
-  setupController: (controller, model) ->
-    controller.set('username', model.username)
 
 Twitarr.TagRoute = Ember.Route.extend
   model: (params) ->

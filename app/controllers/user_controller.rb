@@ -26,30 +26,6 @@ class UserController < ApplicationController
   def login_page
   end
 
-  def new
-    new_username = params[:new_username].downcase
-    @user = User.new username: new_username, display_name: new_username,
-                     is_admin: false, status: User::ACTIVE_STATUS, email: params[:email],
-                     security_question: params[:security_question], security_answer: params[:security_answer]
-    if !@user.valid?
-      render :create_user
-    elsif User.where(username: new_username).exists?
-      @user.errors.add :username, 'already exists.'
-      render :create_user
-    elsif params[:new_password].length < 6
-      @user.errors.add :password, 'must be at least six characters long.'
-      render :create_user
-    elsif params[:new_password] != params[:new_password2]
-      @user.errors.add :password, 'does not match.'
-      render :create_user
-    else
-      @user.set_password params[:new_password]
-      @user.update_last_login.save
-      login_user(@user)
-      redirect_to "/#/help"
-    end
-  end
-
   def security_question
     @user = User.where(username: params[:username].downcase).first
     if @user.nil?

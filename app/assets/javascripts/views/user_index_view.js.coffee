@@ -1,4 +1,4 @@
-Twitarr.ProfileView = Ember.View.extend
+Twitarr.UserIndexView = Ember.View.extend
   needs: ['application']
 
   didInsertElement: ->

@@ -65,12 +65,7 @@ Twitarr.UserProfile.reopenClass
       @create data.user 
 
 Twitarr.UserNew = Ember.Object.extend
-  username: null
-  email: null
-  new_password: null
-  new_password2: null
-  security_question: null
-  security_answer: null
+  post_data: {}
 
 Twitarr.UserNew.reopenClass
   save: (new_username, email, new_password, new_password2, security_question, security_answer) -> 

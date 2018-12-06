@@ -33,7 +33,7 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
       @get('model').star()
 
 Twitarr.UserNewController = Twitarr.ObjectController.extend
-  needs: ['application']
+  errors: Ember.A()
 
   actions:
     save: ->
@@ -49,5 +49,7 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
         if response.status is 'ok'
           self.get('controllers.application').login(response.user)
           self.transitionToRoute('stream')
+        else if response.errors?
+          self.set 'errors', response.errors
         else
-          alert(response.errors)  
+          alert 'Something went wrong. Try again later.'

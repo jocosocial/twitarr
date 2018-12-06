@@ -7,8 +7,5 @@ Twitarr.UserProfileRoute = Ember.Route.extend
     Twitarr.UserProfile.get(params.username)
 
 Twitarr.UserNewRoute = Ember.Route.extend
-  model: (params) ->
+  model: ->
     Twitarr.UserNew
-  actions:
-    refreshRoute: ->
-      @refresh()

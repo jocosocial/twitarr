@@ -14,17 +14,15 @@
 
 </div>
 
-<!-- 
-<div>
-  if user posted and there are errors
-    <ul class="alert alert-warning" style="padding-left: 2em;">
-      error check loop
-        <li><error message</li>
-      end error check loop
-    </ul>
-  end if
-</div>
--->
+{{#if errors}}
+  <div>
+      <ul class="alert alert-warning" style="padding-left: 2em;">
+        {{#each error in errors}}
+          <li>{{error}}</li>
+        {{/each}}
+      </ul>
+  </div>
+{{/if}}
 
 <div class="form-group">
   <label for="new_username">Username</label>
@@ -51,7 +49,7 @@
   {{ input type="password" value=new_password class='input' name="new_password" }}
 </div>
 <div class="form-group">
-  <label for="new_password2">Repeat password</label>
+  <label for="new_password2">Confirm Password</label>
   {{ input type="password" value=new_password2 class='input' name="new_password2" }}
 </div>
 <div style="margin-top: 1em;">

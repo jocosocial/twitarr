@@ -8,7 +8,7 @@ Twitarr.User = Ember.Object.extend
       post_data["current_password"] = @get('current_password')
       post_data["new_password"] = @get('new_password')
 
-    $.post('user/save_profile', post_data)
+    $.post("#{Twitarr.api_path}/user/profile", post_data)
 
 Twitarr.User.reopenClass
   get: ->

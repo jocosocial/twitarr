@@ -46,7 +46,6 @@ Twitarr.Router.map ()->
 
   @route 'tag', { path: 'tag/:tag_name' }
   @route 'alerts'
-  @route 'profile'
   @route 'starred'
   @route 'time'
   @route 'help'

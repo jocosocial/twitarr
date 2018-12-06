@@ -1,6 +1,6 @@
 Twitarr.UserIndexRoute = Ember.Route.extend
-  beforeModel: ->
-    @transitionTo 'profile'
+  model: (params) ->
+    Twitarr.User.get()
 
 Twitarr.UserProfileRoute = Ember.Route.extend
   model: (params) ->

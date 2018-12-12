@@ -1,0 +1,31 @@
+<div class="clearfix">
+  <img src="/img/jellyfish.png" style="height: 150px; margin-left: 0.5em;" class="pull-left"/>
+
+  <h3 class="pull-left" style="margin: 1em 0.5em 0">Welcome to Twit-arr!</h3>
+</div>
+
+<legend>I have an account</legend>
+
+<div class="form-group">
+  <label for="username">Username</label>
+  {{input class="form-control" value=username name="username"}}
+</div>
+<div class="form-group">
+  <label for="password">Password</label>
+  {{input type="password" value=password class='form-control' name="password"}}
+</div>
+
+{{#if error}}
+  <div>
+      <ul class="alert alert-warning" style="padding-left: 2em;">
+          <li>{{error}}</li>
+      </ul>
+  </div>
+{{/if}}
+
+<div style="margin-top: 1em;">
+  <button class="btn btn-primary" {{action 'login'}}>Login</button>
+</div>
+
+<h4>{{#link-to "user.new"}}I want to join!{{/link-to}}</h4>
+<h4><a href="/user/forgot_password">I forgot my daggone password!</a></h4>

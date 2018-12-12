@@ -56,7 +56,7 @@
         <li {{bind-attr class="logged_in::hidden"}}><a tabindex='-1' href='#' {{ action 'logout' }}>Logout</a></li>
       </div>
       <div {{bind-attr class="logged_in:hidden"}}>
-        <li><a href="#" {{action 'login'}}>Login</a></li>
+        <li>{{#link-to "user.login"}}Login{{/link-to}}</li>
         <li>{{#link-to "user.new"}}Sign up{{/link-to}}</li>
       </div>
       <div {{bind-attr class="login_admin::hidden"}}>

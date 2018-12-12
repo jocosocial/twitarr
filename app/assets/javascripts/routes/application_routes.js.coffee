@@ -5,7 +5,7 @@ Twitarr.LoadingRoute = Ember.Route.extend
 Twitarr.ApplicationRoute = Ember.Route.extend
   actions:
     logout: ->
-      $.getJSON('user/logout').done (data) =>
+      $.getJSON("#{Twitarr.api_path}/user/logout").done (data) =>
         if data.status is 'ok'
           @controller.logout()
           @transitionTo 'stream.index'

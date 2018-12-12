@@ -82,3 +82,16 @@ Twitarr.UserNew.reopenClass
     }
 
     return $.post("#{Twitarr.api_path}/user/new", post_data)
+
+Twitarr.UserLogin = Ember.Object.extend
+  username: null
+  password: null
+
+Twitarr.UserLogin.reopenClass
+  login: (username, password) ->
+    post_data = {
+      username: username,
+      password: password
+    }
+
+    return $.post("#{Twitarr.api_path}/user/auth", post_data)

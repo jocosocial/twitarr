@@ -53,3 +53,22 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
           self.set 'errors', response.errors
         else
           alert 'Something went wrong. Try again later.'
+
+Twitarr.UserLoginController = Twitarr.ObjectController.extend
+  error: null
+
+  actions:
+    login: ->
+      self = this
+      Twitarr.UserLogin.login(@get('username'), @get('password')).fail (response) ->
+        self.set 'error', response.responseJSON.status
+        return
+      .then (response) ->
+        if response.status is 'ok'
+          self.set('username', '')
+          self.set('password', '')
+          $.getJSON("#{Twitarr.api_path}/user/whoami").then (data) =>
+            self.get('controllers.application').login(data.user)
+            self.transitionToRoute('stream')
+        else 
+           self.set 'error', response.status

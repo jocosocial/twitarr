@@ -3,7 +3,6 @@ Twitarr::Application.routes.draw do
 
   get 'time', to: 'home#time'
 
-  get 'login', to: 'user#login_page'
   post 'login', to: 'user#login'
 
   get 'alerts', to: 'alerts#index'
@@ -121,7 +120,7 @@ Twitarr::Application.routes.draw do
       get 'user/new_seamail', to: 'user#new_seamail'
       delete 'user/mentions', to:'user#reset_mentions'
       get 'user/mentions', to:'user#mentions'
-      get 'user/auth', to: 'user#auth'
+      post 'user/auth', to: 'user#auth'
       get 'user/logout', to: 'user#logout'
       get 'user/whoami', to: 'user#whoami'
       get 'user/profile', to: 'user#whoami'

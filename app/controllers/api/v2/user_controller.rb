@@ -42,7 +42,7 @@ class API::V2::UserController < ApplicationController
   def auth
     login_result = validate_login params[:username], params[:password]
     if login_result.has_key? :error
-      render json: { :status => 'incorrect password or username' }, status: 401 and return
+      render json: { :status => 'incorrect username or password' }, status: 401 and return
     else
       @user = login_result[:user]
       login_user @user

@@ -35,10 +35,6 @@ Twitarr.ApplicationController = Ember.Controller.extend
       $('.top-bar-search-text').val('')
       $('.top-bar-search-text').blur()
 
-    login: ->
-      window.location = '/login'
-
-
   menu_toggle: ->
     $('#side-menu').animate { width: 'toggle' }, 100
 

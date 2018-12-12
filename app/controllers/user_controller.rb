@@ -5,27 +5,6 @@ class UserController < ApplicationController
 
   layout 'login'
 
-  def login
-    user = User.get params[:username]
-    if user.nil?
-      @error = 'User does not exist.'
-      render :login_page
-    elsif user.status != User::ACTIVE_STATUS || user.empty_password?
-      @error = 'User account has been disabled.'
-      render :login_page
-    elsif !user.correct_password(params[:password])
-      @error = 'Invalid username or password.'
-      render :login_page
-    else
-      login_user(user)
-      user.update_last_login.save
-      redirect_to :root
-    end
-  end
-
-  def login_page
-  end
-
   def security_question
     @user = User.where(username: params[:username].downcase).first
     if @user.nil?

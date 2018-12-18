@@ -2,7 +2,7 @@ class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   POST_COUNT = 20
-  before_filter :login_required, :only => [:create, :update_post, :like, :unlike]
+  before_filter :login_required, :only => [:create, :update_post, :like, :unlike, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create, :show, :rc_forums, :rc_forum]
 
   def index

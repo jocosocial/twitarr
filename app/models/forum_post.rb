@@ -15,6 +15,9 @@ class ForumPost
   field :et, as: :entities, type: Array
 
   field :ph, as: :photos, type: Array
+
+  embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
+
   embedded_in :forum, inverse_of: :posts
 
   validates :text, :author, :timestamp, presence: true

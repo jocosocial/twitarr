@@ -13,6 +13,7 @@ class StreamPostDecorator < BaseDecorator
         display_name: User.display_name_from_username(author),
         text: twitarr_auto_linker(twitarr_replace_emoji(clean_text_with_cr(text))),
         likes: some_likes(username),
+        reactions: reaction_summary(reactions),
         parent_chain: parent_chain
     }
     unless photo.blank?
@@ -35,6 +36,7 @@ class StreamPostDecorator < BaseDecorator
         display_timestamp: "#{time_ago_in_words(timestamp)} ago",
         likes: some_likes(username),
         all_likes: all_likes(username),
+        reactions: reaction_summary(reactions),
         mentions: mentions,
         entities: entities,
         hash_tags: hash_tags,
@@ -90,5 +92,17 @@ class StreamPostDecorator < BaseDecorator
     favs += likes.reject { |x| x == username }
     return nil if favs.empty?
     favs
+  end
+
+  def reaction_summary(reactions)
+    summary = {}
+    reactions.each do |x|
+      if summary.has_key?(x.reaction) then
+        summary[x.reaction] += 1
+      else
+        summary[x.reaction] = 1
+      end
+    end
+    summary
   end
 end

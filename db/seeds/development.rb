@@ -195,3 +195,16 @@ if Seamail.count == 0
   reply_seamail seamail, 'Awesome!', 'james', at_time(9, 30)
   seamail.reset_read 'kvort'
 end
+
+def create_reaction(tag)
+  reaction = Reaction.add_reaction tag
+  reaction.save!
+  reaction
+end
+Reaction.delete_all
+if Reaction.count == 0
+  create_reaction 'funny'
+  create_reaction 'helpful'
+  create_reaction 'insightful'
+  create_reaction 'cool'
+end

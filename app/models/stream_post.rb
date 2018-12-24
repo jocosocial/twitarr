@@ -20,6 +20,8 @@ class StreamPost
   field :p, as: :photo, type: String
   field :pc, as: :parent_chain, type: Array, default: []
 
+  embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
+
   validates :text, :author, :timestamp, presence: true
   validate :validate_author
   validate :validate_location

@@ -3,7 +3,7 @@ class API::V2::StreamController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   PAGE_LENGTH = 20
-  before_filter :login_required,  :only => [:create, :destroy, :update, :like, :unlike, :rc_posts]
+  before_filter :login_required,  :only => [:create, :destroy, :update, :like, :unlike, :react, :unreact, :rc_posts]
   before_filter :fetch_post, :except => [:index, :create, :view_mention, :view_hash_tag, :rc_posts]
 
   def login_required
@@ -156,6 +156,32 @@ class API::V2::StreamController < ApplicationController
   def unlike
     @post = @post.remove_like current_username
     render status: :ok, json: {status: 'ok', likes: @post.likes }
+  end
+
+  def react
+    unless params.has_key?(:type)
+      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      return
+    end
+    @post.add_reaction current_username, params[:type]
+    if @post.valid?
+      render status: :ok, json: {status: 'ok', reactions: @post.reactions }
+    else
+      render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
+    end
+  end
+
+  def show_reacts
+    render status: :ok, json: {status: 'ok', reactions: @post.reactions }
+  end
+
+  def unreact
+    unless params.has_key?(:type)
+      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      return
+    end
+    @post.remove_reaction current_username, params[:type]
+    render status: :ok, json: {status: 'ok', reactions: @post.reactions }
   end
 
   ## The following functions are helpers for the finding of new posts in the stream

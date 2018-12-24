@@ -15,7 +15,8 @@ class ForumPostDecorator < BaseDecorator
         photos: decorate_photos,
         hash_tags: hash_tags,
 #        location: location,
-        mentions: mentions
+        mentions: mentions,
+        reactions: reaction_summary(reactions)
     }
     ret[:new] = (timestamp > last_view) unless last_view.nil?
     ret
@@ -54,4 +55,15 @@ class ForumPostDecorator < BaseDecorator
     favs
   end
 
+  def reaction_summary(reactions)
+    summary = {}
+    reactions.each do |x|
+      if summary.has_key?(x.reaction) then
+        summary[x.reaction] += 1
+      else
+        summary[x.reaction] = 1
+      end
+    end
+    summary
+  end
 end

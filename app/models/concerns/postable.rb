@@ -85,6 +85,24 @@ module Postable
       end
       result
     end
+
+    def add_reaction(username, reaction)
+      begin 
+        doc = reactions.find_by({:reaction => reaction, :username => username})
+        logger.info "Duplicate reaction on post: #{username}, #{reaction}"
+      rescue Mongoid::Errors::DocumentNotFound => e
+        reactions.create reaction: reaction, username: username
+      end
+    end
+  
+    def remove_reaction(username, reaction)
+      begin 
+        doc = reactions.find_by({:reaction => reaction, :username => username})
+        doc.remove
+      rescue Mongoid::Errors::DocumentNotFound => e
+        logger.info "Could not find reaction to remove: #{username}, #{reaction}"
+      end
+    end
   end
 
   module ClassMethods

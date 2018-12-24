@@ -2,7 +2,7 @@ class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   POST_COUNT = 20
-  before_filter :login_required, :only => [:create, :update_post, :like, :unlike]
+  before_filter :login_required, :only => [:create, :update_post, :like, :unlike, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create, :show, :rc_forums, :rc_forum]
 
   def index
@@ -94,6 +94,35 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.posts.find(params[:post_id])
     post = post.pull likes: current_username
     render status: :ok, json: {status: 'ok', likes: post.likes}
+  end
+
+  def react
+    unless params.has_key?(:type)
+      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      return
+    end
+    post = @forum.posts.find(params[:post_id])
+    post.add_reaction current_username, params[:type]
+    if post.valid?
+      render status: :ok, json: {status: 'ok', reactions: post.reactions }
+    else
+      render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
+    end
+  end
+
+  def show_reacts
+    post = @forum.posts.find(params[:post_id])
+    render status: :ok, json: {status: 'ok', reactions: post.reactions }
+  end
+
+  def unreact
+    unless params.has_key?(:type)
+      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      return
+    end
+    post = @forum.posts.find(params[:post_id])
+    post.remove_reaction current_username, params[:type]
+    render status: :ok, json: {status: 'ok', reactions: post.reactions }
   end
 
   def rc_forums

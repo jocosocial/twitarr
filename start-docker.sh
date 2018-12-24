@@ -9,7 +9,7 @@ set -x
 
 # docker passes in the linked mongo container by environment variables.
 # plug it into mongoid.yml here
-sed -e "s/127.0.0.1:27017/${MONGO_PORT#tcp://}/" config/mongoid-example.yml > config/mongoid.yml
+sed -e "s/127.0.0.1:27017/${MONGO_PORT#tcp://}/" config/mongoid_example.yml > config/mongoid.yml
 
 # setup steps (which we only need to do once)
 rake db:mongoid:create_indexes

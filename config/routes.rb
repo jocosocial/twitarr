@@ -129,6 +129,7 @@ Twitarr::Application.routes.draw do
       get 'user/auth', to: 'user#auth'
       post 'user/auth', to: 'user#auth'
       get 'user/logout', to: 'user#logout'
+      post 'user/logout', to: 'user#logout'
       get 'user/whoami', to: 'user#whoami'
       get 'user/profile', to: 'user#whoami'
       post 'user/profile', to: 'user#update_profile'

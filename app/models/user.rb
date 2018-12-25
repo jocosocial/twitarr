@@ -27,11 +27,11 @@ class User
   field :ph, as: :photo_hash, type: String
   field :pu, as: :last_photo_updated, type: Integer, default: Time.now.to_i
   field :rn, as: :room_number, type: String
-  field :pe, as: :is_email_public, type: Boolean
+  field :pe, as: :is_email_public, type: Boolean, default: false
   field :an, as: :real_name, type: String
   field :hl, as: :home_location, type: String
   field :lf, as: :forum_view_timestamps, type: Hash, default: {}
-  field :pv, as: :is_vcard_public, type: Boolean, default: true
+  field :pv, as: :is_vcard_public, type: Boolean, default: false
   field :lc, as: :current_location, type: String
   field :us, as: :starred_users, type: Array, default: []
   field :pc, as: :personal_comments, type: Hash, default: {}

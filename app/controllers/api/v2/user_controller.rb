@@ -56,7 +56,11 @@ class API::V2::UserController < ApplicationController
   end
 
   def autocomplete
-    render_json names: User.where(username: /^#{params[:username]}/).map(:username)
+    search = params[:username].downcase
+    render_json names: User.or(
+      { username: /^#{search}/ },
+      { display_name: /^#{search}/i },
+    ).map { |x| { username: x.username, display_name: x.display_name } }
   end
 
   def whoami

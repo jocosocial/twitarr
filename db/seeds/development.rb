@@ -1,35 +1,54 @@
 @BASE_DATE = DateTime.now - 1.day
 puts "Using a base date of #{@BASE_DATE}"
 
+def create_registration_code(code)
+  regcode = RegistrationCode.add_code code
+  regcode.save!
+  regcode
+end
+RegistrationCode.delete_all
+if RegistrationCode.count == 0
+  create_registration_code 'code1'
+  create_registration_code 'code2'
+  create_registration_code 'code3'
+  create_registration_code 'code4'
+  create_registration_code 'code5'
+  create_registration_code 'code6'
+  create_registration_code 'code7'
+  create_registration_code 'code8'
+  create_registration_code 'code9'
+  create_registration_code 'code10'
+end
+
 unless User.exist? 'kvort'
   puts 'Creating user kvort'
-  user = User.new username: 'kvort', display_name: 'kvort',
+  user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
                   is_admin: true, status: User::ACTIVE_STATUS, email: 'kvort@rylath.net',
-                  security_question: 'none', security_answer: 'none'
+                  security_question: 'none', security_answer: 'none', registration_code: 'code1'
   user.set_password 'kvort'
   user.save
 end
 unless User.exist? 'james'
   puts 'Creating user james'
-  user = User.new username: 'james', display_name: 'james',
+  user = User.new username: 'james', display_name: 'james', password: 'james1',
                   is_admin: false, status: User::ACTIVE_STATUS, email: 'james@james.com',
-                  security_question: 'none', security_answer: 'none'
+                  security_question: 'none', security_answer: 'none', registration_code: 'code2'
   user.set_password 'james'
   user.save
 end
 unless User.exist? 'steve'
   puts 'Creating user steve'
-  user = User.new username: 'steve', display_name: 'steve',
+  user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
                   is_admin: false, status: User::ACTIVE_STATUS, email: 'james@james.com',
-                  security_question: 'none', security_answer: 'none'
+                  security_question: 'none', security_answer: 'none', registration_code: 'code3'
   user.set_password 'steve'
   user.save
 end
 unless User.exist? 'admin'
   puts 'Creating user admin'
-  user = User.new username: 'admin', display_name: 'admin',
+  user = User.new username: 'admin', display_name: 'admin', password: 'admin1',
                   is_admin: true, status: User::ACTIVE_STATUS, email: 'admin@james.com',
-                  security_question: 'none', security_answer: 'none'
+                  security_question: 'none', security_answer: 'none', registration_code: 'code4'
   user.set_password 'admin'
   user.save
 end

@@ -36,6 +36,7 @@ class User
   field :us, as: :starred_users, type: Array, default: []
   field :pc, as: :personal_comments, type: Hash, default: {}
   field :ea, as: :acknowledged_event_alerts, type: Array, default: []
+  field :rc, as: :registration_code, type: String
 
   index username: 1
   index display_name: 1
@@ -44,10 +45,12 @@ class User
   # noinspection RubyResolve
   after_save :update_display_name_cache
 
+  validate :valid_registration_code?
   validate :valid_username?
   validate :valid_display_name?
   validate :valid_location?
-  validates :email, format: { with: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i, message: 'address is not valid.' }
+  validates :email, format: { with: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i, message: 'email address is not valid' }
+  validate :valid_password?
   validates :security_question, :security_answer, presence: true
   
   def self.valid_username?(username)
@@ -56,8 +59,23 @@ class User
   end
 
   def valid_username?
-    unless User.valid_username? (username)
+    unless User.valid_username?(username)
       errors.add(:username, 'must be three or more characters and only include letters, numbers, underscore, dash, and ampersand')
+    end
+    if User.where(username: username).exists?
+      errors.add :username, 'already exists'
+    end
+  end
+
+  def valid_password?
+    if password.nil? || password.length < 6
+      errors.add :password, 'must be at least six characters long'
+    end
+  end
+
+  def valid_registration_code?
+    unless RegistrationCode.valid_code?(registration_code)
+      errors.add(:registration_code, 'is invalid')
     end
   end
 

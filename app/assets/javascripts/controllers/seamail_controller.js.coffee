@@ -41,7 +41,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
       @get('searchResults').clear()
       return
     @last_search = val
-    $.getJSON("user/autocomplete?string=#{encodeURIComponent val}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/user/autocomplete/#{encodeURIComponent val}").then (data) =>
       if @last_search is val
         @get('searchResults').clear()
         existing_usernames = (user.username for user in @get('toUsers'))

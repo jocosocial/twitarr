@@ -13,22 +13,13 @@ class API::V2::UserController < ApplicationController
       return
     end
     new_username = params[:new_username].downcase unless params[:new_username].blank?
-    user = User.new username: new_username, display_name: new_username,
+    display_name = params[:display_name] 
+    display_name = params[:new_username] if params[:display_name].blank?
+    user = User.new username: new_username, display_name: display_name, password: params[:new_password],
                      is_admin: false, status: User::ACTIVE_STATUS, email: params[:email],
-                     security_question: params[:security_question], security_answer: params[:security_answer]
+                     security_question: params[:security_question], security_answer: params[:security_answer], registration_code: params[:registration_code]
+    
     if !user.valid?
-      render_json errors: ['user is not valid - probably missing required fields']
-      return
-    else
-      if User.where(username: new_username).exists?
-        user.errors.add :username, 'already exists'
-      end
-      if params[:new_password].length < 6
-        user.errors.add :password, 'must be at least six characters long'
-      end
-    end
-
-    if user.errors.count > 0
       render_json errors: user.errors.full_messages
       return
     else

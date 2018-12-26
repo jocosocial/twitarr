@@ -68,17 +68,19 @@ Twitarr.UserNew = Ember.Object.extend
   post_data: {}
 
 Twitarr.UserNew.reopenClass
-  save: (new_username, email, new_password, new_password2, security_question, security_answer) -> 
+  save: (registration_code, new_username, display_name, email, new_password, new_password2, security_question, security_answer) -> 
     if new_password != new_password2
       alert "Password and Confirm Password do not match!"
       return
 
     post_data = { 
-      new_username: new_username, 
+      new_username: new_username,
+      display_name: display_name,
       email: email, 
       new_password: new_password,
       security_question: security_question, 
-      security_answer: security_answer
+      security_answer: security_answer,
+      registration_code: registration_code
     }
 
     return $.post("#{Twitarr.api_path}/user/new", post_data)

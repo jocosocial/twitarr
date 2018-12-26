@@ -39,7 +39,9 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
     save: ->
       self = this
       Twitarr.UserNew.save(
-        @get('new_username'), 
+        @get('registration_code'),
+        @get('new_username'),
+        @get('display_name'),
         @get('email'), 
         @get('new_password'), 
         @get('new_password2'), 

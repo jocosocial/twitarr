@@ -1,7 +1,7 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required,  :only => [:rc_update_profile]
+  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions, :likes]
 
   def login_required
     head :unauthorized unless logged_in? || valid_key?(params[:key])
@@ -9,7 +9,7 @@ class API::V2::UserController < ApplicationController
 
   def new
     if logged_in?
-      render_json errors: ["Already logged in - log out before creating a new account."]
+      render json: {errors: ["Already logged in - log out before creating a new account."]}
       return
     end
     new_username = params[:new_username].downcase unless params[:new_username].blank?
@@ -20,7 +20,7 @@ class API::V2::UserController < ApplicationController
                      security_question: params[:security_question], security_answer: params[:security_answer], registration_code: params[:registration_code]
     
     if !user.valid?
-      render_json errors: user.errors.messages
+      render json: {errors: user.errors.messages}
       return
     else
       user.set_password params[:new_password]
@@ -33,7 +33,7 @@ class API::V2::UserController < ApplicationController
   def auth
     login_result = validate_login params[:username], params[:password]
     if login_result.has_key? :error
-      render json: { :status => 'incorrect username or password' }, status: 401 and return
+      render status: :unauthorized, json: { :status => 'incorrect username or password' } and return
     else
       @user = login_result[:user]
       login_user @user
@@ -42,27 +42,27 @@ class API::V2::UserController < ApplicationController
   end
 
   def new_seamail
-    return unless logged_in!
-    render_json :status => 'ok', email_count: current_user.seamail_unread_count
+    render json: {:status => 'ok', email_count: current_user.seamail_unread_count}
   end
 
   def autocomplete
     search = params[:username].downcase
-    render_json names: User.or(
-      { username: /^#{search}/ },
-      { display_name: /^#{search}/i },
-    ).map { |x| { username: x.username, display_name: x.display_name } }
+    render json: {
+      names: User.or(
+        { username: /^#{search}/ },
+        { display_name: /^#{search}/i },
+      ).map { |x| { username: x.username, display_name: x.display_name } }
+    }
   end
 
   def whoami
-    return unless logged_in!
-    render_json :status => 'ok', user: UserDecorator.decorate(current_user).self_hash
+    render json: {:status => 'ok', user: UserDecorator.decorate(current_user).self_hash}
   end
 
   def show
     user = User.get params[:username]
     if user.nil?
-      render status: :ok, json: { status: "User #{params[:username]} does not exist."}
+      render json: { status: "User #{params[:username]} does not exist."}
       return
     end
     hash = user.decorate.public_hash.merge(
@@ -70,7 +70,7 @@ class API::V2::UserController < ApplicationController
           recent_tweets: StreamPost.where(author: user.username).desc(:timestamp).limit(10).map { |x| x.decorate.to_hash(current_username) }
       })
     hash[:starred] = current_user.starred_users.include?(user.username) if logged_in? 
-    render status: :ok, json: { status: 'ok', user: hash }
+    render json: { status: 'ok', user: hash }
   end
 
   def vcard
@@ -95,10 +95,9 @@ class API::V2::UserController < ApplicationController
   end
 
   def star
-    return unless logged_in!
     show_username = User.format_username params[:username]
     user = User.get show_username
-    render_json status: 'User does not exist.' and return unless User.exist?(params[:username])
+    render json: {status: 'User does not exist.'} and return unless User.exist?(params[:username])
     starred = current_user.starred_users.include? show_username
     if starred
       current_user.starred_users.delete show_username
@@ -106,11 +105,10 @@ class API::V2::UserController < ApplicationController
       current_user.starred_users << show_username
     end
     current_user.save
-    render_json status: 'ok', starred: !starred
+    render json: {status: 'ok', starred: !starred}
   end
 
   def starred
-    return unless logged_in!
     users = User.where(:username.in => current_user.starred_users)
     hash = users.map do |u|
       username = User.format_username u.username
@@ -118,12 +116,10 @@ class API::V2::UserController < ApplicationController
       uu.merge!({comment: current_user.personal_comments[username]})
       uu
     end
-    render_json status: 'ok', users: hash
+    render json: {status: 'ok', users: hash}
   end
 
   def update_profile
-    return unless logged_in!
-
     message = 'Profile Updated.'
 
     if params[:new_password] && params[:current_password]
@@ -145,9 +141,9 @@ class API::V2::UserController < ApplicationController
     current_user.vcard_public = params[:vcard_public?] if params.has_key? :vcard_public?
     if current_user.valid?
       current_user.save
-      render status: :ok, json: { status: message, user: UserDecorator.decorate(current_user).self_hash } and return
+      render json: { status: message, user: UserDecorator.decorate(current_user).self_hash } and return
     else
-      render status: :ok, json: { status: 'Error', errors: current_user.errors.full_messages } and return
+      render json: { status: 'Error', errors: current_user.errors.full_messages } and return
     end
   end
 
@@ -169,29 +165,24 @@ class API::V2::UserController < ApplicationController
   end
 
   def reset_photo
-    return unless logged_in!
-    render_json current_user.reset_photo
+    render json: current_user.reset_photo
   end
 
   def update_photo
-    return unless logged_in!
-    render_json(status: 'Must provide a photo to upload.') and return unless params[:file]
-    render_json current_user.update_photo params[:file]
+    render json: {status: 'Must provide a photo to upload.'} and return unless params[:file]
+    render json: current_user.update_photo(params[:file])
   end
 
   def reset_mentions
-    return unless logged_in!
     current_user.reset_mentions
-    render status: :ok, json: { status: 'OK', user: UserDecorator.decorate(current_user).self_hash }
+    render json: { status: 'OK', user: UserDecorator.decorate(current_user).self_hash }
   end
 
   def mentions
-    return unless logged_in!
-    render status: :ok, json: { mentions: current_user.unnoticed_mentions }
+    render json: { mentions: current_user.unnoticed_mentions }
   end
 
   def likes
-    return unless logged_in!
     limit = params[:limit] || 20
     skip = params[:skip] || 0
     query = current_user.liked_posts.limit(limit).skip(skip)
@@ -205,32 +196,6 @@ class API::V2::UserController < ApplicationController
 
   def logout
     logout_user
-    render_json status: 'ok'
+    render json: {status: 'ok'}
   end
-  
-  def rc_users
-    return unless valid_key?(params[:key])
-    start_loc = params[:since]
-    limit = params[:limit] || 0
-    users = User.where(:updated_at.gte => start_loc).only(:id, :updated_at, :username, :display_name, :real_name, :email, :home_location, :last_photo_updated, :room_number, :is_email_public, :is_vcard_public).limit(limit).order_by(username: :asc)
-    render json: users 
-  end
-  
-  def rc_update_profile
-    return unless logged_in!
-    current_user.display_name = params[:display_name] if params.has_key? :display_name
-    current_user.email = params[:email] if params.has_key? :email
-    current_user.email_public = params[:email_public] if params.has_key? :email_public
-    current_user.home_location = params[:home_location] if params.has_key? :home_location
-    current_user.real_name = params[:real_name] if params.has_key? :real_name
-    current_user.room_number = params[:room_number] if params.has_key? :room_number
-    current_user.vcard_public = params[:vcard_public] if params.has_key? :vcard_public
-    if current_user.valid?
-      current_user.save
-      render json: { status: 'Updated' }
-    else
-      render json: { status: 'Error', errors: current_user.errors.full_messages }
-    end
-  end
-		
 end

@@ -12,7 +12,7 @@ class API::V2::SeamailController < ApplicationController
   def fetch_seamail
     @seamail = Seamail.find(params[:id])
     unless @seamail.usernames.include? current_username
-      render json: {errors: 'Must already be part of the Seamail to view a seamail.'}, status: :forbidden
+      render status: :forbidden, json: {errors: 'Must already be part of the Seamail to view a seamail.'}
     end
   end
 
@@ -34,31 +34,31 @@ class API::V2::SeamailController < ApplicationController
       end
     end
     mails = current_user.seamails extra_query
-    render_json seamail_meta: mails.map { |x| x.decorate.to_meta_hash.merge!({is_unread: x.unread_users.andand.include?(current_username)}) },
-        last_checked: ((Time.now.to_f * 1000).to_i + 1)
+    render json: {seamail_meta: mails.map { |x| x.decorate.to_meta_hash.merge!({is_unread: x.unread_users.andand.include?(current_username)}) },
+        last_checked: ((Time.now.to_f * 1000).to_i + 1)}
   end
 
   def show
     was_unread = @seamail.unread_users.andand.include?(current_username)
     @seamail.mark_as_read current_username
-    render_json seamail:@seamail.decorate.to_hash(request_options).merge!({is_unread: was_unread})
+    render json: {seamail:@seamail.decorate.to_hash(request_options).merge!({is_unread: was_unread})}
   end
 
   def create
     seamail = Seamail.create_new_seamail current_username, params[:users], params[:subject], params[:text]
     if seamail.valid?
-      render_json seamail_meta: seamail.decorate.to_meta_hash.merge!({is_unread: seamail.unread_users.include?(current_username)})
+      render json: {seamail_meta: seamail.decorate.to_meta_hash.merge!({is_unread: seamail.unread_users.include?(current_username)})}
     else
-      render_json errors: seamail.errors.full_messages
+      render json: {errors: seamail.errors.full_messages}
     end
   end
 
   def new_message
     message = @seamail.add_message current_username, params[:text]
     if message.valid?
-      render_json seamail_message: message.decorate.to_hash(request_options).merge!({is_unread: @seamail.unread_users.include?(current_username)})
+      render json: {seamail_message: message.decorate.to_hash(request_options).merge!({is_unread: @seamail.unread_users.include?(current_username)})}
     else
-      render_json errors: message.errors.full_messages
+      render json: {errors: message.errors.full_messages}
     end
   end
 

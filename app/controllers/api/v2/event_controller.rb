@@ -2,8 +2,8 @@ require 'csv'
 class API::V2::EventController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:create, :destroy, :update, :signup, :destroy_signup, :favorite, :destroy_favorite, :rc_events]
-  before_filter :fetch_event, :except => [:index, :create, :csv, :rc_events]
+  before_filter :login_required, :only => [:create, :destroy, :update, :signup, :destroy_signup, :favorite, :destroy_favorite]
+  before_filter :fetch_event, :except => [:index, :create, :csv]
 
   def login_required
     head :unauthorized unless logged_in? || valid_key?(params[:key])
@@ -13,7 +13,7 @@ class API::V2::EventController < ApplicationController
     begin
       @event = Event.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status: 404, json: {status: 'Not found', id: params[:id], error: "Event by id #{params[:id]} is not found."}
+      render status: :not_found, json: {status: 'Not found', id: params[:id], error: "Event by id #{params[:id]} is not found."}
     end
   end
 
@@ -43,25 +43,25 @@ class API::V2::EventController < ApplicationController
 
   def favorite
     @event = Event.find(params[:id])
-    render json: [{error: 'You have already favorited this event'}], status: :forbidden and return if @event.favorites.include? current_username
+    render status: :forbidden, json: {error: 'You have already favorited this event'} and return if @event.favorites.include? current_username
     @event.favorites << current_username
     @event.save
     if @event.valid?
-      render_json event: @event.decorate.to_hash(current_username)
+      render json: { event: @event.decorate.to_hash(current_username) }
     else
-      render_json errors: @event.errors.full_messages
+      render json: { errors: @event.errors.full_messages }
     end
   end
 
   def destroy_favorite
     @event = Event.find(params[:id])
-    render json: [{error: 'You have not favorited this event'}], status: :forbidden and return if !@event.favorites.include? current_username
+    render status: :forbidden, json: {error: 'You have not favorited this event'} and return if !@event.favorites.include? current_username
     @event.favorites = @event.favorites.delete current_username
     @event.save
     if @event.valid?
-      render_json event: @event.decorate.to_hash(current_username)
+      render json: { event: @event.decorate.to_hash(current_username) }
     else
-      render_json errors: @event.errors.full_messages
+      render json: { errors: @event.errors.full_messages }
     end
   end
 
@@ -83,14 +83,6 @@ class API::V2::EventController < ApplicationController
       format.json { render json: @event.decorate.to_hash }
       format.xml { render xml: @event.decorate.to_hash }
     end
-  end
-  
-  def rc_events
-    return unless valid_key?(params[:key])
-    start_loc = params[:since]
-    limit = params[:limit] || 0
-    events = Event.where(:updated_at.gte => start_loc).only(:id, :title, :description, :location, :start_time, :end_time).limit(limit).order_by(id: :asc)
-    render json: events
   end
 
 end

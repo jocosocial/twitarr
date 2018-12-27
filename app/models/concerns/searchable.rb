@@ -9,7 +9,7 @@ module Searchable
   end
 
   module ClassMethods
-    DEFAULT_SEARCH_LIMIT = 20
+    DEFAULT_SEARCH_LIMIT = 5
     def limit_criteria(criteria, params)
       limit = (params[:limit] || DEFAULT_SEARCH_LIMIT).to_i
       start = (params[:page] || 0).to_i * limit

@@ -75,8 +75,8 @@ class Forum
   end
 
   def self.search(params = {})
-    search_text = params[:text].strip.downcase
-    criteria = Forum.or({:'fp.au' => search_text}, { '$text' => { '$search' => "\"#{search_text}\"" } })
+    search_text = params[:text].strip.downcase.gsub(/[^\w&\s@-]/, '')
+    criteria = Forum.or({:'fp.au' => /^#{search_text}.*/i}, { '$text' => { '$search' => "\"#{search_text}\"" } })
     limit_criteria(criteria, params)
   end
 end

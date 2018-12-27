@@ -25,16 +25,16 @@ class API::V2::AlertsController < ApplicationController
       upcoming_events = []
       session[:last_viewed_alerts] = DateTime.now unless params[:no_reset]
     end
-    render_json tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
-                announcements: announcements, unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: (last_checked_time.to_f * 1000).to_i
+    render json: { tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
+                announcements: announcements, unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: (last_checked_time.to_f * 1000).to_i }
   end
 
   def check
     if logged_in? || valid_key?(params[:key])
-      render_json status: 'ok', user: current_user.decorate.alerts_meta
+      render json: { status: 'ok', user: current_user.decorate.alerts_meta }
     else
       last_checked_time = session[:last_viewed_alerts] || Time.at(0).to_datetime
-      render_json status: 'ok', user:{unnoticed_announcements:Announcement.new_announcements(last_checked_time).count}
+      render json: { status: 'ok', user:{unnoticed_announcements:Announcement.new_announcements(last_checked_time).count} }
     end
 
   end

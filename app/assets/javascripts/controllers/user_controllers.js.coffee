@@ -33,7 +33,7 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
       @get('model').star()
 
 Twitarr.UserNewController = Twitarr.ObjectController.extend
-  errors: Ember.A()
+  errors: null
 
   actions:
     save: ->

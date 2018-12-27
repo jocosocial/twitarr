@@ -9,7 +9,7 @@ class API::V2::UserController < ApplicationController
 
   def new
     if logged_in?
-      render_json errors: ["already logged in - log out before creating a new account"]
+      render_json errors: ["Already logged in - log out before creating a new account."]
       return
     end
     new_username = params[:new_username].downcase unless params[:new_username].blank?
@@ -20,7 +20,7 @@ class API::V2::UserController < ApplicationController
                      security_question: params[:security_question], security_answer: params[:security_answer], registration_code: params[:registration_code]
     
     if !user.valid?
-      render_json errors: user.errors.full_messages
+      render_json errors: user.errors.messages
       return
     else
       user.set_password params[:new_password]

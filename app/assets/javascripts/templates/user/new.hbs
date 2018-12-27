@@ -14,15 +14,7 @@
 
 </div>
 
-{{#if errors}}
-  <div>
-      <ul class="alert alert-warning" style="padding-left: 2em;">
-        {{#each error in errors}}
-          <li>{{error}}</li>
-        {{/each}}
-      </ul>
-  </div>
-{{/if}}
+
 
 <form {{action "save" on="submit"}}>
   <div style="margin-top: 1em;">
@@ -34,20 +26,47 @@
   </div>
   <div class="form-group">
     <label for="registration_code">Registration code</label>
-    {{ input class="input" value=registration_code name="registration_code"}}
+    {{input class="input" value=registration_code name="registration_code"}}
+    {{#if errors.registration_code}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.registration_code}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
-
   <div class="form-group">
     <label for="new_username">Username</label>
-    {{ input class="input" value=new_username name="new_username"}}
+    {{input class="input" value=new_username name="new_username"}}
+    {{#if errors.username}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.username}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
   <div class="form-group">
     <label for="display_name">Display Name (optional)</label>
-    {{ input class="input" value=display_name name="display_name"}}
+    {{input class="input" value=display_name name="display_name"}}
+    {{#if errors.display_name}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.display_name}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
   <div class="form-group">
     <label for="email">Email - only visible to administrators.</label>
-    {{ input class="input" value=email name="email"}}
+    {{input class="input" value=email name="email"}}
+    {{#if errors.email}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.email}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
   <div style="margin-top: 1em;">
     <p>
@@ -63,22 +82,43 @@
   </div>
   <div class="form-group">
     <label for="new_password">Password</label>
-    {{ input type="password" value=new_password class='input' name="new_password" }}
+    {{input type="password" value=new_password class='input' name="new_password"}}
+    {{#if errors.password}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.password}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
   <div class="form-group">
     <label for="new_password2">Confirm Password</label>
-    {{ input type="password" value=new_password2 class='input' name="new_password2" }}
+    {{input type="password" value=new_password2 class='input' name="new_password2" }}
   </div>
   <div style="margin-top: 1em;">
     This password reset question and answer will be asked in case you lose your password
   </div>
   <div class="form-group">
     <label for="security_question">Security Question</label>
-    {{ input class="input" value=security_question name="security_question"}}
+    {{input class="input" value=security_question name="security_question"}}
+    {{#if errors.security_question}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.security_question}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
   <div class="form-group">
     <label for="security_answer">Security Answer</label>
-    {{ input class="input" value=security_answer name="security_answer"}}
+    {{input class="input" value=security_answer name="security_answer"}}
+    {{#if errors.security_answer}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.security_answer}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
   </div>
   <div style="margin-top: 1em;">
     <button class="btn btn-primary" type="submit">Create</button>

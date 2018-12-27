@@ -49,9 +49,10 @@ class User
   validate :valid_username?
   validate :valid_display_name?
   validate :valid_location?
-  validates :email, format: { with: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i, message: 'email address is not valid' }
+  validates :email, format: { with: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i, message: 'E-mail address is not valid.' }
   validate :valid_password?
-  validates :security_question, :security_answer, presence: true
+  validates :security_question, presence: { message: 'Security question is required.' }
+  validates :security_answer, presence: { message: 'Security answer is required.' }
   
   def self.valid_username?(username)
     return false unless username
@@ -60,22 +61,22 @@ class User
 
   def valid_username?
     unless User.valid_username?(username)
-      errors.add(:username, 'must be three or more characters and only include letters, numbers, underscore, dash, and ampersand')
+      errors.add(:username, 'Username must be three or more characters and only include letters, numbers, underscore, dash, and ampersand.')
     end
     if User.where(username: username).exists?
-      errors.add :username, 'already exists'
+      errors.add :username, 'An account with this username already exists.'
     end
   end
 
   def valid_password?
     if password.nil? || password.length < 6
-      errors.add :password, 'must be at least six characters long'
+      errors.add :password, 'Your password must be at least six characters long.'
     end
   end
 
   def valid_registration_code?
     unless RegistrationCode.valid_code?(registration_code)
-      errors.add(:registration_code, 'is invalid')
+      errors.add(:registration_code, 'Invalid registration code.')
     end
   end
 
@@ -86,7 +87,7 @@ class User
 
   def valid_display_name?
     unless User.valid_display_name? (display_name)
-      errors.add(:display_name, 'must be three or more characters and cannot include any of ~!@#$%^*()+=<>{}[]\\|;:/?')
+      errors.add(:display_name, 'If display name is entered, it must be three or more characters and cannot include any of ~!@#$%^*()+=<>{}[]\\|;:/?')
     end
   end
 

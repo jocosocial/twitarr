@@ -5,6 +5,10 @@ class API::V2::ForumsController < ApplicationController
   before_filter :login_required, :only => [:create, :update_post, :like, :unlike, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create, :show]
 
+  def login_required
+    head :unauthorized unless logged_in? || valid_key?(params[:key])
+  end
+  
   def index
     page_size = (params[:limit] || POST_COUNT).to_i
     page = (params[:page] || 0).to_i
@@ -30,7 +34,7 @@ class API::V2::ForumsController < ApplicationController
                 else
                   nil
                 end
-    render_json forum_meta: query.map { |x| x.decorate.to_meta_hash(current_user) }, next_page: next_page, prev_page: prev_page, pages: page_count
+    render json: {forum_meta: query.map { |x| x.decorate.to_meta_hash(current_user) }, next_page: next_page, prev_page: prev_page, pages: page_count}
   end
 
   def show
@@ -53,23 +57,30 @@ class API::V2::ForumsController < ApplicationController
                   end
       
     if current_user
-      query = query.to_paginated_hash(start_loc, limit, current_user) if params.has_key?(:page)
-      query = query.to_hash(current_user) if !params.has_key?(:page)
+      if params.has_key?(:page)
+        result = query.to_paginated_hash(start_loc, limit, current_user)
+      else
+        result = query.to_hash(current_user)
+      end
     else
-      query = query.to_paginated_hash(start_loc, limit) if params.has_key?(:page)
-      query = query.to_hash() if !params.has_key?(:page)
+      if params.has_key?(:page)
+        result = query.to_paginated_hash(start_loc, limit)
+      else
+        result = query.to_hash()
+      end
     end
 
-    render_json forum: query, pages: page_count
     current_user.update_forum_view(params[:id]) if logged_in?
+
+    render json: {forum: result, pages: page_count}
   end
 
   def create
     forum = Forum.create_new_forum current_username, params[:subject], params[:text], params[:photos]
     if forum.valid?
-      render_json forum_meta: forum.decorate.to_meta_hash
+      render json: {forum_meta: forum.decorate.to_meta_hash}
     else
-      render_json errors: forum.errors.full_messages
+      render json: {errors: forum.errors.full_messages}
     end
   end
 
@@ -77,9 +88,9 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.add_post current_username, params[:text], params[:photos]
     if post.valid?
       @forum.save
-      render_json forum_post: post.decorate.to_hash(current_user, nil, request_options)
+      render json: {forum_post: post.decorate.to_hash(current_user, nil, request_options)}
     else
-      render_json errors: post.errors.full_messages
+      render json: {errors: post.errors.full_messages}
     end
   end
 
@@ -87,24 +98,24 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.posts.find(params[:post_id])
     post = post.add_to_set likes: current_username
     post.likes[post.likes.index(current_username)] = 'You'
-    render status: :ok, json: {status: 'ok', likes: post.likes}
+    render json: {status: 'ok', likes: post.likes}
   end
 
   def unlike
     post = @forum.posts.find(params[:post_id])
     post = post.pull likes: current_username
-    render status: :ok, json: {status: 'ok', likes: post.likes}
+    render json: {status: 'ok', likes: post.likes}
   end
 
   def react
     unless params.has_key?(:type)
-      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      render status: :bad_request, json: {error:'Reaction type must be included.'}
       return
     end
     post = @forum.posts.find(params[:post_id])
     post.add_reaction current_username, params[:type]
     if post.valid?
-      render status: :ok, json: {status: 'ok', reactions: post.reactions }
+      render json: {status: 'ok', reactions: post.reactions}
     else
       render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
     end
@@ -112,25 +123,21 @@ class API::V2::ForumsController < ApplicationController
 
   def show_reacts
     post = @forum.posts.find(params[:post_id])
-    render status: :ok, json: {status: 'ok', reactions: post.reactions }
+    render json: {status: 'ok', reactions: post.reactions}
   end
 
   def unreact
     unless params.has_key?(:type)
-      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      render status: :bad_request, json: {error:'Reaction type must be included.'}
       return
     end
     post = @forum.posts.find(params[:post_id])
     post.remove_reaction current_username, params[:type]
-    render status: :ok, json: {status: 'ok', reactions: post.reactions }
+    render json: {status: 'ok', reactions: post.reactions}
   end
     
   private
   def fetch_forum
     @forum = Forum.find(params[:id])
-  end
-
-  def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
   end
 end

@@ -13,7 +13,7 @@ class API::V2::EventController < ApplicationController
     begin
       @event = Event.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status: 404, json: {status: 'Not found', id: params[:id], error: "Event by id #{params[:id]} is not found."}
+      render status: :not_found, json: {status: 'Not found', id: params[:id], error: "Event by id #{params[:id]} is not found."}
     end
   end
 
@@ -43,25 +43,25 @@ class API::V2::EventController < ApplicationController
 
   def favorite
     @event = Event.find(params[:id])
-    render json: [{error: 'You have already favorited this event'}], status: :forbidden and return if @event.favorites.include? current_username
+    render status: :forbidden, json: {error: 'You have already favorited this event'} and return if @event.favorites.include? current_username
     @event.favorites << current_username
     @event.save
     if @event.valid?
-      render_json event: @event.decorate.to_hash(current_username)
+      render json: { event: @event.decorate.to_hash(current_username) }
     else
-      render_json errors: @event.errors.full_messages
+      render json: { errors: @event.errors.full_messages }
     end
   end
 
   def destroy_favorite
     @event = Event.find(params[:id])
-    render json: [{error: 'You have not favorited this event'}], status: :forbidden and return if !@event.favorites.include? current_username
+    render status: :forbidden, json: {error: 'You have not favorited this event'} and return if !@event.favorites.include? current_username
     @event.favorites = @event.favorites.delete current_username
     @event.save
     if @event.valid?
-      render_json event: @event.decorate.to_hash(current_username)
+      render json: { event: @event.decorate.to_hash(current_username) }
     else
-      render_json errors: @event.errors.full_messages
+      render json: { errors: @event.errors.full_messages }
     end
   end
 

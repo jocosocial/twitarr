@@ -14,7 +14,7 @@ class API::V2::StreamController < ApplicationController
     begin
       @post = StreamPost.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status:404, json:{status:'Not found', id:params[:id], error: "Post by id #{params[:id]} is not found."}
+      render status: :not_found, json: {status:'Not found', id:params[:id], error: "Post by id #{params[:id]} is not found."}
     end
   end
 
@@ -27,7 +27,7 @@ class API::V2::StreamController < ApplicationController
     elsif want_newer_posts?
       posts = newer_posts
     end
-    render_json posts
+    render json: {posts}
   end
 
   def show
@@ -40,7 +40,7 @@ class API::V2::StreamController < ApplicationController
     if children and children.length > 0
       post_result[:children] = children
     end
-    render_json post_result
+    render json: {post_result}
   end
 
   def view_mention
@@ -54,7 +54,7 @@ class API::V2::StreamController < ApplicationController
     start_loc = params[:page]
     limit = params[:limit]
     query = StreamPost.view_mentions params
-    render status: :ok, json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
   end
 
   def view_hash_tag
@@ -68,7 +68,7 @@ class API::V2::StreamController < ApplicationController
     start_loc = params[:page]
     limit = params[:limit]
     query = StreamPost.where(hash_tags: query_string).order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
-    render status: :ok, json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
   end
 
   def destroy
@@ -95,7 +95,7 @@ class API::V2::StreamController < ApplicationController
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
       unless parent
-        render status: :unprocessable_entity, json:{errors: ["Parent id: #{params[:parent]} was not found"]}
+        render status: :unprocessable_entity, json: {errors: ["Parent id: #{params[:parent]} was not found"]}
         return
       end
       parent_chain = parent.parent_chain + [params[:parent]]
@@ -108,29 +108,29 @@ class API::V2::StreamController < ApplicationController
         current_user.current_location = params[:location]
         current_user.save
       end
-      render_json stream_post: post.decorate.to_hash(current_username, request_options)
+      render json: {stream_post: post.decorate.to_hash(current_username, request_options)}
     else
-      render status: :unprocessable_entity, json:{errors: post.errors.full_messages}
+      render status: :unprocessable_entity, json: {errors: post.errors.full_messages}
     end
   end
 
   # noinspection RubyResolve
   def update
     unless params.has_key?(:text) or params.has_key?(:photo)
-      render json:[{error:'Update may only modify text or photo.'}], status: :bad_request
+      render status: :bad_request, json: {error:'Update may only modify text or photo.'}
       return
     end
 
     unless @post.author == current_username or is_admin?
       err = [{error:"You can not modify other users' posts"}]
-      render json: err, status: :forbidden
+      render status: :forbidden, json: {err}
       return
     end
     @post.text = params[:text] if params.has_key? :text
 
     if params.has_key? :photo
       unless PhotoMetadata.where(id: params[:photo]).exists?
-        render json:[{error:"Unable to find photo by id #{params[:photo]}"}], status: :not_acceptable
+        render status: :not_acceptable, json: {error:"Unable to find photo by id #{params[:photo]}"}
         return
       end
       @post.photo = params[:photo]
@@ -138,50 +138,50 @@ class API::V2::StreamController < ApplicationController
 
     @post.save
     if @post.valid?
-      render_json stream_post: @post.decorate.to_hash(current_username, request_options)
+      render json: {stream_post: @post.decorate.to_hash(current_username, request_options)}
     else
-      render_json errors: @post.errors.full_messages
+      render json: {errors: @post.errors.full_messages}
     end
   end
 
   def like
     @post = @post.add_like current_username
-    render status: :ok, json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.likes }
   end
 
   def show_likes
-    render status: :ok, json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.likes }
   end
 
   def unlike
     @post = @post.remove_like current_username
-    render status: :ok, json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.likes }
   end
 
   def react
     unless params.has_key?(:type)
-      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      render status: :bad_request, json: {error:'Reaction type must be included.'}
       return
     end
     @post.add_reaction current_username, params[:type]
     if @post.valid?
-      render status: :ok, json: {status: 'ok', reactions: @post.reactions }
+      render json: {status: 'ok', reactions: @post.reactions }
     else
       render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
     end
   end
 
   def show_reacts
-    render status: :ok, json: {status: 'ok', reactions: @post.reactions }
+    render json: {status: 'ok', reactions: @post.reactions }
   end
 
   def unreact
     unless params.has_key?(:type)
-      render json:[{error:'Reaction type must be included.'}], status: :bad_request
+      render status: :bad_request, json: {error:'Reaction type must be included.'}
       return
     end
     @post.remove_reaction current_username, params[:type]
-    render status: :ok, json: {status: 'ok', reactions: @post.reactions }
+    render json: {status: 'ok', reactions: @post.reactions }
   end
 
   ## The following functions are helpers for the finding of new posts in the stream

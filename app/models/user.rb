@@ -63,7 +63,7 @@ class User
     unless User.valid_username?(username)
       errors.add(:username, 'Username must be three or more characters and only include letters, numbers, underscore, dash, and ampersand.')
     end
-    if User.where(username: username).exists?
+    if new_record? && User.where(username: username).exists?
       errors.add :username, 'An account with this username already exists.'
     end
   end
@@ -75,7 +75,7 @@ class User
   end
 
   def valid_registration_code?
-    unless RegistrationCode.valid_code?(registration_code)
+    if new_record? && !RegistrationCode.valid_code?(registration_code)
       errors.add(:registration_code, 'Invalid registration code.')
     end
   end

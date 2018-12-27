@@ -165,12 +165,12 @@ class API::V2::UserController < ApplicationController
   end
 
   def reset_photo
-    render json: {current_user.reset_photo}
+    render json: current_user.reset_photo
   end
 
   def update_photo
     render json: {status: 'Must provide a photo to upload.'} and return unless params[:file]
-    render json: {current_user.update_photo params[:file]}
+    render json: current_user.update_photo(params[:file])
   end
 
   def reset_mentions

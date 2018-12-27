@@ -27,7 +27,7 @@ class API::V2::StreamController < ApplicationController
     elsif want_newer_posts?
       posts = newer_posts
     end
-    render json: {posts}
+    render json: posts
   end
 
   def show
@@ -40,7 +40,7 @@ class API::V2::StreamController < ApplicationController
     if children and children.length > 0
       post_result[:children] = children
     end
-    render json: {post_result}
+    render json: post_result
   end
 
   def view_mention
@@ -122,8 +122,7 @@ class API::V2::StreamController < ApplicationController
     end
 
     unless @post.author == current_username or is_admin?
-      err = [{error:"You can not modify other users' posts"}]
-      render status: :forbidden, json: {err}
+      render status: :forbidden, json: {error:"You can not modify other users' posts"}
       return
     end
     @post.text = params[:text] if params.has_key? :text

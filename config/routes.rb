@@ -98,7 +98,6 @@ Twitarr::Application.routes.draw do
       get 'event/:id/ical', to: 'event#ical'
       post 'event/:id/favorite', to: 'event#favorite'
       delete 'event/:id/favorite', to: 'event#destroy_favorite'
-      get 'event/rc/events', to: 'event#rc_events'
 
       get 'forums', to: 'forums#index'
       put 'forums', to: 'forums#create'
@@ -109,8 +108,6 @@ Twitarr::Application.routes.draw do
       post 'forums/thread/:id/react/:post_id/:type', to: 'forums#react'
       delete 'forums/thread/:id/react/:post_id/:type', to: 'forums#unreact'
       get 'forums/thread/:id/react/:post_id', to: 'forums#show_reacts'
-      get 'forums/rc/forums', to: 'forums#rc_forums'
-      get 'forums/rc/thread/:id', to: 'forums#rc_forum'
 
       post 'stream/:id/like', to: 'stream#like'
       delete 'stream/:id/like', to: 'stream#unlike'
@@ -120,7 +117,6 @@ Twitarr::Application.routes.draw do
       get 'stream/m/:query', to: 'stream#view_mention'
       get 'stream/h/:query', to: 'stream#view_hash_tag'
       get 'stream/:id/like', to: 'stream#show_likes'
-      get 'stream/rc/posts', to: 'stream#rc_posts'
 
       post 'user/new', to: 'user#new'
       get 'user/new_seamail', to: 'user#new_seamail'
@@ -142,8 +138,6 @@ Twitarr::Application.routes.draw do
       get 'user/photo/:username', to: 'user#get_photo'
       post 'user/photo', to: 'user#update_photo'
       delete 'user/photo', to: 'user#reset_photo'
-      get 'user/rc/users', to: 'user#rc_users'
-      post 'user/rc/update_profile', to: 'user#rc_update_profile'
 
       get 'hashtag/repopulate', to: 'hashtag#populate_hashtags'
       get 'hashtag/ac/:query', to: 'hashtag#auto_complete'

@@ -3,7 +3,7 @@ class API::V2::ForumsController < ApplicationController
 
   POST_COUNT = 20
   before_filter :login_required, :only => [:create, :update_post, :like, :unlike, :react, :unreact]
-  before_filter :fetch_forum, :except => [:index, :create, :show, :rc_forums, :rc_forum]
+  before_filter :fetch_forum, :except => [:index, :create, :show]
 
   def index
     page_size = (params[:limit] || POST_COUNT).to_i
@@ -123,23 +123,6 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.posts.find(params[:post_id])
     post.remove_reaction current_username, params[:type]
     render status: :ok, json: {status: 'ok', reactions: post.reactions }
-  end
-
-  def rc_forums
-    return unless logged_in!
-    start_loc = params[:since]
-    limit = params[:limit] || 0
-    forums = Forum.unscoped.where(:updated_at.gte => start_loc).only(:id, :subject, :created_at, :deleted_at).limit(limit).order_by(created_at: :asc)
-    render json: forums
-  end
-
-   def rc_forum
-    return unless logged_in!
-    forum_id = params[:id]
-    start_loc = params[:since]
-    limit = params[:limit] || 0
-    posts = Forum.unscoped.where(:id => forum_id, :updated_at.gte => start_loc).only(:id, :posts).limit(limit)
-    render json: posts
   end
     
   private

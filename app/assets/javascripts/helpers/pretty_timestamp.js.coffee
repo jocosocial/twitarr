@@ -1,6 +1,6 @@
 Ember.Handlebars.helper 'pretty_username', (username, display_name) ->
   if !!display_name && username isnt display_name
-    new Ember.Handlebars.SafeString "<span title='@#{username}'>#{display_name}</span>"
+    new Ember.Handlebars.SafeString "<span title='@#{username}'>#{display_name} (@#{username})</span>"
   else
     '@' + username
 

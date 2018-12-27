@@ -9,15 +9,11 @@ Twitarr.SearchRoute = Ember.Route.extend
 
 Twitarr.SearchResultsRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("search/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/all/#{params.text}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
-      @controllerFor('search').set('text', model.text)
       controller.set('error', null)
-      model.tweets = (Twitarr.StreamPost.create(post) for post in model.tweets)
-      model.forums = (Twitarr.ForumMeta.create(forum) for forum in model.forums)
-      model.events = (Twitarr.EventMeta.create(event) for event in model.events)
       controller.set('model', model)
     else
       controller.set('error', model.status)
@@ -29,7 +25,7 @@ Twitarr.SearchUserResultsRoute = Ember.Route.extend
         @transitionTo('search.user_results', text)
 
   model: (params) ->
-    $.getJSON("search_users/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/users/#{params.text}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -46,7 +42,7 @@ Twitarr.SearchTweetResultsRoute = Ember.Route.extend
         @transitionTo('search.tweet_results', text)
 
   model: (params) ->
-    $.getJSON("search_tweets/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/tweets/#{params.text}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -63,7 +59,7 @@ Twitarr.SearchForumResultsRoute = Ember.Route.extend
         @transitionTo('search.forum_results', text)
 
   model: (params) ->
-    $.getJSON("search_forums/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/forums/#{params.text}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -80,7 +76,7 @@ Twitarr.SearchEventResultsRoute = Ember.Route.extend
         @transitionTo('search.event_results', text)
 
   model: (params) ->
-    $.getJSON("search_events/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/events/#{params.text}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'

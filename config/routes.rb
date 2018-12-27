@@ -142,7 +142,11 @@ Twitarr::Application.routes.draw do
       get 'hashtag/repopulate', to: 'hashtag#populate_hashtags'
       get 'hashtag/ac/:query', to: 'hashtag#auto_complete'
 
-      get 'search', to: 'search#search'
+      get 'search/all/:text', to: 'search#all'
+      get 'search/users/:text', to: 'search#users'
+      get 'search/tweets/:text', to: 'search#tweets'
+      get 'search/forums/:text', to: 'search#forums'
+      get 'search/events/:text', to: 'search#events'
       get 'alerts', to: 'alerts#index'
       get 'alerts/check', to: 'alerts#check'
 

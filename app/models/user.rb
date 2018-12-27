@@ -310,8 +310,8 @@ class User
   end
 
   def self.search(params = {})
-    query = params[:text].gsub(/\W/,'')
-    criteria = User.or({username: Regexp.new(query)}, { '$text' => { '$search' => "\"#{query}\"" } })
+    query = params[:text].strip.downcase.gsub(/[^\w&\s-]/, '')
+    criteria = User.or({:username => /^#{query}.*/i}, { :display_name => /^#{query}.*/i }, { '$text' => { '$search' => "\"#{query}\"" } })
     limit_criteria(criteria, params)
   end
 end

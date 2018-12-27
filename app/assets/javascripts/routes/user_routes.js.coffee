@@ -8,7 +8,7 @@ Twitarr.UserProfileRoute = Ember.Route.extend
 
 Twitarr.UserNewRoute = Ember.Route.extend
   model: ->
-    Twitarr.UserNew
+    Twitarr.UserNew.load()
 
 Twitarr.UserLoginRoute = Ember.Route.extend
   model: ->

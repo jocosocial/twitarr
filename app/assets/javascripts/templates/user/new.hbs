@@ -1,29 +1,8 @@
 <div>
-  <h4>Unpleasant but neccessary stuff that hopefully will not be needed:</h4>
-
-  <p>
-    By signing up and using this system, you agree to abide by the JCCC convention / harassment policy that you were
-    required to sign. Basically: follow Wheaton's Law and please don't try to ruin this for someone else.
-  </p>
-
-  <p>
-    Having said this, if someone on Twit-arr is behaving in a manner that does NOT follow the harassment policy, then
-    please seek out any of the fine helper monkeys and they can assist. Helper monkeys should seek assistance from @kvort
-    on anything technical that needs doing re: Harassment.
-  </p>
-
+  {{render 'text' model}}
 </div>
 
-
-
 <form {{action "save" on="submit"}}>
-  <div style="margin-top: 1em;">
-    <p>
-      In your stateroom, you can find a card with your Twit-arr registration code. Please enter your code below.
-      You can create multiple accounts using your code, but please do not share your code with others.
-      If you share your code and the recipient misbehaves, you may be held responsible!
-    </p>
-  </div>
   <div class="form-group">
     <label for="registration_code">Registration code</label>
     {{input class="input" value=registration_code name="registration_code"}}

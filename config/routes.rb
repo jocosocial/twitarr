@@ -153,6 +153,8 @@ Twitarr::Application.routes.draw do
       resources :seamail, except: [:destroy, :edit, :new], :defaults => { :format => 'json' }
       post 'seamail/:id/new_message', to: 'seamail#new_message'
       put 'seamail/:id/recipients', to: 'seamail#recipients'
+
+      get 'text/:filename', to: 'text#index'
     end
   end
 

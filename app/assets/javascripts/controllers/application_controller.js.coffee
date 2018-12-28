@@ -84,7 +84,8 @@ Twitarr.ApplicationController.reopenClass
 
 Twitarr.PhotoViewController = Twitarr.ObjectController.extend
   photo_path: (->
-    if @get('model').get('constructor').toString() == 'Twitarr.User'
+    path = @get('model').get('constructor').toString()
+    if path == 'Twitarr.User' || path == 'Twitarr.UserProfile'
       "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true"
     else
       if(@get('animated'))
@@ -95,7 +96,8 @@ Twitarr.PhotoViewController = Twitarr.ObjectController.extend
 
   actions:
     open_full: ->
-      if @get('model').get('constructor').toString() == 'Twitarr.User'
+      path = @get('model').get('constructor').toString()
+      if path == 'Twitarr.User' || path == 'Twitarr.UserProfile'
         window.open "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true"
       else
         window.open Twitarr.ApplicationController.full_photo_path(@get('id'))

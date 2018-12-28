@@ -31,6 +31,9 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
   actions:
     star: ->
       @get('model').star()
+    
+    save_comment: ->
+      $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })
 
 Twitarr.UserNewController = Twitarr.ObjectController.extend
   errors: null

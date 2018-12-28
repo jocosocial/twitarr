@@ -3,7 +3,7 @@ Twitarr.StarredMeta = Ember.Object.extend
 
 Twitarr.StarredMeta.reopenClass
   get: ->
-    $.getJSON("user/starred").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/user/starred").then (data) =>
       {starred: Ember.A(Twitarr.Starred.create(user)) for user in data.users}
 
 Twitarr.Starred = Ember.Object.extend
@@ -13,4 +13,4 @@ Twitarr.Starred = Ember.Object.extend
   last_photo_updated: null
 
   save: ->
-    $.post("user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })
+    $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })

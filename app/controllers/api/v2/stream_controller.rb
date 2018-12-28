@@ -30,10 +30,6 @@ class API::V2::StreamController < ApplicationController
     render json: posts
   end
 
-  def star
-
-  end
-
   def show
     limit = (params[:limit] || PAGE_LENGTH).to_i
     start_loc = (params[:page] || 0).to_i

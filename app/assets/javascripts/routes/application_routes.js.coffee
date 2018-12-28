@@ -39,7 +39,7 @@ Twitarr.IndexRoute = Ember.Route.extend
 
 Twitarr.AlertsRoute = Ember.Route.extend
   model: ->
-    $.getJSON("alerts").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/alerts").then (data) =>
       data.tweet_mentions = Ember.A(Twitarr.StreamPost.create(post) for post in data.tweet_mentions)
       data.upcoming_events = Ember.A(Twitarr.EventMeta.create(event) for event in data.upcoming_events)
       data
@@ -66,7 +66,7 @@ Twitarr.StarredRoute = Ember.Route.extend
 
 Twitarr.TimeRoute = Ember.Route.extend
   model: ->
-    $.getJSON("time").then (data) ->
+    $.getJSON("#{Twitarr.api_path}/time").then (data) ->
       data
 
 Twitarr.HelpRoute = Ember.Route.extend

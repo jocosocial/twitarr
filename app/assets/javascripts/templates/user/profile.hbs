@@ -10,6 +10,15 @@
       {{! Because SVG actually gets text-stroke in every browser ever... Good consistency.}} 
       {{display_name_plus_username username display_name}}<svg {{bind-attr class=":star hidden::logged_in"}} style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.3 18.59"><defs><style>.star {font-size:15.05px;fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:1px;font-family:Arial;}.true {fill:gold;stroke:gold;}</style></defs><text {{action "star"}} {{bind-attr class=":star starred:true"}} transform="translate(0.13 13.37)">★</text></svg>
     </div>
+    <div class="body">
+        <div class="label">Personal comment:</div>
+        <div class="body-section">
+          {{textarea value=comment rows='2' class='input'}}
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn" {{action 'save_comment' model}}>save</button>
+      </div>
   </div>
   <div class="card-section">
     <div class="form row">

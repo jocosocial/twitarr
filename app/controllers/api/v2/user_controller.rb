@@ -1,7 +1,7 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions, :likes]
+  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions, :likes]
 
   def login_required
     head :unauthorized unless logged_in? || valid_key?(params[:key])
@@ -56,7 +56,11 @@ class API::V2::UserController < ApplicationController
   end
 
   def whoami
-    render json: {:status => 'ok', user: UserDecorator.decorate(current_user).self_hash}
+    render json: {
+      :status => 'ok', 
+      user: UserDecorator.decorate(current_user).self_hash,
+      need_password_change: current_user.correct_password(User::RESET_PASSWORD)
+    }
   end
 
   def show
@@ -70,6 +74,7 @@ class API::V2::UserController < ApplicationController
           recent_tweets: StreamPost.where(author: user.username).desc(:timestamp).limit(10).map { |x| x.decorate.to_hash(current_username) }
       })
     hash[:starred] = current_user.starred_users.include?(user.username) if logged_in? 
+    hash[:comment] = current_user.personal_comments[user.username] if logged_in?
     render json: { status: 'ok', user: hash }
   end
 
@@ -117,6 +122,15 @@ class API::V2::UserController < ApplicationController
       uu
     end
     render json: {status: 'ok', users: hash}
+  end
+
+  def personal_comment
+    render json: {status: 'User does not exist.'} and return unless User.exist?(params[:username])
+
+    show_username = User.format_username params[:username]
+    current_user.personal_comments[show_username] = params[:comment]
+    current_user.save
+    render_json status: 'ok'
   end
 
   def update_profile

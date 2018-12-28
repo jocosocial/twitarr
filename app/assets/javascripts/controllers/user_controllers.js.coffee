@@ -31,6 +31,9 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
   actions:
     star: ->
       @get('model').star()
+    
+    save_comment: ->
+      $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })
 
 Twitarr.UserNewController = Twitarr.ObjectController.extend
   errors: null
@@ -71,6 +74,10 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
           self.set('password', '')
           $.getJSON("#{Twitarr.api_path}/user/whoami").then (data) =>
             self.get('controllers.application').login(data.user)
-            self.transitionToRoute('stream')
+            if data.need_password_change
+              self.transitionToRoute('user')
+              alert('You need to change your password before you continue')
+            else
+              self.transitionToRoute('stream')
         else 
            self.set 'error', response.status

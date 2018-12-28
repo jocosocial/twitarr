@@ -122,13 +122,14 @@ class API::V2::UserController < ApplicationController
   def update_profile
     message = 'Profile Updated.'
 
+    password_change = false
     if params[:new_password] && params[:current_password]
       unless current_user.correct_password(params[:current_password])
         render status: :unauthorized, json: { status: 'Current password is incorrect.' }
         return
       end
-      current_user.set_password params[:new_password]
-      message += ' Password changed.'
+      current_user.password = params[:new_password]
+      password_change = true
     end
 
     current_user.current_location = params[:current_location] if params.has_key? :current_location
@@ -140,6 +141,10 @@ class API::V2::UserController < ApplicationController
     current_user.room_number = params[:room_number] if params.has_key? :room_number
     current_user.vcard_public = params[:vcard_public?] if params.has_key? :vcard_public?
     if current_user.valid?
+      if password_change
+        current_user.set_password params[:new_password]
+        message += ' Password changed.'
+      end
       current_user.save
       render json: { status: message, user: UserDecorator.decorate(current_user).self_hash } and return
     else

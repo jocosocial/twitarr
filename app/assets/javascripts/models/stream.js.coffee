@@ -36,21 +36,21 @@ Twitarr.StreamPost = Ember.Object.extend
   ).property('likes')
 
   like: ->
-    $.getJSON("tweet/like/#{@get('id')}").then (data) =>
+    $.post("#{Twitarr.api_path}/tweet/#{@get('id')}/like").then (data) =>
       if(data.status == 'ok')
         @set('likes', data.likes)
       else
         alert data.status
 
   unlike: ->
-    $.getJSON("tweet/unlike/#{@get('id')}").then (data) =>
+    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}/like", method: 'DELETE').then (data) =>
       if(data.status == 'ok')
         @set('likes', data.likes)
       else
         alert data.status
 
   delete: ->
-    $.getJSON("tweet/destroy/#{@get('id')}").then (data) =>
+    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}", method: 'DELETE').then (data) =>
       if(data.status == 'ok')
         for child in @get('children')
           child.parent_chain = []
@@ -60,33 +60,33 @@ Twitarr.StreamPost = Ember.Object.extend
 
 Twitarr.StreamPost.reopenClass
   page: (page) ->
-    $.getJSON("stream/#{page}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}").then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
 
   star_page: (page) ->
-    $.getJSON("stream/star/#{page}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}?starred=true").then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
 
   view: (post_id) ->
-    $.getJSON("#{Twitarr.api_path}/stream/#{post_id}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/thread/#{post_id}").then (data) =>
       @create(data)
 
   get: (post_id) ->
-    $.getJSON("tweet/#{post_id}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/tweet/#{post_id}").then (data) =>
       data.post.photo = Twitarr.Photo.create(data.post.photo) if data.post and data.post.photo
       data
 
   edit: (post_id, text, photo) ->
-    $.post("tweet/edit/#{post_id}", text: text, photo: photo).then (data) =>
+    $.post("#{Twitarr.api_path}/tweet/#{post_id}", text: text, photo: photo).then (data) =>
       data.stream_post = Twitarr.StreamPost.create(data.stream_post) if data.stream_post?
       data
 
   new_post: (text, photo) ->
-    $.post('stream', text: text, photo: photo).then (data) =>
+    $.post("#{Twitarr.api_path}/stream", text: text, photo: photo).then (data) =>
       data.stream_post = Twitarr.StreamPost.create(data.stream_post) if data.stream_post?
       data
 
   reply: (id, text, photo) ->
-    $.post('stream', text: text, photo: photo, parent: id).then (data) =>
+    $.post("#{Twitarr.api_path}/stream", text: text, photo: photo, parent: id).then (data) =>
       data.stream_post = Twitarr.StreamPost.create(data.stream_post) if data.stream_post?
       data

@@ -114,7 +114,7 @@ Twitarr.StreamPostPartialController = Twitarr.ObjectController.extend
     edit: ->
       @transitionToRoute 'stream.edit', @get('id')
     view_thread: ->
-      @transitionToRoute 'stream.view', @get('parent_id')
+      @transitionToRoute 'stream.view', @get('parent_id') or @get('id')
 
   show_parent: (->
     @get('parentController').get('parent_link_visible') && @get('parent_chain')

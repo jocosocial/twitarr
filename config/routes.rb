@@ -162,6 +162,7 @@ Twitarr::Application.routes.draw do
       put 'seamail/:id/recipients', to: 'seamail#recipients'
 
       get 'text/:filename', to: 'text#index'
+      get 'time', to: 'text#time'
 
       get 'admin/users', to: 'admin#users'
       get 'admin/users/:username', to: 'admin#user'

@@ -56,7 +56,11 @@ class API::V2::UserController < ApplicationController
   end
 
   def whoami
-    render json: {:status => 'ok', user: UserDecorator.decorate(current_user).self_hash}
+    render json: {
+      :status => 'ok', 
+      user: UserDecorator.decorate(current_user).self_hash,
+      need_password_change: current_user.correct_password(User::RESET_PASSWORD)
+    }
   end
 
   def show

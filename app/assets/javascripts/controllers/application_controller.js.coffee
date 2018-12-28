@@ -11,7 +11,7 @@ Twitarr.ApplicationController = Ember.Controller.extend
   ).property('uploads_pending')
 
   setup: (->
-    $.ajax('user/username', dataType: 'json', cache: false).done (data) =>
+    $.ajax("#{Twitarr.api_path}/user/whoami", dataType: 'json', cache: false).done (data) =>
       if data.status is 'ok'
         @login data.user
         if data.need_password_change
@@ -60,7 +60,7 @@ Twitarr.ApplicationController = Ember.Controller.extend
 
   tick: ->
     return unless @get('logged_in')
-    $.ajax('alerts/check', dataType: 'json', cache: false).done (data) =>
+    $.ajax("#{Twitarr.api_path}/alerts/check", dataType: 'json', cache: false).done (data) =>
       if data.status is 'ok'
         Ember.run =>
           @set('email_count', data.user.seamail_unread_count)

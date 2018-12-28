@@ -1,6 +1,6 @@
 Twitarr.AdminUsersRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("admin/users/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.text}")
 
   setupController: (controller, model) ->
     if model.status isnt 'ok'
@@ -14,8 +14,7 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
       @refresh()
 
     save: (user) ->
-      $.post('admin/update_user', {
-        username: user.username
+      $.post("#{Twitarr.api_path}/admin/users/#{user.username}", {
         is_admin: user.is_admin
         status: user.status
         email: user.email
@@ -29,14 +28,14 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
           @refresh()
 
     activate: (username) ->
-      $.post('admin/activate', { username: username }).then (data) =>
+      $.post("#{Twitarr.api_path}/admin/users/#{username}/activate").then (data) =>
         if (data.status isnt 'ok')
           alert data.status
         else
           @refresh()
 
     reset_password: (username) ->
-      $.post('admin/reset_password', { username: username }).then (data) =>
+      $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_password").then (data) =>
         if (data.status isnt 'ok')
           alert data.status
         else
@@ -54,7 +53,7 @@ Twitarr.AdminSearchRoute = Ember.Route.extend
 
 Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
   model: ->
-    $.getJSON("admin/announcements")
+    $.getJSON("#{Twitarr.api_path}/admin/announcements")
 
   setupController: (controller, model) ->
     controller.set('text', null)
@@ -66,7 +65,7 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
 
   actions:
     new: (text, hours) ->
-      $.post('admin/new_announcement', { text: text, hours: hours }).then (data) =>
+      $.post("#{Twitarr.api_path}/admin/announcements", { text: text, hours: hours }).then (data) =>
         if (data.status isnt 'ok')
           alert data.status
         else

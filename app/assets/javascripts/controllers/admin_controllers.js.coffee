@@ -14,6 +14,10 @@ Twitarr.AdminUserPartialController = Twitarr.ObjectController.extend
 Twitarr.AdminAnnouncementsController = Twitarr.Controller.extend()
 
 Twitarr.AdminUploadScheduleController = Twitarr.Controller.extend
+  schedule_upload_url: (->
+    "#{Twitarr.api_path}/admin/schedule"
+  ).property()
+
   actions:
     file_uploaded: (data) ->
       alert data.status unless data.status is 'ok'
@@ -21,4 +25,3 @@ Twitarr.AdminUploadScheduleController = Twitarr.Controller.extend
       @get('controllers.application').send('start_upload')
     end_upload: ->
       @get('controllers.application').send('end_upload')
-

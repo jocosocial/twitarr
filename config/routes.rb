@@ -155,6 +155,17 @@ Twitarr::Application.routes.draw do
       put 'seamail/:id/recipients', to: 'seamail#recipients'
 
       get 'text/:filename', to: 'text#index'
+
+      get 'admin/users', to: 'admin#users'
+      get 'admin/users/:username', to: 'admin#user'
+      post 'admin/users/:username', to: 'admin#update_user'
+      post 'admin/users/:username/activate', to: 'admin#activate'
+      post 'admin/users/:username/reset_password', to: 'admin#reset_password'
+      
+      get 'admin/announcements', to: 'admin#announcements'
+      post 'admin/announcements', to: 'admin#new_announcement'
+      
+      post 'admin/schedule', to: 'admin#upload_schedule'
     end
   end
 

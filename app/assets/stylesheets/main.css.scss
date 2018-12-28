@@ -443,7 +443,7 @@ img.photo {
 .seamail-autocomplete-parent {
   position: relative;
 
-  .to-autocomplete-list {
+  .seamail-user-autocomplete-list {
     list-style-type: none;
     background-color: white;
     padding: 0;
@@ -456,14 +456,21 @@ img.photo {
     font-size: larger;
     z-index: 200;
 
-    .to-autocomplete-item {
+    .seamail-user-autocomplete-item {
       border-top: 1px solid #aaa;
       padding: 0.2em 0.4em;
       cursor: pointer;
 
-      &:hover {
-        background-color: #BFEEFC;
-        box-shadow: 0 0 4px 4px white inset;
+      .seamail-user-autocomplete-anchor {
+        &:focus {
+          background-color: #BFEEFC;
+          box-shadow: 0 0 4px 4px white inset;
+          text-decoration: none;
+        }
+
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
   }

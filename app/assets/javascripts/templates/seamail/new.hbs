@@ -8,9 +8,11 @@
       <div class="seamail-autocomplete-parent">
         {{ input value=toInput id='seamail-user-autocomplete' class='input' placeholder='start typing a name'}}
         {{#if searchResults}}
-          <ul class="to-autocomplete-list">
+          <ul class="seamail-user-autocomplete-list">
             {{#each result in searchResults}}
-              <li class="to-autocomplete-item" href="#" {{ action 'select' result }}>{{display_name_plus_username result.username result.display_name}}</li>
+              <li class="seamail-user-autocomplete-item" {{ action 'select' result }}>
+                <a class="seamail-user-autocomplete-anchor" href="#" {{ action 'select' result }}>{{display_name_plus_username result.username result.display_name}}</a>
+              </li>
             {{/each}}
           </ul>
         {{/if}}

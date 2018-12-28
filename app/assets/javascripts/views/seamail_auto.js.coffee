@@ -8,21 +8,25 @@ Twitarr.SeamailNewView = Ember.View.extend
         return @moveUp()
       when 27
         @get('controller').send('cancel_autocomplete')
-        $('#to-autocomplete').focus()
+        $('#seamail-user-autocomplete').focus()
         return false
 
   keyDown: (e) ->
-    @get('controller').send('new') if e.ctrlKey and e.keyCode == 13      
+    @get('controller').send('new') if e.ctrlKey and e.keyCode == 13
 
   moveUp: ->
-    if $('.to-autocomplete-item:first').is(':focus')
-      $('#to-autocomplete').focus()
+    if $('#seamail-user-autocomplete').is(':focus')
+      $('.seamail-user-autocomplete-item:last').children('a').focus()
+    else if $('.seamail-user-autocomplete-anchor:first').is(':focus')
+      $('#seamail-user-autocomplete').focus()
     else
-      $('.to-autocomplete-item:focus').parent().prevAll('li').first().children('a').focus()
+      $('.seamail-user-autocomplete-anchor:focus').parent().prev().children('a').focus()
     false
 
   moveDown: ->
-    if $('#to-autocomplete').is(':focus')
-      $('.to-autocomplete-item:first').focus()
+    if $('#seamail-user-autocomplete').is(':focus')
+      $('.seamail-user-autocomplete-item:first').children('a').focus()
+    else if $('.seamail-user-autocomplete-anchor:last').is(':focus')
+      $('#seamail-user-autocomplete').focus()
     else
-      $('.to-autocomplete-item:focus').parent().nextAll
+      $('.seamail-user-autocomplete-anchor:focus').parent().next().children('a').focus()

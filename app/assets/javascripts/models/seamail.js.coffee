@@ -7,7 +7,7 @@ Twitarr.SeamailMeta = Ember.Object.extend
 
 Twitarr.SeamailMeta.reopenClass
   list: ->
-    $.getJSON('seamail').then (data) =>
+    $.getJSON("#{Twitarr.api_path}/seamail").then (data) =>
       Ember.A(@create(meta)) for meta in data.seamail_meta
 
 Twitarr.Seamail = Ember.Object.extend
@@ -22,16 +22,16 @@ Twitarr.Seamail = Ember.Object.extend
 
 Twitarr.Seamail.reopenClass
   get: (id) ->
-    $.getJSON("seamail/#{id}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/seamail/#{id}").then (data) =>
       @create(data.seamail)
 
   new_message: (seamail_id, text) ->
-    $.post('seamail/new_message', { seamail_id: seamail_id, text: text }).then (data) =>
+    $.post("#{Twitarr.api_path}/seamail/#{seamail_id}/new_message", { text: text }).then (data) =>
       data.seamail_message = Twitarr.SeamailMessage.create(data.seamail_message) if data.seamail_message?
       data
 
   new_seamail: (users, subject, text) ->
-    $.post('seamail', { users: users, subject: subject, text: text }).then (data) =>
+    $.post("#{Twitarr.api_path}/seamail", { users: users, subject: subject, text: text }).then (data) =>
       data.seamail = Twitarr.SeamailMeta.create(data.seamail_meta) if data.seamail_meta?
       data
 

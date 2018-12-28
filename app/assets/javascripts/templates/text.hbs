@@ -1,6 +1,17 @@
-{{#if header}}
-    <h4>{{header}}</h4>
-{{/if}}
-{{#each paragraph in model.paragraphs}}
-    <p>{{paragraph}}</p>
+{{#each section in sections}}
+    {{#if section.header}}
+        <h4>{{section.header}}</h4>
+    {{/if}}
+    {{#each paragraph in section.paragraphs}}
+        {{#if paragraph.text}}
+            <p>{{paragraph.text}}</p>
+        {{/if}}
+        {{#if paragraph.list}}
+            <ul>
+                {{#each item in paragraph.list}}
+                    <li>{{item}}</li>
+                {{/each}}
+            </ul>
+        {{/if}}
+    {{/each}}
 {{/each}}

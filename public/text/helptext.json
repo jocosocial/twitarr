@@ -60,6 +60,14 @@
                 ]
             },
             {
+                "header": "What's this alert that says \"You need to change your password before you continue\"?",
+                "paragraphs": [
+                    {
+                        "text": "You're getting this alert because your password was reset to the default password, or you happened to pick the same password as the default password. Sure, it's annoying - but it's also very easy to stop! Press the Change Password button on your user profile screen. Enter \"seamonkey\" as your current password, and pick a new password. And remember - due to the complete lack of security on the wifi, make sure you use a password that you don't use anywhere else!"
+                    }
+                ]
+            },
+            {
                 "header": "Who did this?",
                 "paragraphs": [
                     {

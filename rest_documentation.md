@@ -214,7 +214,7 @@ Get the recent tweets in the stream
 #### Query parameters
 
 * start=epoch - Optional (Default: Now) - The start location for getting tweets
-* older_posts - Optional (Default: off) - If this parameter exist, retrieve posts older than this, otherwise get newer ones
+* newer_posts - Optional (Default: off) - If this parameter exist, retrieve posts newer than start, otherwise get older ones
 * limit=Integer - Optional (Default: 20) - How many to tweets to get
 * author=username - Optional (Default:No Filter) - Filter by username specified
 * hashtag=hashtag - Optional (Default:NO Filter) - Filter by hashtag

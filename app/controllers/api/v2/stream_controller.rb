@@ -30,17 +30,26 @@ class API::V2::StreamController < ApplicationController
     render json: posts
   end
 
+  def star
+
+  end
+
   def show
     limit = (params[:limit] || PAGE_LENGTH).to_i
     start_loc = (params[:page] || 0).to_i
     show_options = request_options
     show_options[:remove] = [:parent_chain]
-    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(timestamp: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
-    post_result = @post.decorate.to_hash(current_username, request_options)
+    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(timestamp: :asc).map { |x| x.decorate.to_twitarr_hash(current_username, show_options) }
+    post_result = @post.decorate.to_twitarr_hash(current_username, request_options)
     if children and children.length > 0
       post_result[:children] = children
     end
     render json: post_result
+  end
+
+  def get
+    result = @post.decorate.to_twitarr_hash(current_username, request_options)
+    render json: {status: 'ok', post: result}
   end
 
   def view_mention
@@ -54,7 +63,7 @@ class API::V2::StreamController < ApplicationController
     start_loc = params[:page]
     limit = params[:limit]
     query = StreamPost.view_mentions params
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_twitarr_hash(current_username, request_options) }, next:(start_loc+limit)}
   end
 
   def view_hash_tag
@@ -68,10 +77,10 @@ class API::V2::StreamController < ApplicationController
     start_loc = params[:page]
     limit = params[:limit]
     query = StreamPost.where(hash_tags: query_string).order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_twitarr_hash(current_username, request_options) }, next:(start_loc+limit)}
   end
 
-  def destroy
+  def delete
     unless @post.author == current_username or is_admin?
       err = [{error:"You can not delete other users' posts"}]
       return respond_to do |format|
@@ -145,7 +154,7 @@ class API::V2::StreamController < ApplicationController
 
   def like
     @post = @post.add_like current_username
-    render json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username) }
   end
 
   def show_likes
@@ -196,7 +205,7 @@ class API::V2::StreamController < ApplicationController
   end
 
   def want_older_posts?
-    params.has_key?(:start) and params.has_key?(:older_posts)
+    params.has_key?(:start) and not params.has_key?(:newer_posts)
   end
 
   def older_posts
@@ -208,16 +217,18 @@ class API::V2::StreamController < ApplicationController
     mentions_only = !params[:include_author]
     filter_authors = nil
     if params[:starred]
-      filter_authors = current_user.starred_users
+      filter_authors = current_user.starred_users.reject { |x| x == current_username }
     end
     limit = params[:limit] || PAGE_LENGTH
-    posts = StreamPost.at_or_before(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :desc).map { |x| x }
+    posts = StreamPost.at_or_before(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :desc)
+    has_next_page = posts.count > limit
+    posts = posts.map { |x| x }
     next_page = posts.last.nil? ? 0 : (posts.last.timestamp.to_f * 1000).to_i - 1
-    {stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, next_page: next_page}
+    {stream_posts: posts.map{|x| x.decorate.to_twitarr_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
   end
 
   def want_newer_posts?
-    params.has_key?(:start) and not params.has_key?(:older_posts)
+    params.has_key?(:start) and params.has_key?(:newer_posts)
   end
 
   def newer_posts
@@ -229,11 +240,13 @@ class API::V2::StreamController < ApplicationController
     mentions_only = !params[:include_author]
     filter_authors = nil
     if params[:starred]
-      filter_authors = current_user.starred_users
+      filter_authors = current_user.starred_users.reject { |x| x == current_username }
     end
     limit = params[:limit] || PAGE_LENGTH
-    posts = StreamPost.at_or_after(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :asc).map { |x| x }
+    posts = StreamPost.at_or_after(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :asc)
+    has_next_page = posts.count > limit
+    posts = posts.map { |x| x }
     next_page = posts.last.nil? ? 0 : (posts.first.timestamp.to_f * 1000).to_i + 1
-    {stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, next_page: next_page}
+    {stream_posts: posts.map{|x| x.decorate.to_twitarr_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
   end  
 end

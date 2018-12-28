@@ -92,9 +92,8 @@ Twitarr::Application.routes.draw do
   namespace :api do
     namespace :v2 do
       resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
-      resources :stream, only: [:index, :new, :create, :show, :destroy, :update]
-      resources :event, only: [:index, :show]
 
+      resources :event, only: [:index, :show]
       get 'event/:id/ical', to: 'event#ical'
       post 'event/:id/favorite', to: 'event#favorite'
       delete 'event/:id/favorite', to: 'event#destroy_favorite'
@@ -109,14 +108,22 @@ Twitarr::Application.routes.draw do
       delete 'forums/thread/:id/react/:post_id/:type', to: 'forums#unreact'
       get 'forums/thread/:id/react/:post_id', to: 'forums#show_reacts'
 
-      post 'stream/:id/like', to: 'stream#like'
-      delete 'stream/:id/like', to: 'stream#unlike'
-      post 'stream/:id/react/:type', to: 'stream#react'
-      delete 'stream/:id/react/:type', to: 'stream#unreact'
-      get 'stream/:id/react', to: 'stream#show_reacts'
+      resources :stream, only: [:new, :create]
+      get 'stream', to: 'stream#index'
+      get 'stream/:start', to: 'stream#index'
       get 'stream/m/:query', to: 'stream#view_mention'
       get 'stream/h/:query', to: 'stream#view_hash_tag'
-      get 'stream/:id/like', to: 'stream#show_likes'
+
+      get 'thread/:id', to: 'stream#show'
+      get 'tweet/:id', to: 'stream#get'
+      post 'tweet/:id', to: 'stream#update'
+      delete 'tweet/:id', to: 'stream#delete'
+      get 'tweet/:id/like', to: 'stream#show_likes'
+      post 'tweet/:id/like', to: 'stream#like'
+      delete 'tweet/:id/like', to: 'stream#unlike'
+      get 'tweet/:id/react', to: 'stream#show_reacts'
+      post 'tweet/:id/react/:type', to: 'stream#react'
+      delete 'tweet/:id/react/:type', to: 'stream#unreact'
 
       post 'user/new', to: 'user#new'
       get 'user/new_seamail', to: 'user#new_seamail'

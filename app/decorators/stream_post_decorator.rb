@@ -5,7 +5,10 @@ class StreamPostDecorator < BaseDecorator
 
   MAX_LIST_LIKES = 5
 
-  def to_twitarr_hash(username = nil)
+  def to_twitarr_hash(username = nil, options = {})
+    length_limit = options[:length_limit] || text.length
+    adjusted_text = (text)[0...length_limit]
+
     result = {
         id: as_str(id),
         author: author,
@@ -18,6 +21,9 @@ class StreamPostDecorator < BaseDecorator
     }
     unless photo.blank?
       result[:photo] = { id: photo, animated: PhotoMetadata.find(photo).animated }
+    end
+    if options.has_key? :remove
+      options[:remove].each { |k| result.delete k }
     end
     result
   end

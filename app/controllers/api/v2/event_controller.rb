@@ -2,12 +2,17 @@ require 'csv'
 class API::V2::EventController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:create, :destroy, :update, :signup, :destroy_signup, :favorite, :destroy_favorite]
-  before_filter :fetch_event, :except => [:index, :create, :csv]
+  before_filter :login_required, :only => [:follow, :unfollow, :mine]
+  before_filter :admin_required, :only => [:destroy, :update]
+  before_filter :fetch_event, :except => [:index, :csv, :all, :mine]
 
   def login_required
     head :unauthorized unless logged_in? || valid_key?(params[:key])
   end
+
+  def admin_required
+		head :unauthorized unless (logged_in? || valid_key?(params[:key])) && is_admin?
+	end
 
   def fetch_event
     begin
@@ -17,8 +22,29 @@ class API::V2::EventController < ApplicationController
     end
   end
 
+  def update
+    @event.title = params[:title] if params.has_key? :title
+    @event.description = params[:description] if params.has_key? :description
+    @event.location = params[:location] if params.has_key? :location
+    @event.start_time = Time.parse(params[:start_time]) if params.has_key? :start_time
+    @event.end_time = Time.parse(params[:end_time]) unless params[:end_time].blank?
+
+    if @event.save
+      render json: {events: @event.decorate.to_hash(current_username)}
+    else
+      render json: {errors: @event.errors.full_messages}
+    end
+  end
+
+  def destroy
+    if @event.destroy
+      render json: {status: :ok}
+    else
+      render json: {status: :error, error: @event.errors}
+    end
+  end
+
   def ical
-    @event = Event.find(params[:id])
     # Yes this is based off vcard. They're really similar!
     cal_string = "BEGIN:VCALENDAR\n"
     cal_string << "VERSION:2.0\n"
@@ -41,27 +67,21 @@ class API::V2::EventController < ApplicationController
     render body: cal_string, content_type: 'text/vcard', layout: false
   end
 
-  def favorite
-    @event = Event.find(params[:id])
-    render status: :forbidden, json: {error: 'You have already favorited this event'} and return if @event.favorites.include? current_username
-    @event.favorites << current_username
-    @event.save
-    if @event.valid?
-      render json: { event: @event.decorate.to_hash(current_username) }
+  def follow
+    @event.follow current_username
+    if @event.save
+      render json: {status: 'ok'}
     else
-      render json: { errors: @event.errors.full_messages }
+      render json: {status: 'error', errors: @event.errors}
     end
   end
 
-  def destroy_favorite
-    @event = Event.find(params[:id])
-    render status: :forbidden, json: {error: 'You have not favorited this event'} and return if !@event.favorites.include? current_username
-    @event.favorites = @event.favorites.delete current_username
-    @event.save
-    if @event.valid?
-      render json: { event: @event.decorate.to_hash(current_username) }
+  def unfollow
+    @event.unfollow current_username
+    if @event.save
+      render json: {status: 'ok'}
     else
-      render json: { errors: @event.errors.full_messages }
+      render json: {status: 'error', errors: @event.errors}
     end
   end
 
@@ -78,11 +98,21 @@ class API::V2::EventController < ApplicationController
   end
 
   def show
-    @event = Event.find(params[:id])
     respond_to do |format|
-      format.json { render json: @event.decorate.to_hash }
-      format.xml { render xml: @event.decorate.to_hash }
+      format.json { render json: @event.decorate.to_hash(current_username) }
+      format.xml { render xml: @event.decorate.to_hash(current_username) }
     end
   end
 
+  def mine
+    day = Date.parse params[:day]
+    events = Event.where(:start_time.gte => day.to_time + 4.hours).where(:start_time.lt => day.to_time + 28.hours).where(favorites: current_username).order_by(:start_time.asc)
+    render json: {events: events.map { |x| x.decorate.to_meta_hash(current_username) }, today: day.to_s, prev_day: (day - 1).to_s, next_day: (day + 1).to_s}
+  end
+
+  def all
+    day = Date.parse params[:day]
+    events = Event.where(:start_time.gte => day.to_time + 4.hours).where(:start_time.lt => day.to_time + 28.hours).order_by(:start_time.asc)
+    render json: {events: events.map { |x| x.decorate.to_meta_hash(current_username) }, today: day.to_s, prev_day: (day - 1).to_s, next_day: (day + 1).to_s}
+  end
 end

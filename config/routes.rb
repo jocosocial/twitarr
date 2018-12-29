@@ -93,10 +93,13 @@ Twitarr::Application.routes.draw do
     namespace :v2 do
       resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
 
-      resources :event, only: [:index, :show]
+      resources :event, only: [:index, :update, :destroy]
+      get 'event/:id', to: 'event#show'
       get 'event/:id/ical', to: 'event#ical'
-      post 'event/:id/favorite', to: 'event#favorite'
-      delete 'event/:id/favorite', to: 'event#destroy_favorite'
+      post 'event/:id/favorite', to: 'event#follow'
+      delete 'event/:id/favorite', to: 'event#unfollow'
+      get 'event/mine/:day', to: 'event#mine'
+      get 'event/all/:day', to: 'event#all'
 
       get 'forums', to: 'forums#index'
       put 'forums', to: 'forums#create'

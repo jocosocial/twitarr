@@ -3,7 +3,7 @@ class API::V2::AlertsController < ApplicationController
 
   def index
     announcements = Announcement.valid_announcements.map { |x| x.decorate.to_hash }
-    if logged_in? || valid_key?(params[:key])
+    if logged_in?
       last_checked_time = current_user[:last_viewed_alerts]
       tweet_mentions = StreamPost.view_mentions(query: current_username,
                                                 mentions_only: true).map {|p| p.decorate.to_hash(current_username, params) }
@@ -30,7 +30,7 @@ class API::V2::AlertsController < ApplicationController
   end
 
   def check
-    if logged_in? || valid_key?(params[:key])
+    if logged_in?
       render json: { status: 'ok', user: current_user.decorate.alerts_meta }
     else
       last_checked_time = session[:last_viewed_alerts] || Time.at(0).to_datetime

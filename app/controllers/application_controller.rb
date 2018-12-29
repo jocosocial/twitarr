@@ -31,19 +31,12 @@ class ApplicationController < ActionController::Base
     (current_user&.is_admin) || session[:is_admin]
   end
 
-  def logged_in!
-    unless valid_key?(params[:key]) || logged_in?
-      render json: {:status => 'key not valid'}, status: 401 and return false
-    end
-    true
-  end
-
   def validate_login(username, password)
     user = User.get username
     result = {user: user}
     if user.nil?
       result[:error] = 'User does not exist.'
-    elsif user.status != User::ACTIVE_STATUS|| user.empty_password?
+    elsif user.status != User::ACTIVE_STATUS || user.empty_password?
       result[:error] = 'User account has been disabled.'
     elsif !user.correct_password(password)
       result[:error] = 'Invalid username or password.'
@@ -54,19 +47,15 @@ class ApplicationController < ActionController::Base
   end
 
   def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
+    head :unauthorized unless logged_in?
   end
 
   def admin_required
-		head :unauthorized unless (logged_in? || valid_key?(params[:key])) && is_admin?
+		head :unauthorized unless logged_in? && is_admin?
 	end
 
   def read_only_mode
     render json: { status: 'Twit-arr is in storage (read-only) mode.' }
-  end
-
-  def render_json(hash)
-    render json: hash
   end
 
   def get_username(key)

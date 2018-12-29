@@ -58,6 +58,23 @@ class ApplicationController < ActionController::Base
     render json: { status: 'Twit-arr is in storage (read-only) mode.' }
   end
 
+  def build_key(name, days_back = 0)
+    digest = OpenSSL::HMAC.hexdigest(
+        OpenSSL::Digest::SHA1.new,
+        Twitarr::Application.config.secret_key_base,
+        "#{name}#{Time.now.year}#{Time.now.yday - days_back}"
+    )
+    "#{name}:#{digest}"
+  end
+
+  def request_options
+    ret = {}
+    ret[:app] = params[:app] if !params.nil? and params.has_key?(:app)
+    ret
+  end
+
+  private
+
   def get_username(key)
     return nil if key.nil?
     key = URI.unescape(key)
@@ -82,21 +99,6 @@ class ApplicationController < ActionController::Base
     false
   end
 
-  def build_key(name, days_back = 0)
-    digest = OpenSSL::HMAC.hexdigest(
-        OpenSSL::Digest::SHA1.new,
-        Twitarr::Application.config.secret_key_base,
-        "#{name}#{Time.now.year}#{Time.now.yday - days_back}"
-    )
-    "#{name}:#{digest}"
-  end
-
-  def request_options
-    ret = {}
-    ret[:app] = params[:app] if !params.nil? and params.has_key?(:app)
-    ret
-  end
-
   CHECK_DAYS_BACK = 10
-
+  
 end

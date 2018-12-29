@@ -1,11 +1,7 @@
 class API::V2::AdminController < ApplicationController
 	skip_before_action :verify_authenticity_token
 	
-	before_filter :has_access
-	
-	def has_access
-		head :unauthorized unless (logged_in? || valid_key?(params[:key])) && is_admin?
-	end
+	before_filter :admin_required
 	
 	def users
 		render json: {status: 'ok', list: User.all.asc(:username).map { |x| x.decorate.admin_hash }}

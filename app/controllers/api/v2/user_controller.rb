@@ -3,10 +3,6 @@ class API::V2::UserController < ApplicationController
 
   before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions, :likes]
 
-  def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
-  end
-
   def new
     if logged_in?
       render json: {errors: ["Already logged in - log out before creating a new account."]}

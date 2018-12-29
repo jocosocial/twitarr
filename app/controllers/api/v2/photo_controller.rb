@@ -7,10 +7,6 @@ class API::V2::PhotoController < ApplicationController
   before_filter :login_required, :only => [:create, :destroy, :update]
   before_filter :fetch_photo, :except => [:index, :create]
 
-  def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
-  end
-
   def fetch_photo
     begin
       @photo = PhotoMetadata.find(params[:id])

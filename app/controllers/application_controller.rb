@@ -53,10 +53,13 @@ class ApplicationController < ActionController::Base
     result
   end
 
-
   def login_required
-    render json: { status: 'Not logged in.' }
+    head :unauthorized unless logged_in? || valid_key?(params[:key])
   end
+
+  def admin_required
+		head :unauthorized unless (logged_in? || valid_key?(params[:key])) && is_admin?
+	end
 
   def read_only_mode
     render json: { status: 'Twit-arr is in storage (read-only) mode.' }

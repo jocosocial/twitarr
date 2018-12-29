@@ -155,7 +155,7 @@ class API::V2::UserController < ApplicationController
     show_username = User.format_username params[:username]
     current_user.personal_comments[show_username] = params[:comment]
     current_user.save
-    render_json status: 'ok'
+    render json: {status: 'ok'}
   end
 
   def update_profile

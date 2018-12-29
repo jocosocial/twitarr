@@ -36,7 +36,7 @@ class API::V2::PhotoController < ApplicationController
   end
 
   def create
-    return render_json status: 'Must provide photos to upload.' if params[:files].blank? && params[:file].blank?
+    render json: {status: 'Must provide photos to upload.'} and return if params[:files].blank? && params[:file].blank?
     files = []
     if params[:file].blank?
       files = params[:files]
@@ -50,7 +50,7 @@ class API::V2::PhotoController < ApplicationController
     if browser.ie?
       render text: { files: files }.to_json
     else
-      render_json files: files
+      render json: {files: files}
     end
   end
 

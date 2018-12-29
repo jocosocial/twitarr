@@ -53,36 +53,6 @@ Twitarr.ScheduleDetailController = Twitarr.ObjectController.extend
     ical: ->
       window.location.replace("#{Twitarr.api_path}/event/#{@get('id')}/ical")
 
-Twitarr.ScheduleNewController = Twitarr.Controller.extend
-  init: ->
-    @set 'errors', Ember.A()
-
-  start_time: (->
-    getUsableTimeValue()
-  ).property()
-
-  actions:
-    new: ->
-      return if @get('posting')
-      @set 'posting', true
-      Twitarr.Event.new_event(@get('title'), @get('description'), @get('location'), @get('start_time'), @get('end_time')).then((response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-        else
-          @set 'title', ''
-          @set 'description', ''
-          @set 'location', ''
-          @set 'start_time', getUsableTimeValue()
-          @set 'end_time', ''
-          @set 'posting', false
-          @get('errors').clear()
-          @transitionToRoute 'schedule'
-      , ->
-        @set 'posting', false
-        alert 'Event could not be added. Please try again later. Or try again someplace without so many seamonkeys.'
-      )
-
 Twitarr.ScheduleEditController = Twitarr.ObjectController.extend
   errors: Ember.A()
 

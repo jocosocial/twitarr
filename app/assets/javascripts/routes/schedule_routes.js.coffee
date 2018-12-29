@@ -20,8 +20,6 @@ Twitarr.ScheduleDayRoute = Ember.Route.extend
     reload: ->
       @refresh()
 
-Twitarr.ScheduleNewRoute = Ember.Route.extend()
-
 Twitarr.ScheduleDetailRoute = Ember.Route.extend
   model: (params) ->
     Twitarr.Event.get params.id

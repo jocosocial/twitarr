@@ -45,6 +45,7 @@ Twitarr.Router.map ()->
     @route 'profile', { path: 'profile/:username' }
     @route 'new', { path: 'new' }
     @route 'login', { path: 'login' }
+    @route 'forgot_password', { path: 'forgot_password' }
 
   @route 'tag', { path: 'tag/:tag_name', model: Twitarr.UserNew }
   @route 'alerts'

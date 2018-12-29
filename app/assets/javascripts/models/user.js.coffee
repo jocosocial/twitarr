@@ -101,3 +101,30 @@ Twitarr.UserLogin.reopenClass
     }
 
     return $.post("#{Twitarr.api_path}/user/auth", post_data)
+
+Twitarr.UserForgotPassword = Ember.Object.extend
+  username: null
+  email: null
+  security_question: null
+  security_answer: null
+  new_password: null
+  confirm_password: null
+
+Twitarr.UserForgotPassword.reopenClass
+  getSecurityQuestion: (username, email) ->
+    post_data = {
+      username: username,
+      email: email
+    }
+
+    return $.post("#{Twitarr.api_path}/user/security_question", post_data)
+
+  resetPassword: (username, email, security_answer, new_password) ->
+    post_data = {
+      username: username,
+      email: email,
+      security_answer: security_answer,
+      new_password: new_password
+    }
+
+    return $.post("#{Twitarr.api_path}/user/reset_password", post_data)

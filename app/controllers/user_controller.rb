@@ -3,34 +3,6 @@ require 'json'
 
 class UserController < ApplicationController
 
-  layout 'login'
-
-  def security_question
-    @user = User.where(username: params[:username].downcase).first
-    if @user.nil?
-      @error = 'User does not exist.'
-      render :forgot_password
-    end
-  end
-
-  def security_answer
-    @user = User.where(username: params[:username].downcase).first
-    if @user.nil?
-      @error = 'User does not exist.'
-      render :forgot_password
-    end
-    if params[:security_answer].downcase.strip != @user.security_answer.downcase ||
-        params[:email].strip != @user.email.downcase
-      sleep 10.seconds.to_i
-      @error = 'Email or security answer did not match.'
-      render :security_question and return
-    end
-    @user.set_password User::RESET_PASSWORD
-    @user.save!
-    @error = 'Password has been reset to "seamonkey"'
-    render :login_page
-  end
-
   def save_profile
     return unless logged_in!
 

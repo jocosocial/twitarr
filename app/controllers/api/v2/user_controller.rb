@@ -37,6 +37,35 @@ class API::V2::UserController < ApplicationController
     end
   end
 
+  def security_question
+    user = User.where(username: params[:username].downcase).first
+    if user.nil? or user.email != params[:email].downcase
+      render status: :bad_request, json: { :status => 'error', errors: {step1: ['Username and email combination not found.']}} and return
+    else
+      render json: {:status => 'ok', security_question: user.security_question }
+    end
+  end
+
+  def reset_password
+    user = User.where(username: params[:username].downcase).first
+    if user.nil? or user.email != params[:email].downcase
+      render status: :bad_request, json: { :status => 'error', errors: {step1: ['Username and email combination not found.']}} and return
+    end
+    if params[:security_answer].downcase.strip != user.security_answer.downcase
+      sleep 10.seconds.to_i
+      render status: :bad_request, json: { :status => 'error', errors: {security_answer: ['Security answer did not match.']}} and return
+    end
+
+    # Check validity of new password
+    new_pass = params[:new_password]
+    user.password = new_pass
+    render status: :bad_request, json: { :status => 'error', errors: {password: ['Your password must be at least six characters long.']}} and return unless user.valid?
+
+    user.set_password params[:new_password]
+    user.save!
+    render json: { :status => 'ok', message: 'Your password has been changed!' }
+  end
+
   def new_seamail
     render json: {:status => 'ok', email_count: current_user.seamail_unread_count}
   end

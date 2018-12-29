@@ -5,10 +5,6 @@ class API::V2::SeamailController < ApplicationController
   before_filter :login_required
   before_filter :fetch_seamail, :only => [:show, :new_message, :recipients]
 
-  def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
-  end
-
   def fetch_seamail
     @seamail = Seamail.find(params[:id])
     unless @seamail.usernames.include? current_username

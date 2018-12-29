@@ -4,10 +4,6 @@ class API::V2::ForumsController < ApplicationController
   POST_COUNT = 20
   before_filter :login_required, :only => [:create, :update_post, :like, :unlike, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create, :show]
-
-  def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
-  end
   
   def index
     page_size = (params[:limit] || POST_COUNT).to_i

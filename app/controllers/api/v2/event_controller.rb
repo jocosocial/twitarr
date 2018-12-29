@@ -6,14 +6,6 @@ class API::V2::EventController < ApplicationController
   before_filter :admin_required, :only => [:destroy, :update]
   before_filter :fetch_event, :except => [:index, :csv, :all, :mine]
 
-  def login_required
-    head :unauthorized unless logged_in? || valid_key?(params[:key])
-  end
-
-  def admin_required
-		head :unauthorized unless (logged_in? || valid_key?(params[:key])) && is_admin?
-	end
-
   def fetch_event
     begin
       @event = Event.find(params[:id])

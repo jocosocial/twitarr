@@ -101,4 +101,22 @@ class API::V2::PhotoController < ApplicationController
       end
     end
   end
+
+  def small_thumb
+    expires_in 30.days, public: true
+    response.headers['Etag'] = params[:id]
+    send_file PhotoStore.instance.sm_thumb_path @photo.store_filename
+  end
+
+  def medium_thumb
+    expires_in 30.days, public: true
+    response.headers['Etag'] = params[:id]
+    send_file PhotoStore.instance.md_thumb_path @photo.store_filename
+  end
+
+  def full
+    expires_in 30.days, public: true
+    response.headers['Etag'] = params[:id]
+    send_file PhotoStore.instance.photo_path(@photo.store_filename), filename: @photo.original_filename, disposition: :inline
+  end
 end

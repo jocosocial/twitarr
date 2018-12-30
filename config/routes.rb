@@ -87,8 +87,6 @@ Twitarr::Application.routes.draw do
 
   namespace :api do
     namespace :v2 do
-      resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
-
       resources :event, only: [:index, :update, :destroy]
       get 'event/:id', to: 'event#show'
       get 'event/:id/ical', to: 'event#ical'
@@ -165,6 +163,11 @@ Twitarr::Application.routes.draw do
 
       get 'text/:filename', to: 'text#index'
       get 'time', to: 'text#time'
+
+      resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
+      get 'photo/small_thumb/:id', to: 'photo#small_thumb'
+      get 'photo/medium_thumb/:id', to: 'photo#medium_thumb'
+      get 'photo/full/:id', to: 'photo#full'
 
       get 'admin/users', to: 'admin#users'
       get 'admin/users/:username', to: 'admin#user'

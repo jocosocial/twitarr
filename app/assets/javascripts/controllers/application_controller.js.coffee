@@ -5,6 +5,7 @@ Twitarr.ApplicationController = Ember.Controller.extend
   display_name: null
   read_only: false
   uploads_pending: 0
+  photo_upload_path: "#{Twitarr.api_path}/photo"
 
   has_uploads_pending: (->
     @get('uploads_pending')
@@ -74,13 +75,13 @@ Twitarr.ApplicationController = Ember.Controller.extend
 
 Twitarr.ApplicationController.reopenClass
   sm_photo_path: (photo) ->
-    "/photo/small_thumb/#{photo}"
+    "#{Twitarr.api_path}/photo/small_thumb/#{photo}"
 
   md_photo_path: (photo) ->
-    "/photo/medium_thumb/#{photo}"
+    "#{Twitarr.api_path}/photo/medium_thumb/#{photo}"
 
   full_photo_path: (photo) ->
-    "/photo/full/#{photo}"
+    "#{Twitarr.api_path}/photo/full/#{photo}"
 
 Twitarr.PhotoViewController = Twitarr.ObjectController.extend
   photo_path: (->

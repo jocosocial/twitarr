@@ -33,7 +33,7 @@ class API::V2::UserController < ApplicationController
     else
       @user = login_result[:user]
       login_user @user
-      render json: { :status => 'ok', :key => build_key(@user.username) }
+      render json: { :status => 'ok', :username => @user.username, :key => build_key(@user.username) }
     end
   end
 

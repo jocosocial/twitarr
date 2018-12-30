@@ -28,6 +28,10 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
 Twitarr.UserProfileController = Twitarr.ObjectController.extend
   photo_path: (-> "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true").property("username")
 
+  logged_in_visible: (->
+    @get('logged_in')
+  ).property('logged_in')
+
   actions:
     star: ->
       @get('model').star()
@@ -72,6 +76,7 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
         if response.status is 'ok'
           self.set('username', '')
           self.set('password', '')
+          self.set('error', null)
           $.getJSON("#{Twitarr.api_path}/user/whoami").then (data) =>
             self.get('controllers.application').login(data.user)
             if data.need_password_change

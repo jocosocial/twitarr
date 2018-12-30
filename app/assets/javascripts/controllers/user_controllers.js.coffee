@@ -28,6 +28,10 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
 Twitarr.UserProfileController = Twitarr.ObjectController.extend
   photo_path: (-> "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true").property("username")
 
+  logged_in_visible: (->
+    @get('logged_in')
+  ).property('logged_in')
+
   actions:
     star: ->
       @get('model').star()

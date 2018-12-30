@@ -16,21 +16,23 @@
   </div>
 {{/if}}
 
-<div class="display_card">
-  <div class="card-section">
-    <div class="title big-title">Reply</div>
-    <div class="form">
-      {{textarea value=reply_text rows='3' class='input'}}
-      {{view 'upload'}}
+<div {{bind-attr class="logged_in_visible::hidden"}}>
+  <div class="display_card">
+    <div class="card-section">
+      <div class="title big-title">Reply</div>
+      <div class="form">
+        {{textarea value=reply_text rows='3' class='input'}}
+        {{view 'upload'}}
 
-      <ul class="errors-list">
-        {{#each error in errors}}
-          <li>{{error}}</li>
-        {{/each}}
-      </ul>
-      <span class="controls">
-        <button class="btn" {{action 'new'}}>Post</button>
-      </span>
+        <ul class="errors-list">
+          {{#each error in errors}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+        <span class="controls">
+          <button class="btn" {{action 'new'}}>Post</button>
+        </span>
+      </div>
     </div>
   </div>
 </div>

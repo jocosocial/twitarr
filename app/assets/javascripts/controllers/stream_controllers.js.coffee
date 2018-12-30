@@ -25,6 +25,10 @@ Twitarr.SinglePhotoMixin = Ember.Mixin.create
 Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePhotoMixin,
   parent_link_visible: true
 
+  logged_in_visible: (->
+    @get('logged_in')
+  ).property('logged_in')
+
   actions:
     show_new_post: ->
       @set 'new_post_visible', true

@@ -6,11 +6,18 @@ Twitarr.StreamPost = Ember.Object.extend
   photo: null
   likes: []
   parent_chain: []
+  children: Ember.A()
 
   objectize: (->
     photo = @get('photo')
     if photo
       @set 'photo', Twitarr.Photo.create(photo)
+
+    children = @get('children')
+    fixed_children = Ember.A()
+    for child in children
+      fixed_children.push Twitarr.StreamPost.create(child)
+    @set 'children', fixed_children
   ).on('init')
 
   user_likes: (->

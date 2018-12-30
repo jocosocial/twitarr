@@ -72,6 +72,7 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
         if response.status is 'ok'
           self.set('username', '')
           self.set('password', '')
+          self.set('error', null)
           $.getJSON("#{Twitarr.api_path}/user/whoami").then (data) =>
             self.get('controllers.application').login(data.user)
             if data.need_password_change

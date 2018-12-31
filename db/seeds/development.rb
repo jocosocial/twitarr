@@ -8,16 +8,8 @@ def create_registration_code(code)
 end
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
-  create_registration_code 'code1'
-  create_registration_code 'code2'
-  create_registration_code 'code3'
-  create_registration_code 'code4'
-  create_registration_code 'code5'
-  create_registration_code 'code6'
-  create_registration_code 'code7'
-  create_registration_code 'code8'
-  create_registration_code 'code9'
-  create_registration_code 'code10'
+  for i in 1..20 do
+    create_registration_code "code#{i}"
 end
 
 unless User.exist? 'kvort'

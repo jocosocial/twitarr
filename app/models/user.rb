@@ -49,7 +49,7 @@ class User
   validate :valid_username?
   validate :valid_display_name?
   validate :valid_location?
-  validates :email, format: { with: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i, message: 'E-mail address is not valid.' }
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: 'E-mail address is not valid.' }
   validate :valid_password?
   validates :security_question, presence: { message: 'Security question is required.' }
   validates :security_answer, presence: { message: 'Security answer is required.' }

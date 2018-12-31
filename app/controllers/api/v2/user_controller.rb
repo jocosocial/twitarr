@@ -40,7 +40,7 @@ class API::V2::UserController < ApplicationController
   def security_question
     user = User.where(username: params[:username].downcase).first
     if user.nil? or user.email != params[:email].downcase
-      render status: :bad_request, json: { :status => 'error', errors: {step1: ['Username and email combination not found.']}} and return
+      render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and email combination not found.']}} and return
     else
       render json: {:status => 'ok', security_question: user.security_question }
     end
@@ -49,7 +49,7 @@ class API::V2::UserController < ApplicationController
   def reset_password
     user = User.where(username: params[:username].downcase).first
     if user.nil? or user.email != params[:email].downcase
-      render status: :bad_request, json: { :status => 'error', errors: {step1: ['Username and email combination not found.']}} and return
+      render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and email combination not found.']}} and return
     end
     if params[:security_answer].downcase.strip != user.security_answer.downcase
       sleep 10.seconds.to_i

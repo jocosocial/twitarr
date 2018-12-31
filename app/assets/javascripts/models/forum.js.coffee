@@ -64,14 +64,14 @@ Twitarr.ForumPost = Ember.Object.extend
   ).property('likes')
 
   like: ->
-    $.getJSON("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/like/#{@get('id')}").then (data) =>
+    $.post("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/like/#{@get('id')}").then (data) =>
       if(data.status == 'ok')
         @set('likes', data.likes)
       else
         alert data.status
 
   unlike: ->
-    $.getJSON("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/unlike/#{@get('id')}").then (data) =>
+    $.ajax("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/like/#{@get('id')}", method: 'DELETE').then (data) =>
       if(data.status == 'ok')
         @set('likes', data.likes)
       else

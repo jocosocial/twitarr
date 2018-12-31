@@ -10,6 +10,7 @@ RegistrationCode.delete_all
 if RegistrationCode.count == 0
   for i in 1..20 do
     create_registration_code "code#{i}"
+  end
 end
 
 unless User.exist? 'kvort'

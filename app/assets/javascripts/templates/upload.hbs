@@ -9,7 +9,6 @@
 <div id="photo-display">
   {{#each photo in photos}}
     <div class="photo-container">
-      {{log 'photo: ' photo}}
       <img class="close" {{action 'remove_photo' photo.id}} src="/img/close-icon.png" />
       {{render 'photo_mini' photo }}
     </div>

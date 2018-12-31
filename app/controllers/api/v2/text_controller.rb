@@ -9,6 +9,6 @@ class API::V2::TextController < ApplicationController
 	end
 	
 	def time
-		render json: {time: Time.now.strftime('%B %d, %l:%M %P %Z')}
+		render json: {time: Time.now.strftime('%B %d, %l:%M %P %Z'), offset: Time.now.utc_offset / 3600}
 	end
 end

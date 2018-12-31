@@ -97,6 +97,11 @@ class API::V2::ForumsController < ApplicationController
     render json: {status: 'ok', likes: post.likes}
   end
 
+  def show_likes
+    post = @forum.posts.find(params[:post_id])
+    render json: {status: 'ok', likes: post.likes }
+  end
+
   def unlike
     post = @forum.posts.find(params[:post_id])
     post = post.pull likes: current_username

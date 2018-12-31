@@ -1,28 +1,4 @@
-Twitarr.SinglePhotoMixin = Ember.Mixin.create
-  init: ->
-    @_super()
-    @set 'photo_id', null
-    @set 'errors', Ember.A()
-
-  photos: (->
-    photo_id = @get('photo_id')
-    if photo_id
-      [ Twitarr.Photo.create { id: photo_id } ]
-    else
-      []
-  ).property('photo_id')
-
-  actions:
-    file_uploaded: (data) ->
-      if data.files[0]?.photo
-        @set('photo_id', data.files[0].photo)
-      else
-        alert "Error: " + data.files[0]?.status
-
-    remove_photo: ->
-      @set 'photo_id', null
-
-Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePhotoMixin,
+Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePhotoUploadMixin,
   parent_link_visible: true
 
   logged_in_visible: (->
@@ -59,7 +35,7 @@ Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePho
         alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       )
 
-Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePhotoMixin,
+Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePhotoUploadMixin,
   new_post_visible: false
 
   new_post_button_visible: (->
@@ -99,7 +75,7 @@ Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePho
     next_page: ->
       @transitionToRoute 'stream.page', @get('next_page')
 
-Twitarr.StreamStarPageController = Twitarr.ObjectController.extend Twitarr.SinglePhotoMixin,
+Twitarr.StreamStarPageController = Twitarr.ObjectController.extend Twitarr.SinglePhotoUploadMixin,
   actions:
     next_page: ->
       @transitionToRoute 'stream.star_page', @get('next_page')

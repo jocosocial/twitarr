@@ -9,7 +9,16 @@
 #= require ember
 #= require ember-data
 #= require_self
-#= require twitarr
+
+#= require ./store
+#= require_tree ./mixins
+#= require_tree ./controllers
+#= require_tree ./helpers
+#= require_tree ./models
+#= require_tree ./routes
+#= require_tree ./templates
+#= require_tree ./views
+#= require ./router
 
 window.console = { log: -> } unless window.console?
 
@@ -60,4 +69,3 @@ window.Twitarr = Ember.Application.create
   api_path: "/api/v2"
   ready: ->
     $("#app-loading").remove()
-

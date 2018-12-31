@@ -1,25 +1,4 @@
-Twitarr.PhotosUploadMixin = Ember.Mixin.create
-  init: ->
-    @_super()
-    @set 'photo_ids', Ember.A()
-    @set 'errors', Ember.A()
-
-  photos: (->
-    Twitarr.Photo.create({id: id}) for id in @get('photo_ids')
-  ).property('photo_ids.@each')
-
-  actions:
-    file_uploaded: (data) ->
-      data.files.forEach (file) =>
-        if file.photo
-          @get('photo_ids').pushObject file.photo
-        else
-          @get('errors').pushObject file.status
-
-    remove_photo: (id) ->
-      @get('photo_ids').removeObject id
-
-Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.PhotosUploadMixin,
+Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.MultiplePhotoUploadMixin,
   has_new_posts: (->
     for post in @get('forum.posts')
       return true if post.timestamp > @get('forum.latest_read')
@@ -84,7 +63,7 @@ Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
     unlike: ->
       @get('model').unlike()
 
-Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.PhotosUploadMixin,
+Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:
     new: ->
       if @get('controllers.application.uploads_pending')

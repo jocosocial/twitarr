@@ -6,12 +6,15 @@ class API::V2::SeamailController < ApplicationController
   before_filter :fetch_seamail, :only => [:show, :new_message, :recipients]
 
   def fetch_seamail
-    @seamail = Seamail.find(params[:id])
+    begin
+      @seamail = Seamail.find(params[:id])
+    rescue Mongoid::Errors::DocumentNotFound
+      render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
+    end
     unless @seamail.usernames.include? current_username
-      render status: :forbidden, json: {errors: 'Must already be part of the Seamail to view a seamail.'}
+      render status: :forbidden, json: {status: 'error', error: 'User must be part of the seamail to access a seamail'}
     end
   end
-
 
   def index
     extra_query = {}
@@ -45,7 +48,7 @@ class API::V2::SeamailController < ApplicationController
     if seamail.valid?
       render json: {seamail_meta: seamail.decorate.to_meta_hash.merge!({is_unread: seamail.unread_users.include?(current_username)})}
     else
-      render json: {errors: seamail.errors.full_messages}
+      render status: :bad_request, json: {status: 'error', errors: seamail.errors.full_messages}
     end
   end
 
@@ -54,16 +57,23 @@ class API::V2::SeamailController < ApplicationController
     if message.valid?
       render json: {seamail_message: message.decorate.to_hash(request_options).merge!({is_unread: @seamail.unread_users.include?(current_username)})}
     else
-      render json: {errors: message.errors.full_messages}
+      render status: :bad_request, json: {status: 'error', errors: message.errors.full_messages}
     end
   end
 
   def recipients
     # this ensures that the logged in user is also specified
-    usernames = Set.new([params[:users], current_username].flatten).to_a
+    usernames = params[:users]
+    usernames ||= []
+    usernames << current_username unless usernames.include? current_username
+    usernames = usernames.map(&:downcase).uniq
     @seamail.usernames = usernames
-    @seamail.reset_read current_username
-    @seamail.save!
+    if @seamail.valid?
+      @seamail.reset_read current_username
+      @seamail.save!
+    else
+      render status: :bad_request, json: {status: 'error', errors: @seamail.errors.full_messages} and return
+    end
     render json: {seamail_meta: @seamail.decorate.to_meta_hash}
   end
 

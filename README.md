@@ -115,12 +115,15 @@ Now you can seed the database with some initial data:
 ```
   $ rake db:seed
 ```
+This will create 20 reusable registration codes, which can be used for creating new users. The created codes are numbered, code1 through code20.
 
-This will create 3 users.  Each of the users' password is the same as their username.
+It will also create 4 users.  Each of the users' password is the same as their username.
 
-1. kvort (an admin user)
-2. james (a non-admin user)
-3. admin (another admin user)
+1. kvort (code1, an admin user)
+2. james (code2, a non-admin user)
+3. steve (code3, a non-admin user)
+4. admin (code4, another admin user)
+
 
 Now we can finally run the rails server.  By default this server can be hit from [http://localhost:3000](http://localhost:3000)
 

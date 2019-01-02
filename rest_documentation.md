@@ -189,11 +189,11 @@ none
 
 #### JSON Request Body
 
-    ```
-    {
-      "text": "string"
-    }
-    ```
+```
+{
+    "text": "string"
+}
+```
 
 #### Returns
 

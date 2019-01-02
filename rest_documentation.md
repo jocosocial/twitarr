@@ -16,17 +16,17 @@ This documentation is for the rest endpoints under /api/v2
   * HTTP status code with a blank response
 * status_code_with_message
   * HTTP status code with JSON: a single error message
-  ```json
+  ```
   { "status": "error", "error": "message" }
   ```
 * status_code_with_error_list
   * HTTP status code with JSON: a list of error messages
-  ```json
+  ```
   { "status": "error", "errors": [ "message1", ...] }
   ```
 * status_code_with_parameter_messages
   * HTTP status code with JSON: a list of error messages associated to a parameter
-  ```json
+  ```
   { 
     "status": "error", 
     "errors": {
@@ -44,44 +44,44 @@ This documentation is for the rest endpoints under /api/v2
 
 #### SeamailDetails
 
-    ```json
-    "seamail": Object {
-        "id": "id_string",
-        "users": Array [
-        Object { "username": "username_string",
-                "display_name": "displayname_string",
-                "last_photo"updated": epoch
-        }, …],
-        "subject": "string",
-        "messages": Array [
-            SeamailMessage {
-            "author": "username_string",
-            "author_display_name": "displayname_string",
-            "text": "string",
-            "timestamp": "ISO_8601_DATETIME"
-            }, …
-        ],
-        "is_unread": boolean
-    }
-    ```
+```
+"seamail": {
+    "id": "id_string",
+    "users": Array [
+    Object { "username": "username_string",
+            "display_name": "displayname_string",
+            "last_photo"updated": epoch
+    }, …],
+    "subject": "string",
+    "messages": Array [
+        SeamailMessage {
+        "author": "username_string",
+        "author_display_name": "displayname_string",
+        "text": "string",
+        "timestamp": "ISO_8601_DATETIME"
+        }, …
+    ],
+    "is_unread": boolean
+}
+```
 
 #### SeamailMetaInfo
 
-    ```json
-    {
-        "id": id_string,
-        "users": ARRAY [ Object {
-                "username": "username_string",
-                "display_name": "displayname_string",
-                "last_photo_updated": epoch
-                },
-                … ],
-        "subject": "string",
-        "messages": "\d+ message", # message will be plural if the number is > 1
-        "timestamp": "ISO_8601_DATETIME",
-        "is_unread": boolean
-    }
-    ```
+```
+{
+    "id": id_string,
+    "users": Array [ Object {
+            "username": "username_string",
+            "display_name": "displayname_string",
+            "last_photo_updated": epoch
+            },
+            … ],
+    "subject": "string",
+    "messages": "\d+ message", # message will be plural if the number is > 1
+    "timestamp": "ISO_8601_DATETIME",
+    "is_unread": boolean
+}
+```
 
 ### GET /api/v2/seamail
 
@@ -99,12 +99,12 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 
 #### Returns
 
-    ```json
-    {
-        "seamail_meta": [ SeamailMetaInfo{…}, … ],
-        "last_checked": epoch
-    }
-    ```
+```
+{
+    "seamail_meta": [ SeamailMetaInfo{…}, … ],
+    "last_checked": epoch
+}
+```
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
@@ -129,7 +129,7 @@ none
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message - HTTP 403 if current user is not in the seamail recipients list
-  ```json
+  ```
     { "status": "error", "error": "User must be part of the seamail to view a seamail." }
   ```
 ### POST /api/v2/seamail
@@ -147,13 +147,13 @@ none
 
 #### JSON Request Body
 
-    ```json
-    {
-      "users": [username_string, …],   # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
-      "subject": "string",
-      "text": "string"  # The first post's of the seamail's textual content
-    }
-    ```
+```
+{
+    "users": [username_string, …],   # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
+    "subject": "string",
+    "text": "string"  # The first post's of the seamail's textual content
+}
+```
 
 #### Returns
 
@@ -162,7 +162,7 @@ none
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_error_list - HTTP 400 with a list of any problems
-  ```json
+  ```
     {
         "status": "error",
         "errors": [
@@ -189,7 +189,7 @@ none
 
 #### JSON Request Body
 
-    ```json
+    ```
     {
       "text": "string"
     }
@@ -203,15 +203,15 @@ none
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
   * HTTP 404 if seamail with given ID is not found
-    ```json
+    ```
     { "status": "error", "error": "Seamail not found" }
     ```
   * HTTP 403 if current user is not in the seamail participants list
-    ```json
+    ```
     { "status": "error", "error": "User must be part of the seamail to access a seamail" }
     ```
 * status_code_with_error_list - HTTP 400
-   ```json
+   ```
    { "status": "error", "errors": [ "Text can't be blank" ]}
    ```
 ### PUT /api/v2/seamail/:id/recipients
@@ -241,15 +241,15 @@ none
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
   * HTTP 404 if seamail with given ID is not found
-   ```json
+   ```
     { "status": "error", "error": "Seamail not found" }
    ```
   * HTTP 403 if current user is not in the seamail participants list
-   ```json
+   ```
     { "status": "error", "error": "User must be part of the seamail to access a seamail" }
    ```
 * status_code_with_error_list - HTTP 400 with a list of any problems
-   ```json
+   ```
     {
         "status": "error",
         "errors": [
@@ -260,7 +260,7 @@ none
 ### GET /api/v2/user/new_seamail
 
 Get how many unread seamails the user has
-    ```json
+    ```
     {
     "status": "ok",
     "email_count": 0 # Integer count of unread seamails

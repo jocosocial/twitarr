@@ -24,7 +24,7 @@ This documentation is for the rest endpoints under /api/v2
   ```
   { "status": "error", "errors": [ "message1", ...] }
   ```
-* status_code_with_parameter_messages
+* status_code_with_parameter_errors
   * HTTP status code with JSON: a list of error messages associated to a parameter
   ```
   { 

@@ -260,12 +260,12 @@ none
 ### GET /api/v2/user/new_seamail
 
 Get how many unread seamails the user has
-    ```
-    {
+```
+{
     "status": "ok",
     "email_count": 0 # Integer count of unread seamails
-    }
-    ```
+}
+```
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in

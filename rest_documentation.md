@@ -119,7 +119,8 @@ none
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message - HTTP 403 if current user is not in the seamail recipients list
-  { "status": "error", "error": "User must be part of the seamail to view a seamail." }
+    
+    { "status": "error", "error": "User must be part of the seamail to view a seamail." }
 
 ### POST /api/v2/seamail
 
@@ -149,15 +150,16 @@ none
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_error_list - HTTP 400 with a list of any problems
-  {
-      "status": "error",
-      "errors": [
-          "Must send seamail to another user of Twitarr", # No users in the user list
-          "x is not a valid username", # No user exists with the username 'x'
-          "Subject can't be blank",
-          "Text can't be blank"
-      ]
-  }
+    
+    {
+        "status": "error",
+        "errors": [
+            "Must send seamail to another user of Twitarr", # No users in the user list
+            "x is not a valid username", # No user exists with the username 'x'
+            "Subject can't be blank",
+            "Text can't be blank"
+        ]
+    }
 
 ### POST /api/v2/seamail/:id/new_message
 
@@ -186,11 +188,16 @@ none
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
   * HTTP 404 if seamail with given ID is not found
+
     { "status": "error", "error": "Seamail not found" }
+
   * HTTP 403 if current user is not in the seamail participants list
+
     { "status": "error", "error": "User must be part of the seamail to access a seamail" }
+
 * status_code_with_error_list - HTTP 400
-  { "status": "error", "errors": [ "Text can't be blank" ]}
+
+    { "status": "error", "errors": [ "Text can't be blank" ]}
 
 ### PUT /api/v2/seamail/:id/recipients
 
@@ -219,16 +226,21 @@ none
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
   * HTTP 404 if seamail with given ID is not found
+
     { "status": "error", "error": "Seamail not found" }
+
   * HTTP 403 if current user is not in the seamail participants list
+
     { "status": "error", "error": "User must be part of the seamail to access a seamail" }
+
 * status_code_with_error_list - HTTP 400 with a list of any problems
-  {
-      "status": "error",
-      "errors": [
-          "Must send seamail to another user of Twitarr", # No users in the user list
-      ]
-  }
+
+    {
+        "status": "error",
+        "errors": [
+            "Must send seamail to another user of Twitarr", # No users in the user list
+        ]
+    }
 
 ### GET /api/v2/user/new_seamail
 

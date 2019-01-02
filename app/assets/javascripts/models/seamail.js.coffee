@@ -26,7 +26,7 @@ Twitarr.Seamail.reopenClass
       @create(data.seamail)
 
   new_message: (seamail_id, text) ->
-    $.post("#{Twitarr.api_path}/seamail/#{seamail_id}/new_message", { text: text }).then (data) =>
+    $.post("#{Twitarr.api_path}/seamail/#{seamail_id}", { text: text }).then (data) =>
       data.seamail_message = Twitarr.SeamailMessage.create(data.seamail_message) if data.seamail_message?
       data
 

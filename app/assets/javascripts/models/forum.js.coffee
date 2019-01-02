@@ -34,7 +34,7 @@ Twitarr.Forum.reopenClass
       data
 
   new_forum: (subject, text, photos) ->
-    $.ajax("#{Twitarr.api_path}/forums", method: 'PUT', data: { subject: subject, text: text, photos: photos }).then (data) =>
+    $.post("#{Twitarr.api_path}/forums", { subject: subject, text: text, photos: photos }).then (data) =>
       data.forum_meta = Twitarr.ForumMeta.create(data.forum_meta) if data.forum_meta?
       data
 

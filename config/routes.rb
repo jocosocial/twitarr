@@ -96,7 +96,7 @@ Twitarr::Application.routes.draw do
       get 'event/all/:day', to: 'event#all'
 
       get 'forums', to: 'forums#index'
-      put 'forums', to: 'forums#create'
+      post 'forums', to: 'forums#create'
       get 'forums/thread/:id', to: 'forums#show'
       post 'forums/thread/:id', to: 'forums#new_post'
       post 'forums/thread/:id/like/:post_id', to: 'forums#like'
@@ -160,7 +160,7 @@ Twitarr::Application.routes.draw do
 
       resources :seamail, except: [:destroy, :edit, :new], :defaults => { :format => 'json' }
       post 'seamail/:id/', to: 'seamail#new_message'
-      put 'seamail/:id/recipients', to: 'seamail#recipients'
+      post 'seamail/:id/recipients', to: 'seamail#recipients'
 
       get 'text/:filename', to: 'text#index'
       get 'time', to: 'text#time'

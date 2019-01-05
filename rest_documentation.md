@@ -269,6 +269,7 @@ none
 {
     "seamail_meta": SeamailMetaInfo{}
 }
+```
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in

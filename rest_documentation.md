@@ -239,9 +239,11 @@ none
 
 #### JSON Request Body
 
-    JSON Object {
+    ```
+    {
       "users": ["username_string", …] # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
     }
+    ```
 
 #### Returns
 
@@ -293,24 +295,28 @@ Get/post information on the tweet stream
         "text": "marked up text",
         "timestamp": "ISO_8601_DATETIME",
         "likes": null|Integer,
-        "mentions": ["username_string", …],
+        "mentions": [ "username_string", … ],
         "entities": [ … ],
         "hash_tags": [ "word_character_string", … ],
-        "parent_chain": [ "stream_post_id_string", …]
+        "parent_chain": [ "stream_post_id_string", … ]
     }
 
     JSON StreamPostDetails {
-    "id": "id_string",
-    "author": "username_string",
-    "display_name": "displayname_string",
-    "text": "marked up text",
-    "timestamp": "ISO_8601_DATETIME",
-    "likes": null|Integer,
-    "mentions": [ "username_string", … ],
-    "entities": [ … ],
-    "hash_tags": [ "word_character_string", … ],
-    "parent_chain": [ "stream_post_id_string", .. ],
-    "children": [StreamPostMeta{… Minus the parent_chain}, …]
+        "id": "id_string",
+        "author": "username_string",
+        "display_name": "displayname_string",
+        "text": "marked up text",
+        "timestamp": "ISO_8601_DATETIME",
+        "likes": null|Integer,
+        "mentions": [ "username_string", … ],
+        "entities": [ … ],
+        "hash_tags": [ "word_character_string", … ],
+        "parent_chain": [ "stream_post_id_string", .. ],
+        "children": [
+            StreamPostDetails { 
+                … Minus the parent_chain 
+            }, … 
+        ]
     }
 
 

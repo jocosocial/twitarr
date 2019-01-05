@@ -117,6 +117,7 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 
 ```
 {
+    "status": "ok",
     "seamail_meta": [ SeamailMetaInfo{}, ... ],
     "last_checked": epoch
 }
@@ -142,6 +143,7 @@ none
 
 ```
 {
+    "status": "ok",
     "seamail": SeamailDetails{}
 }
 ```
@@ -179,6 +181,7 @@ none
 
 ```
 {
+    "status": "ok",
     "seamail_meta": SeamailMetaInfo{}
 }
 ```
@@ -223,6 +226,7 @@ none
 
 ```
 {
+    "status": "ok",
     "seamail_message": SeamailMessage{}
 }
 ```
@@ -267,6 +271,7 @@ none
 
 ```
 {
+    "status": "ok",
     "seamail_meta": SeamailMetaInfo{}
 }
 ```

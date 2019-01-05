@@ -185,16 +185,59 @@ class User
   end
 
   def seamails(params = {})
-    query = {usernames: username}
-    query[:unread_users] = username if params.has_key?(:unread)
-    query[:last_update.gte] = params[:after] if params.has_key?(:after)
-    Seamail.where(query).sort_by { |x| x.last_message }.reverse
+    result = {}
+    if params.has_key?(:unread)
+      query = { "us" => username }
+      query["up"] = { "$gte" => params[:after]} if params.has_key?(:after)
+      result = Seamail.collection.aggregate([
+        {
+          "$match" => query
+        },
+        {
+          "$unwind" => "$sm"
+        },
+        {
+          "$match" => { "sm.rd" => {"$ne" => username } }
+        },
+        {
+          "$group" => {
+            "_id" => "$_id",
+            "deleted_at" => { "$first" => "$deleted_at" },
+            "us" => { "$first" => "$us" },
+            "sj" => { "$first" => "$sj" },
+            "up" => { "$first" => "$up" },
+            "updated_at" => { "$first" => "$updated_at" },
+            "created_at" => { "$first" => "$created_at" },
+            "sm" => { "$push" => "$sm" }
+          }
+        }
+      ]).map { |x| Seamail.new(x) { |o| o.new_record = false } }
+    else
+      query = {usernames: username}
+      query[:last_update.gte] = params[:after] if params.has_key?(:after)
+      result = Seamail.where(query)
+    end
+    result.sort_by { |x| x.last_message }.reverse
   end
 
   def seamail_unread_count
-    Seamail.where(usernames: username, unread_users: username).length
+    Seamail.collection.aggregate([
+      {
+        "$match" => { "us" => username }
+      },
+      {
+        "$unwind" => "$sm"
+      },
+      {
+        "$match" => { "sm.rd" => {"$ne" => username } }
+      },
+      {
+        "$group" => {
+          "_id" => "$_id"
+        }
+      }
+    ]).count
   end
-
 
   def seamail_count
     Seamail.where(usernames: username).length

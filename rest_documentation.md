@@ -48,17 +48,26 @@ This documentation is for the rest endpoints under /api/v2
 "seamail": {
     "id": "id_string",
     "users": Array [
-    Object { "username": "username_string",
+        Object { 
+            "username": "username_string",
             "display_name": "displayname_string",
             "last_photo"updated": epoch
-    }, …],
+        }, …
+    ],
     "subject": "string",
     "messages": Array [
         SeamailMessage {
-        "author": "username_string",
-        "author_display_name": "displayname_string",
-        "text": "string",
-        "timestamp": "ISO_8601_DATETIME"
+            "author": "username_string",
+            "author_display_name": "displayname_string",
+            "text": "string",
+            "timestamp": "ISO_8601_DATETIME",
+            "read_users": Array [
+                Object { 
+                    "username": "username_string",
+                    "display_name": "displayname_string",
+                    "last_photo"updated": epoch
+                }, …
+            ],
         }, …
     ],
     "is_unread": boolean
@@ -70,12 +79,13 @@ This documentation is for the rest endpoints under /api/v2
 ```
 {
     "id": id_string,
-    "users": Array [ Object {
+    "users": Array [ 
+        Object {
             "username": "username_string",
             "display_name": "displayname_string",
             "last_photo_updated": epoch
-            },
-            … ],
+        }, …
+    ],
     "subject": "string",
     "messages": "\d+ message", # message will be plural if the number is > 1
     "timestamp": "ISO_8601_DATETIME",

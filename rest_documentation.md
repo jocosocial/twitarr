@@ -42,33 +42,39 @@ This documentation is for the rest endpoints under /api/v2
 
 ### Seamail specific types
 
-#### SeamailDetails
+#### SeamailMessage
 
 ```
-"seamail": {
-    "id": "id_string",
-    "users": Array [
-        Object { 
+{
+    "author": "username_string",
+    "author_display_name": "displayname_string",
+    "text": "string",
+    "timestamp": "ISO_8601_DATETIME",
+    "read_users": [
+        { 
             "username": "username_string",
             "display_name": "displayname_string",
             "last_photo"updated": epoch
-        }, …
+        }, ...
+    ]
+}
+```
+
+#### SeamailDetails
+
+```
+{
+    "id": "id_string",
+    "users": [
+        { 
+            "username": "username_string",
+            "display_name": "displayname_string",
+            "last_photo"updated": epoch
+        }, ...
     ],
     "subject": "string",
-    "messages": Array [
-        SeamailMessage {
-            "author": "username_string",
-            "author_display_name": "displayname_string",
-            "text": "string",
-            "timestamp": "ISO_8601_DATETIME",
-            "read_users": Array [
-                Object { 
-                    "username": "username_string",
-                    "display_name": "displayname_string",
-                    "last_photo"updated": epoch
-                }, …
-            ],
-        }, …
+    "messages": [
+        SeamailMessage{}, ...
     ],
     "is_unread": boolean
 }
@@ -79,12 +85,12 @@ This documentation is for the rest endpoints under /api/v2
 ```
 {
     "id": id_string,
-    "users": Array [ 
-        Object {
+    "users": [ 
+        {
             "username": "username_string",
             "display_name": "displayname_string",
             "last_photo_updated": epoch
-        }, …
+        }, ...
     ],
     "subject": "string",
     "messages": "\d+ message", # message will be plural if the number is > 1
@@ -111,7 +117,7 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 
 ```
 {
-    "seamail_meta": [ SeamailMetaInfo{…}, … ],
+    "seamail_meta": [ SeamailMetaInfo{}, ... ],
     "last_checked": epoch
 }
 ```
@@ -134,7 +140,11 @@ none
 
 #### Returns
 
-    JSON SeamailDetails{…}
+```
+{
+    "seamail": SeamailDetails{}
+}
+```
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
@@ -159,7 +169,7 @@ none
 
 ```
 {
-    "users": [username_string, …],   # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
+    "users": [username_string, ...],   # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
     "subject": "string",
     "text": "string"  # The first post's of the seamail's textual content
 }
@@ -167,7 +177,11 @@ none
 
 #### Returns
 
-    JSON SeamailDetails{…}
+```
+{
+    "seamail_meta": SeamailMetaInfo{}
+}
+```
 
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
@@ -207,7 +221,11 @@ none
 
 #### Returns
 
-    JSON SeamailMessage{…}
+```
+{
+    "seamail_message": SeamailMessage{}
+}
+```
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
@@ -224,7 +242,7 @@ none
    ```
    { "status": "error", "errors": [ "Text can't be blank" ]}
    ```
-### PUT /api/v2/seamail/:id/recipients
+### POST /api/v2/seamail/:id/recipients
 
 Modifies the recipients of a seamail.
 
@@ -241,13 +259,16 @@ none
 
     ```
     {
-      "users": ["username_string", …] # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
+      "users": ["username_string", ...] # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
     }
     ```
 
 #### Returns
 
-    JSON SeamailMetaInfo{…}
+```
+{
+    "seamail_meta": SeamailMetaInfo{}
+}
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
@@ -288,37 +309,42 @@ Get/post information on the tweet stream
 
 ### Stream specific types
 
-    JSON StreamPostMeta {
-        "id": "id_string",
-        "author": "username_string",
-        "display_name": "displayname_string",
-        "text": "marked up text",
-        "timestamp": "ISO_8601_DATETIME",
-        "likes": null|Integer,
-        "mentions": [ "username_string", … ],
-        "entities": [ … ],
-        "hash_tags": [ "word_character_string", … ],
-        "parent_chain": [ "stream_post_id_string", … ]
-    }
+#### StreamPostMeta
 
-    JSON StreamPostDetails {
-        "id": "id_string",
-        "author": "username_string",
-        "display_name": "displayname_string",
-        "text": "marked up text",
-        "timestamp": "ISO_8601_DATETIME",
-        "likes": null|Integer,
-        "mentions": [ "username_string", … ],
-        "entities": [ … ],
-        "hash_tags": [ "word_character_string", … ],
-        "parent_chain": [ "stream_post_id_string", .. ],
-        "children": [
-            StreamPostDetails { 
-                … Minus the parent_chain 
-            }, … 
-        ]
-    }
+```
+{
+    "id": "id_string",
+    "author": "username_string",
+    "display_name": "displayname_string",
+    "text": "marked up text",
+    "timestamp": "ISO_8601_DATETIME",
+    "likes": null|Integer,
+    "mentions": [ "username_string", ... ],
+    "entities": [ ... ],
+    "hash_tags": [ "word_character_string", ... ],
+    "parent_chain": [ "stream_post_id_string", ... ]
+}
+```
 
+#### StreamPostDetails 
+
+```
+{
+    "id": "id_string",
+    "author": "username_string",
+    "display_name": "displayname_string",
+    "text": "marked up text",
+    "timestamp": "ISO_8601_DATETIME",
+    "likes": null|Integer,
+    "mentions": [ "username_string", ... ],
+    "entities": [ ... ],
+    "hash_tags": [ "word_character_string", ... ],
+    "parent_chain": [ "stream_post_id_string", ... ],
+    "children": [ 
+        StreamPostDetails { WITHOUT parent_chain}, ... 
+    ]
+}
+```
 
 ### GET /api/v2/stream
 
@@ -340,7 +366,7 @@ Get the recent tweets in the stream
 
 #### Returns
 
-    JSON Object { "stream_posts": Array[ StreamPostMeta {…}, … ],
+    JSON Object { "stream_posts": Array[ StreamPostMeta {...}, ... ],
                   "next_page": 1421197659001
                 }
 
@@ -360,7 +386,7 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 
 #### Returns
 
-    JSON StreamPostDetails {…}
+    JSON StreamPostDetails {...}
 
 ### GET /api/v2/stream/m/:query
 
@@ -376,7 +402,7 @@ View a user's mention's stream
 
 #### Returns
 
-    JSON Object {"status": "ok", "posts": [StreamPostMeta {…}, …],
+    JSON Object {"status": "ok", "posts": [StreamPostMeta {...}, ...],
                  "next": "page number to start with"}
 
 
@@ -395,7 +421,7 @@ View a hash tag tweet stream
 
 #### Returns
 
-    JSON Object {"status": "ok", "posts": [StreamPostMeta {…}, …],
+    JSON Object {"status": "ok", "posts": [StreamPostMeta {...}, ...],
                  "next": "page number to start with"}
 
 
@@ -478,7 +504,7 @@ The author will be the logged in user.  The timestamp will be "Now", defaults to
 
 #### Returns
 
-    JSON StreamPostDetails {…}
+    JSON StreamPostDetails {...}
 
 ### PUT /api/v2/stream/:id
 
@@ -499,7 +525,7 @@ A user may only edit their posts, unless they are an admin.
 
 #### Returns
 
-    JSON StreamPostDetails {…}
+    JSON StreamPostDetails {...}
 
 ### DELETE /api/v2/stream/:id
 
@@ -546,22 +572,22 @@ Perform a search against the database for results.  Will search for Stream and F
     JSON Object {
         "status": "ok",
         "stream_posts": {
-        "matches": [ StreamPostMeta ,… ],
+        "matches": [ StreamPostMeta ,... ],
         "count": Integer:Count of matches,
         "more": boolean:True if more results than display is found
         },
         "forum_posts": {
-        "matches": [ ForumPostMeta ,… ],
+        "matches": [ ForumPostMeta ,... ],
         "count": Integer:Count of matches,
         "more": boolean:True if more results than display is found
         },
         "users": {
-        "matches": [ UserMeta, … ],
+        "matches": [ UserMeta, ... ],
         "count": Integer:Count of matches,
         "more": boolean:True if more results than display is found
         },
         "seamails": {
-        "matches": [ SeamailMetaInfo, … ],
+        "matches": [ SeamailMetaInfo, ... ],
         "count": Integer:Count of matches,
         "more": boolean:True if more results than display is found
         },
@@ -651,7 +677,7 @@ Get/post new threads and posts to those threads
         "subject": "subject_string",
         "next_page": null|Integer,
         "prev_page": null|Integer,
-        "posts": Array[PostMeta {…}, …]
+        "posts": Array[PostMeta {...}, ...]
     }
 
     JSON PostMeta {
@@ -659,7 +685,7 @@ Get/post new threads and posts to those threads
         "forum_id": "forum_id_string",
         "author": "author_string",
         "display_name": "display_name_string",
-        "likes": Array["username_string", …],
+        "likes": Array["username_string", ...],
         "new": boolean,
         "text": "text_string",
         "timestamp": "ISO_8601_DATETIME"
@@ -679,7 +705,7 @@ Returns the index of all threads. Can be paginated or mass list.
 #### Returns
 
     JSON Object {
-        "forums_meta": Array[ ForumMeta {…}, … ],
+        "forums_meta": Array[ ForumMeta {...}, ... ],
         "next_page": Integer,
         "prev_page": Integer
     }
@@ -698,7 +724,7 @@ Creates a forum and it's first post.
     JSON Object {
       "subject": "string",
       "text": "string",
-      "photos": Array ["string", …]
+      "photos": Array ["string", ...]
     }
 
 ### GET /api/v2/forums/thread/:id
@@ -715,7 +741,7 @@ Returns a thread and it's contained posts.
 #### Returns
   
     JSON Object {
-        "forum": ForumMeta {…}
+        "forum": ForumMeta {...}
     }
 
 ### POST /api/v2/forums/thread/:id
@@ -731,13 +757,13 @@ Creates a new post in the thread
 
     JSON Object {
       "text": "string",
-      "photos": Array ["string", …]
+      "photos": Array ["string", ...]
     }
 
 #### Returns
 
   JSON Object {
-          "forum_post": PostMeta {…}
+          "forum_post": PostMeta {...}
       }
 
 ### GET /api/v2/forums/thread/:id/like/:post_id
@@ -752,7 +778,7 @@ Likes a specific post_id
 #### Returns
 
   JSON Object {
-          "likes": Array ["username_string", …]
+          "likes": Array ["username_string", ...]
       }
 
 ### GET /api/v2/forums/thread/:id/unlike/:post_id
@@ -767,7 +793,7 @@ Unlikes a specific post_id
 #### Returns
 
   JSON Object {
-          "likes": Array ["username_string", …]
+          "likes": Array ["username_string", ...]
       }
 
 ## Event Information
@@ -784,8 +810,8 @@ Get/post information on events.
         "location": "location_string",
         "start_time": "ISO_8601_DATETIME",
         "end_time": "ISO_8601_DATETIME",
-        "signups": ["username_string", …],
-        "favorites": ["username_string", …],
+        "signups": ["username_string", ...],
+        "favorites": ["username_string", ...],
         "description": "marked up text",
         "max_signups": null|Integer
     }
@@ -802,7 +828,7 @@ Get/post information on events.
 #### Returns
 
     JSON Object { "total_count": 5,
-                  "events": Array[ EventMeta {…}, … ],
+                  "events": Array[ EventMeta {...}, ... ],
                 }
 
 
@@ -831,7 +857,7 @@ Posts an event.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}
 
 
 ### GET /api/v2/event/:id
@@ -844,7 +870,7 @@ Get details of an event.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}
 
 
 ### DELETE /api/v2/event/:id
@@ -887,7 +913,7 @@ A user may only edit their events, unless they are an admin.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}
 
 
 ### POST /api/v2/event/:id/signup
@@ -903,7 +929,7 @@ Allows the user to signup to an event.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}
 
 ### DELETE /api/v2/event/:id/signup
 
@@ -918,7 +944,7 @@ Allows the user to remove their signup from an event.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}
 
 ### POST /api/v2/event/:id/favorite
 
@@ -933,7 +959,7 @@ Allows the user to favorite an event.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}
 
 ### DELETE /api/v2/event/:id/favorite
 
@@ -948,4 +974,4 @@ Allows the user to remove their favorite from an event.
 
 #### Returns
 
-    JSON EventMeta {…}
+    JSON EventMeta {...}

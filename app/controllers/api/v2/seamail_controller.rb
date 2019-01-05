@@ -33,20 +33,20 @@ class API::V2::SeamailController < ApplicationController
       end
     end
     mails = current_user.seamails extra_query
-    render json: {seamail_meta: mails.map { |x| x.decorate.to_meta_hash.merge!({is_unread: x.unread_users.andand.include?(current_username)}) },
+    render json: {seamail_meta: mails.map { |x| x.decorate.to_meta_hash.merge!({is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) },
         last_checked: ((Time.now.to_f * 1000).to_i + 1)}
   end
 
   def show
-    was_unread = @seamail.unread_users.andand.include?(current_username)
+    mails = @seamail.decorate.to_hash(request_options).merge!({is_unread: @seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})
     @seamail.mark_as_read current_username
-    render json: {seamail:@seamail.decorate.to_hash(request_options).merge!({is_unread: was_unread})}
+    render json: {seamail:mails}
   end
 
   def create
     seamail = Seamail.create_new_seamail current_username, params[:users], params[:subject], params[:text]
     if seamail.valid?
-      render json: {seamail_meta: seamail.decorate.to_meta_hash.merge!({is_unread: seamail.unread_users.include?(current_username)})}
+      render json: {seamail_meta: seamail.decorate.to_meta_hash.merge!({is_unread: seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})}
     else
       render status: :bad_request, json: {status: 'error', errors: seamail.errors.full_messages}
     end
@@ -55,7 +55,7 @@ class API::V2::SeamailController < ApplicationController
   def new_message
     message = @seamail.add_message current_username, params[:text]
     if message.valid?
-      render json: {seamail_message: message.decorate.to_hash(request_options).merge!({is_unread: @seamail.unread_users.include?(current_username)})}
+      render json: {seamail_message: message.decorate.to_hash(request_options).merge!({is_unread: @seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})}
     else
       render status: :bad_request, json: {status: 'error', errors: message.errors.full_messages}
     end
@@ -69,7 +69,6 @@ class API::V2::SeamailController < ApplicationController
     usernames = usernames.map(&:downcase).uniq
     @seamail.usernames = usernames
     if @seamail.valid?
-      @seamail.reset_read current_username
       @seamail.save!
     else
       render status: :bad_request, json: {status: 'error', errors: @seamail.errors.full_messages} and return

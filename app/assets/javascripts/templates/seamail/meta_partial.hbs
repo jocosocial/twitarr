@@ -1,6 +1,6 @@
 <div class="card-section clickable" {{action 'display_seamail' id}}>
   <span class="title big-title">
-    {{unbound subject}}
+    {{unbound subject}} <span {{bind-attr class=":highlight is_unread::hidden"}}>New</span>
   </span>
   {{unbound pretty_timestamp timestamp}}
 

@@ -205,7 +205,6 @@ if Seamail.count == 0
   reply_seamail seamail, 'Sounds great to me!', 'james', at_time(8, 28)
   seamail = create_seamail 'artemis?', 'We should go to the game room and play artemis at 15:00!', 'steve', ['kvort', 'james'], at_time(9, 23)
   reply_seamail seamail, 'Awesome!', 'james', at_time(9, 30)
-  seamail.reset_read 'kvort'
 end
 
 def create_reaction(tag)

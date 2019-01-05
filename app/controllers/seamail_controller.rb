@@ -55,7 +55,6 @@ class SeamailController < ApplicationController
     # this ensures that the logged in user is also specified
     usernames = Set.new([params[:users], current_username].flatten).to_a
     seamail.usernames = usernames
-    seamail.reset_read current_username
     seamail.save!
     render json: {seamail_meta: seamail.decorate.to_meta_hash}
   end

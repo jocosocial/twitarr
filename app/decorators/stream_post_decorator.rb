@@ -3,8 +3,6 @@ class StreamPostDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::DateHelper
 
-  MAX_LIST_LIKES = 5
-
   def to_twitarr_hash(username = nil, options = {})
     length_limit = options[:length_limit] || text.length
     adjusted_text = (text)[0...length_limit]
@@ -15,7 +13,7 @@ class StreamPostDecorator < BaseDecorator
         timestamp: timestamp,
         display_name: User.display_name_from_username(author),
         text: twitarr_auto_linker(twitarr_replace_emoji(clean_text_with_cr(text))),
-        likes: some_likes(username),
+        likes: some_likes(username, likes),
         reactions: reaction_summary(reactions),
         parent_chain: parent_chain
     }
@@ -40,8 +38,8 @@ class StreamPostDecorator < BaseDecorator
         text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(adjusted_text), options), options),
         timestamp: timestamp,
         display_timestamp: "#{time_ago_in_words(timestamp)} ago",
-        likes: some_likes(username),
-        all_likes: all_likes(username),
+        likes: some_likes(username, likes),
+        all_likes: all_likes(username, likes),
         reactions: reaction_summary(reactions),
         mentions: mentions,
         entities: entities,
@@ -70,45 +68,5 @@ class StreamPostDecorator < BaseDecorator
       result[:photo_id] = photo
     end
     result
-  end
-
-  def some_likes(username)
-    favs = []
-    unless username.nil?
-      favs << 'You' if likes.include? username
-    end
-    if likes.count < MAX_LIST_LIKES
-      favs += likes.reject { |x| x == username }
-    else
-      if likes.include? username
-        favs << "#{likes.count - 1} other seamonkeys"
-      else
-        favs << "#{likes.count} seamonkeys"
-      end
-    end
-    return nil if favs.empty?
-    favs
-  end
-
-  def all_likes(username)
-    favs = []
-    unless username.nil?
-      favs << 'You' if likes.include? username
-    end
-    favs += likes.reject { |x| x == username }
-    return nil if favs.empty?
-    favs
-  end
-
-  def reaction_summary(reactions)
-    summary = {}
-    reactions.each do |x|
-      if summary.has_key?(x.reaction) then
-        summary[x.reaction] += 1
-      else
-        summary[x.reaction] = 1
-      end
-    end
-    summary
   end
 end

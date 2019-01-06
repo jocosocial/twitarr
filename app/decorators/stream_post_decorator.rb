@@ -6,9 +6,12 @@ class StreamPostDecorator < BaseDecorator
   def to_hash(username = nil, options = {})
     result = {
         id: as_str(id),
-        author: author,
+        author: {
+          username: author,
+          display_name: User.display_name_from_username(author),
+          last_photo_updated: User.last_photo_updated_from_username(author)
+        },
         timestamp: timestamp,
-        display_name: User.display_name_from_username(author),
         text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options),
         likes: some_likes(username, likes),
         reactions: reaction_summary(reactions),

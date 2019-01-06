@@ -12,12 +12,12 @@
       <div class="card-section section-with-photo">
 
         <div class="section-photo">
-          {{user_picture announcement.author announcement.author_last_photo_updated}}
+          {{user_picture announcement.author.username announcement.author.last_photo_updated}}
         </div>
 
         <span class="title">
-          {{#link-to 'user.profile' announcement.author}}
-            {{pretty_username announcement.author announcement.display_name}}
+          {{#link-to 'user.profile' announcement.author.username}}
+            {{pretty_username announcement.author.username announcement.author.display_name}}
           {{/link-to}}
         </span>
 

@@ -161,14 +161,14 @@ class API::V2::StreamController < ApplicationController
     end
     @post.add_reaction current_username, params[:type]
     if @post.valid?
-      render json: {status: 'ok', reactions: @post.reactions }
+      render json: {status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash } }
     else
       render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"}
     end
   end
 
   def show_reacts
-    render json: {status: 'ok', reactions: @post.reactions }
+    render json: {status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash } }
   end
 
   def unreact
@@ -177,7 +177,7 @@ class API::V2::StreamController < ApplicationController
       return
     end
     @post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: @post.reactions }
+    render json: {status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash } }
   end
 
   private

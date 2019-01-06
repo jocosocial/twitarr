@@ -116,7 +116,7 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.posts.find(params[:post_id])
     post.add_reaction current_username, params[:type]
     if post.valid?
-      render json: {status: 'ok', reactions: post.reactions}
+      render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
     else
       render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
     end
@@ -124,7 +124,7 @@ class API::V2::ForumsController < ApplicationController
 
   def show_reacts
     post = @forum.posts.find(params[:post_id])
-    render json: {status: 'ok', reactions: post.reactions}
+    render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
   end
 
   def unreact
@@ -134,7 +134,7 @@ class API::V2::ForumsController < ApplicationController
     end
     post = @forum.posts.find(params[:post_id])
     post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: post.reactions}
+    render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
   end
     
   private

@@ -10,7 +10,7 @@ class API::V2::StreamController < ApplicationController
     begin
       @post = StreamPost.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status: :not_found, json: {status:'Not found', id:params[:id], error: "Post by id #{params[:id]} is not found."}
+      render status: :not_found, json: {status:'error', error: "Post with id #{params[:id]} is not found."}
     end
   end
 
@@ -23,7 +23,7 @@ class API::V2::StreamController < ApplicationController
     elsif want_newer_posts?
       posts = newer_posts
     end
-    render json: posts
+    render json: {status: 'ok'}.merge!(posts) 
   end
 
   def show
@@ -31,16 +31,16 @@ class API::V2::StreamController < ApplicationController
     start_loc = (params[:page] || 0).to_i
     show_options = request_options
     show_options[:remove] = [:parent_chain]
-    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(timestamp: :asc).map { |x| x.decorate.to_twitarr_hash(current_username, show_options) }
-    post_result = @post.decorate.to_twitarr_hash(current_username, request_options)
+    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(timestamp: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
+    post_result = @post.decorate.to_hash(current_username, request_options)
     if children and children.length > 0
       post_result[:children] = children
     end
-    render json: post_result
+    render json: {status: 'ok', post: post_result}
   end
 
   def get
-    result = @post.decorate.to_twitarr_hash(current_username, request_options)
+    result = @post.decorate.to_base_hash()
     render json: {status: 'ok', post: result}
   end
 
@@ -55,7 +55,7 @@ class API::V2::StreamController < ApplicationController
     start_loc = params[:page]
     limit = params[:limit]
     query = StreamPost.view_mentions params
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_twitarr_hash(current_username, request_options) }, next:(start_loc+limit)}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
   end
 
   def view_hash_tag
@@ -69,25 +69,17 @@ class API::V2::StreamController < ApplicationController
     start_loc = params[:page]
     limit = params[:limit]
     query = StreamPost.where(hash_tags: query_string).order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_twitarr_hash(current_username, request_options) }, next:(start_loc+limit)}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
   end
 
   def delete
     unless @post.author == current_username or is_admin?
-      err = [{error:"You can not delete other users' posts"}]
-      return respond_to do |format|
-        format.json { render json: err, status: :forbidden }
-        format.xml { render xml: err, status: :forbidden }
-      end
+      render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts"}
     end
-    respond_to do |format|
-      if @post.destroy
-        format.json { head :no_content, status: :ok }
-        format.xml { head :no_content, status: :ok }
-      else
-        format.json { render json: @post.errors, status: :unprocessable_entity }
-        format.xml { render xml: @post.errors, status: :unprocessable_entity }
-      end
+    if @post.destroy
+      head :no_content, status: :ok
+    else
+      render status: :bad_request, json: {status:'error', errors: @post.errors}
     end
   end
 
@@ -96,7 +88,7 @@ class API::V2::StreamController < ApplicationController
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
       unless parent
-        render status: :unprocessable_entity, json: {errors: ["Parent id: #{params[:parent]} was not found"]}
+        render status: :bad_request, json: {status:'error', error: "Parent post id #{params[:parent]} was not found"}
         return
       end
       parent_chain = parent.parent_chain + [params[:parent]]
@@ -109,44 +101,48 @@ class API::V2::StreamController < ApplicationController
         current_user.current_location = params[:location]
         current_user.save
       end
-      render json: {stream_post: post.decorate.to_hash(current_username, request_options)}
+      render json: {status: 'ok', stream_post: post.decorate.to_hash(current_username, request_options)}
     else
-      render status: :unprocessable_entity, json: {errors: post.errors.full_messages}
+      render status: :bad_request, json: {status:'error', errors: post.errors.full_messages}
     end
   end
 
   # noinspection RubyResolve
   def update
     unless params.has_key?(:text) or params.has_key?(:photo)
-      render status: :bad_request, json: {error:'Update may only modify text or photo.'}
+      render status: :bad_request, json: {status:'error', error: 'Update may only modify text or photo.'}
       return
     end
 
     unless @post.author == current_username or is_admin?
-      render status: :forbidden, json: {error:"You can not modify other users' posts"}
+      render status: :forbidden, json: {status:'error', error: "You can not modify other users' posts"}
       return
     end
     @post.text = params[:text] if params.has_key? :text
 
     if params.has_key? :photo
-      unless PhotoMetadata.where(id: params[:photo]).exists?
-        render status: :not_acceptable, json: {error:"Unable to find photo by id #{params[:photo]}"}
-        return
+      if params[:photo].length == 0
+        @post.photo = nil
+      else
+        unless PhotoMetadata.where(id: params[:photo]).exists?
+          render status: :not_acceptable, json: {status:'error', error: "Unable to find photo by id #{params[:photo]}"}
+          return
+        end
+        @post.photo = params[:photo]
       end
-      @post.photo = params[:photo]
     end
 
     @post.save
     if @post.valid?
-      render json: {stream_post: @post.decorate.to_hash(current_username, request_options)}
+      render json: {status: 'ok', stream_post: @post.decorate.to_hash(current_username, request_options)}
     else
-      render json: {errors: @post.errors.full_messages}
+      render json: {status: 'error', errors: @post.errors.full_messages}
     end
   end
 
   def like
     @post = @post.add_like current_username
-    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username) }
+    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username, @post.likes) }
   end
 
   def show_likes
@@ -160,14 +156,14 @@ class API::V2::StreamController < ApplicationController
 
   def react
     unless params.has_key?(:type)
-      render status: :bad_request, json: {error:'Reaction type must be included.'}
+      render status: :bad_request, json: {status: 'error', error: 'Reaction type must be included.'}
       return
     end
     @post.add_reaction current_username, params[:type]
     if @post.valid?
       render json: {status: 'ok', reactions: @post.reactions }
     else
-      render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
+      render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"}
     end
   end
 
@@ -177,13 +173,14 @@ class API::V2::StreamController < ApplicationController
 
   def unreact
     unless params.has_key?(:type)
-      render status: :bad_request, json: {error:'Reaction type must be included.'}
+      render status: :bad_request, json: {status: 'error', error: 'Reaction type must be included.'}
       return
     end
     @post.remove_reaction current_username, params[:type]
     render json: {status: 'ok', reactions: @post.reactions }
   end
 
+  private
   ## The following functions are helpers for the finding of new posts in the stream
 
   def want_newest_posts?
@@ -216,7 +213,7 @@ class API::V2::StreamController < ApplicationController
     has_next_page = posts.count > limit
     posts = posts.map { |x| x }
     next_page = posts.last.nil? ? 0 : (posts.last.timestamp.to_f * 1000).to_i - 1
-    {stream_posts: posts.map{|x| x.decorate.to_twitarr_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
+    {stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
   end
 
   def want_newer_posts?
@@ -239,6 +236,6 @@ class API::V2::StreamController < ApplicationController
     has_next_page = posts.count > limit
     posts = posts.map { |x| x }
     next_page = posts.last.nil? ? 0 : (posts.first.timestamp.to_f * 1000).to_i + 1
-    {stream_posts: posts.map{|x| x.decorate.to_twitarr_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
+    {stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
   end  
 end

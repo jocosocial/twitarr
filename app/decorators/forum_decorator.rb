@@ -38,7 +38,7 @@ class ForumDecorator < Draper::Decorator
     end
   end
 
-  def to_paginated_hash(page, limit = 10,user = nil, options = {})
+  def to_paginated_hash(page, limit = 10, user = nil, options = {})
     per_page = limit
     offset = page * per_page
     next_page = nil

@@ -54,15 +54,15 @@ class API::V2::ForumsController < ApplicationController
       
     if current_user
       if params.has_key?(:page)
-        result = query.to_paginated_hash(start_loc, limit, current_user)
+        result = query.to_paginated_hash(start_loc, limit, current_user, request_options)
       else
-        result = query.to_hash(current_user)
+        result = query.to_hash(current_user, request_options)
       end
     else
       if params.has_key?(:page)
-        result = query.to_paginated_hash(start_loc, limit)
+        result = query.to_paginated_hash(start_loc, limit, nil, request_options)
       else
-        result = query.to_hash()
+        result = query.to_hash(nil, request_options)
       end
     end
 

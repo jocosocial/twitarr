@@ -1,14 +1,14 @@
 <div class="card-section section-with-photo clickable" {{action 'view_thread' model bubbles=false}}>
 
   <div class="section-photo">
-    {{#link-to 'user.profile' author}}
-      {{unbound user_picture author author_last_photo_updated}}
+    {{#link-to 'user.profile' author.username}}
+      {{unbound user_picture author.username author.last_photo_updated}}
     {{/link-to}}
   </div>
 
   <span class="title">
-    {{#link-to 'user.profile' author}}
-      {{unbound pretty_username author display_name}}
+    {{#link-to 'user.profile' author.username}}
+      {{unbound pretty_username author.username author.display_name}}
     {{/link-to}}
   </span>
 

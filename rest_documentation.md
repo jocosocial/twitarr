@@ -2,7 +2,10 @@
 
 This documentation is for the rest endpoints under /api/v2
 
-## Parameter Type Definition
+## Global Query Parameters
+* app=plain - If this is included in the query parameters, no HTML text formatting will be applied to marked_up_text. Returned text will be plain text instead. This is useful in any endpoint that returns stream post text, forum post text, or seamail text.
+
+## Parameter Type Definitions
 
 * boolean - (true, false, 1, 0, yes, no)
 * datetime string - ISO 8601 date/time, or unix epoch in milliseconds
@@ -10,6 +13,55 @@ This documentation is for the rest endpoints under /api/v2
 * epoch - unix epoch in milliseconds
 * id_string - a string for the id
 * username_string - user's username.  All lowercase word characters plus '-' and '&', at least 3 characters
+* displayname_string - user's display name. All word characters plus '.', '&', '-', and space, at least 3 characters, max 40 characters.
+
+## Output Type Definitions
+
+* UserInfo{} - A JSON object representing the most basic details of a user
+  ```
+  {
+      "username": username_string
+      "display_name": displayname_string
+      "last_photo_updated": epoch
+  }
+  ```
+* marked_up_text - A string with inline HTML. Allowed HTML is limited. If you do not want any HTML, include app=plain in your query parameters. This parameter will cause any marked_up_text to instead be returned as plain text. Examples of allowed tags:
+  * a - Hashtags. Example for the hashtag, #some_tag
+    * `<a class="tweet-url hashtag" href="#/tag/some_tag" title="#some_tag">#some_tag</a>` 
+  * a - User mentions. Example for the user mention, @some_user
+    * `<a class="tweet-url username" href="#/user/some_user">@some_user</a>`
+  * img - Emoji. Example for the emoji, :buffet:
+    * `<img src="/img/emoji/small/buffet.png" class="emoji" />`
+    * Possible emoji: buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie
+  * br - Line breaks
+    * `<br />`
+    * If using app=plain, these will instead be returned as newline `\n`
+* likes_summary - null (if no likes), or an array
+  * First element will be "You" if current_user likes the post: ["You", ...]
+  * If fewer than MAX_LIST_LIKES, array will include usernames: ["username_string", ...] OR ["You", "username_string", ...] 
+  * If more than MAX_LIST_LIKES likes, array will have one or two elements: ["\d+ other seamonkeys"] OR ["You", "\d+ other seamonkeys"]
+
+* ReactionsSummary{} - A JSON object showing the counts of each reaction type. Will be { } if no reactions.
+  ```
+  {
+      "reaction_word": \d+,
+      ...
+  }
+  ```
+* ReactionDetails{} - A JSON object with the details of an individual reaction
+  ```
+  {
+      "reaction": string
+      "user": UserInfo{}
+  }
+  ```
+* PhotoDetails{} - A JSON object with the details of a photo
+  ```
+  {
+      "id": "photo_id_string",
+      "animated": boolean
+  }
+  ```
 
 ## Error Type Definitions
 * status_code_only
@@ -42,35 +94,26 @@ This documentation is for the rest endpoints under /api/v2
 
 ### Seamail specific types
 
-#### SeamailMessage
+#### SeamailMessage{}
 
 ```
 {
-    "author": "username_string",
-    "author_display_name": "displayname_string",
+    "author": UserInfo{},
     "text": "string",
     "timestamp": "ISO_8601_DATETIME",
     "read_users": [
-        { 
-            "username": "username_string",
-            "display_name": "displayname_string",
-            "last_photo"updated": epoch
-        }, ...
+        UserInfo{}, ...
     ]
 }
 ```
 
-#### SeamailDetails
+#### SeamailDetails{}
 
 ```
 {
     "id": "id_string",
     "users": [
-        { 
-            "username": "username_string",
-            "display_name": "displayname_string",
-            "last_photo"updated": epoch
-        }, ...
+        UserInfo{}, ...
     ],
     "subject": "string",
     "messages": [
@@ -80,17 +123,13 @@ This documentation is for the rest endpoints under /api/v2
 }
 ```
 
-#### SeamailMetaInfo
+#### SeamailMetaInfo{}
 
 ```
 {
     "id": id_string,
     "users": [ 
-        {
-            "username": "username_string",
-            "display_name": "displayname_string",
-            "last_photo_updated": epoch
-        }, ...
+        UserInfo{}, ...
     ],
     "subject": "string",
     "messages": "\d+ message", # message will be plural if the number is > 1
@@ -320,34 +359,30 @@ Get/post information on the tweet stream
 ```
 {
     "id": "id_string",
-    "author": "username_string",
-    "display_name": "displayname_string",
-    "text": "marked up text",
+    "author": UserInfo{},
     "timestamp": "ISO_8601_DATETIME",
-    "likes": null|Integer,
-    "mentions": [ "username_string", ... ],
-    "entities": [ ... ],
-    "hash_tags": [ "word_character_string", ... ],
+    "text": "marked_up_text",
+    "likes": likes_summary,
+    "reactions": ReactionsSummary{},
+    "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
     "parent_chain": [ "stream_post_id_string", ... ]
 }
 ```
 
-#### StreamPostDetails 
+#### StreamPostThread
 
 ```
 {
     "id": "id_string",
-    "author": "username_string",
-    "display_name": "displayname_string",
+    "author": UserInfo{},
     "text": "marked up text",
     "timestamp": "ISO_8601_DATETIME",
-    "likes": null|Integer,
-    "mentions": [ "username_string", ... ],
-    "entities": [ ... ],
-    "hash_tags": [ "word_character_string", ... ],
+    "likes": likes_summary,
+    "reactions": ReactionsSummary{},
     "parent_chain": [ "stream_post_id_string", ... ],
+    "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
     "children": [ 
-        StreamPostDetails { WITHOUT parent_chain}, ... 
+        StreamPostMeta{WITHOUT parent_chain}, ...
     ]
 }
 ```
@@ -392,7 +427,7 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 
 #### Returns
 
-    JSON StreamPostDetails {...}
+    JSON StreamPostThread {...}
 
 ### GET /api/v2/stream/m/:query
 

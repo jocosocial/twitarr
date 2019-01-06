@@ -5,9 +5,11 @@ class AnnouncementDecorator < BaseDecorator
   def to_hash
     {
         id: as_str(id),
-        author: author,
-        display_name: User.display_name_from_username(author),
-        author_last_photo_updated: User.last_photo_updated_from_username(author),
+        author: {
+          username: author,
+          display_name: User.display_name_from_username(author),
+          last_photo_updated: User.last_photo_updated_from_username(author)
+        },
         text: twitarr_auto_linker(text.gsub("\n", '<br />')),
         timestamp: timestamp
     }

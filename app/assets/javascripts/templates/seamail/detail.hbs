@@ -36,11 +36,11 @@
   {{#each message in messages}}
     <div class="card-section section-with-photo">
       <div class="section-photo">
-        {{unbound user_picture message.author message.author_last_photo_updated}}
+        {{unbound user_picture message.author.username message.author.last_photo_updated}}
       </div>
 
       <span class="title">
-        {{unbound pretty_username message.author message.author_display_name}}
+        {{unbound pretty_username message.author.username message.author.display_name}}
       </span>
       {{unbound pretty_timestamp message.timestamp}}
 

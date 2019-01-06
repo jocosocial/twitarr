@@ -54,15 +54,15 @@ class API::V2::ForumsController < ApplicationController
       
     if current_user
       if params.has_key?(:page)
-        result = query.to_paginated_hash(start_loc, limit, current_user)
+        result = query.to_paginated_hash(start_loc, limit, current_user, request_options)
       else
-        result = query.to_hash(current_user)
+        result = query.to_hash(current_user, request_options)
       end
     else
       if params.has_key?(:page)
-        result = query.to_paginated_hash(start_loc, limit)
+        result = query.to_paginated_hash(start_loc, limit, nil, request_options)
       else
-        result = query.to_hash()
+        result = query.to_hash(nil, request_options)
       end
     end
 
@@ -116,7 +116,7 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.posts.find(params[:post_id])
     post.add_reaction current_username, params[:type]
     if post.valid?
-      render json: {status: 'ok', reactions: post.reactions}
+      render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
     else
       render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
     end
@@ -124,7 +124,7 @@ class API::V2::ForumsController < ApplicationController
 
   def show_reacts
     post = @forum.posts.find(params[:post_id])
-    render json: {status: 'ok', reactions: post.reactions}
+    render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
   end
 
   def unreact
@@ -134,7 +134,7 @@ class API::V2::ForumsController < ApplicationController
     end
     post = @forum.posts.find(params[:post_id])
     post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: post.reactions}
+    render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
   end
     
   private

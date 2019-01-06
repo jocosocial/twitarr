@@ -76,7 +76,7 @@ Twitarr.StreamPost.reopenClass
 
   view: (post_id) ->
     $.getJSON("#{Twitarr.api_path}/thread/#{post_id}").then (data) =>
-      @create(data)
+      @create(data.post)
 
   get: (post_id) ->
     $.getJSON("#{Twitarr.api_path}/tweet/#{post_id}").then (data) =>

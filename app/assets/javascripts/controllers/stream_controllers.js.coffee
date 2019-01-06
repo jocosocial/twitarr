@@ -101,8 +101,8 @@ Twitarr.StreamPostPartialController = Twitarr.ObjectController.extend
   ).property('parent_chain', 'new_post_visible')
 
   editable: (->
-    @get('logged_in') and (@get('author') is @get('login_user') or @get('login_admin'))
-  ).property('logged_in', 'author', 'login_user', 'login_admin')
+    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('login_admin'))
+  ).property('logged_in', 'author.username', 'login_user', 'login_admin')
 
   unlikeable: (->
     @get('logged_in') and @get('user_likes')
@@ -113,8 +113,8 @@ Twitarr.StreamPostPartialController = Twitarr.ObjectController.extend
   ).property('logged_in', 'user_likes')
 
   deleteable: (->
-    @get('logged_in') and (@get('author') is @get('login_user') or @get('login_admin'))
-  ).property('logged_in', 'author', 'login_user', 'login_admin')
+    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('login_admin'))
+  ).property('logged_in', 'author.username', 'login_user', 'login_admin')
 
 Twitarr.StreamEditController = Twitarr.ObjectController.extend
   errors: Ember.A()

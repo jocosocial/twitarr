@@ -26,14 +26,14 @@ Twitarr.StreamViewRoute = Ember.Route.extend
 
   setupController: (controller, model) ->
     controller.set 'model', model
-    controller.set 'base_reply_text', "@#{model.author} "
-    controller.set 'reply_text', "@#{model.author} "
+    controller.set 'base_reply_text', "@#{model.author.username} "
+    controller.set 'reply_text', "@#{model.author.username} "
 
   actions:
     reload: ->
       @refresh()
 
-Twitarr.StreamEditRoute = Ember.Route.extend Twitarr.StripHtmlMixin,
+Twitarr.StreamEditRoute = Ember.Route.extend
   model: (params) ->
     Twitarr.StreamPost.get(params.id)
 
@@ -41,7 +41,6 @@ Twitarr.StreamEditRoute = Ember.Route.extend Twitarr.StripHtmlMixin,
     if(model.status isnt 'ok')
       alert model.status
       return
-    model.post.text = @stripHtml(model.post.text)
     controller.set 'model', model.post
 
 mostRecentTime = -> Math.ceil(new Date().valueOf() + 1000)

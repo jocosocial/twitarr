@@ -151,7 +151,7 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 
 * unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
 * after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
-  * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get messages created/updated since your last call. Useful if you are polling.
+  * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 
 #### Returns
 

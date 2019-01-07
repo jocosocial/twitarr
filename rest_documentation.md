@@ -174,7 +174,7 @@ Gets the User's seamail threads, with messages included
 ```
 {
     "status": "ok",
-    "seamail_messages": [ SeamailThread{}, ... ], 
+    "seamail_threads": [ SeamailThread{}, ... ], 
     "last_checked": epoch # Server timestamp of when this call was made
 }
 ```

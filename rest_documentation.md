@@ -116,25 +116,12 @@ This documentation is for the rest endpoints under /api/v2
         UserInfo{}, ...
     ],
     "subject": "string",
-    "messages": [ # Sorted by message timestamp descending
+    "messages": [ # Sorted by message timestamp descending. May be excluded from some endpoints that only return metadata.
         SeamailMessage{}, ...
     ],
-    "is_unread": boolean # If any message in the thread is unread, this will be true.
-}
-```
-
-#### SeamailMetaInfo{}
-
-```
-{
-    "id": id_string,
-    "users": [ 
-        UserInfo{}, ...
-    ],
-    "subject": "string",
-    "messages": "\d+ message", # message will be plural if the number is > 1
+    "message_count": integer, # Normally, this is the count of all messages in the thread. However, if only returning unread messages, this will be the count of unread messages in the thread.
     "timestamp": "ISO_8601_DATETIME", # Date and time of the most recent message in the thread
-    "is_unread": boolean
+    "is_unread": boolean # If any message in the thread is unread, this will be true
 }
 ```
 
@@ -150,6 +137,7 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 #### Query parameters
 
 * unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
+  * Note: If this parameter is true, the message_count in the meta info will be the count of unread messages in the thread. Normally, the messages count is the total number of messages in the thread.
 * after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 
@@ -158,7 +146,7 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 ```
 {
     "status": "ok",
-    "seamail_meta": [ SeamailMetaInfo{}, ... ],
+    "seamail_meta": [ SeamailThread{ WITHOUT messages }, ... ],
     "last_checked": epoch # Server timestamp of when this call was made
 }
 ```
@@ -250,7 +238,7 @@ none
 ```
 {
     "status": "ok",
-    "seamail_meta": SeamailMetaInfo{}
+    "seamail_meta": SeamailThread{ WITHOUT messages }
 }
 ```
 
@@ -340,7 +328,7 @@ none
 ```
 {
     "status": "ok",
-    "seamail_meta": SeamailMetaInfo{}
+    "seamail_meta": SeamailThread{ WITHOUT messages }
 }
 ```
 

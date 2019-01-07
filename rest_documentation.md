@@ -158,7 +158,12 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 
 ### GET /api/v2/seamail_threads
 
-Gets the User's seamail threads, with messages included
+Gets the User's seamail threads, with messages included. This endpoint has three basic modes, which can be further modified by using the after parameter:
+1. All threads with all messages - do not send unread or exclude_read_messages parameters
+1. All threads, only unread messages - send exclude_read_messages=true
+1. Unread threads, only unread messages - send unread=true
+
+Note that sending both unread=true&exclude_read_messages=true will operate identically to the third mode.
 
 #### Requires
 
@@ -167,8 +172,8 @@ Gets the User's seamail threads, with messages included
 
 #### Query parameters
 
-* unread=true - Optional (Default: false) - only show threads with unread seamail if true
-* exclude_read_messages=true - Optional (Default: false) - If this parameter is included, the messages array of each thread will only include unread messages. It is intended that this parameter not be used at the same time as unread=true. The goal of this parameter is to receive metadata of all threads, but only messages in threads with new messages. Including the unread=true parameter will exclude any thread metadata where the thread does not have unread messages.
+* unread=true - Optional (Default: false) - If this parameter is included, only return threads with unread seamail, and only include unread messages in each thread.
+* exclude_read_messages=true - Optional (Default: false) - If this parameter is included, return all threads, but only include unread messages in each thread.
 * after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 

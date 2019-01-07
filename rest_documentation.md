@@ -119,12 +119,14 @@ This documentation is for the rest endpoints under /api/v2
     "messages": [ # Sorted by message timestamp descending. May be excluded from some endpoints that only return metadata.
         SeamailMessage{}, ...
     ],
-    "message_count": "\d+ message" OR "\d+ new message" # A string presenting the number of messages (or new messages) in the thread
+    "message_count": integer # An integer counting the number of messages (or unread messages) in the thread
     "timestamp": "ISO_8601_DATETIME", # Date and time of the most recent message in the thread
+    "count_is_unread": boolean # If true, message_count is the number of unread messages in the thread. If false, message_count is the number of all messages in the thread.
     "is_unread": boolean # If any message in the thread is unread, this will be true
 }
 ```
-Note about message_count: Normally, this is the count of all messages in the thread. However, if only returning unread messages (using an unread=true parameter in an endpoint which supports it), this will be the count of unread messages in the thread, and the word "new" will be included. If the number is greater than one, the word "message" will be "messages".
+
+Note about message_count: Normally, this is the count of all messages in the thread. However, if only returning unread messages (using an unread=true parameter in an endpoint which supports it), this will be the count of unread messages in the thread. If this is the case, count_is_unread will be set to true.
 
 ### GET /api/v2/seamail
 

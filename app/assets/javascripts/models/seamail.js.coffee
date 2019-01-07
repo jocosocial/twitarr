@@ -4,6 +4,7 @@ Twitarr.SeamailMeta = Ember.Object.extend
   message_count: 0
   subject: null
   timestamp: null
+  count_is_unread: false
 
 Twitarr.SeamailMeta.reopenClass
   list: ->

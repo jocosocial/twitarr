@@ -200,6 +200,9 @@ class User
           "$match" => { "sm.rd" => {"$ne" => username } }
         },
         {
+          "$sort" => { "sm.ts" => -1 }
+        },
+        {
           "$group" => {
             "_id" => "$_id",
             "deleted_at" => { "$first" => "$deleted_at" },

@@ -40,6 +40,7 @@ Twitarr.IndexRoute = Ember.Route.extend
 Twitarr.AlertsRoute = Ember.Route.extend
   model: ->
     $.getJSON("#{Twitarr.api_path}/alerts").then (data) =>
+      data.unread_seamail = Ember.A(Twitarr.SeamailMeta.create(seamail) for seamail in data.unread_seamail)
       data.tweet_mentions = Ember.A(Twitarr.StreamPost.create(post) for post in data.tweet_mentions)
       data.upcoming_events = Ember.A(Twitarr.EventMeta.create(event) for event in data.upcoming_events)
       data

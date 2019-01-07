@@ -35,7 +35,7 @@ class API::V2::SeamailController < ApplicationController
     mails = current_user.seamails extra_query
 
     if @include_messages
-      output = "seamail_messages"
+      output = "seamail_threads"
       mails = mails.map { |x| x.decorate.to_hash(request_options).merge!({is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) }
     else
       output = "seamail_meta"

@@ -119,11 +119,12 @@ This documentation is for the rest endpoints under /api/v2
     "messages": [ # Sorted by message timestamp descending. May be excluded from some endpoints that only return metadata.
         SeamailMessage{}, ...
     ],
-    "message_count": integer, # Normally, this is the count of all messages in the thread. However, if only returning unread messages, this will be the count of unread messages in the thread.
+    "message_count": "\d+ message" OR "\d+ new message" # A string presenting the number of messages (or new messages) in the thread
     "timestamp": "ISO_8601_DATETIME", # Date and time of the most recent message in the thread
     "is_unread": boolean # If any message in the thread is unread, this will be true
 }
 ```
+Note about message_count: Normally, this is the count of all messages in the thread. However, if only returning unread messages (using an unread=true parameter in an endpoint which supports it), this will be the count of unread messages in the thread, and the word "new" will be included. If the number is greater than one, the word "message" will be "messages".
 
 ### GET /api/v2/seamail
 
@@ -137,7 +138,6 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 #### Query parameters
 
 * unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
-  * Note: If this parameter is true, the message_count in the meta info will be the count of unread messages in the thread. Normally, the messages count is the total number of messages in the thread.
 * after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 
@@ -165,7 +165,8 @@ Gets the User's seamail threads, with messages included
 
 #### Query parameters
 
-* unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
+* unread=true - Optional (Default: false) - only show threads with unread seamail if true
+* exclude_read_messages=true - Optional (Default: false) - If this parameter is included, the messages array of each thread will only include unread messages. It is intended that this parameter not be used at the same time as unread=true. The goal of this parameter is to receive metadata of all threads, but only messages in threads with new messages. Including the unread=true parameter will exclude any thread metadata where the thread does not have unread messages.
 * after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 

@@ -1,7 +1,7 @@
 Twitarr.SeamailMeta = Ember.Object.extend
   id: null
   users: []
-  messages: 0
+  message_count: 0
   subject: null
   timestamp: null
 

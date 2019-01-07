@@ -158,7 +158,11 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 
 ### GET /api/v2/seamail_threads
 
-Gets the User's seamail threads, with messages included
+Gets the User's seamail threads, with messages included. This endpoint has three basic modes, which can be further modified by using the after parameter:
+1. All threads with all messages - do not send unread or exclude_read_messages parameters
+1. All threads, only unread messages - send exclude_read_messages=true
+1. Unread threads, only unread messages - send unread=true
+Note that sending both unread=true&exclude_read_messages=true will operate identically to the third mode.
 
 #### Requires
 

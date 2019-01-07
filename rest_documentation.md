@@ -140,7 +140,7 @@ This documentation is for the rest endpoints under /api/v2
 
 ### GET /api/v2/seamail
 
-Gets the User's seamail (Not the messages contained within, just the subject, etc)
+Gets the User's seamail metadata (Not the messages contained within, just the subject, etc)
 
 #### Requires
 
@@ -159,6 +159,34 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 {
     "status": "ok",
     "seamail_meta": [ SeamailMetaInfo{}, ... ],
+    "last_checked": epoch # Server timestamp of when this call was made
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+
+### GET /api/v2/seamail_threads
+
+Gets the User's seamail threads, with messages included
+
+#### Requires
+
+* logged in.
+    * Accepts: key query parameter
+
+#### Query parameters
+
+* unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
+* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
+  * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "seamail_messages": [ SeamailThread{}, ... ], 
     "last_checked": epoch # Server timestamp of when this call was made
 }
 ```

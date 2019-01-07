@@ -100,26 +100,26 @@ This documentation is for the rest endpoints under /api/v2
 {
     "author": UserInfo{},
     "text": "string",
-    "timestamp": "ISO_8601_DATETIME",
+    "timestamp": "ISO_8601_DATETIME", # Date and time that this message was posted
     "read_users": [
         UserInfo{}, ...
     ]
 }
 ```
 
-#### SeamailDetails{}
+#### SeamailThread{}
 
 ```
 {
     "id": "id_string",
-    "users": [
+    "users": [ # All of the users participating in the thread
         UserInfo{}, ...
     ],
     "subject": "string",
-    "messages": [
+    "messages": [ # Sorted by message timestamp descending
         SeamailMessage{}, ...
     ],
-    "is_unread": boolean
+    "is_unread": boolean # If any message in the thread is unread, this will be true.
 }
 ```
 
@@ -133,7 +133,7 @@ This documentation is for the rest endpoints under /api/v2
     ],
     "subject": "string",
     "messages": "\d+ message", # message will be plural if the number is > 1
-    "timestamp": "ISO_8601_DATETIME",
+    "timestamp": "ISO_8601_DATETIME", # Date and time of the most recent message in the thread
     "is_unread": boolean
 }
 ```
@@ -150,7 +150,8 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 #### Query parameters
 
 * unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
-* after=&lt;datetime string&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
+* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
+  * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get messages created/updated since your last call. Useful if you are polling.
 
 #### Returns
 
@@ -158,7 +159,7 @@ Gets the User's seamail (Not the messages contained within, just the subject, et
 {
     "status": "ok",
     "seamail_meta": [ SeamailMetaInfo{}, ... ],
-    "last_checked": epoch
+    "last_checked": epoch # Server timestamp of when this call was made
 }
 ```
 
@@ -176,14 +177,14 @@ Gets the messages contained within a seamail
 
 #### Query parameters
 
-none
+* skip_mark_read=true - If this parameter is present, seamail will not be marked read as a result of this call. Default behavior is to mark the entire thread as read.
 
 #### Returns
 
 ```
 {
     "status": "ok",
-    "seamail": SeamailDetails{}
+    "seamail": SeamailThread{}
 }
 ```
 
@@ -240,7 +241,7 @@ none
     }
   ```
 
-### POST /api/v2/seamail/:id/new_message
+### POST /api/v2/seamail/:id
 
 Add a new message to an existing Seamail thread
 
@@ -354,7 +355,7 @@ Get/post information on the tweet stream
 
 ### Stream specific types
 
-#### StreamPostMeta
+#### StreamPost
 
 ```
 {
@@ -381,8 +382,8 @@ Get/post information on the tweet stream
     "reactions": ReactionsSummary{},
     "parent_chain": [ "stream_post_id_string", ... ],
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
-    "children": [ 
-        StreamPostMeta{WITHOUT parent_chain}, ...
+    "children": [ # children will not be present if there are no child posts
+        StreamPost{WITHOUT parent_chain}, ...
     ]
 }
 ```
@@ -396,24 +397,29 @@ Get the recent tweets in the stream
 #### Query parameters
 
 * start=epoch - Optional (Default: Now) - The start location for getting tweets
-* newer_posts - Optional (Default: off) - If this parameter exist, retrieve posts newer than start, otherwise get older ones
-* limit=Integer - Optional (Default: 20) - How many to tweets to get
-* author=username - Optional (Default:No Filter) - Filter by username specified
-* hashtag=hashtag - Optional (Default:NO Filter) - Filter by hashtag
-* likes=username - Optional (Default:No Filter) - Return only posts liked by the username specified
-* mentions=username - Optional (Default:No Filter) - Filter by mentions of username specified
+* newer_posts - Optional (Default: false) - If this parameter is true, retrieve tweets newer than start, otherwise get older ones
+* limit=Integer - Optional (Default: 20) - How many tweets to get
+* author=username - Optional (Default: No Filter) - Filter by username specified
+* hashtag=hashtag - Optional (Default: No Filter) - Filter by hashtag
+* likes=username - Optional (Default: No Filter) - Return only posts liked by the username specified
+* mentions=username - Optional (Default: No Filter) - Filter by mentions of username specified
 * include_author=true - Optional (Default: false) - When filtering by mentions, include posts mentioning *or* written by the username specified
 * starred=true - Optional (Default: false) - Return only posts by starred users (You must be logged in for this to work.)
 
 #### Returns
 
-    JSON Object { "stream_posts": Array[ StreamPostMeta {...}, ... ],
-                  "next_page": 1421197659001
-                }
+    ```
+    {
+        "status": "ok",
+        "stream_posts": [
+            StreamPost{},
+            ...
+        ],
+        "next_page": 1421197659001
+    }
+    ```
 
-
-
-### GET /api/v2/stream/:id
+### GET /api/v2/thread/:id
 
 Get details of a stream post (tweet)
 This will include the children posts (replies) to this tweet sorted in timestamp order
@@ -427,7 +433,12 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 
 #### Returns
 
-    JSON StreamPostThread {...}
+    ```
+    {
+        "status": "ok",
+        "post": StreamPostThread{}
+    }
+    ```
 
 ### GET /api/v2/stream/m/:query
 
@@ -443,10 +454,16 @@ View a user's mention's stream
 
 #### Returns
 
-    JSON Object {"status": "ok", "posts": [StreamPostMeta {...}, ...],
-                 "next": "page number to start with"}
-
-
+    ```
+    {
+        "status": "ok", 
+        "posts": [
+            StreamPost{}, 
+            ...
+        ],
+        "next": "page number to start with"
+    }
+    ```
 
 ### GET /api/v2/stream/h/:query
 
@@ -462,7 +479,7 @@ View a hash tag tweet stream
 
 #### Returns
 
-    JSON Object {"status": "ok", "posts": [StreamPostMeta {...}, ...],
+    JSON Object {"status": "ok", "posts": [StreamPost {...}, ...],
                  "next": "page number to start with"}
 
 
@@ -613,7 +630,7 @@ Perform a search against the database for results.  Will search for Stream and F
     JSON Object {
         "status": "ok",
         "stream_posts": {
-        "matches": [ StreamPostMeta ,... ],
+        "matches": [ StreamPost ,... ],
         "count": Integer:Count of matches,
         "more": boolean:True if more results than display is found
         },

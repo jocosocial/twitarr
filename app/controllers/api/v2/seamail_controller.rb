@@ -33,8 +33,21 @@ class API::V2::SeamailController < ApplicationController
       end
     end
     mails = current_user.seamails extra_query
-    render json: {status: 'ok', seamail_meta: mails.map { |x| x.decorate.to_meta_hash.merge!({is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) },
-        last_checked: ((Time.now.to_f * 1000).to_i + 1)}
+
+    if @include_messages
+      output = "seamail_messages"
+      mails = mails.map { |x| x.decorate.to_hash(request_options).merge!({is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) }
+    else
+      output = "seamail_meta"
+      mails = mails.map { |x| x.decorate.to_meta_hash.merge!({is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) }
+    end
+
+    render json: {status: 'ok', output => mails, last_checked: ((Time.now.to_f * 1000).to_i + 1)}
+  end
+
+  def threads
+    @include_messages = true
+    index
   end
 
   def show

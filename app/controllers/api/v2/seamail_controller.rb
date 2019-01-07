@@ -12,7 +12,7 @@ class API::V2::SeamailController < ApplicationController
       render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
     end
     unless @seamail.usernames.include? current_username
-      render status: :forbidden, json: {status: 'error', error: 'User must be part of the seamail to access a seamail'}
+      render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
     end
   end
 

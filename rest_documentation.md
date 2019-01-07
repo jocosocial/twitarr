@@ -293,13 +293,9 @@ none
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
-  * HTTP 404 if seamail with given ID is not found
+  * HTTP 404 if seamail with given ID is not found or user does not have access
     ```
     { "status": "error", "error": "Seamail not found" }
-    ```
-  * HTTP 403 if current user is not in the seamail participants list
-    ```
-    { "status": "error", "error": "User must be part of the seamail to access a seamail" }
     ```
 * status_code_with_error_list - HTTP 400
    ```
@@ -307,7 +303,7 @@ none
    ```
 ### POST /api/v2/seamail/:id/recipients
 
-Modifies the recipients of a seamail.
+Modifies the recipients of a seamail. Disabled until we figure out if/how we want to support this.
 
 #### Requires
 
@@ -338,13 +334,9 @@ none
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
-  * HTTP 404 if seamail with given ID is not found
+  * HTTP 404 if seamail with given ID is not found or user does not have access
    ```
     { "status": "error", "error": "Seamail not found" }
-   ```
-  * HTTP 403 if current user is not in the seamail participants list
-   ```
-    { "status": "error", "error": "User must be part of the seamail to access a seamail" }
    ```
 * status_code_with_error_list - HTTP 400 with a list of any problems
    ```

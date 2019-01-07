@@ -3,6 +3,7 @@ class SeamailMessageDecorator < BaseDecorator
 
   def to_hash(options = {})
     {
+      id: id.to_s,
       author: {
         username: author,
         display_name: User.display_name_from_username(author),

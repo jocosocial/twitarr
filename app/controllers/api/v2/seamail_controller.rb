@@ -39,7 +39,7 @@ class API::V2::SeamailController < ApplicationController
 
   def show
     mails = @seamail.decorate.to_hash(request_options).merge!({is_unread: @seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})
-    @seamail.mark_as_read current_username
+    @seamail.mark_as_read current_username unless params[:skip_mark_read]
     render json: {status: 'ok', seamail: mails}
   end
 

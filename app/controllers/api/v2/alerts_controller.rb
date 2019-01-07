@@ -9,7 +9,7 @@ class API::V2::AlertsController < ApplicationController
                                                 mentions_only: true).map {|p| p.decorate.to_hash(current_username, params) }
       forum_mentions = Forum.view_mentions(query: current_username,
                                                 mentions_only: true).map {|p| p.decorate.to_meta_hash }
-      unread_seamail = current_user.seamails(unread: true).map{|m| m.decorate.to_meta_hash().merge!({count_is_unread: true}) }
+      unread_seamail = current_user.seamails(unread: true).map{|m| m.decorate.to_meta_hash().merge!({count_is_unread: true, is_unread: true}) }
 
       upcoming_events = current_user.upcoming_events(true).map{|e| e.decorate.to_hash current_username }
 

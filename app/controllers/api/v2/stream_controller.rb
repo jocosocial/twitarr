@@ -190,7 +190,11 @@ class API::V2::StreamController < ApplicationController
   def newest_posts
     start = (DateTime.now.to_f * 1000).to_i
     params[:start] = start
-    older_posts.merge!({next_page: start+1})
+    if params.has_key?(:newer_posts)
+      older_posts.merge!({has_next_page: false, next_page: start+1})
+    else
+      older_posts
+    end
   end
 
   def want_older_posts?
@@ -232,7 +236,7 @@ class API::V2::StreamController < ApplicationController
       filter_authors = current_user.starred_users.reject { |x| x == current_username }
     end
     limit = params[:limit] || PAGE_LENGTH
-    posts = StreamPost.at_or_after(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :asc)
+    posts = StreamPost.at_or_after(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :desc)
     has_next_page = posts.count > limit
     posts = posts.map { |x| x }
     next_page = posts.last.nil? ? 0 : (posts.first.timestamp.to_f * 1000).to_i + 1

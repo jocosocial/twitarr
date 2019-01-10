@@ -8,9 +8,9 @@ This documentation is for the rest endpoints under /api/v2
 ## Parameter Type Definitions
 
 * boolean - (true, false, 1, 0, yes, no)
-* datetime string - ISO 8601 date/time, or unix epoch in milliseconds
-* ISO_8601_DATETIME - ISO 8601 date/time
-* epoch - unix epoch in milliseconds
+* datetime string - ISO 8601 date/time string, or milliseconds since the unix epoch as a string
+* ISO_8601_DATETIME - ISO 8601 date/time string
+* epoch - milliseconds since the unix epoch as an integer
 * id_string - a string for the id
 * username_string - user's username.  All lowercase word characters plus '-' and '&', at least 3 characters
 * displayname_string - user's display name. All word characters plus '.', '&', '-', and space, at least 3 characters, max 40 characters.
@@ -214,10 +214,11 @@ Gets the messages contained within a seamail
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
-* status_code_with_message - HTTP 403 if current user is not in the seamail recipients list
+* status_code_with_message - HTTP 404 if the seamail is not found or the current user is not in the seamail recipients list
   ```
-    { "status": "error", "error": "User must be part of the seamail to view a seamail." }
+    { "status": "error", "error": "Seamail not found" }
   ```
+
 ### POST /api/v2/seamail
 
 Creates a new Seamail, with a initial message
@@ -399,21 +400,21 @@ Get/post information on the tweet stream
     "parent_chain": [ "stream_post_id_string", ... ],
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
     "children": [ # children will not be present if there are no child posts
-        StreamPost{WITHOUT parent_chain}, ...
+        StreamPost{ WITHOUT parent_chain }, ...
     ]
 }
 ```
 
-### GET /api/v2/stream
+### GET /api/v2/stream or /api/v2/stream/:start
 
-Get the recent tweets in the stream
+Get the tweets in the stream. This is an incredibly flexible endpoint that will return a page of tweets (default 20, the `limit` parameter) either before or after (the `newer_posts` paramter) a given timestamp (the `start` parameter). If no timestamp is given, it will return the `limit` most recent tweets.
 
 #### Requires
 
 #### Query parameters
 
 * start=epoch - Optional (Default: Now) - The start location for getting tweets
-* newer_posts - Optional (Default: false) - If this parameter is true, retrieve tweets newer than start, otherwise get older ones
+* newer_posts=true - Optional (Default: false) - If this parameter is true, get tweets newer than start, otherwise get tweets older than start
 * limit=Integer - Optional (Default: 20) - How many tweets to get
 * author=username - Optional (Default: No Filter) - Filter by username specified
 * hashtag=hashtag - Optional (Default: No Filter) - Filter by hashtag
@@ -427,13 +428,22 @@ Get the recent tweets in the stream
     ```
     {
         "status": "ok",
-        "stream_posts": [
-            StreamPost{},
+        "stream_posts": [ # Sorted by timestamp descending
+            StreamPost{}, 
             ...
         ],
-        "next_page": 1421197659001
+        "has_next_page": boolean,
+        "next_page": epoch
     }
     ```
+
+Some info about `next_page` in the output: This is a timestamp that depends on the `newer_posts` parameter. `newer_posts` essentially controlls which direction through the tweet stream you are scrolling. `has_next_page` will be true if the server has more posts in the direction indicated by the `newer_posts` parameter at the time of the request.
+* If `newer_posts=false`, the value of `next_page` will be the timestamp of the oldest tweet minus one millisecond. This will assist in going backwards in time through the tweet stream.
+* If `newer_posts=true`, the value of `next_page` will be the timestamp of the youngest tweet returned plus one millisecond. This will assist in going forwards in time through the tweet stream.
+* Hint: If you want to get the latest page of tweets and then poll (or refresh) for newer tweets, it is recommended to send a request without `start`, and with `newer_posts=true`. This will give you a timestamp that you can pass as the value of `start`, along with `newer_posts=true`. If there are new posts, you will get results, and a new value for `start` for future polling. However, you will need to calculate a value for scrolling backwards in time: take the timestamp of the last tweet, convert to milliseconds since the unix epoc, and subtract 1 millisecond. Use that calculated value as `start` with `newer_posts=false` to get previous pages. You will then be able to use the server-provided `next_page` value for even older pages.
+
+#### Error Responses
+* None.
 
 ### GET /api/v2/thread/:id
 

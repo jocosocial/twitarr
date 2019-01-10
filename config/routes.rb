@@ -139,7 +139,6 @@ Twitarr::Application.routes.draw do
       get 'user/profile/:username', to: 'user#show'
       get 'user/profile/:username/star', to: 'user#star'
       post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
-      get 'user/profile/:username/vcf', to: 'user#vcard', format: false
       get 'user/autocomplete/:username', to: 'user#autocomplete'
       get 'user/view/:username', to: 'user#show'
       get 'user/starred', to: 'user#starred'

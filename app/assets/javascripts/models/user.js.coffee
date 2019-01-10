@@ -6,8 +6,7 @@ Twitarr.User = Ember.Object.extend
       room_number: @get('room_number'), 
       "email_public?": @get('email_public?'), 
       real_name: @get('real_name'), 
-      home_location: @get('home_location'), 
-      "vcard_public?": @get('vcard_public?') 
+      home_location: @get('home_location')
     }
 
     if @get('current_password') and @get('new_password') and @get('confirm_password')
@@ -34,7 +33,6 @@ Twitarr.UserMeta = Ember.Object.extend
   home_location: null
   number_of_tweets: null
   number_of_mentions: null
-  "vcard_public?": null
   starred: null
   # TODO: this is an interesting idea, but don't have time now
 #  current_location: null
@@ -46,10 +44,6 @@ Twitarr.UserMeta = Ember.Object.extend
         @set('starred', data.starred)
       else
         alert data.status
-  
-  vcard_url: (->
-    "#{Twitarr.api_path}/user/profile/#{@get('username')}/vcf"
-  ).property()
 
 Twitarr.UserProfile = Twitarr.UserMeta.extend
   recent_tweets: []

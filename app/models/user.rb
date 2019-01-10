@@ -31,7 +31,6 @@ class User
   field :an, as: :real_name, type: String
   field :hl, as: :home_location, type: String
   field :lf, as: :forum_view_timestamps, type: Hash, default: {}
-  field :pv, as: :is_vcard_public, type: Boolean, default: false
   field :lc, as: :current_location, type: String
   field :us, as: :starred_users, type: Array, default: []
   field :pc, as: :personal_comments, type: Hash, default: {}
@@ -156,14 +155,6 @@ class User
 
   def home_location=(val)
     super val.andand.strip
-  end
-
-  def vcard_public?
-    self[:is_vcard_public]
-  end
-
-  def vcard_public=(val)
-    self[:is_vcard_public] = !val.nil? && val.to_bool
   end
 
   def upcoming_events(alerts=false)

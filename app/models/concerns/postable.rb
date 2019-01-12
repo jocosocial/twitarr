@@ -120,5 +120,16 @@ module Postable
       end
       query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
     end
+
+    def view_hashtags(params = {})
+      query_string = params[:query]
+      start_loc = params[:page] || 0
+      limit = params[:limit] || 20
+      query = where({hash_tags: query_string})
+      if params[:after]
+        query = query.where(:timestamp.gt => params[:after])
+      end
+      query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
+    end
   end
 end

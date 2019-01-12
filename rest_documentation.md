@@ -101,6 +101,7 @@ This documentation is for the rest endpoints under /api/v2
 
 ```
 {
+    "id": "seamail_message_id_string",
     "author": UserInfo{},
     "text": "string",
     "timestamp": "ISO_8601_DATETIME", # Date and time that this message was posted
@@ -114,7 +115,7 @@ This documentation is for the rest endpoints under /api/v2
 
 ```
 {
-    "id": "id_string",
+    "id": "seamail_thread_id_string",
     "users": [ # All of the users participating in the thread
         UserInfo{}, ...
     ],

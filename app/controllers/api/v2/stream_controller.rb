@@ -16,7 +16,7 @@ class API::V2::StreamController < ApplicationController
 
   def index
     params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
-    if limit < 1
+    if params[:limit] < 1
       render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0"} and return
     end
 

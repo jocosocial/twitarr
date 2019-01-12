@@ -40,6 +40,9 @@ This documentation is for the rest endpoints under /api/v2
   * First element will be "You" if current_user likes the post: ["You", ...]
   * If fewer than MAX_LIST_LIKES, array will include usernames: ["username_string", ...] OR ["You", "username_string", ...] 
   * If more than MAX_LIST_LIKES likes, array will have one or two elements: ["\d+ other seamonkeys"] OR ["You", "\d+ other seamonkeys"]
+* all_likes - null (if no likes), or an array
+  * First element will be "You" if current_user likes the post: ["You", ...]
+  * Array will include usernames all users who have liked the post: ["username_string", ...] OR ["You", "username_string", ...] 
 
 * ReactionsSummary{} - A JSON object showing the counts of each reaction type. Will be { } if no reactions.
   ```
@@ -560,9 +563,7 @@ Current users who like the post
 ```
 {
     "status": "ok",
-    "likes": [
-        "username_string", ...
-    ]
+    "likes": likes_summary
 }
 ```
 
@@ -590,9 +591,7 @@ Current users who like the post
 ```
 {
     "status": "ok",
-    "likes": [
-       "username_string", ...
-    ]
+    "likes": likes_summary
 }
 ```
 
@@ -617,9 +616,7 @@ Current users who like the post
 ```
 {
     "status": "ok",
-    "likes": [
-       "username_string", ...
-    ]
+    "likes": all_likes
 }
 ```
 
@@ -655,7 +652,32 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
 
 #### Returns
 
-    JSON StreamPostDetails {...}
+```
+{
+    "status": "ok",
+    "stream_post": StreamPost{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 400 if tweet with given parent ID is not found
+   ```
+    { 
+        "status": "error", 
+        "error": "stream_post_id_string  is not a valid parent id" # stream_post_id_string will be replaced with the posted parent id
+    } 
+   ```
+* status_code_with_error_list - HTTP 400 with a list of problems
+   ```
+    { 
+        "status": "error", 
+        "errors": [
+            "Text can't be blank",
+            "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
+        ]
+   ```
 
 ### PUT /api/v2/stream/:id
 

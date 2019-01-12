@@ -15,4 +15,8 @@ class PhotoMetadata
          }]
   end
 
+  def self.exist?(id)
+    where(id: id).exists?
+  end
+
 end

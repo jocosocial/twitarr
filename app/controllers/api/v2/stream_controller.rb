@@ -140,11 +140,12 @@ class API::V2::StreamController < ApplicationController
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
       unless parent
-        render status: :bad_request, json: {status:'error', error: "Parent post id #{params[:parent]} was not found"}
+        render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"}
         return
       end
       parent_chain = parent.parent_chain + [params[:parent]]
     end
+
     post = StreamPost.create(text: params[:text], author: current_username, timestamp: Time.now, photo: params[:photo],
                              location: params[:location], parent_chain: parent_chain)
     if post.valid?
@@ -198,12 +199,12 @@ class API::V2::StreamController < ApplicationController
   end
 
   def show_likes
-    render json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.decorate.all_likes(current_username, @post.likes) }
   end
 
   def unlike
     @post = @post.remove_like current_username
-    render json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username, @post.likes) }
   end
 
   def react

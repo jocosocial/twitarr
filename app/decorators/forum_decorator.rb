@@ -6,8 +6,11 @@ class ForumDecorator < Draper::Decorator
     ret = {
         id: id.to_s,
         subject: subject,
-        last_post_username: posts.last.author,
-        last_post_display_name: User.display_name_from_username(posts.last.author),
+        last_post_author: {
+          username: posts.last.author,
+          display_name: User.display_name_from_username(posts.last.author),
+          last_photo_updated: User.last_photo_updated_from_username(posts.last.author)
+        },
         posts: post_count,
         timestamp: last_post_time,
         last_post_page: 0

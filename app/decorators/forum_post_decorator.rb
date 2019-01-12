@@ -5,9 +5,11 @@ class ForumPostDecorator < BaseDecorator
     ret = {
         id: id.to_s,
         forum_id: forum.id.to_s,
-        author: author,
-        display_name: User.display_name_from_username(author),
-        author_last_photo_updated: User.last_photo_updated_from_username(author),
+        author: {
+          username: author,
+          display_name: User.display_name_from_username(author),
+          last_photo_updated: User.last_photo_updated_from_username(author)
+        },
         text: replace_emoji(clean_text_with_cr(text, options), options),
         timestamp: timestamp,
         likes: some_likes(username, likes),

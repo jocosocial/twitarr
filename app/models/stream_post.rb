@@ -25,6 +25,7 @@ class StreamPost
   validates :text, :author, :timestamp, presence: true
   validate :validate_author
   validate :validate_location
+  validate :validate_photo
 
   # 1 = ASC, -1 DESC
   index likes: 1
@@ -85,5 +86,12 @@ class StreamPost
     search_text = params[:text].strip.downcase.gsub(/[^\w&\s@-]/, '')
     criteria = StreamPost.or({ author: /^#{search_text}.*/ }, { '$text' => { '$search' => "\"#{search_text}\"" } })
     limit_criteria(criteria, params).order_by(timestamp: :desc)
+  end
+
+  def validate_photo
+    return if photo.blank?
+    unless PhotoMetadata.exist? photo
+      errors[:base] << "#{photo} is not a valid photo id"
+    end
   end
 end

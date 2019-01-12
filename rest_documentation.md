@@ -40,6 +40,9 @@ This documentation is for the rest endpoints under /api/v2
   * First element will be "You" if current_user likes the post: ["You", ...]
   * If fewer than MAX_LIST_LIKES, array will include usernames: ["username_string", ...] OR ["You", "username_string", ...] 
   * If more than MAX_LIST_LIKES likes, array will have one or two elements: ["\d+ other seamonkeys"] OR ["You", "\d+ other seamonkeys"]
+* all_likes - null (if no likes), or an array
+  * First element will be "You" if current_user likes the post: ["You", ...]
+  * Array will include usernames all users who have liked the post: ["username_string", ...] OR ["You", "username_string", ...] 
 
 * ReactionsSummary{} - A JSON object showing the counts of each reaction type. Will be { } if no reactions.
   ```
@@ -322,11 +325,11 @@ none
 
 #### JSON Request Body
 
-    ```
-    {
-      "users": ["username_string", ...] # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
-    }
-    ```
+```
+{
+    "users": ["username_string", ...] # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
+}
+```
 
 #### Returns
 
@@ -407,7 +410,7 @@ Get/post information on the tweet stream
 
 ### GET /api/v2/stream or /api/v2/stream/:start
 
-Get the tweets in the stream. This is an incredibly flexible endpoint that will return a page of tweets (default 20, the `limit` parameter) either before or after (the `newer_posts` paramter) a given timestamp (the `start` parameter). If no timestamp is given, it will return the `limit` most recent tweets.
+Get the tweets in the stream. This is an incredibly flexible endpoint that will return a page of tweets (default 20, the `limit` parameter) either before or after (the `newer_posts` paramter) a given timestamp (the `start` parameter). If no `start` timestamp is given, it will return the `limit` most recent tweets.
 
 #### Requires
 
@@ -425,25 +428,29 @@ Get the tweets in the stream. This is an incredibly flexible endpoint that will 
 
 #### Returns
 
-    ```
-    {
-        "status": "ok",
-        "stream_posts": [ # Sorted by timestamp descending
-            StreamPost{}, 
-            ...
-        ],
-        "has_next_page": boolean,
-        "next_page": epoch
-    }
-    ```
+```
+{
+    "status": "ok",
+    "stream_posts": [ # Sorted by timestamp descending
+        StreamPost{}, 
+        ...
+    ],
+    "has_next_page": boolean,
+    "next_page": epoch
+}
+```
 
-Some info about `next_page` in the output: This is a timestamp that depends on the `newer_posts` parameter. `newer_posts` essentially controlls which direction through the tweet stream you are scrolling. `has_next_page` will be true if the server has more posts in the direction indicated by the `newer_posts` parameter at the time of the request.
+Some notes on `newer_posts` in the input and `next_page` in the output: `next_page` is a timestamp that depends on the `newer_posts` parameter. `newer_posts` essentially controlls which direction through the tweet stream you are scrolling. `has_next_page` will be true if the server has more posts in the direction indicated by the `newer_posts` parameter at the time of the request.
 * If `newer_posts=false`, the value of `next_page` will be the timestamp of the oldest tweet minus one millisecond. This will assist in going backwards in time through the tweet stream.
 * If `newer_posts=true`, the value of `next_page` will be the timestamp of the youngest tweet returned plus one millisecond. This will assist in going forwards in time through the tweet stream.
 * Hint: If you want to get the latest page of tweets and then poll (or refresh) for newer tweets, it is recommended to send a request without `start`, and with `newer_posts=true`. This will give you a timestamp that you can pass as the value of `start`, along with `newer_posts=true`. If there are new posts, you will get results, and a new value for `start` for future polling. However, you will need to calculate a value for scrolling backwards in time: take the timestamp of the last tweet, convert to milliseconds since the unix epoc, and subtract 1 millisecond. Use that calculated value as `start` with `newer_posts=false` to get previous pages. You will then be able to use the server-provided `next_page` value for even older pages.
 
 #### Error Responses
-* None.
+* status_code_with_message
+  * HTTP 400 if `limit < 1`
+   ```
+    { "status": "error", "error": "Limit must be greater than 0" }
+   ```
 
 ### GET /api/v2/thread/:id
 
@@ -454,42 +461,58 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 
 #### Query parameters
 
-* limit=Integer - Optional(Default: 20) - Number of children posts to return with this tweet
-* start_loc=Integer - Optional(Default: 0) - Start offset to display children posts
+* limit=Integer - Optional (Default: 20) - Number of child posts to return with the thread
+* page=Integer - Optional (Default: 0) - The page of tweets to retrieve, zero-indexed. Multiplied by `limit` to determine number of tweets to skip.
 
 #### Returns
 
-    ```
-    {
-        "status": "ok",
-        "post": StreamPostThread{}
-    }
-    ```
+```
+{
+    "status": "ok",
+    "post": StreamPostThread{},
+    "has_next_page": boolean
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 400 if `limit < 1` or `page < 0`
+   ```
+    { "status": "error", "error": "Limit must be greater than 0, Page must be greater than or equal to 0" }
+   ```
 
 ### GET /api/v2/stream/m/:query
 
-View a user's mention's stream
+View a user's mentions stream. Will include all tweets that tag the user.
 
 #### Requires
 
 #### Query parameters
 
-* page=Integer - Optional(Default: 0) - Number of posts to return
-* limit=Integer - Optional(Default: 20) - Start offset to view
-* after=epoch - Optional(Default: None) - Start time to query for (only showing mentions newer than this)
+* limit=Integer - Optional (Default: 20) - Number of tweets to return
+* page=Integer - Optional (Default: 0) - The page of tweets to retrieve, zero-indexed. Multiplied by `limit` to determine number of tweets to skip.
+* after=epoch - Optional (Default: None) - Start time to query for (only showing tweets newer than this)
 
 #### Returns
 
-    ```
-    {
-        "status": "ok", 
-        "posts": [
-            StreamPost{}, 
-            ...
-        ],
-        "next": "page number to start with"
-    }
-    ```
+```
+{
+    "status": "ok", 
+    "posts": [
+        StreamPost{}, 
+        ...
+    ],
+    "total": integer, # Total number of tweets that mention the user
+    "has_next_page": boolean
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 400 if `limit < 1` or `page < 0`
+   ```
+    { "status": "error", "error": "Limit must be greater than 0, Page must be greater than or equal to 0" }
+   ```
 
 ### GET /api/v2/stream/h/:query
 
@@ -499,17 +522,32 @@ View a hash tag tweet stream
 
 #### Query parameters
 
-* page=Integer - Optional(Default: 0) - Number of posts to return
-* limit=Integer - Optional(Default: 20) - Start offset to view
-* after=epoch - Optional(Default: None) - Start time to query for (only showing mentions newer than this)
+* limit=Integer - Optional (Default: 20) - Number of tweets to return
+* page=Integer - Optional (Default: 0) - The page of tweets to retrieve, zero-indexed. Multiplied by `limit` to determine number of tweets to skip.
+* after=epoch - Optional (Default: None) - Start time to query for (only showing tweets newer than this)
 
 #### Returns
 
-    JSON Object {"status": "ok", "posts": [StreamPost {...}, ...],
-                 "next": "page number to start with"}
+```
+{
+    "status": "ok", 
+    "posts": [
+        StreamPost{}, 
+        ...
+    ],
+    "total": integer, # Total number of tweets that have the hashtag
+    "has_next_page": boolean
+}
+```
 
-
-### POST /api/v2/stream/:id/like
+#### Error Responses
+* status_code_with_message
+  * HTTP 400 if `limit < 1` or `page < 0`
+   ```
+    { "status": "error", "error": "Limit must be greater than 0, Page must be greater than or equal to 0" }
+   ```
+   
+### POST /api/v2/tweet/:id/like
 
 Like a post
 
@@ -522,14 +560,22 @@ Like a post
 
 Current users who like the post
 
-    {
+```
+{
     "status": "ok",
-    "likes": [
-    "username_string", ...
-    ]
-    }
+    "likes": likes_summary
+}
+```
 
-### DELETE /api/v2/stream/:id/like
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+   ```
+    { "status": "error", "error": "Post not found" }
+   ```
+
+### DELETE /api/v2/tweet/:id/like
 
 Unlike a post
 
@@ -540,16 +586,24 @@ Unlike a post
 
 #### Returns
 
-   Current users who like the post
+Current users who like the post
 
-       {
-       "status": "ok",
-       "likes": [
-       "username_string", ...
-       ]
-       }
+```
+{
+    "status": "ok",
+    "likes": likes_summary
+}
+```
 
-### GET /api/v2/stream/:id/like
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+   ```
+    { "status": "error", "error": "Post not found" }
+   ```
+
+### GET /api/v2/tweet/:id/like
 
 Get the current likes of a post
 
@@ -557,18 +611,25 @@ Get the current likes of a post
 
 #### Returns
 
-   Current users who like the post
+Current users who like the post
 
-       {
-       "status": "ok",
-       "likes": [
-       "username_string", ...
-       ]
-       }
+```
+{
+    "status": "ok",
+    "likes": all_likes
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+   ```
+    { "status": "error", "error": "Post not found" }
+   ```
 
 ### POST /api/v2/stream
 
-Posts or reply to a post in the stream.
+Creates a new tweet in the tweet stream. The author will be the logged in user. The timestamp will be "Now". The post will have mentions and hashtags automatically extracted.
 
 #### Requires
 
@@ -577,18 +638,46 @@ Posts or reply to a post in the stream.
 
 #### Json Request Body
 
-    JSON Object { "parent": "stream_post_id_string", "text": "Tweet content", "photo": "photo_id_string"}
+```
+{
+    "text": "Tweet content",
+    "parent": "stream_post_id_string", # Optional
+    "photo": "photo_id_string" # Optional
+}
+```
 
-* The parent is optional.  If Specified, it will make this post a reply to another StreamPost by the id_string passed in.
-* The photo is optional.  If Specified, it will make this post link in the photo that has already been uploaded with the id_string passed in.
-* Text is *NOT* optional.  This will be the text of the tweet to be posted.
-
-The author will be the logged in user.  The timestamp will be "Now", defaults to no likes.  The post will have mentions and hashtags automatically extracted.
-
+* Text is required.  This will be the text of the tweet to be posted.
+* parent is optional.  If Specified, it will make this post a reply to another StreamPost by the stream_post_id_string passed in.
+* photo is optional.  If Specified, it will make this post link in the photo that has already been uploaded with the photo_id_string passed in.
 
 #### Returns
 
-    JSON StreamPostDetails {...}
+```
+{
+    "status": "ok",
+    "stream_post": StreamPost{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 400 if tweet with given parent ID is not found
+   ```
+    { 
+        "status": "error", 
+        "error": "stream_post_id_string  is not a valid parent id" # stream_post_id_string will be replaced with the posted parent id
+    } 
+   ```
+* status_code_with_error_list - HTTP 400 with a list of problems
+   ```
+    { 
+        "status": "error", 
+        "errors": [
+            "Text can't be blank",
+            "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
+        ]
+   ```
 
 ### PUT /api/v2/stream/:id
 

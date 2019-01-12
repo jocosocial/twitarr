@@ -10,33 +10,75 @@ class API::V2::StreamController < ApplicationController
     begin
       @post = StreamPost.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status: :not_found, json: {status:'error', error: "Post with id #{params[:id]} is not found."}
+      render status: :not_found, json: {status:'error', error: "Post not found"}
     end
   end
 
   def index
-    posts = nil
-    if want_newest_posts?
-      posts = newest_posts
-    elsif want_older_posts?
-      posts = older_posts
-    elsif want_newer_posts?
-      posts = newer_posts
+    params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
+    if params[:limit] < 1
+      render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0"} and return
     end
-    render json: {status: 'ok'}.merge!(posts) 
+
+    filter_authors = nil
+    if params[:starred]
+      filter_authors = current_user.starred_users.reject { |x| x == current_username }
+    end
+    query = {filter_author: params[:author], filter_authors: filter_authors, filter_hashtag: params[:hashtag], filter_likes: params[:likes], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
+    
+    posts = nil
+    newest = false
+    sort = :desc
+
+    if want_newest_posts?
+      posts = newest_posts(query)
+      newest = true
+    elsif want_older_posts?
+      posts = older_posts(query)
+    elsif want_newer_posts?
+      posts = newer_posts(query)
+      sort = :asc # Change the sort direction so mongo returns the expected posts, instead of the oldest posts.
+    end
+
+    has_next_page = posts.count > params[:limit]
+    posts = posts.limit(0 - params[:limit]).order_by(timestamp: sort) # Limit needs to be negative, otherwise mongo will return additional posts
+
+    posts = posts.map { |x| x } # Execute the query, so that our results are the expected size
+
+    next_page = posts.last.nil? ? 0 : (posts.last.timestamp.to_f * 1000).to_i - 1
+
+    if sort == :asc
+      posts = posts.reverse # Restore sort direction of output to be by time descending - the opposite of what mongo gave us
+      next_page = next_page + 1 # Since we're moving in the opposite direction, undo previous next_page calculation, and add an additional ms 
+    end
+
+    results = {status: 'ok', stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
+
+    # If pulled the newest posts, and newer_posts=true, it means we are getting the newest posts,
+    # and expect the next_page to be posts that are even further in the future.
+    # Since we can't time travel, there are no newer posts, so set expected values for has_next_page and next_page.
+    if newest && params.has_key?(:newer_posts) && params[:newer_posts].to_bool
+      results.merge!({has_next_page: false, next_page: params[:start]+1})
+    end
+    
+    render json: results
   end
 
   def show
     limit = (params[:limit] || PAGE_LENGTH).to_i
     start_loc = (params[:page] || 0).to_i
+    if limit < 1 || start_loc < 0
+      render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0, Page must be greater than or equal to 0"} and return
+    end
     show_options = request_options
     show_options[:remove] = [:parent_chain]
+    has_next_page = StreamPost.where(parent_chain: params[:id]).count > ((start_loc + 1) * limit)
     children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(timestamp: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
     post_result = @post.decorate.to_hash(current_username, request_options)
     if children and children.length > 0
       post_result[:children] = children
     end
-    render json: {status: 'ok', post: post_result}
+    render json: {status: 'ok', post: post_result, has_next_page: has_next_page}
   end
 
   def get
@@ -45,31 +87,41 @@ class API::V2::StreamController < ApplicationController
   end
 
   def view_mention
-    params[:page] = 0 unless params[:page]
-    params[:page] = params[:page].to_i
-    params[:limit] = PAGE_LENGTH unless params[:limit]
-    params[:limit] = params[:limit].to_i
+    params[:mentions_only] = true
+
+    params[:page] = (params[:page] || 0).to_i
+    params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
+    if params[:limit] < 1 || params[:page] < 0
+      render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0, Page must be greater than or equal to 0"} and return
+    end
+
     if params[:after]
       params[:after] = Time.at(params[:after].to_f / 1000)
     end
-    start_loc = params[:page]
-    limit = params[:limit]
+
     query = StreamPost.view_mentions params
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
+    count = query.count
+    has_next_page = count > ((params[:page] + 1) * params[:limit])
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, total_mentions: count, has_next_page: has_next_page}
   end
 
   def view_hash_tag
     query_string = params[:query].downcase
 
-    params[:page] = 0 unless params[:page]
-    params[:page] = params[:page].to_i
-    params[:limit] = PAGE_LENGTH unless params[:limit]
-    params[:limit] = params[:limit].to_i
+    params[:page] = (params[:page] || 0).to_i
+    params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
+    if params[:limit] < 1 || params[:page] < 0
+      render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0, Page must be greater than or equal to 0"} and return
+    end
 
-    start_loc = params[:page]
-    limit = params[:limit]
-    query = StreamPost.where(hash_tags: query_string).order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, next:(start_loc+limit)}
+    if params[:after]
+      params[:after] = Time.at(params[:after].to_f / 1000)
+    end
+
+    query = StreamPost.view_hashtags params
+    count = query.count
+    has_next_page = count > ((params[:page] + 1) * params[:limit])
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, total_mentions: count, has_next_page: has_next_page}
   end
 
   def delete
@@ -88,11 +140,12 @@ class API::V2::StreamController < ApplicationController
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
       unless parent
-        render status: :bad_request, json: {status:'error', error: "Parent post id #{params[:parent]} was not found"}
+        render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"}
         return
       end
       parent_chain = parent.parent_chain + [params[:parent]]
     end
+
     post = StreamPost.create(text: params[:text], author: current_username, timestamp: Time.now, photo: params[:photo],
                              location: params[:location], parent_chain: parent_chain)
     if post.valid?
@@ -146,12 +199,12 @@ class API::V2::StreamController < ApplicationController
   end
 
   def show_likes
-    render json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.decorate.all_likes(current_username, @post.likes) }
   end
 
   def unlike
     @post = @post.remove_like current_username
-    render json: {status: 'ok', likes: @post.likes }
+    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username, @post.likes) }
   end
 
   def react
@@ -187,59 +240,25 @@ class API::V2::StreamController < ApplicationController
     not params.has_key?(:start)
   end
 
-  def newest_posts
+  def newest_posts(query)
     start = (DateTime.now.to_f * 1000).to_i
     params[:start] = start
-    if params.has_key?(:newer_posts)
-      older_posts.merge!({has_next_page: false, next_page: start+1})
-    else
-      older_posts
-    end
+    older_posts(query)
   end
 
   def want_older_posts?
-    params.has_key?(:start) and not params.has_key?(:newer_posts)
+    params.has_key?(:start) and (!params.has_key?(:newer_posts) || !params[:newer_posts].to_bool)
   end
 
-  def older_posts
-    start_loc = params[:start]
-    author = params[:author] || nil
-    filter_hashtag = params[:hashtag] || nil
-    filter_likes = params[:likes] || nil
-    filter_mentions = params[:mentions] || nil
-    mentions_only = !params[:include_author]
-    filter_authors = nil
-    if params[:starred]
-      filter_authors = current_user.starred_users.reject { |x| x == current_username }
-    end
-    limit = params[:limit] || PAGE_LENGTH
-    posts = StreamPost.at_or_before(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :desc)
-    has_next_page = posts.count > limit
-    posts = posts.map { |x| x }
-    next_page = posts.last.nil? ? 0 : (posts.last.timestamp.to_f * 1000).to_i - 1
-    {stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
+  def older_posts(query)
+    posts = StreamPost.at_or_before(params[:start], query)
   end
 
   def want_newer_posts?
-    params.has_key?(:start) and params.has_key?(:newer_posts)
+    params.has_key?(:start) and (params.has_key?(:newer_posts) && params[:newer_posts].to_bool)
   end
 
-  def newer_posts
-    start_loc = params[:start]
-    author = params[:author] || nil
-    filter_hashtag = params[:hashtag] || nil
-    filter_likes = params[:likes] || nil
-    filter_mentions = params[:mentions] || nil
-    mentions_only = !params[:include_author]
-    filter_authors = nil
-    if params[:starred]
-      filter_authors = current_user.starred_users.reject { |x| x == current_username }
-    end
-    limit = params[:limit] || PAGE_LENGTH
-    posts = StreamPost.at_or_after(start_loc, {filter_author: author, filter_authors: filter_authors, filter_hashtag: filter_hashtag, filter_likes: filter_likes, filter_mentions: filter_mentions, mentions_only: mentions_only}).limit(limit).order_by(timestamp: :desc)
-    has_next_page = posts.count > limit
-    posts = posts.map { |x| x }
-    next_page = posts.last.nil? ? 0 : (posts.first.timestamp.to_f * 1000).to_i + 1
-    {stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
+  def newer_posts(query)
+    posts = StreamPost.at_or_after(params[:start], query)
   end  
 end

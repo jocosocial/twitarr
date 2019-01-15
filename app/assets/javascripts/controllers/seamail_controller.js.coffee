@@ -70,7 +70,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
           @get('toUsers').clear()
           @set 'subject', ''
           @set 'text', ''
-          @transitionTo("/seamail/#{response.seamail.id}")
+          @transitionToRoute('seamail.detail', response.seamail.id)
       )
 
     remove: (user) ->

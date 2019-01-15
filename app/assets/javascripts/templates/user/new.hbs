@@ -100,6 +100,13 @@
     {{/if}}
   </div>
   <div style="margin-top: 1em;">
+    {{#if errors.general}}
+        <ul class="alert alert-warning" style="padding-left: 2em;">
+          {{#each error in errors.general}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+    {{/if}}
     <button class="btn btn-primary" type="submit">Create</button>
   </div>
 </form>

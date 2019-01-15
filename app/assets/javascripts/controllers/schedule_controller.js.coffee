@@ -60,18 +60,17 @@ Twitarr.ScheduleEditController = Twitarr.ObjectController.extend
     save: ->
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Event.edit(@get('id'), @get('description'), @get('location'), @get('start_time'), @get('end_time')).then((response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-          return
+      Twitarr.Event.edit(@get('id'), @get('description'), @get('location'), @get('start_time'), @get('end_time')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Event could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
         Ember.run =>
           @get('errors').clear()
           @set 'posting', false
           @transitionToRoute 'schedule.detail', @get('id')
-      , =>
-        @set 'posting', false
-        alert 'Event could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       )
 
 getUsableTimeValue = -> d = new Date(); d.toISOString().replace('Z', '').replace(/:\d{2}\.\d{3}/, '')

@@ -35,6 +35,7 @@ tmp
 *#
 temp/
 .rakeTasks
+.DS_Store
 
 start.sh
 

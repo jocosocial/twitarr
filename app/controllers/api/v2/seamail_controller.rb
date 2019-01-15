@@ -18,11 +18,9 @@ class API::V2::SeamailController < ApplicationController
 
   def index
     extra_query = {}
-    message_prefix = ''
     counting_unread = false
     if params[:unread] && params[:unread].to_bool
       extra_query[:unread] = true
-      message_prefix = 'new '
       counting_unread = true
     end
     if params[:after]
@@ -44,10 +42,10 @@ class API::V2::SeamailController < ApplicationController
       if @exclude_read_messages
         options[:exclude_read_messages] = true
       end
-      mails = mails.map { |x| x.decorate.to_hash(options, message_prefix, current_username).merge!({count_is_unread: counting_unread, is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) }
+      mails = mails.map { |x| x.decorate.to_hash(options, current_username, counting_unread) }
     else
       output = "seamail_meta"
-      mails = mails.map { |x| x.decorate.to_meta_hash(message_prefix).merge!({count_is_unread: counting_unread, is_unread: x.messages.any? { |message| message.read_users.exclude?(current_username) }}) }
+      mails = mails.map { |x| x.decorate.to_meta_hash(current_username, counting_unread) }
     end
 
     render json: {status: 'ok', output => mails, last_checked: ((Time.now.to_f * 1000).to_i + 1)}
@@ -62,7 +60,7 @@ class API::V2::SeamailController < ApplicationController
   end
 
   def show
-    mails = @seamail.decorate.to_hash(request_options).merge!({count_is_unread: false, is_unread: @seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})
+    mails = @seamail.decorate.to_hash(request_options, current_username)
     @seamail.mark_as_read current_username unless params[:skip_mark_read]
     render json: {status: 'ok', seamail: mails}
   end
@@ -70,7 +68,7 @@ class API::V2::SeamailController < ApplicationController
   def create
     seamail = Seamail.create_new_seamail current_username, params[:users], params[:subject], params[:text]
     if seamail.valid?
-      render json: {status: 'ok', seamail_meta: seamail.decorate.to_meta_hash.merge!({is_unread: seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})}
+      render json: {status: 'ok', seamail: seamail.decorate.to_hash(request_options, current_username)}
     else
       render status: :bad_request, json: {status: 'error', errors: seamail.errors.full_messages}
     end
@@ -79,7 +77,7 @@ class API::V2::SeamailController < ApplicationController
   def new_message
     message = @seamail.add_message current_username, params[:text]
     if message.valid?
-      render json: {status: 'ok', seamail_message: message.decorate.to_hash(request_options).merge!({is_unread: @seamail.messages.any? { |message| message.read_users.exclude?(current_username) }})}
+      render json: {status: 'ok', seamail_message: message.decorate.to_hash(request_options, current_username)}
     else
       render status: :bad_request, json: {status: 'error', errors: message.errors.full_messages}
     end
@@ -97,7 +95,7 @@ class API::V2::SeamailController < ApplicationController
     else
       render status: :bad_request, json: {status: 'error', errors: @seamail.errors.full_messages} and return
     end
-    render json: {status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash}
+    render json: {status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(current_username)}
   end
 
 end

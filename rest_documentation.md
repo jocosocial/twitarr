@@ -251,7 +251,7 @@ none
 ```
 {
     "status": "ok",
-    "seamail_meta": SeamailThread{ WITHOUT messages }
+    "seamail": SeamailThread{}
 }
 ```
 

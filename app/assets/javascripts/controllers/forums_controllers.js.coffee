@@ -27,20 +27,20 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Forum.new_post(@get('forum.id'), @get('new_post'), @get('photo_ids')).then (response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-          return
+      Twitarr.Forum.new_post(@get('forum.id'), @get('new_post'), @get('photo_ids')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
         Ember.run =>
           @set 'posting', false
           @set 'new_post', ''
           @get('errors').clear()
           @get('photo_ids').clear()
           @send 'reload'
-      , ->
-        @set 'posting', false
-        alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      )        
     next_page: ->
       return if @get('next_page') is null or undefined
       @transitionToRoute 'forums.detail', @get('next_page')
@@ -71,21 +71,20 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Forum.new_forum(@get('subject'), @get('text'), @get('photo_ids')).then((response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-          return
+      Twitarr.Forum.new_forum(@get('subject'), @get('text'), @get('photo_ids')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Forum could not be added. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
         Ember.run =>
           @set 'posting', false
           @set 'subject', ''
           @set 'text', ''
           @get('errors').clear()
           @get('photo_ids').clear()
-        @transitionToRoute 'forums.page', 0
-      , ->
-        @set 'posting', false
-        alert 'Forum could not be added. Please try again later. Or try again someplace without so many seamonkeys.'
+          @transitionToRoute('forums.detail', response.forum_meta.id, 0)
       )
 
 Twitarr.ForumsPageController = Twitarr.ObjectController.extend

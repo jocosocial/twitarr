@@ -66,11 +66,7 @@ Twitarr.UserNew.reopenClass
     $.getJSON("#{Twitarr.api_path}/text/welcome").then (data) =>
       @create data
 
-  save: (registration_code, new_username, display_name, email, new_password, new_password2, security_question, security_answer) -> 
-    if new_password != new_password2
-      alert "Password and Confirm Password do not match!"
-      return
-
+  save: (registration_code, new_username, display_name, email, new_password, security_question, security_answer) -> 
     post_data = { 
       new_username: new_username,
       display_name: display_name,

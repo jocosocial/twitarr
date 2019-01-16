@@ -9,6 +9,11 @@ Twitarr.UserProfileRoute = Ember.Route.extend
 Twitarr.UserNewRoute = Ember.Route.extend
   model: ->
     Twitarr.UserNew.load()
+  
+  setupController: (controller, model) ->
+    # Clear state when loading this form
+    controller.errors = Ember.A()
+    controller.set('model', model)
 
 Twitarr.UserLoginRoute = Ember.Route.extend
   model: ->

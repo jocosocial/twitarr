@@ -79,7 +79,7 @@ Twitarr.StreamPost.reopenClass
       @create(data.post)
 
   get: (post_id) ->
-    $.getJSON("#{Twitarr.api_path}/tweet/#{post_id}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/tweet/#{post_id}?app=plain").then (data) =>
       data.post.photo = Twitarr.Photo.create(data.post.photo) if data.post and data.post.photo
       data
 

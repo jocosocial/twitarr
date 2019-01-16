@@ -44,6 +44,10 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
 
   actions:
     save: ->
+      if @get('new_password') != @get('new_password2')
+        alert "New Password and Confirm New Password do not match!"
+        return
+
       self = this
       Twitarr.UserNew.save(
         @get('registration_code'),
@@ -51,17 +55,16 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
         @get('display_name'),
         @get('email'), 
         @get('new_password'), 
-        @get('new_password2'), 
         @get('security_question'), 
         @get('security_answer')
-      ).then (response) -> 
-        if response.status is 'ok'
-          self.get('controllers.application').login(response.user)
-          self.transitionToRoute('stream')
-        else if response.errors?
-          self.set 'errors', response.errors
+      ).fail((response) =>
+        if response.responseJSON.errors?
+          self.set('errors', response.responseJSON.errors)
         else
           alert 'Something went wrong. Try again later.'
+      ).then (response) -> 
+        self.get('controllers.application').login(response.user)
+        self.transitionToRoute('stream')
 
 Twitarr.UserLoginController = Twitarr.ObjectController.extend
   error: null
@@ -96,14 +99,15 @@ Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
       self = this
       Twitarr.UserForgotPassword.getSecurityQuestion(
         @get('username'), @get('email')
-      ).fail (response) ->
+      ).fail((response) ->
         self.set 'errors', response.responseJSON.errors
-      .then (response) ->         
+      ).then((response) ->         
         if response.status is 'ok'
           self.set('errors', Ember.A())
           self.set('security_question', response.security_question)
         else
           alert 'Something went wrong. Try again later.'
+      )
 
     user_reset_password: ->
       self = this

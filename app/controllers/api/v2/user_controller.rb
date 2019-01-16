@@ -5,7 +5,7 @@ class API::V2::UserController < ApplicationController
 
   def new
     if logged_in?
-      render json: {errors: ["Already logged in - log out before creating a new account."]}
+      render status: :bad_request, json: {status: "error", errors: { general: ["Already logged in - log out before creating a new account."]}}
       return
     end
     new_username = params[:new_username].downcase unless params[:new_username].blank?
@@ -16,7 +16,7 @@ class API::V2::UserController < ApplicationController
                      security_question: params[:security_question], security_answer: params[:security_answer], registration_code: params[:registration_code]
     
     if !user.valid?
-      render json: {errors: user.errors.messages}
+      render status: :bad_request, json: {status: "error", errors: user.errors.messages}
       return
     else
       user.set_password params[:new_password]
@@ -38,6 +38,8 @@ class API::V2::UserController < ApplicationController
   end
 
   def security_question
+    params[:username] ||= ''
+    params[:email] ||= 'invalid'
     user = User.where(username: params[:username].downcase).first
     if user.nil? or user.email != params[:email].downcase
       render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and email combination not found.']}} and return
@@ -47,6 +49,9 @@ class API::V2::UserController < ApplicationController
   end
 
   def reset_password
+    params[:username] ||= ''
+    params[:email] ||= 'invalid'
+    params[:security_answer] ||= ''
     user = User.where(username: params[:username].downcase).first
     if user.nil? or user.email != params[:email].downcase
       render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and email combination not found.']}} and return

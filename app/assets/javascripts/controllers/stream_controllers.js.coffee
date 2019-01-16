@@ -18,11 +18,13 @@ Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePho
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.StreamPost.reply(@get('id'), @get('reply_text'), @get('photo_id')).then((response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-          return
+      Twitarr.StreamPost.reply(@get('id'), @get('reply_text'), @get('photo_id')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
         Ember.run =>
           @get('errors').clear()
           @set 'posting', false
@@ -30,9 +32,6 @@ Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePho
           @set 'photo_id', null
           [p, ...] = response.stream_post['parent_chain']
           @send 'reload'
-      , =>
-        @set 'posting', false
-        alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       )
 
 Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePhotoUploadMixin,
@@ -55,11 +54,13 @@ Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePho
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.StreamPost.new_post(@get('new_post'), @get('photo_id')).then((response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-          return
+      Twitarr.StreamPost.new_post(@get('new_post'), @get('photo_id')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
         Ember.run =>
           @get('errors').clear()
           @set 'posting', false
@@ -67,9 +68,6 @@ Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePho
           @set 'photo_id', null
           @set 'new_post_visible', false
           @send 'reload'
-      , =>
-        @set 'posting', false
-        alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       )
 
     next_page: ->
@@ -134,18 +132,17 @@ Twitarr.StreamEditController = Twitarr.ObjectController.extend
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.StreamPost.edit(@get('id'), @get('text'), @get('photo_id')).then((response) =>
-        if response.errors?
-          @set 'errors', response.errors
-          @set 'posting', false
-          return
+      Twitarr.StreamPost.edit(@get('id'), @get('text'), @get('photo_id')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
         Ember.run =>
           @get('errors').clear()
           @set 'posting', false
           @transitionToRoute 'stream.view', @get('id')
-      , =>
-        @set 'posting', false
-        alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       )
 
     file_uploaded: (data) ->

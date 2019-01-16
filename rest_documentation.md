@@ -449,9 +449,12 @@ Some notes on `newer_posts` in the input and `next_page` in the output: `next_pa
 #### Error Responses
 * status_code_with_message
   * HTTP 400 if `limit < 1`
-   ```
-    { "status": "error", "error": "Limit must be greater than 0" }
-   ```
+    ```
+    {
+        "status": "error",
+        "error": "Limit must be greater than 0"
+    }
+    ```
 
 ### GET /api/v2/thread/:id
 
@@ -478,9 +481,12 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 #### Error Responses
 * status_code_with_message
   * HTTP 400 if `limit < 1` or `page < 0`
-   ```
-    { "status": "error", "error": "Limit must be greater than 0, Page must be greater than or equal to 0" }
-   ```
+    ```
+    {
+        "status": "error", 
+        "error": "Limit must be greater than 0, Page must be greater than or equal to 0"
+    }
+    ```
 
 ### GET /api/v2/stream/m/:query
 
@@ -511,9 +517,12 @@ View a user's mentions stream. Will include all tweets that tag the user.
 #### Error Responses
 * status_code_with_message
   * HTTP 400 if `limit < 1` or `page < 0`
-   ```
-    { "status": "error", "error": "Limit must be greater than 0, Page must be greater than or equal to 0" }
-   ```
+    ```
+    {
+        "status": "error", 
+        "error": "Limit must be greater than 0, Page must be greater than or equal to 0"
+    }
+    ```
 
 ### GET /api/v2/stream/h/:query
 
@@ -544,89 +553,12 @@ View a hash tag tweet stream
 #### Error Responses
 * status_code_with_message
   * HTTP 400 if `limit < 1` or `page < 0`
-   ```
-    { "status": "error", "error": "Limit must be greater than 0, Page must be greater than or equal to 0" }
-   ```
-   
-### POST /api/v2/tweet/:id/like
-
-Like a post
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameter
-
-#### Returns
-
-Current users who like the post
-
-```
-{
-    "status": "ok",
-    "likes": likes_summary
-}
-```
-
-#### Error Responses
-* status_code_only - HTTP 401 if user is not logged in
-* status_code_with_message
-  * HTTP 404 if tweet with given ID is not found
-   ```
-    { "status": "error", "error": "Post not found" }
-   ```
-
-### DELETE /api/v2/tweet/:id/like
-
-Unlike a post
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameter
-
-#### Returns
-
-Current users who like the post
-
-```
-{
-    "status": "ok",
-    "likes": likes_summary
-}
-```
-
-#### Error Responses
-* status_code_only - HTTP 401 if user is not logged in
-* status_code_with_message
-  * HTTP 404 if tweet with given ID is not found
-   ```
-    { "status": "error", "error": "Post not found" }
-   ```
-
-### GET /api/v2/tweet/:id/like
-
-Get the current likes of a post
-
-#### Requires
-
-#### Returns
-
-Current users who like the post
-
-```
-{
-    "status": "ok",
-    "likes": all_likes
-}
-```
-
-#### Error Responses
-* status_code_with_message
-  * HTTP 404 if tweet with given ID is not found
-   ```
-    { "status": "error", "error": "Post not found" }
-   ```
+    ```
+    {
+        "status": "error", 
+        "error": "Limit must be greater than 0, Page must be greater than or equal to 0"
+    }
+    ```
 
 ### POST /api/v2/stream
 
@@ -664,25 +596,47 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
 * status_code_only - HTTP 401 if user is not logged in
 * status_code_with_message
   * HTTP 400 if tweet with given parent ID is not found
-   ```
-    { 
+    ```
+    {
         "status": "error", 
         "error": "stream_post_id_string  is not a valid parent id" # stream_post_id_string will be replaced with the posted parent id
     } 
-   ```
+    ```
 * status_code_with_error_list - HTTP 400 with a list of problems
-   ```
+  ```
     { 
         "status": "error", 
         "errors": [
             "Text can't be blank",
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
+    }
+  ```
+### GET /api/v2/tweet/:id
+
+Gets a single tweet.
+
+#### Requires
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "stream_post": StreamPost{}
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+   ```
+    { "status": "error", "error": "Post not found" }
    ```
 
-### PUT /api/v2/stream/:id
+### POST /api/v2/tweet/:id
 
-Allows the user to edit the text or photo for this post.  Nothing else is modifyable
+Allows the user to edit the text or photo for this post.  Nothing else is modifyable. A user may only edit their own posts, unless they are an admin.
 
 #### Requires
 
@@ -691,30 +645,286 @@ Allows the user to edit the text or photo for this post.  Nothing else is modify
 
 #### JSON Request Body
 
-    JSON Object {"text": "string", "photo": "photo_id_string"}
+```
+{
+    "text": "Tweet content",
+    "photo": "photo_id_string" # Optional
+}
+```
 
 Both text and photo are optional, however, at least one must be specified.  If one is not specified it will not be changed.
 
-A user may only edit their posts, unless they are an admin.
-
 #### Returns
 
-    JSON StreamPostDetails {...}
+```
+{
+    "status": "ok",
+    "stream_post": StreamPost{}
+}
+```
 
-### DELETE /api/v2/stream/:id
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    { 
+        "status": "error", 
+        "error": "Post not found"
+    }
+    ```
+  * HTTP 403 if the user does not have permission to modify the tweet
+    ```
+    { 
+        "status": "error", 
+        "error": "You can not modify other users' posts" 
+    }
+    ```
+  * HTTP 400 if neither text nor photo is included in the request
+    ```
+    { 
+        "status": "error", 
+        "error": "Update must modify either text or photo, or both." 
+    }
+    ```
+  * status_code_with_error_list - HTTP 400 with a list of problems
+    ```
+    { 
+        "status": "error", 
+        "errors": [
+            "Text can't be blank",
+            "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
+        ]
+    }
+    ```
 
-Allows the user to delete a post
+### DELETE /api/v2/tweet/:id
+
+Allows the user to delete a post. A user may only edit their posts, unless they are an admin.
 
 #### Requires
 
 * logged in.
     * Accepts: key query parameter
 
-A user may only edit their posts, unless they are an admin.
-
 #### Returns
 
 No body.  200-OK
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    { 
+        "status": "error", 
+        "error": "Post not found"
+    }
+    ```
+  * HTTP 403 if the user does not have permission to delete the tweet
+    ```
+    { 
+        "status": "error", 
+        "error": "You can not delete other users' posts" 
+    }
+    ```
+
+### POST /api/v2/tweet/:id/like
+
+Like a post
+
+#### Requires
+
+* logged in.
+    * Accepts: key query parameter
+
+#### Returns
+
+Current users who like the post
+
+```
+{
+    "status": "ok",
+    "likes": likes_summary
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    {
+        "status": "error",
+        "error": "Post not found"
+    }
+    ```
+
+### DELETE /api/v2/tweet/:id/like
+
+Unlike a post
+
+#### Requires
+
+* logged in.
+  * Accepts: key query parameter
+
+#### Returns
+
+Current users who like the post
+
+```
+{
+    "status": "ok",
+    "likes": likes_summary
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    { 
+        "status": "error", 
+        "error": "Post not found" 
+    }
+    ```
+
+### GET /api/v2/tweet/:id/like
+
+Get the current likes of a post
+
+#### Requires
+
+#### Returns
+
+Current users who like the post
+
+```
+{
+    "status": "ok",
+    "likes": all_likes
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    { 
+        "status": "error", 
+        "error": "Post not found"
+    }
+    ```
+
+### POST /api/v2/tweet/:id/react/:type
+
+React to a post. Type must come from the list of valid reaction words.
+
+#### Requires
+
+* logged in.
+    * Accepts: key query parameter
+
+#### Returns
+
+All reactions that have been applied to the post.
+
+```
+{
+    "status": "ok",
+    "reactions": ReactionDetails{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    {
+        "status": "error",
+        "error": "Post not found"
+    }
+    ```
+  * HTTP 400 if `type` is not included
+    ```
+    {
+        "status": "error",
+        "error": "Reaction type must be included."
+    }
+    ```
+  * HTTP 400 if `type` is not a valid reaction word
+    ```
+    {
+        "status": "error",
+        "error": "Invalid reaction: type}" # type will be replaced with the posted type
+    }
+    ```
+
+### DELETE /api/v2/tweet/:id/react/:type
+
+Remove reaction from a post. If `type` is not a valid reaction word, or if it has not been added to the post by the current user, this request will report success without making any modifications to the post.
+
+#### Requires
+
+* logged in.
+  * Accepts: key query parameter
+
+#### Returns
+
+All reactions that have been applied to the post.
+
+```
+{
+    "status": "ok",
+    "reactions": ReactionDetails{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    {
+        "status": "error",
+        "error": "Post not found"
+    }
+    ```
+  * HTTP 400 if `type` is not included
+    ```
+    {
+        "status": "error",
+        "error": "Reaction type must be included."
+    }
+    ```
+
+### GET /api/v2/tweet/:id/react
+
+Get the list of reactions that have been applied to a post
+
+#### Requires
+
+#### Returns
+
+All reactions that have been applied to the post.
+
+```
+{
+    "status": "ok",
+    "reactions": ReactionDetails{}
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if tweet with given ID is not found
+    ```
+    { 
+        "status": "error", 
+        "error": "Post not found"
+    }
+    ```
 
 ## Hashtag information
 

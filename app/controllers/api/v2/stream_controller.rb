@@ -82,7 +82,7 @@ class API::V2::StreamController < ApplicationController
   end
 
   def get
-    result = @post.decorate.to_base_hash()
+    result = @post.decorate.to_hash(current_username, request_options)
     render json: {status: 'ok', post: result}
   end
 
@@ -162,34 +162,24 @@ class API::V2::StreamController < ApplicationController
 
   # noinspection RubyResolve
   def update
-    unless params.has_key?(:text) or params.has_key?(:photo)
-      render status: :bad_request, json: {status:'error', error: 'Update may only modify text or photo.'}
-      return
-    end
-
     unless @post.author == current_username or is_admin?
       render status: :forbidden, json: {status:'error', error: "You can not modify other users' posts"}
       return
     end
-    @post.text = params[:text] if params.has_key? :text
 
-    if params.has_key? :photo
-      if params[:photo].length == 0
-        @post.photo = nil
-      else
-        unless PhotoMetadata.where(id: params[:photo]).exists?
-          render status: :not_acceptable, json: {status:'error', error: "Unable to find photo by id #{params[:photo]}"}
-          return
-        end
-        @post.photo = params[:photo]
-      end
+    unless params.has_key?(:text) or params.has_key?(:photo)
+      render status: :bad_request, json: {status:'error', error: 'Update must modify either text or photo, or both.'}
+      return
     end
-
-    @post.save
+    
+    @post.text = params[:text] if params.has_key? :text
+    @post.photo = params[:photo] if params.has_key? :photo
+    
     if @post.valid?
+      @post.save
       render json: {status: 'ok', stream_post: @post.decorate.to_hash(current_username, request_options)}
     else
-      render json: {status: 'error', errors: @post.errors.full_messages}
+      render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages}
     end
   end
 

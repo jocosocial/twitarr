@@ -186,24 +186,25 @@ class User
 
     aggregation = Array.new
     aggregation.push({"$match" => threadQuery})
+    aggregation.push({"$unwind" => "$sm"})
 
     if postQuery.length > 0
-      aggregation.push({"$unwind" => "$sm"})
       aggregation.push({"$match" => postQuery})
-      aggregation.push({"$sort" => { "sm.ts" => -1 }})
-      aggregation.push({
-        "$group" => {
-          "_id" => "$_id",
-          "deleted_at" => { "$first" => "$deleted_at" },
-          "us" => { "$first" => "$us" },
-          "sj" => { "$first" => "$sj" },
-          "up" => { "$first" => "$up" },
-          "updated_at" => { "$first" => "$updated_at" },
-          "created_at" => { "$first" => "$created_at" },
-          "sm" => { "$push" => "$sm" }
-        }
-      })
     end
+
+    aggregation.push({"$sort" => { "sm.ts" => -1 }})
+    aggregation.push({
+      "$group" => {
+        "_id" => "$_id",
+        "deleted_at" => { "$first" => "$deleted_at" },
+        "us" => { "$first" => "$us" },
+        "sj" => { "$first" => "$sj" },
+        "up" => { "$first" => "$up" },
+        "updated_at" => { "$first" => "$updated_at" },
+        "created_at" => { "$first" => "$created_at" },
+        "sm" => { "$push" => "$sm" }
+      }
+    })
 
     result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
 

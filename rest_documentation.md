@@ -144,7 +144,7 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 #### Query parameters
 
 * unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
-* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
+* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail threads that have been updated after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 
 #### Returns
@@ -178,8 +178,8 @@ Note that sending both unread=true&exclude_read_messages=true will operate ident
 
 * unread=true - Optional (Default: false) - If this parameter is included, only return threads with unread seamail, and only include unread messages in each thread.
 * exclude_read_messages=true - Optional (Default: false) - If this parameter is included, return all threads, but only include unread messages in each thread.
-* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail after this point in time.
-  * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
+* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail threads and messages after this point in time.
+  * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads and messages created since your last call. Useful if you are polling and storing the results client-side.
 
 #### Returns
 

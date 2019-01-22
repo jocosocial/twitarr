@@ -176,41 +176,37 @@ class User
   end
 
   def seamails(params = {})
-    result = {}
-    if params.has_key?(:unread)
-      query = { "us" => username }
-      query["up"] = { "$gte" => params[:after]} if params.has_key?(:after)
-      result = Seamail.collection.aggregate([
-        {
-          "$match" => query
-        },
-        {
-          "$unwind" => "$sm"
-        },
-        {
-          "$match" => { "sm.rd" => {"$ne" => username } }
-        },
-        {
-          "$sort" => { "sm.ts" => -1 }
-        },
-        {
-          "$group" => {
-            "_id" => "$_id",
-            "deleted_at" => { "$first" => "$deleted_at" },
-            "us" => { "$first" => "$us" },
-            "sj" => { "$first" => "$sj" },
-            "up" => { "$first" => "$up" },
-            "updated_at" => { "$first" => "$updated_at" },
-            "created_at" => { "$first" => "$created_at" },
-            "sm" => { "$push" => "$sm" }
-          }
+    threadQuery = Hash.new
+    threadQuery["us"] = username
+    threadQuery["up"] = { "$gt" => params[:after]} if params.has_key?(:after)
+
+    postQuery = Hash.new
+    postQuery["sm.rd"] = {"$ne" => username } if params.has_key?(:unread)
+    postQuery["sm.ts"] = {"$gt" => params[:after]} if params.has_key?(:after)
+
+    aggregation = Array.new
+    aggregation.push({"$match" => threadQuery})
+
+    if postQuery.length > 0
+      aggregation.push({"$unwind" => "$sm"})
+      aggregation.push({"$match" => postQuery})
+      aggregation.push({"$sort" => { "sm.ts" => -1 }})
+      aggregation.push({
+        "$group" => {
+          "_id" => "$_id",
+          "deleted_at" => { "$first" => "$deleted_at" },
+          "us" => { "$first" => "$us" },
+          "sj" => { "$first" => "$sj" },
+          "up" => { "$first" => "$up" },
+          "updated_at" => { "$first" => "$updated_at" },
+          "created_at" => { "$first" => "$created_at" },
+          "sm" => { "$push" => "$sm" }
         }
-      ]).map { |x| Seamail.new(x) { |o| o.new_record = false } }
-    else
-      query = {usernames: username}
-      query[:last_update.gte] = params[:after] if params.has_key?(:after)
-      result = Seamail.where(query)
+      })
     end
+
+    result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
+
     result.sort_by { |x| x.last_message }.reverse
   end
 

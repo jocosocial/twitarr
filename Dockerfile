@@ -2,7 +2,9 @@ FROM jruby:9
 
 COPY Gemfile* /tmp/
 WORKDIR /tmp
-RUN bundle install
+
+# we're not compatible with bundler 2, so force 1.17.2
+RUN gem install bundler:1.17.2 && bundle _1.17.2_ install
 # todo - this warn against running as root, should we make an app user?
 
 ENV app /srv/app

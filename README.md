@@ -90,7 +90,13 @@ Since I like to keep my database just for this project, when I execute the mongo
 This will create the mongo database within this project's temp directory.  The temp directory is also explictly ignored in the `.gitignore` file, so you don't have to worry about checking it in.
 
 ### Project setup
-First you will need to run:
+We're not currently compatible with bundler 2. So, you will need to make sure you're using bundler 1.17.2:
+
+```
+  $ gem install bundler:1.17.2
+```
+
+Then you will need to run:
 
 ```
   $ bundle install

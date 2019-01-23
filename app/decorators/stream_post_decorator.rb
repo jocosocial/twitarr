@@ -59,14 +59,14 @@ class StreamPostDecorator < BaseDecorator
   #   result
   # end
 
-  def to_base_hash
-    result = {
-        id: as_str(id),
-        text: clean_text(text),
-    }
-    unless photo.blank?
-      result[:photo_id] = photo
-    end
-    result
-  end
+  # def to_base_hash
+  #   result = {
+  #       id: as_str(id),
+  #       text: clean_text(text),
+  #   }
+  #   unless photo.blank?
+  #     result[:photo_id] = photo
+  #   end
+  #   result
+  # end
 end

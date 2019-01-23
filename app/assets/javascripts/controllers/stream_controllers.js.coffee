@@ -118,7 +118,7 @@ Twitarr.StreamEditController = Twitarr.ObjectController.extend
   errors: Ember.A()
 
   photos: (->
-    photo_id = @get('photo_id')
+    photo_id = @get('photo.id')
     if photo_id
       [ Twitarr.Photo.create { id: photo_id } ]
     else
@@ -148,8 +148,10 @@ Twitarr.StreamEditController = Twitarr.ObjectController.extend
     file_uploaded: (data) ->
       if data.files[0]?.photo
         @set('photo_id', data.files[0].photo)
+        @set('photo', Twitarr.Photo.create {id: data.files[0].photo})
       else
         alert "Error: " + data.files[0]?.status
 
     remove_photo: ->
       @set 'photo_id', null
+      @set 'photo', null

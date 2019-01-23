@@ -2,14 +2,14 @@ Twitarr.SearchRoute = Ember.Route.extend
   actions:
     search: (text) ->
       if !!text
-        @transitionTo('search.results', encodeURIComponent(text))
+        @transitionTo('search.results', text)
 
   setupController: (controller) ->
     controller.set('text', '')
 
 Twitarr.SearchResultsRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/all/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/all/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -25,7 +25,7 @@ Twitarr.SearchUserResultsRoute = Ember.Route.extend
         @transitionTo('search.user_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/users/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/users/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -42,7 +42,7 @@ Twitarr.SearchTweetResultsRoute = Ember.Route.extend
         @transitionTo('search.tweet_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/tweets/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/tweets/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -59,7 +59,7 @@ Twitarr.SearchForumResultsRoute = Ember.Route.extend
         @transitionTo('search.forum_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/forums/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/forums/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'
@@ -76,7 +76,7 @@ Twitarr.SearchEventResultsRoute = Ember.Route.extend
         @transitionTo('search.event_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/events/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/search/events/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
     if model.status is 'ok'

@@ -4,19 +4,19 @@ class API::V2::SearchController < ApplicationController
   # noinspection RailsParamDefResolve
   skip_before_action :verify_authenticity_token
 
-  DETAILED_SEARCH_MAX = 50
+  DETAILED_SEARCH_MAX = 20
 
   def all
     return unless params_valid?(params)
     params[:current_username] = current_username
     render json: {
       status: 'ok',
-      query: params[:text],
+      query: params[:query],
       users: do_search(params, User) { |e| e.decorate.gui_hash },
-      seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash },
+      seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
       tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_username, request_options) },
-      forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash },
-      events: do_search(params, Event) { |e| e.decorate.to_hash }      
+      forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash(current_user) },
+      events: do_search(params, Event) { |e| e.decorate.to_hash(current_username) }
     }
   end
 
@@ -25,8 +25,18 @@ class API::V2::SearchController < ApplicationController
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
-      query: params[:text],
+      query: params[:query],
       users: do_search(params, User) { |e| e.decorate.gui_hash }
+    }
+  end
+
+  def seamails
+    return unless params_valid?(params)
+    params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
+    render json: { 
+      status: 'ok',
+      query: params[:query],
+      seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
     }
   end
 
@@ -35,7 +45,7 @@ class API::V2::SearchController < ApplicationController
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
-      query: params[:text],
+      query: params[:query],
       tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_username, request_options) }
     }
   end
@@ -45,8 +55,8 @@ class API::V2::SearchController < ApplicationController
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
-      query: params[:text],
-      forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash }
+      query: params[:query],
+      forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash(current_user) }
     }
   end
 
@@ -55,8 +65,8 @@ class API::V2::SearchController < ApplicationController
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: { 
       status: 'ok',
-      query: params[:text],
-      events: do_search(params, Event) { |e| e.decorate.to_hash }
+      query: params[:query],
+      events: do_search(params, Event) { |e| e.decorate.to_hash(current_username) }
     }
   end
 
@@ -68,10 +78,24 @@ class API::V2::SearchController < ApplicationController
   end
 
   def params_valid?(params)
-    unless params[:text]
-      render status: :bad_request, json: {error: 'Required parameter \'text\' not set.'}
+    errors = []
+    unless params[:query]
+      errors.push 'Required parameter \'query\' not set.'
+    end
+
+    if !params[:limit].nil? && params[:limit].to_i < 1 
+      errors.push "Limit must be greater than 0."
+    end
+
+    if !params[:page].nil? && params[:page].to_i < 0
+      errors.push "Page must be greater than or equal to 0."
+    end
+
+    if errors.count > 0
+      render status: :bad_request, json: {status: 'error', errors: errors}
       return false
     end
     return true
   end
+  
 end

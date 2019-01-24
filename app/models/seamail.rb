@@ -77,7 +77,7 @@ class Seamail
   end
 
   def self.search(params = {})
-    search_text = params[:text].strip.downcase.gsub(/[^\w&\s@-]/, '')
+    search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
     current_username = params[:current_username]
     criteria = Seamail.where(usernames: current_username).or({ usernames: /^#{search_text}.*/ },
                                                               { '$text' => { '$search' => "\"#{search_text}\"" } })

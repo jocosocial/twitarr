@@ -6,22 +6,22 @@ class PhotoStore
   include Singleton
 
   SMALL_PROFILE_PHOTO_SIZE = 200
-  LARGE_PROFILE_PHOTO_SIZE = 1000
-  SMALL_IMAGE_SIZE = 500
-  MEDIUM_IMAGE_SIZE = 1600
+  SMALL_IMAGE_SIZE = 200
+  MEDIUM_IMAGE_SIZE = 800
 
   def upload(temp_file, uploader)
+    return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
-    return { status: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
+    return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
     existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash).first
-    return { status: 'File has already been uploaded.', photo: existing_photo.id.to_s } unless existing_photo.nil?
+    return { status: 'ok', photo: existing_photo.id.to_s } unless existing_photo.nil?
     begin
       img = read_image(temp_file)
     rescue Java::JavaLang::NullPointerException
       # yeah, ImageMagick throws a NPE if the photo isn't a photo
-      return { status: 'Photo could not be opened - is it an image?' }
+      return { status: 'error', error: 'Photo could not be opened - is it an image?' }
     end
-    return { status: 'File exceeds maximum file size of 10MB' } if temp_file.tempfile.size >= 10000000 # 10MB
+    return { status: 'error', error: 'File exceeds maximum file size of 10MB' } if temp_file.tempfile.size >= 10000000 # 10MB
     photo = store(temp_file, uploader)
     img.resize_to_fit(MEDIUM_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
     FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", md_thumb_path(photo.store_filename)
@@ -30,7 +30,7 @@ class PhotoStore
     photo.save
     { status: 'ok', photo: photo.id.to_s }
   rescue EXIFR::MalformedJPEG
-    { status: 'Photo extension is jpg but could not be opened as jpeg.' }
+    { status: 'error', error: 'Photo extension is jpg but could not be opened as jpeg.' }
   end
 
   def read_image(temp_file)
@@ -53,7 +53,7 @@ class PhotoStore
       return { status: 'Photo could not be opened - is it an image?' }
     end
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
-    img.resize_to_fit(LARGE_PROFILE_PHOTO_SIZE).write tmp_store_path
+    img.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.small_profile_path(username)
@@ -63,7 +63,7 @@ class PhotoStore
   def reset_profile_photo(username)
     identicon = Identicon.create(username)
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
-    identicon.resize_to_fit(LARGE_PROFILE_PHOTO_SIZE).write tmp_store_path
+    identicon.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     identicon.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
     small_profile_path = PhotoStore.instance.small_profile_path(username)

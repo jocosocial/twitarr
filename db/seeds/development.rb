@@ -16,32 +16,28 @@ end
 unless User.exist? 'kvort'
   puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
-                  is_admin: true, status: User::ACTIVE_STATUS, email: 'kvort@rylath.net',
-                  security_question: 'none', security_answer: 'none', registration_code: 'code1'
+                  is_admin: true, status: User::ACTIVE_STATUS, email: 'kvort@rylath.net', registration_code: 'code1'
   user.set_password 'kvort'
   user.save
 end
 unless User.exist? 'james'
   puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
-                  is_admin: false, status: User::ACTIVE_STATUS, email: 'james@james.com',
-                  security_question: 'none', security_answer: 'none', registration_code: 'code2'
+                  is_admin: false, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code2'
   user.set_password 'james'
   user.save
 end
 unless User.exist? 'steve'
   puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
-                  is_admin: false, status: User::ACTIVE_STATUS, email: 'james@james.com',
-                  security_question: 'none', security_answer: 'none', registration_code: 'code3'
+                  is_admin: false, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code3'
   user.set_password 'steve'
   user.save
 end
 unless User.exist? 'admin'
   puts 'Creating user admin'
   user = User.new username: 'admin', display_name: 'admin', password: 'admin1',
-                  is_admin: true, status: User::ACTIVE_STATUS, email: 'admin@james.com',
-                  security_question: 'none', security_answer: 'none', registration_code: 'code4'
+                  is_admin: true, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code4'
   user.set_password 'admin'
   user.save
 end
@@ -214,6 +210,7 @@ def create_reaction(tag)
 end
 Reaction.delete_all
 if Reaction.count == 0
+  create_reaction 'like'
   create_reaction 'funny'
   create_reaction 'helpful'
   create_reaction 'insightful'

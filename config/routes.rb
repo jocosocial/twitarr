@@ -164,6 +164,7 @@ Twitarr::Application.routes.draw do
 
       get 'text/:filename', to: 'text#index'
       get 'time', to: 'text#time'
+      get 'reactions', to: 'text#reactions'
 
       resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
       get 'photo/small_thumb/:id', to: 'photo#small_thumb'

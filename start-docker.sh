@@ -16,4 +16,4 @@ rake db:mongoid:create_indexes
 rake db:seed
 
 # bind to all interfaces (this exposes ports out to docker)
-rails server -b 0.0.0.0
+exec rails server -b 0.0.0.0

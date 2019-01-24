@@ -926,20 +926,53 @@ All reactions that have been applied to the post.
     }
     ```
 
-## Hashtag information
 
-Get some metainformation about hashtags
+## Hashtag Information
 
-### GET hashtag/ac/:query
+### GET /api/v2/hashtag/ac/:query
 
-Get auto completion list for hashtags.  Query string must be greater than 3, and not include the '#' symbol
+Get auto completion list for hashtags.  Query string length must be at least 3, # symbol is optional - it will be ignored and does not count toward query length.
 
 #### Returns
 
-    {
-    "values": [ "word_character_string"]
-    }
+```
+{
+    "values": ["hashtag_string", ...]
+}
+```
 
+#### Error Responses
+* status_code_with_message
+  * HTTP 400 if query length is less than 3
+    ```
+    { 
+        "status": "error", 
+        "error": "Minimum length is 3"
+    }
+    ```
+
+### GET api/v2/hashtag/repopulate
+
+Completely rebuilds the table of hashtags. This is extremely expensive. Only admins can use this endpoint.
+
+#### Requires
+
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "values": ["hashtag_string", ...]
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
+
+
+## Search information
 
 ### GET /api/v2/search?text=:query
 

@@ -33,12 +33,12 @@ class BaseDecorator < Draper::Decorator
 
   def twitarr_auto_linker(text, options = {})
     if options[:app] == 'CM'
-      cm_auto_link text, options
+      cm_auto_link text
     elsif options[:app] == 'plain'
       # plain wants us to not do any markup
       text
     else
-      auto_link text
+      auto_link text, {username_url_base: "#/user/profile/"}
     end
   end
 

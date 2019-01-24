@@ -12,7 +12,7 @@ class UserDecorator < Draper::Decorator
   end
 
   def gui_hash
-    return_attribute_hash %w(username is_admin display_name last_photo_updated)
+    return_attribute_hash %w(username display_name last_photo_updated)
   end
   
   def admin_hash

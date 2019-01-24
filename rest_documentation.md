@@ -926,59 +926,289 @@ All reactions that have been applied to the post.
     }
     ```
 
-## Hashtag information
 
-Get some metainformation about hashtags
+## Hashtag Information
 
-### GET hashtag/ac/:query
+### GET /api/v2/hashtag/ac/:query
 
-Get auto completion list for hashtags.  Query string must be greater than 3, and not include the '#' symbol
+Get auto completion list for hashtags.  Query string length must be at least 3, # symbol is optional - it will be ignored and does not count toward query length.
 
 #### Returns
 
-    {
-    "values": [ "word_character_string"]
+```
+{
+    "values": ["hashtag_string", ...]
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 400 if query length is less than 3
+    ```
+    { 
+        "status": "error", 
+        "error": "Minimum length is 3"
     }
+    ```
+
+### GET api/v2/hashtag/repopulate
+
+Completely rebuilds the table of hashtags. This is extremely expensive. Only admins can use this endpoint.
+
+#### Requires
+
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "values": ["hashtag_string", ...]
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
 
 
-### GET /api/v2/search?text=:query
+## Search information
 
-Perform a search against the database for results.  Will search for Stream and Forum Posts, usernames, and seamail
+### GET /api/v2/search/all/:query
+
+Perform a search against the database for results. Will search for users, seamails, stream posts, forum posts, and events.
 
 #### Query params
 
-* limit - The amount of objects per type returned
-* page - The starting offset for objects being displayed (per type) returned
-*
+* limit (optional) - The amount of objects per type returned, default 5
+* page (optional) - The starting offset for objects being displayed (per type) returned, default 0
 
 #### Returns
 
-    JSON Object {
-        "status": "ok",
-        "stream_posts": {
-        "matches": [ StreamPost ,... ],
-        "count": Integer:Count of matches,
-        "more": boolean:True if more results than display is found
-        },
-        "forum_posts": {
-        "matches": [ ForumPostMeta ,... ],
-        "count": Integer:Count of matches,
-        "more": boolean:True if more results than display is found
-        },
-        "users": {
-        "matches": [ UserMeta, ... ],
-        "count": Integer:Count of matches,
-        "more": boolean:True if more results than display is found
-        },
-        "seamails": {
-        "matches": [ SeamailMetaInfo, ... ],
-        "count": Integer:Count of matches,
-        "more": boolean:True if more results than display is found
-        },
-        "query": {
-        "text": "used text query" (this may be modified from what is passed in, if required)
-        }
+```
+{
+    "status": "ok",
+    "query": {
+        "text": "query_string" # This may have been modified from what was passed in. The value here is what was actually searched.
+    },
+    "users": {
+        "matches": [ UserInfo{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    },
+    "seamails": {
+        "matches": [ SeamailThread{WITHOUT messages}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    },
+    "tweets": {
+        "matches": [ StreamPost{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    },
+    "forums": {
+        "matches": [ ForumThreadMeta{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    },
+    "events": {
+        "matches": [ Event{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
     }
+}
+```
+
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Required parameter 'query' not set.",
+            "Limit must be greater than 0.",
+            "Page must be greater than or equal to 0."
+        ]
+    }
+  ```
+
+### GET /api/v2/search/users/:query
+
+Perform a username search against the database for results.
+
+#### Query params
+
+* limit (optional) - The amount of objects per type returned, default 20
+* page (optional) - The starting offset for objects being displayed (per type) returned, default 0
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "query": {
+        "text": "query_string" # This may have been modified from what was passed in. The value here is what was actually searched.
+    },
+    "users": {
+        "matches": [ UserInfo{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    }
+}
+```
+
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Required parameter 'query' not set.",
+            "Limit must be greater than 0.",
+            "Page must be greater than or equal to 0."
+        ]
+    }
+  ```
+
+### GET /api/v2/search/seamails/:query
+
+Perform a seamail search against the database for results.
+
+#### Query params
+
+* limit (optional) - The amount of objects per type returned, default 5
+* page (optional) - The starting offset for objects being displayed (per type) returned, default 0
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "query": {
+        "text": "query_string" # This may have been modified from what was passed in. The value here is what was actually searched.
+    },
+    "seamails": {
+        "matches": [ SeamailThread{WITHOUT messages}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    }
+}
+```
+
+### GET /api/v2/search/tweets/:query
+
+Perform a stream post search against the database for results.
+
+#### Query params
+
+* limit (optional) - The amount of objects per type returned, default 20
+* page (optional) - The starting offset for objects being displayed (per type) returned, default 0
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "query": {
+        "text": "query_string" # This may have been modified from what was passed in. The value here is what was actually searched.
+    },
+    "tweets": {
+        "matches": [ StreamPost{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    }
+}
+```
+
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Required parameter 'query' not set.",
+            "Limit must be greater than 0.",
+            "Page must be greater than or equal to 0."
+        ]
+    }
+  ```
+
+### GET /api/v2/search/forums/:query
+
+Perform a forum post search against the database for results.
+
+#### Query params
+
+* limit (optional) - The amount of objects per type returned, default 20
+* page (optional) - The starting offset for objects being displayed (per type) returned, default 0
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "query": {
+        "text": "query_string" # This may have been modified from what was passed in. The value here is what was actually searched.
+    },
+    "forums": {
+        "matches": [ ForumThreadMeta{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    }
+}
+```
+
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Required parameter 'query' not set.",
+            "Limit must be greater than 0.",
+            "Page must be greater than or equal to 0."
+        ]
+    }
+  ```
+
+### GET /api/v2/search/events/:query
+
+Perform an events search against the database for results.
+
+#### Query params
+
+* limit (optional) - The amount of objects per type returned, default 5
+* page (optional) - The starting offset for objects being displayed (per type) returned, default 0
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "query": {
+        "text": "query_string" # This may have been modified from what was passed in. The value here is what was actually searched.
+    },
+    "events": {
+        "matches": [ Event{}, ... ],
+        "count": integer, # Count of matches
+        "more": boolean # True if there are more pages of results
+    },
+}
+```
+
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Required parameter 'query' not set.",
+            "Limit must be greater than 0.",
+            "Page must be greater than or equal to 0."
+        ]
+    }
+  ```
+
 
 ## User information
 
@@ -1045,7 +1275,7 @@ Get/post new threads and posts to those threads
 
 ### Forum Specific types
 
-    JSON ForumMeta {
+    JSON ForumThreadMeta {
         "id": "id_string",
         "last_post_display_name": "display_name_string",
         "last_post_page": Integer,
@@ -1055,7 +1285,7 @@ Get/post new threads and posts to those threads
         "timestamp": "ISO_8601_DATETIME"
     }
 
-    JSON Forum {
+    JSON ForumThread {
         "id": "id_string",
         "latest_read": "ISO_8601_DATETIME", // Last time the user read the thread
         "subject": "subject_string",
@@ -1064,7 +1294,7 @@ Get/post new threads and posts to those threads
         "posts": Array[PostMeta {...}, ...]
     }
 
-    JSON PostMeta {
+    JSON ForumPost {
         "id": "id_string",
         "forum_id": "forum_id_string",
         "author": "author_string",
@@ -1089,7 +1319,7 @@ Returns the index of all threads. Can be paginated or mass list.
 #### Returns
 
     JSON Object {
-        "forums_meta": Array[ ForumMeta {...}, ... ],
+        "forums_meta": Array[ ForumThreadMeta {...}, ... ],
         "next_page": Integer,
         "prev_page": Integer
     }
@@ -1125,7 +1355,7 @@ Returns a thread and it's contained posts.
 #### Returns
   
     JSON Object {
-        "forum": ForumMeta {...}
+        "forum": ForumThreadMeta {...}
     }
 
 ### POST /api/v2/forums/thread/:id
@@ -1186,7 +1416,7 @@ Get/post information on events.
 
 ### Stream specific types
 
-    JSON EventMeta {
+    JSON Event {
         "id": "id_string",
         "author": "username_string",
         "display_name": "displayname_string",
@@ -1212,7 +1442,7 @@ Get/post information on events.
 #### Returns
 
     JSON Object { "total_count": 5,
-                  "events": Array[ EventMeta {...}, ... ],
+                  "events": Array[ Event {...}, ... ],
                 }
 
 
@@ -1241,7 +1471,7 @@ Posts an event.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}
 
 
 ### GET /api/v2/event/:id
@@ -1254,7 +1484,7 @@ Get details of an event.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}
 
 
 ### DELETE /api/v2/event/:id
@@ -1297,7 +1527,7 @@ A user may only edit their events, unless they are an admin.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}
 
 
 ### POST /api/v2/event/:id/signup
@@ -1313,7 +1543,7 @@ Allows the user to signup to an event.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}
 
 ### DELETE /api/v2/event/:id/signup
 
@@ -1328,7 +1558,7 @@ Allows the user to remove their signup from an event.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}
 
 ### POST /api/v2/event/:id/favorite
 
@@ -1343,7 +1573,7 @@ Allows the user to favorite an event.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}
 
 ### DELETE /api/v2/event/:id/favorite
 
@@ -1358,4 +1588,4 @@ Allows the user to remove their favorite from an event.
 
 #### Returns
 
-    JSON EventMeta {...}
+    JSON Event {...}

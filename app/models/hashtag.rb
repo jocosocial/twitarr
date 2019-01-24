@@ -20,11 +20,6 @@ class Hashtag
   end
 
   def self.auto_complete(prefix)
-    unless prefix and prefix.size >= MIN_AUTO_COMPLETE_LEN
-      puts "#{prefix} is not large enough"
-      return nil
-    end
-    prefix = prefix[1..-1] if prefix[0] == '#'
     prefix = prefix.downcase
     Hashtag.where(name: /^#{prefix}/).asc(:name).limit(LIMIT)
   end
@@ -32,6 +27,9 @@ class Hashtag
   # this is probably not going to be a fast operation
   def self.repopulate_hashtags
     StreamPost.distinct(:hash_tags).each do |ht|
+      Hashtag.add_tag ht
+    end
+    ForumPost.distinct(:hash_tags).each do |ht|
       Hashtag.add_tag ht
     end
   end

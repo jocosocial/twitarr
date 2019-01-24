@@ -18,5 +18,5 @@ class API::V2::TextController < ApplicationController
 
 	def announcements
 		render json: {announcements: Announcement.valid_announcements.map { |x| x.decorate.to_hash }}
- end
+ 	end
 end

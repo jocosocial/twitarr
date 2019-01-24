@@ -12,8 +12,7 @@ class API::V2::UserController < ApplicationController
     display_name = params[:display_name] 
     display_name = params[:new_username] if params[:display_name].blank?
     user = User.new username: new_username, display_name: display_name, password: params[:new_password],
-                     is_admin: false, status: User::ACTIVE_STATUS, email: params[:email],
-                     security_question: params[:security_question], security_answer: params[:security_answer], registration_code: params[:registration_code]
+                     is_admin: false, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
     
     if !user.valid?
       render status: :bad_request, json: {status: "error", errors: user.errors.messages}
@@ -37,28 +36,13 @@ class API::V2::UserController < ApplicationController
     end
   end
 
-  def security_question
-    params[:username] ||= ''
-    params[:email] ||= 'invalid'
-    user = User.where(username: params[:username].downcase).first
-    if user.nil? or user.email != params[:email].downcase
-      render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and email combination not found.']}} and return
-    else
-      render json: {:status => 'ok', security_question: user.security_question }
-    end
-  end
-
   def reset_password
     params[:username] ||= ''
-    params[:email] ||= 'invalid'
-    params[:security_answer] ||= ''
+    params[:registration_code] ||= ''
     user = User.where(username: params[:username].downcase).first
-    if user.nil? or user.email != params[:email].downcase
-      render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and email combination not found.']}} and return
-    end
-    if params[:security_answer].downcase.strip != user.security_answer.downcase
+    if user.nil? or user.registration_code != params[:registration_code].downcase
       sleep 10.seconds.to_i
-      render status: :bad_request, json: { :status => 'error', errors: {security_answer: ['Security answer did not match.']}} and return
+      render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and registration code combination not found.']}} and return
     end
 
     # Check validity of new password

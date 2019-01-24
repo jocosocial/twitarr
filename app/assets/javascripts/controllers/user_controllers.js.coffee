@@ -53,10 +53,7 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
         @get('registration_code'),
         @get('new_username'),
         @get('display_name'),
-        @get('email'), 
-        @get('new_password'), 
-        @get('security_question'), 
-        @get('security_answer')
+        @get('new_password')
       ).fail((response) =>
         if response.responseJSON.errors?
           self.set('errors', response.responseJSON.errors)
@@ -95,20 +92,6 @@ Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
   loading: false
 
   actions:
-    user_forgot_password: ->
-      self = this
-      Twitarr.UserForgotPassword.getSecurityQuestion(
-        @get('username'), @get('email')
-      ).fail((response) ->
-        self.set 'errors', response.responseJSON.errors
-      ).then((response) ->         
-        if response.status is 'ok'
-          self.set('errors', Ember.A())
-          self.set('security_question', response.security_question)
-        else
-          alert 'Something went wrong. Try again later.'
-      )
-
     user_reset_password: ->
       self = this
 
@@ -118,7 +101,7 @@ Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
 
       @set('loading', true)
       Twitarr.UserForgotPassword.resetPassword(
-        @get('username'), @get('email'), @get('security_answer'), @get('new_password')
+        @get('username'), @get('registration_code'), @get('new_password')
       ).fail (response) ->
         self.set('loading', false)
         self.set 'errors', response.responseJSON.errors

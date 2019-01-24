@@ -66,14 +66,11 @@ Twitarr.UserNew.reopenClass
     $.getJSON("#{Twitarr.api_path}/text/welcome").then (data) =>
       @create data
 
-  save: (registration_code, new_username, display_name, email, new_password, security_question, security_answer) -> 
+  save: (registration_code, new_username, display_name, new_password) -> 
     post_data = { 
       new_username: new_username,
       display_name: display_name,
-      email: email, 
       new_password: new_password,
-      security_question: security_question, 
-      security_answer: security_answer,
       registration_code: registration_code
     }
 
@@ -94,26 +91,15 @@ Twitarr.UserLogin.reopenClass
 
 Twitarr.UserForgotPassword = Ember.Object.extend
   username: null
-  email: null
-  security_question: null
-  security_answer: null
+  registration_code: null
   new_password: null
   confirm_password: null
 
 Twitarr.UserForgotPassword.reopenClass
-  getSecurityQuestion: (username, email) ->
+  resetPassword: (username, registration_code, new_password) ->
     post_data = {
       username: username,
-      email: email
-    }
-
-    return $.post("#{Twitarr.api_path}/user/security_question", post_data)
-
-  resetPassword: (username, email, security_answer, new_password) ->
-    post_data = {
-      username: username,
-      email: email,
-      security_answer: security_answer,
+      registration_code: registration_code,
       new_password: new_password
     }
 

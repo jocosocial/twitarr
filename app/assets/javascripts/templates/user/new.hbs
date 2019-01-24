@@ -36,17 +36,6 @@
         </ul>
     {{/if}}
   </div>
-  <div class="form-group">
-    <label for="email">Email - only visible to administrators, unless you make it public.</label>
-    {{input class="input" value=email name="email"}}
-    {{#if errors.email}}
-        <ul class="alert alert-warning" style="padding-left: 2em;">
-          {{#each error in errors.email}}
-            <li>{{error}}</li>
-          {{/each}}
-        </ul>
-    {{/if}}
-  </div>
   <div style="margin-top: 1em;">
     <p>
       Due to technical restrictions, the security available on the ship is akin to
@@ -54,10 +43,10 @@
       At least, it is to anyone skilled and motivated to do such things.
     </p>
     <h4>
-      DO NOT USE the same password or security question/answer that you have used for ANYTHING ELSE.
+      DO NOT USE the same password that you have used for ANYTHING ELSE.
     </h4>
 
-    <p>Really not kidding here. Please don't do it. If you do, you are risking the security of any account that uses the same password or security reset information.</p>
+    <p>Really not kidding here. Please don't do it. If you do, you are risking the security of any account that uses the same password.</p>
   </div>
   <div class="form-group">
     <label for="new_password">Password</label>
@@ -73,31 +62,6 @@
   <div class="form-group">
     <label for="new_password2">Confirm Password</label>
     {{input type="password" value=new_password2 class='input' name="new_password2" }}
-  </div>
-  <div style="margin-top: 1em;">
-    This password reset question and answer will be asked in case you lose your password
-  </div>
-  <div class="form-group">
-    <label for="security_question">Security Question</label>
-    {{input class="input" value=security_question name="security_question"}}
-    {{#if errors.security_question}}
-        <ul class="alert alert-warning" style="padding-left: 2em;">
-          {{#each error in errors.security_question}}
-            <li>{{error}}</li>
-          {{/each}}
-        </ul>
-    {{/if}}
-  </div>
-  <div class="form-group">
-    <label for="security_answer">Security Answer</label>
-    {{input class="input" value=security_answer name="security_answer"}}
-    {{#if errors.security_answer}}
-        <ul class="alert alert-warning" style="padding-left: 2em;">
-          {{#each error in errors.security_answer}}
-            <li>{{error}}</li>
-          {{/each}}
-        </ul>
-    {{/if}}
   </div>
   <div style="margin-top: 1em;">
     {{#if errors.general}}

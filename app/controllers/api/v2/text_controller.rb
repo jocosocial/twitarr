@@ -11,4 +11,8 @@ class API::V2::TextController < ApplicationController
 	def time
 		render json: {time: Time.now.strftime('%B %d, %l:%M %P %Z'), offset: Time.now.utc_offset / 3600}
 	end
+
+	def reactions
+		render json: {reactions: Reaction.all.map { |x| x.id }}
+	end
 end

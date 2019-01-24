@@ -15,4 +15,8 @@ class API::V2::TextController < ApplicationController
 	def reactions
 		render json: {reactions: Reaction.all.map { |x| x.id }}
 	end
+
+	def announcements
+		render json: {announcements: Announcement.valid_announcements.map { |x| x.decorate.to_hash }}
+ 	end
 end

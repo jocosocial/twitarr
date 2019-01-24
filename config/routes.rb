@@ -1,89 +1,5 @@
 Twitarr::Application.routes.draw do
-  root 'home#index'
-
-  # get 'time', to: 'home#time'
-
-  # post 'login', to: 'user#login'
-
-  # get 'alerts', to: 'alerts#index'
-  # get 'alerts/check', to: 'alerts#check'
-
-  # get 'announcements', to: 'announcements#index'
-
-  # get 'search/:text', to: 'search#search'
-  # get 'search_users/:text', to: 'search#search_users'
-  # get 'search_tweets/:text', to: 'search#search_tweets'
-  # get 'search_forums/:text', to: 'search#search_forums'
-  # get 'search_events/:text', to: 'search#search_events'
-
-  # get 'user/username'
-  # get 'user/logout'
-  # get 'user/starred'
-  # get 'user/autocomplete'
-  # post 'user/save_profile'
-  # get 'user/profile/:username', to: 'user#show'
-  # get 'user/profile/:username/star', to: 'user#star'
-  # get 'user/profile/:username/vcf', to: 'user#vcard', format: false
-  # post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
-
-  # get 'admin/users'
-  # get 'admin/users/:text', to: 'admin#user'
-  # post 'admin/activate'
-  # post 'admin/reset_password'
-  # post 'admin/update_user'
-  # post 'admin/new_announcement'
-  # get 'admin/announcements'
-  # post 'admin/upload_schedule'
-
-  # resources :forums, except: [:show, :destroy, :edit, :new] do
-  #   collection do
-  #     get ':page', to: 'forums#page'
-  #     get 'thread/:id', to: 'forums#show'
-  #     get 'thread/:id/:page', to: 'forums#show'
-  #     post 'new_post'
-  #     put 'thread/:forum_id/:forum_post_id', to: 'forums#update'
-  #     delete 'thread/:forum_id/:forum_post_id', to: 'forums#delete_post'
-  #   end
-  # end
-
-  # resources :seamail, except: [:destroy, :edit, :new] do
-  #   collection do
-  #     post 'new_message'
-  #   end
-  # end
-  # put 'seamail/:id/recipients', to: 'seamail#recipients'
-
-  # get 'stream/star/:page', to: 'stream#star_filtered_page'
-  # get 'stream/:page', to: 'stream#page'
-  # post 'stream', to: 'stream#create'
-  # post 'tweet/edit/:id', to: 'stream#edit'
-  # get 'tweet/like/:id', to: 'stream#like'
-  # get 'tweet/unlike/:id', to: 'stream#unlike'
-  # get 'tweet/destroy/:id', to: 'stream#destroy'
-  # get 'tweet/:id', to: 'stream#get'
-
-  # post 'photo/upload'
-  # get 'photo/small_thumb/:id', to: 'photo#small_thumb'
-  # get 'photo/medium_thumb/:id', to: 'photo#medium_thumb'
-  # get 'photo/full/:id', to: 'photo#full'
-
-  # get 'location/autocomplete/:query', to: 'location#auto_complete'
-  # get 'location', to: 'location#index'
-  # post 'location', to: 'location#create'
-  # delete 'location/:name', to: 'location#delete'
-
-  # resources :event, except: [:index, :edit, :new] do
-  #   collection do
-  #     get 'mine/:day', to: 'event#mine'
-  #     get 'all/:day', to: 'event#all'
-  #     get 'csv'
-  #   end
-  #   member do
-  #     post 'follow'
-  #     post 'unfollow'
-  #     get 'ical'
-  #   end
-  # end
+  root 'application#index'
 
   namespace :api do
     namespace :v2 do
@@ -164,6 +80,7 @@ Twitarr::Application.routes.draw do
       get 'text/:filename', to: 'text#index'
       get 'time', to: 'text#time'
       get 'reactions', to: 'text#reactions'
+      get 'announcements', to: 'text#announcements'
 
       resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
       get 'photo/small_thumb/:id', to: 'photo#small_thumb'

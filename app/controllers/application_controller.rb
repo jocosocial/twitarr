@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   #protect_from_forgery with: :exception
-
+  def index
+  end
+  
   def logged_in?
     !current_username.nil? && !current_user.nil?
   end

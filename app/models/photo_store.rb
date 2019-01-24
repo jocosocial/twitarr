@@ -10,6 +10,7 @@ class PhotoStore
   MEDIUM_IMAGE_SIZE = 800
 
   def upload(temp_file, uploader)
+    return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
     existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash).first

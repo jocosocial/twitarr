@@ -59,14 +59,15 @@ class API::V2::UserController < ApplicationController
     render json: {:status => 'ok', email_count: current_user.seamail_unread_count}
   end
 
-  def autocomplete
-    search = params[:username].downcase
-    render json: {
-      names: User.or(
-        { username: /^#{search}/ },
-        { display_name: /^#{search}/i },
-      ).map { |x| { username: x.username, display_name: x.display_name } }
-    }
+  def auto_complete
+    params[:query] ||= ''
+    query = params[:query].downcase
+    query = query[1..-1] if query[0] == '@'
+    unless query && query.size >= User::MIN_AUTO_COMPLETE_LEN
+      render status: :bad_request, json: {status: 'error', error: "Minimum length is #{User::MIN_AUTO_COMPLETE_LEN}"}
+      return
+    end
+    render json: {status: "ok", users: User.auto_complete(query).map { |x| x.decorate.gui_hash }}
   end
 
   def whoami

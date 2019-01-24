@@ -3,9 +3,12 @@
 This documentation is for the rest endpoints under /api/v2
 
 ## Global Query Parameters
+
 * app=plain - If this is included in the query parameters, no HTML text formatting will be applied to marked_up_text. Returned text will be plain text instead. This is useful in any endpoint that returns stream post text, forum post text, or seamail text.
 
 ## Parameter Type Definitions
+
+These parameter types are used throughout the API
 
 * boolean - (true, false, 1, 0, yes, no)
 * datetime string - ISO 8601 date/time string, or milliseconds since the unix epoch as a string
@@ -14,8 +17,11 @@ This documentation is for the rest endpoints under /api/v2
 * id_string - a string for the id
 * username_string - user's username.  All lowercase word characters plus '-' and '&', at least 3 characters
 * displayname_string - user's display name. All word characters plus '.', '&', '-', and space, at least 3 characters, max 40 characters.
+* password_string - user's password. Minimum length 6 characters.
 
 ## Output Type Definitions
+
+These output types are used throughout the API
 
 * UserInfo{} - A JSON object representing the most basic details of a user
   ```
@@ -232,10 +238,6 @@ Creates a new Seamail, with a initial message
 * logged in.
     * Accepts: key query parameter
 
-#### Query parameters
-
-none
-
 #### JSON Request Body
 
 ```
@@ -279,10 +281,6 @@ Add a new message to an existing Seamail thread
 * logged in.
     * Accepts: key query parameter
 
-#### Query parameters
-
-none
-
 #### JSON Request Body
 
 ```
@@ -311,6 +309,7 @@ none
    ```
    { "status": "error", "errors": [ "Text can't be blank" ]}
    ```
+
 ### POST /api/v2/seamail/:id/recipients
 
 Modifies the recipients of a seamail. Disabled until we figure out if/how we want to support this.
@@ -319,10 +318,6 @@ Modifies the recipients of a seamail. Disabled until we figure out if/how we wan
 
 * logged in.
     * Accepts: key query parameter
-
-#### Query parameters
-
-none
 
 #### JSON Request Body
 
@@ -360,6 +355,14 @@ none
 ### GET /api/v2/user/new_seamail
 
 Get how many unread seamails the user has
+
+#### Requires
+
+* logged in.
+    * Accepts: key query parameter
+
+#### Returns
+
 ```
 {
     "status": "ok",
@@ -369,6 +372,7 @@ Get how many unread seamails the user has
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
+
 
 ## Stream information
 
@@ -413,8 +417,6 @@ Get/post information on the tweet stream
 
 Get the tweets in the stream. This is an incredibly flexible endpoint that will return a page of tweets (default 20, the `limit` parameter) either before or after (the `newer_posts` paramter) a given timestamp (the `start` parameter). If no `start` timestamp is given, it will return the `limit` most recent tweets.
 
-#### Requires
-
 #### Query parameters
 
 * start=epoch - Optional (Default: Now) - The start location for getting tweets
@@ -458,10 +460,8 @@ Some notes on `newer_posts` in the input and `next_page` in the output: `next_pa
 
 ### GET /api/v2/thread/:id
 
-Get details of a stream post (tweet)
+Get details of a stream post (tweet) with the given :id
 This will include the children posts (replies) to this tweet sorted in timestamp order
-
-#### Requires
 
 #### Query parameters
 
@@ -490,9 +490,7 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 
 ### GET /api/v2/stream/m/:query
 
-View a user's mentions stream. Will include all tweets that tag the user.
-
-#### Requires
+View a mentions stream. Will include all tweets that tag the user. :query is the username_string of the user whose mentions we want to view.
 
 #### Query parameters
 
@@ -526,9 +524,7 @@ View a user's mentions stream. Will include all tweets that tag the user.
 
 ### GET /api/v2/stream/h/:query
 
-View a hash tag tweet stream
-
-#### Requires
+View a hash tag tweet stream. :query is the hashtag we would like to view.
 
 #### Query parameters
 
@@ -615,8 +611,6 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
 ### GET /api/v2/tweet/:id
 
 Gets a single tweet.
-
-#### Requires
 
 #### Returns
 
@@ -793,8 +787,6 @@ Current users who like the post
 
 Get the current likes of a post
 
-#### Requires
-
 #### Returns
 
 Current users who like the post
@@ -902,8 +894,6 @@ All reactions that have been applied to the post.
 ### GET /api/v2/tweet/:id/react
 
 Get the list of reactions that have been applied to a post
-
-#### Requires
 
 #### Returns
 
@@ -1212,23 +1202,82 @@ Perform an events search against the database for results.
 
 ## User information
 
+### User Specific types
+
+#### UserAccount
+
+```
+{
+    "username": "username_string",
+    "is_admin": boolean,
+    "status": "status_string",
+    "email": "email_address",  # May be null
+    "email_public?": boolean,
+    "display_name": "displayname_string",
+    "current_location": null, # Not currently implemented
+    "last_login": "ISO_8601_DATETIME",
+    "empty_password?": boolean,
+    "last_photo_updated": epoch,
+    "room_number": "string", # May be null
+    "real_name": "string", # May be null
+    "home_location": "string", # May be null
+    "unnoticed_alerts": boolean
+}
+```
+
 ### POST /api/v2/user/new
 
-Create a new user account. This will trow an error if it is called while logged in.
+Create a new user account. This will throw an error if it is called while logged in.
 
-#### Query Params
+#### JSON Request Body
 
-All parameters are required. If any are missing, an error will be returned. 
-
-* new_username - Username of the new user. If it is in use, an error will be returned.
-* new_password - Password of the new user. Must be at least 6 characters. If it is less, an error will be returned.
-* email - The user's email address.
-* security_question - A prompt used in the forgot password process.
-* security_answer - The answer to the security prompt.
+```
+{
+    "new_username": "username_string", # Username of the new user. If it is in use, an error will be returned.
+    "new_password": "password_string", # Password of the new user. Must be at least 6 characters. If it is less, an error will be returned.
+    "display_name": "displayname_string", # Optional. The user's display name.
+    "registration_code": "string" # A code provided to the user which will allow them to register. Alphanumeric, case insensitive.
+}
+```
 
 #### Returns
 
 If the user is successfully created, a JSON object will be returned with the authentication 'key' of the logged in user (see /api/v2/user/auth) along with the new user's profile information.
+
+```
+{
+    "status": "ok",
+    "key": "string",
+    "user": UserAccount{}
+}
+```
+
+#### Error Resposnes
+* status_code_with_parameter_errors
+  * HTTP 400 if there were any errors with user account creation
+  ```
+  { 
+    "status": "error", 
+    "errors": {
+        "general": [
+            "Already logged in - log out before creating a new account."
+        ],
+        "new_username": [
+            "Username must be three or more characters and only include letters, numbers, underscore, dash, and ampersand.",
+            "An account with this username already exists."
+        ],
+        "new_password": [
+            "Your password must be at least six characters long."
+        ],
+        "registration_code": [
+            "Invalid registration code."
+        ],
+        "display_name": [
+            "If display name is entered, it must be three or more characters and cannot include any of ~!@#$%^*()+=<>{}[]\|;:/?"
+        ]
+    }
+  }
+  ```
 
 ### GET /api/v2/user/auth
 
@@ -1241,11 +1290,50 @@ Removes any session data for the request.  This really has no effect if using th
 
 ### GET /api/v2/user/whoami
 
-Returns the logged in user's information
+Returns the logged in user's account information.
 
-### GET /api/v2/user/autocomplete/:username
+#### Requires
 
-Get auto completion list for usernames.  Username string must be greater than 3, and not include the '@' symbol
+* logged in.
+    * Accepts: key query parameters
+
+#### Returns
+
+```
+{
+    "stauts": "ok",
+    "user": UserAccount{},
+    "need_password_change": boolean
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+
+### GET /api/v2/user/ac/:query
+
+Get auto completion list for usernames. :query string must be at least 1 character long. If the @ symbol is included, it will be ignored and not counted towards the length. It will return a maximum of 10 results.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "users": [
+        UserInfo{}, ...
+    ]
+}
+```
+
+#### Error Resposnes
+* status_code_with_message
+  * HTTP 400 if :query is too short
+    ```
+    {
+        "status": "error", 
+        "error": "Minimum length is 1"
+    }
+    ```
 
 ### GET /api/v2/user/view/:username
 

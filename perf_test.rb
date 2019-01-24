@@ -31,7 +31,7 @@ requests = [
       1 + photos.size
     end,
     Proc.new do |http|
-      response = http.request Net::HTTP::Get.new(SERVER_URL + '/user/autocomplete?string=g')
+      response = http.request Net::HTTP::Get.new(SERVER_URL + '/user/ac?string=g')
       puts "AUTOCOMPLETE: #{response.msg}"
       1
     end,

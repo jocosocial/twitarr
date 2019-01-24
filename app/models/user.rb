@@ -20,8 +20,6 @@ class User
   field :em, as: :email, type: String
   field :dn, as: :display_name, type: String
   field :ll, as: :last_login, type: DateTime
-  field :sq, as: :security_question, type: String
-  field :sa, as: :security_answer, type: String
   field :um, as: :unnoticed_mentions, type: Integer, default: 0
   field :al, as: :last_viewed_alerts, type: DateTime, default: Time.at(0)
   field :ph, as: :photo_hash, type: String
@@ -48,10 +46,8 @@ class User
   validate :valid_username?
   validate :valid_display_name?
   validate :valid_location?
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: 'E-mail address is not valid.' }
+  validates :email, allow_blank: true, format: { with: URI::MailTo::EMAIL_REGEXP, message: 'E-mail address is not valid.' }
   validate :valid_password?
-  validates :security_question, presence: { message: 'Security question is required.' }
-  validates :security_answer, presence: { message: 'Security answer is required.' }
   
   def self.valid_username?(username)
     return false unless username
@@ -127,14 +123,6 @@ class User
 
   def current_location=(loc)
     super loc
-  end
-
-  def security_answer=(val)
-    super val.andand.downcase.andand.strip
-  end
-
-  def security_question=(val)
-    super val.andand.strip
   end
 
   def display_name=(val)

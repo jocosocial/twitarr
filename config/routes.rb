@@ -129,7 +129,6 @@ Twitarr::Application.routes.draw do
       get 'user/mentions', to:'user#mentions'
       get 'user/auth', to: 'user#auth'
       post 'user/auth', to: 'user#auth'
-      post 'user/security_question', to: 'user#security_question'
       post 'user/reset_password', to: 'user#reset_password'
       get 'user/logout', to: 'user#logout'
       post 'user/logout', to: 'user#logout'

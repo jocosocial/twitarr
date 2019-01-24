@@ -27,11 +27,8 @@ Twitarr.UserForgotPasswordRoute = Ember.Route.extend
     # Clear state when loading this form
     controller.errors = Ember.A()
     controller.loading = false
-    controller.security_question = null
     model.username = null
-    model.email = null
-    model.security_question = null
-    model.security_answer = null
+    model.registration_code = null
     model.new_password = null
     model.confirm_password = null
     controller.set('model', model)

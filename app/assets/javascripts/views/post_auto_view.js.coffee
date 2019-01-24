@@ -27,9 +27,9 @@
 #      return
 #    if word[0] is '@'
 #      @last_search = word
-#      $.getJSON("user/autocomplete?string=#{encodeURIComponent word.substr(1)}").then (data) =>
+#      $.getJSON("user/ac?string=#{encodeURIComponent word.substr(1)}").then (data) =>
 #        if @last_search is word
-#          names = ("@#{name}" for name in data.names)
+#          names = ("@#{name}" for name in data.users)
 #          @set 'searchResults', names
 #    if word[0] is '#'
 #      @last_search = word

@@ -2,7 +2,7 @@ class Hashtag
   include Mongoid::Document
 
   MIN_AUTO_COMPLETE_LEN = 3
-  LIMIT = 10
+  AUTO_COMPLETE_LIMIT = 10
 
   field :_id, type: String, as: :name
 
@@ -21,7 +21,7 @@ class Hashtag
 
   def self.auto_complete(prefix)
     prefix = prefix.downcase
-    Hashtag.where(name: /^#{prefix}/).asc(:name).limit(LIMIT)
+    Hashtag.where(name: /^#{prefix}/).asc(:name).limit(AUTO_COMPLETE_LIMIT)
   end
 
   # this is probably not going to be a fast operation

@@ -6,7 +6,7 @@
     <div class="form">
       <span class="label">Users</span>
       <div class="seamail-autocomplete-parent">
-        {{ input value=toInput id='seamail-user-autocomplete' class='input' placeholder='start typing a name'}}
+        {{ input value=toInput id='seamail-user-autocomplete' class='input' autocomplete='off' placeholder='start typing a name'}}
         {{#if searchResults}}
           <ul class="seamail-user-autocomplete-list">
             {{#each result in searchResults}}

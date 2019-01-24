@@ -40,11 +40,11 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
       @get('searchResults').clear()
       return
     @last_search = val
-    $.getJSON("#{Twitarr.api_path}/user/autocomplete/#{encodeURIComponent val}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/user/ac/#{encodeURIComponent val}").then (data) =>
       if @last_search is val
         @get('searchResults').clear()
         existing_usernames = (user.username for user in @get('toUsers'))
-        names = (user for user in data.names when user.username not in existing_usernames)
+        names = (user for user in data.users when user.username not in existing_usernames)
         @get('searchResults').pushObjects names
   ).observes('toInput')
 

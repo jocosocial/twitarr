@@ -5,6 +5,9 @@ class User
   include Mongoid::Timestamps
   include Searchable
 
+  MIN_AUTO_COMPLETE_LEN = 1
+  AUTO_COMPLETE_LIMIT = 10
+
   USERNAME_CACHE_TIME = 30.minutes
 
   USERNAME_REGEX = /^[\w&-]{3,}$/
@@ -335,5 +338,12 @@ class User
     query = params[:query].strip.downcase.gsub(/[^\w&\s-]/, '')
     criteria = User.or({:username => /^#{query}.*/i}, { :display_name => /^#{query}.*/i }, { '$text' => { '$search' => "\"#{query}\"" } })
     limit_criteria(criteria, params)
+  end
+
+  def self.auto_complete(query)
+    User.or(
+      { username: /^#{query}/ },
+      { display_name: /^#{query}/i },
+    ).limit(AUTO_COMPLETE_LIMIT)
   end
 end

@@ -44,13 +44,14 @@ class PhotoStore
   end
 
   def upload_profile_photo(temp_file, username)
+    return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
-    return { status: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
+    return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
     begin
       img = read_image(temp_file)
     rescue Java::JavaLang::NullPointerException
       # yeah, ImageMagick throws a NPE if the photo isn't a photo
-      return { status: 'Photo could not be opened - is it an image?' }
+      return { status: 'error', error: 'Photo could not be opened - is it an image?' }
     end
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
     img.write tmp_store_path

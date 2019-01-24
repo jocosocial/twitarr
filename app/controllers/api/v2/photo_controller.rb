@@ -36,7 +36,7 @@ class API::V2::PhotoController < ApplicationController
   end
 
   def create
-    render json: {status: 'error', error: 'Must provide photos to upload.'} and return if params[:files].blank? && params[:file].blank?
+    render status: :bad_request, json: {status: 'error', error: 'Must provide photos to upload.'} and return if params[:files].blank? && params[:file].blank?
     files = []
     if params[:file].blank?
       files = params[:files]

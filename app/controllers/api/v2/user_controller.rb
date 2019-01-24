@@ -181,7 +181,7 @@ class API::V2::UserController < ApplicationController
   end
 
   def update_photo
-    render json: {status: 'Must provide a photo to upload.'} and return unless params[:file]
+    render status: :bad_request, json: {status: 'error', error: 'Must provide a photo to upload.'} and return unless params[:file]
     render json: current_user.update_photo(params[:file])
   end
 

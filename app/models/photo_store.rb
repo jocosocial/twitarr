@@ -6,9 +6,8 @@ class PhotoStore
   include Singleton
 
   SMALL_PROFILE_PHOTO_SIZE = 200
-  LARGE_PROFILE_PHOTO_SIZE = 1000
-  SMALL_IMAGE_SIZE = 500
-  MEDIUM_IMAGE_SIZE = 1600
+  SMALL_IMAGE_SIZE = 200
+  MEDIUM_IMAGE_SIZE = 800
 
   def upload(temp_file, uploader)
     temp_file = UploadFile.new(temp_file)
@@ -53,7 +52,7 @@ class PhotoStore
       return { status: 'Photo could not be opened - is it an image?' }
     end
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
-    img.resize_to_fit(LARGE_PROFILE_PHOTO_SIZE).write tmp_store_path
+    img.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.small_profile_path(username)
@@ -63,7 +62,7 @@ class PhotoStore
   def reset_profile_photo(username)
     identicon = Identicon.create(username)
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
-    identicon.resize_to_fit(LARGE_PROFILE_PHOTO_SIZE).write tmp_store_path
+    identicon.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     identicon.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
     small_profile_path = PhotoStore.instance.small_profile_path(username)

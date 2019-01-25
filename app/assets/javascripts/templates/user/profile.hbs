@@ -27,27 +27,45 @@
       <div class="col-xs-6">
         <div class="label">Tweets</div>
         <div class="data">{{number_of_tweets}}</div>
-        <div class="label">Mentions</div>
-        <div class="data">{{number_of_mentions}}</div>
-        {{#if real_name}}
-          <div class="label">Real name</div>
-          <div class="data">{{real_name}}</div>
-        {{/if}}
       </div>
       <div class="col-xs-6">
-        {{#if home_location}}
-          <div class="label">Lives in</div>
-          <div class="data">{{home_location}}</div>
-        {{/if}}
-        {{#if email}}
+        <div class="label">Mentions</div>
+        <div class="data">{{number_of_mentions}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="card-section">
+    <div class="form row">
+      {{#if real_name}}
+        <div class="col-xs-6">
+          <div class="label">Real name</div>
+          <div class="data">{{real_name}}</div>
+        </div>
+      {{/if}}
+      {{#if pronouns}}
+        <div class="col-xs-6">
+          <div class="label">Preferred Pronouns</div>
+          <div class="data">{{pronouns}}</div>
+      </div>
+      {{/if}}
+      {{#if email}}
+        <div class="col-xs-6">
           <div class="label">Email</div>
           <div class="data">{{email}}</div>
-        {{/if}}
-        {{#if room_number}}
+        </div>
+      {{/if}}
+      {{#if home_location}}
+        <div class="col-xs-6">
+          <div class="label">Lives in</div>
+          <div class="data">{{home_location}}</div>
+        </div>
+      {{/if}}        
+      {{#if room_number}}
+        <div class="col-xs-6">
           <div class="label">Room number</div>
           <div class="data">{{room_number}}</div>
-        {{/if}}
-      </div>
+        </div>
+      {{/if}}
     </div>
   </div>
 </div>

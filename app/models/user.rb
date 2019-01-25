@@ -28,7 +28,6 @@ class User
   field :ph, as: :photo_hash, type: String
   field :pu, as: :last_photo_updated, type: Integer, default: Time.now.to_i
   field :rn, as: :room_number, type: String
-  field :pe, as: :is_email_public, type: Boolean, default: false
   field :an, as: :real_name, type: String
   field :hl, as: :home_location, type: String
   field :lf, as: :forum_view_timestamps, type: Hash, default: {}
@@ -37,6 +36,7 @@ class User
   field :pc, as: :personal_comments, type: Hash, default: {}
   field :ea, as: :acknowledged_event_alerts, type: Array, default: []
   field :rc, as: :registration_code, type: String
+  field :pr, as: :pronouns, type: String
 
   index username: 1
   index display_name: 1
@@ -111,15 +111,6 @@ class User
     self
   end
 
-  def email_public?
-    self[:is_email_public]
-  end
-
-  def email_public=(val)
-    self[:is_email_public] = !val.nil? && val.to_bool
-  end
-
-
   def username=(val)
     super User.format_username val
   end
@@ -133,10 +124,14 @@ class User
   end
 
   def room_number=(val)
-    if val.is_a? Numeric
+    if val.nil? || val.empty? || (val.is_a? Numeric)
       return super val
     else
-      return super val.andand.strip.to_i
+      if val.andand.strip.to_i > 0
+        return super val.andand.strip.to_i
+      else
+        return nil
+      end
     end
   end
 

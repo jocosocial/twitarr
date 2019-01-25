@@ -28,19 +28,22 @@
       </div>
       <div class="col-md-4">
         <div class="form-group">
+          <label for="pronouns">Preferred Pronouns (Optional, public)</label>
+          {{ input value=pronouns class='input' name="pronouns"}}
+        </div>
+        <div class="form-group">
           <label for="room_number">Room Number (Optional, public)</label>
           {{ input value=room_number class='input' name="room_number"}}
-        </div>
+        </div>        
+      </div>
+      <div class="col-md-4">
         <div class="form-group">
           <label for="home_location">Where are you from? (Optional, public)</label>
           {{ input value=home_location class='input' name="home_location"}}
         </div>
-      </div>
-      <div class="col-md-4">
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="email">Email (Optional, public)</label>
           {{ input value=email class='input' name="email"}}
-          <label>{{ input type="checkbox" checked=email_public?}} Public email</label><br>
         </div>
       </div>
     </div>

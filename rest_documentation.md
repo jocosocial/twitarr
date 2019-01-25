@@ -1339,7 +1339,6 @@ Perform an events search against the database for results.
     "is_admin": boolean,
     "status": "status_string",
     "email": "email_address",  # May be null
-    "email_public?": boolean,
     "display_name": "displayname_string",
     "current_location": null, # Not currently implemented
     "last_login": "ISO_8601_DATETIME",
@@ -1347,6 +1346,7 @@ Perform an events search against the database for results.
     "last_photo_updated": epoch,
     "room_number": "string", # May be null
     "real_name": "string", # May be null
+    "pronouns": "string", # May be null
     "home_location": "string", # May be null
     "unnoticed_alerts": boolean
 }

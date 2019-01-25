@@ -143,9 +143,9 @@ class API::V2::UserController < ApplicationController
     current_user.current_location = params[:current_location] if params.has_key? :current_location
     current_user.display_name = params[:display_name] if params.has_key? :display_name
     current_user.email = params[:email] if params.has_key? :email
-    current_user.email_public = params[:email_public?] if params.has_key? :email_public?
     current_user.home_location = params[:home_location] if params.has_key? :home_location
     current_user.real_name = params[:real_name] if params.has_key? :real_name
+    current_user.pronouns = params[:pronouns] if params.has_key? :pronouns
     current_user.room_number = params[:room_number] if params.has_key? :room_number
     if current_user.valid?
       if password_change

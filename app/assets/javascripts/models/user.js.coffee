@@ -4,8 +4,8 @@ Twitarr.User = Ember.Object.extend
       display_name: @get('display_name'), 
       email: @get('email'), 
       room_number: @get('room_number'), 
-      "email_public?": @get('email_public?'), 
-      real_name: @get('real_name'), 
+      real_name: @get('real_name'),
+      pronouns: @get('pronouns'),
       home_location: @get('home_location')
     }
 
@@ -30,6 +30,7 @@ Twitarr.UserMeta = Ember.Object.extend
   email: null
   room_number: null
   real_name: null
+  pronouns: null
   home_location: null
   number_of_tweets: null
   number_of_mentions: null

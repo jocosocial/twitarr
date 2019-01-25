@@ -6,8 +6,7 @@ class UserDecorator < Draper::Decorator
   end
 
   def public_hash
-    attrs = %w(username display_name current_location number_of_tweets number_of_mentions room_number real_name home_location last_photo_updated)
-    attrs.push(:email) if email_public?
+    attrs = %w(username display_name email current_location number_of_tweets number_of_mentions room_number real_name pronouns home_location last_photo_updated)
     return_attribute_hash attrs
   end
 
@@ -16,7 +15,7 @@ class UserDecorator < Draper::Decorator
   end
   
   def admin_hash
-    return_attribute_hash %w(username is_admin status email email_public? display_name current_location last_login empty_password? last_photo_updated room_number real_name home_location)
+    return_attribute_hash %w(username is_admin status email display_name current_location last_login empty_password? last_photo_updated room_number real_name pronouns home_location)
   end
 
   def self_hash

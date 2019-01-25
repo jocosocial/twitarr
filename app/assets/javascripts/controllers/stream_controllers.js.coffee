@@ -146,11 +146,9 @@ Twitarr.StreamEditController = Twitarr.ObjectController.extend
       )
 
     file_uploaded: (data) ->
-      if data.files[0]?.photo
-        @set('photo_id', data.files[0].photo)
-        @set('photo', Twitarr.Photo.create {id: data.files[0].photo})
-      else
-        alert "Error: " + data.files[0]?.status
+      if data.photo?.id
+        @set('photo_id', data.photo.id)
+        @set('photo', Twitarr.Photo.create {id: data.photo.id})
 
     remove_photo: ->
       @set 'photo_id', null

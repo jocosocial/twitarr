@@ -10,10 +10,10 @@ class PhotoStore
   MEDIUM_IMAGE_SIZE = 800
 
   def upload(temp_file, uploader)
-    return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+    return { status: 'error', error: 'File must be uploaded as form-data.'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash).first
+    existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash, uploader: uploader).first
     return { status: 'ok', photo: existing_photo.id.to_s } unless existing_photo.nil?
     begin
       img = read_image(temp_file)
@@ -21,7 +21,7 @@ class PhotoStore
       # yeah, ImageMagick throws a NPE if the photo isn't a photo
       return { status: 'error', error: 'Photo could not be opened - is it an image?' }
     end
-    return { status: 'error', error: 'File exceeds maximum file size of 10MB' } if temp_file.tempfile.size >= 10000000 # 10MB
+    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
     photo = store(temp_file, uploader)
     img.resize_to_fit(MEDIUM_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
     FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", md_thumb_path(photo.store_filename)

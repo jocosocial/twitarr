@@ -10,11 +10,8 @@ Twitarr.MultiplePhotoUploadMixin = Ember.Mixin.create
 
   actions:
     file_uploaded: (data) ->
-      data.files.forEach (file) =>
-        if file.photo
-          @get('photo_ids').pushObject file.photo
-        else
-          @get('errors').pushObject file.status
+      if data.photo?.id
+        @get('photo_ids').pushObject data.photo?.id
 
     remove_photo: (id) ->
       @get('photo_ids').removeObject id

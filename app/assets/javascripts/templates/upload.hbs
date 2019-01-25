@@ -1,5 +1,5 @@
 <div id="photo-upload-div" class="upload-div">
-  <input id="fileupload" class="fileupload" type="file" name="files[]" data-url="{{unbound controllers.application.photo_upload_path}}" accept="image/*" multiple>
+  <input id="fileupload" class="fileupload" type="file" name="file" data-url="{{unbound controllers.application.photo_upload_path}}" accept="image/*">
   {{#if controllers.application.uploads_pending}}
     <div class="uploading">Uploading...</div>
   {{else}}

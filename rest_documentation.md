@@ -1377,7 +1377,7 @@ Creates a new post in the thread
 
 Get/post information on events.
 
-### Stream specific types
+### Event specific types
 
     JSON Event {
         "id": "id_string",

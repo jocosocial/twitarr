@@ -7,7 +7,6 @@ module CruiseMonkeyHelper
 
   #private
   def self.prepare_cruise_monkey_link(entity, attributes)
-    puts entity
     attributes.delete :href
     attributes.delete :class
     attributes.delete :title

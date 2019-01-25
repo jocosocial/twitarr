@@ -1,35 +1,5 @@
 {{partial 'search/search'}}
 <div class="display_card">
-  <div class="card_title">Users</div>
-  {{#each user in users.matches}}
-    {{render 'search.user_partial' user}}
-  {{else}}
-    <div class="card-section">
-      No results.
-    </div>
-  {{/each}}
-  {{#if users.more}}
-    <div class="card-section clickable" {{action 'user_search'}}>
-      View all matching users...
-    </div>
-  {{/if}}
-</div>
-<div class="display_card">
-  <div class="card_title">Tweets</div>
-  {{#each tweet in tweets.matches}}
-    {{render "stream.post_partial" tweet}}
-  {{else}}
-    <div class="card-section">
-      No results.
-    </div>
-  {{/each}}
-  {{#if tweets.more}}
-    <div class="card-section clickable" {{action 'tweet_search'}}>
-      View all matching tweets...
-    </div>
-  {{/if}}
-</div>
-<div class="display_card">
   <div class="card_title">Events</div>
   {{#each event in events.matches}}
     {{render "schedule.meta_partial" event}}
@@ -41,6 +11,21 @@
   {{#if events.more}}
     <div class="card-section clickable" {{action 'event_search'}}>
       View all matching events...
+    </div>
+  {{/if}}
+</div>
+<div class="display_card">
+  <div class="card_title">Users</div>
+  {{#each user in users.matches}}
+    {{render 'search.user_partial' user}}
+  {{else}}
+    <div class="card-section">
+      No results.
+    </div>
+  {{/each}}
+  {{#if users.more}}
+    <div class="card-section clickable" {{action 'user_search'}}>
+      View all matching users...
     </div>
   {{/if}}
 </div>
@@ -74,5 +59,20 @@
         View all seamail...
       </div>
     {{/link-to}}
+  {{/if}}
+</div>
+<div class="display_card">
+  <div class="card_title">Tweets</div>
+  {{#each tweet in tweets.matches}}
+    {{render "stream.post_partial" tweet}}
+  {{else}}
+    <div class="card-section">
+      No results.
+    </div>
+  {{/each}}
+  {{#if tweets.more}}
+    <div class="card-section clickable" {{action 'tweet_search'}}>
+      View all matching tweets...
+    </div>
   {{/if}}
 </div>

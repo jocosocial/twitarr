@@ -8,7 +8,7 @@ Twitarr.ApplicationRoute = Ember.Route.extend
       $.getJSON("#{Twitarr.api_path}/user/logout").done (data) =>
         if data.status is 'ok'
           @controller.logout()
-          @transitionTo 'stream.index'
+          @transitionTo 'index'
     start_upload: ->
       @controller.incrementProperty 'uploads_pending'
     end_upload: ->
@@ -35,7 +35,7 @@ Twitarr.ApplicationRoute = Ember.Route.extend
 
 Twitarr.IndexRoute = Ember.Route.extend
   redirect: ->
-    @transitionTo 'stream.index'
+    @transitionTo 'forums'
 
 Twitarr.AlertsRoute = Ember.Route.extend
   model: ->

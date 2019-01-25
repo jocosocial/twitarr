@@ -36,6 +36,9 @@ Twitarr.ApplicationController = Ember.Controller.extend
       $('.top-bar-search-text').val('')
       $('.top-bar-search-text').blur()
 
+    go_to_star_feed: ->
+      @transitionToRoute 'stream.star_page', Math.ceil(new Date().valueOf() + 1000)
+
   menu_toggle: ->
     $('#side-menu').animate { width: 'toggle' }, 100
 
@@ -126,8 +129,6 @@ Twitarr.StarredController = Twitarr.ObjectController.extend
           alert 'Comment was saved.'
         else
           alert response.status
-    go_to_star_feed: ->
-      @transitionToRoute 'stream.star_page', Math.ceil(new Date().valueOf() + 1000)
 
 Twitarr.TimeController = Twitarr.ObjectController.extend
 

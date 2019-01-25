@@ -61,7 +61,7 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
           alert 'Something went wrong. Try again later.'
       ).then (response) -> 
         self.get('controllers.application').login(response.user)
-        self.transitionToRoute('stream')
+        self.transitionToRoute('index')
 
 Twitarr.UserLoginController = Twitarr.ObjectController.extend
   error: null
@@ -83,7 +83,7 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
               self.transitionToRoute('user')
               alert('You need to change your password before you continue')
             else
-              self.transitionToRoute('stream')
+              self.transitionToRoute('index')
         else 
            self.set 'error', response.status
 

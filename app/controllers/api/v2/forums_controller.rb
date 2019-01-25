@@ -2,7 +2,7 @@ class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   POST_COUNT = 20
-  before_filter :login_required, :only => [:create, :update_post, :like, :unlike, :react, :unreact]
+  before_filter :login_required, :only => [:create, :update_post, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create, :show]
   
   def index
@@ -90,24 +90,6 @@ class API::V2::ForumsController < ApplicationController
     end
   end
 
-  def like
-    post = @forum.posts.find(params[:post_id])
-    post = post.add_to_set likes: current_username
-    post.likes[post.likes.index(current_username)] = 'You'
-    render json: {status: 'ok', likes: post.likes}
-  end
-
-  def show_likes
-    post = @forum.posts.find(params[:post_id])
-    render json: {status: 'ok', likes: post.likes }
-  end
-
-  def unlike
-    post = @forum.posts.find(params[:post_id])
-    post = post.pull likes: current_username
-    render json: {status: 'ok', likes: post.likes}
-  end
-
   def react
     unless params.has_key?(:type)
       render status: :bad_request, json: {error:'Reaction type must be included.'}
@@ -116,7 +98,7 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.posts.find(params[:post_id])
     post.add_reaction current_username, params[:type]
     if post.valid?
-      render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
+      render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(post.reactions, current_username)}
     else
       render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
     end
@@ -134,7 +116,7 @@ class API::V2::ForumsController < ApplicationController
     end
     post = @forum.posts.find(params[:post_id])
     post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
+    render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(post.reactions, current_username)}
   end
     
   private

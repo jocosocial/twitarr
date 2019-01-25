@@ -7,8 +7,6 @@ class BaseDecorator < Draper::Decorator
   @@emojiReplace = '<img src="/img/emoji/small/\1.png" class="emoji" />'
   @@emojiReplaceCM = '<cm-emoji type="\1" />'
 
-  MAX_LIST_LIKES = 5
-
   def clean_text(text)
     CGI.escapeHTML(text)
   end
@@ -42,41 +40,13 @@ class BaseDecorator < Draper::Decorator
     end
   end
 
-  def some_likes(username, likes)
-    favs = []
-    unless username.nil?
-      favs << 'You' if likes.include? username
-    end
-    if likes.count < MAX_LIST_LIKES
-      favs += likes.reject { |x| x == username }
-    else
-      if likes.include? username
-        favs << "#{likes.count - 1} other seamonkeys"
-      else
-        favs << "#{likes.count} seamonkeys"
-      end
-    end
-    return nil if favs.empty?
-    favs
-  end
-
-  def all_likes(username, likes)
-    favs = []
-    unless username.nil?
-      favs << 'You' if likes.include? username
-    end
-    favs += likes.reject { |x| x == username }
-    return nil if favs.empty?
-    favs
-  end
-
-  def reaction_summary(reactions)
-    summary = {}
+  def self.reaction_summary(reactions, username)
+    summary = Hash.new
     reactions.each do |x|
       if summary.has_key?(x.reaction) then
-        summary[x.reaction] += 1
+        summary[x.reaction] = {count: summary[x.reaction].fetch(:count) + 1, me: ((summary[x.reaction].fetch(:me) == true) || x.username == username)}
       else
-        summary[x.reaction] = 1
+        summary[x.reaction] = {count: 1, me: x.username == username}
       end
     end
     summary

@@ -4,7 +4,7 @@ Twitarr.StreamPost = Ember.Object.extend
   text: null
   timestamp: null
   photo: null
-  likes: []
+  reactions: []
   parent_chain: []
   children: Ember.A()
 
@@ -21,40 +21,53 @@ Twitarr.StreamPost = Ember.Object.extend
   ).on('init')
 
   user_likes: (->
-    @get('likes') && @get('likes')[0] == 'You'
-  ).property('likes')
+    @get('reactions') && @get('reactions')['like'] && @get('reactions')['like'].me
+  ).property('reactions')
 
   parent_id: (->
     _.first(@get('parent_chain')) or @get('id')
   ).property('parent_chain', 'id')
 
   likes_string: (->
-    likes = @get('likes')
-    return '' unless likes and likes.length > 0
-    if likes.length == 1
-      if likes[0] == 'You'
-        return 'You like this.'
-      if likes[0].indexOf('seamonkeys') > -1
-        return "#{likes[0]} like this."
-      else
-        return "#{likes[0]} likes this."
-    last = likes.pop()
-    likes.join(', ') + " and #{last} like this."
-  ).property('likes')
+    reactions = @get('reactions')
+    return '' unless reactions
 
-  like: ->
-    $.post("#{Twitarr.api_path}/tweet/#{@get('id')}/like").then (data) =>
-      if(data.status == 'ok')
-        @set('likes', data.likes)
+    likes = reactions['like']
+    return '' unless likes
+    
+    if likes.me
+      output = 'You'
+      likes.count -= 1
+      
+      if likes.count > 0
+        output += " and #{likes.count} other"
       else
-        alert data.status
+        output += " like this."
+        return output
+    else
+      output = "#{likes.count}"
+    
+    if likes.count > 1
+      output += " seamonkeys like this."
+    else
+      output += " seamonkey likes this."
 
-  unlike: ->
-    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}/like", method: 'DELETE').then (data) =>
+    return output
+  ).property('reactions')
+
+  react: (word) ->
+    $.post("#{Twitarr.api_path}/tweet/#{@get('id')}/react/#{word}").then (data) =>
       if(data.status == 'ok')
-        @set('likes', data.likes)
+        @set('reactions', data.reactions)
       else
-        alert data.status
+        alert data.error
+
+  unreact: (word) ->
+    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}/react/#{word}", method: 'DELETE').then (data) =>
+      if(data.status == 'ok')
+        @set('reactions', data.reactions)
+      else
+        alert data.error
 
   delete: ->
     $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}", method: 'DELETE').then (data) =>

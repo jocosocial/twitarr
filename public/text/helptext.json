@@ -13,7 +13,7 @@
                 "header": "How do I get in on this?",
                 "paragraphs": [
                     {
-                        "text": "You can explore and read the posts without any real effort on your part, just browse. If you'd like to contribute then feel free to go to the login page and register as a new user, at which point you can send Seamails and make posts."
+                        "text": "You can explore and read the posts without any real effort on your part, just browse. If you'd like to contribute then feel free to go to the sign up page and register as a new user, at which point you can send Seamails and make posts."
                     }
                 ]
             },
@@ -50,11 +50,11 @@
                     {
                         "text": "Technically not a question. However, here are solutions for a number of issues:",
                         "list": [
-                            "If you're having problems getting to Twit-arr, it may be the ship's network. In common areas such as the theatre or on deck or the game/dining room, there may be simply too many people trying to get onto the network. Think midgets in a clown car. Your stateroom may be the best place to connect from.",
-                            "Also like any other complex piece of software, something occasionally goes wrong. We'll try and fix it as soon as we can, but remember that we're also on vacation. :)",
-                            "If you've forgotten your login, then you can try the password recovery page (link is on the login page). If you absolutely can't get back in, you have two options: find one of the Twit-arr admins (@gbasden, @grundoon, @rangerrick, or @hendusoone, who are collectively also the team account @TwitarrTeam) or just create a new account. They are free, after all.",
-                            "If something else is broken but you can login, then feel free to send a Seamail to @TwitarrTeam. Depending on the severity it may not get fixed this cruise, but it'll be recorded to fix for the next cruise.",
-                            "If none of these apply to you then your best bet is to seek out @grundoon."
+                            "If you're having problems getting to Twit-arr, it may be the ship's network. In common areas such as the theatre or on deck or the game/dining room, there may be simply too many people trying to get onto the network. Your stateroom may be the best place to connect from.",
+                            "Like any other complex piece of software, something occasionally goes wrong. We'll try and fix it as soon as we can, but remember that we're also on vacation. :)",
+                            "If you've forgotten your login, then you can try the password reset page (link is on the login page). If you absolutely can't get back in, you have a few options: Go to the Info Desk and ask for your registration code - this will help you reset your password if you know your username. Or, find one of the Twit-arr admins (@gbasden, @grundoon, @rangerrick, or @hendusoone, who are collectively also the team account @TwitarrTeam), or just create a new account. They are free, after all.",
+                            "If something else is broken but you can login, then feel free to send a Seamail to @TwitarrTeam or post in the Twit-arr Feedback forum. Depending on the severity, it may not get fixed this cruise, but it will be recorded to fix for the next cruise.",
+                            "If none of these apply to you then your best bet is to seek out @grundoon or @hendusoone."
                         ]
                     }
                 ]
@@ -78,7 +78,8 @@
                             "Glenn Basden (gbasden) graciously brings the laptop server and provides technical support.",
                             "Nathan Walker (kvort) decided that he hated Status.net enough to rebuild the codebase for JCC4. For JCC5 he was joined in his quest by Emily Ozols (wingar) and James Stapleton (tasermonkey).",
                             "RangerRick builds CruiseMonkey and integrates with the Twit-arr APIs.",
-                            "grundoon attempts to step up when needed.",
+                            "grundoon attempts to step up when needed, and did a bunch of work to prepare for JCC8.",
+                            "Dustin Hendrickson (hendusoone) fixed bugs, added features, and updated APIs for JCC9.",
                             "None of this would be here without the invaluable aid of the beta testers, who try out our software on the many, MANY mobile devices that are out there."
                         ]
                     }

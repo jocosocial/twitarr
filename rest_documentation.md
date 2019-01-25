@@ -375,7 +375,7 @@ Get/post information on the tweet stream
 
 ### Stream specific types
 
-#### StreamPost
+#### StreamPost{}
 
 ```
 {
@@ -389,7 +389,7 @@ Get/post information on the tweet stream
 }
 ```
 
-#### StreamPostThread
+#### StreamPostThread{}
 
 ```
 {
@@ -823,6 +823,227 @@ All reactions that have been applied to the post.
     ```
 
 
+## Photo Information
+
+### Photo Specific types
+
+#### PhotoMeta{}
+
+```
+{
+    "id": "photo_id_string",
+    "animated": boolean,
+    "store_filename": "filename_string",
+    "md5_hash": "md5_string",
+    "original_filename": "filename_string",
+    "uploader": "username_string",
+    "upload_time": "ISO_8601_DATETIME"
+}
+```
+
+### GET /api/v2/photo
+
+#### Query parameters
+
+* sort_by=string - Optional (Default: upload_time) - The field used for sorting the results.
+* order=string - Optional (Default: asc) - Sort direction. Either asc or desc.
+* limit=Integer - Optional (Default: 20) - Number of photos to return
+* page=Integer - Optional (Default: 0) - The page of photos to retrieve, zero-indexed. Multiplied by `limit` to determine number of photos to skip.
+
+#### Returns
+
+A listing of photo metadata.
+
+```
+{
+    "status": "ok",
+    "total_count": integer,
+    "page": integer,
+    "photos": [ PhotoMeta{}, ...]
+}
+```
+
+#### Error Responses
+
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+  {
+      "status": "error",
+      "errors": [
+          "Limit must be greater than 0",
+          "Page must be greater than or equal to 0",
+          "Invalid field name for sort_by",
+          "Order must be either asc or desc"
+      ]
+  }
+  ```
+
+### POST /api/v2/photo
+
+Upload a photo. Photo should be uploaded as form-data.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### Post parameters
+* file=photo_file - The form-data image file you are uploading
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "photo": PhotoMeta{}
+}
+```
+
+#### Error Resposnes
+
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 400 with a message indicating what went wrong. Possible messages:
+  * Must provide photo to upload.
+  * File must be uploaded as form-data.
+  * File was not an allowed image type - only jpg, gif, and png accepted.
+  * Photo could not be opened - is it an image?
+  * File exceeds maximum file size of 10MB.
+  * Photo extension is jpg but could not be opened as jpeg.
+  ```
+  {
+      "status": "error",
+      "error": "error_message"
+  }
+  ```
+
+### GET /api/v2/photo/:photo_id
+
+#### Returns
+
+A single photo's metadata
+
+```
+{
+    "status": "ok",
+    "photo": PhotoMeta{}
+}
+```
+
+#### Error Resposnes
+* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
+  ```
+    { "status": "error", "error": "Photo not found" }
+  ```
+
+### PUT /api/v2/photo/:photo_id
+
+Allows users or admins to change the original filename of a photo.
+
+#### Requires
+* logged in as the original photo uploader, or as admin.
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+	"original_filename": "new_filename_string"
+}
+```
+
+#### Returns
+
+The photo's updated metadata
+
+```
+{
+    "status": "ok",
+    "photo": PhotoMeta{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
+  ```
+    { "status": "error", "error": "Photo not found" }
+  ```
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+  {
+      "status": "error",
+      "errors": [
+          "Unable to modify fields other than original_filename",
+          "You can not update other users' photos",
+          "Filename was not an allowed image type - only jpg, gif, and png accepted."
+      ]
+  }
+  ```
+
+### DELETE /api/v2/photo/:photo_id
+
+Allows users or admins to delete a photo.
+
+#### Requires
+* logged in as the original photo uploader, or as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+HTTP 204 No Content if deletion was successful
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
+  ```
+    { "status": "error", "error": "Photo not found" }
+  ```
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+  {
+      "status": "error",
+      "errors": [
+          "You can not delete other users' photos"
+      ]
+  }
+  ```
+
+### GET /api/v2/photo/small_thumb/:photo_id
+
+#### Returns
+
+A small thumbnail image file suitable for embedding in a forum post or tweet.
+
+#### Error Resposnes
+* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
+  ```
+    { "status": "error", "error": "Photo not found" }
+  ```
+
+### GET /api/v2/photo/medium_thumb/:photo_id
+
+#### Returns
+
+A medium-sided image file suitable for a somewhat larger view of an image.
+
+#### Error Resposnes
+* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
+  ```
+    { "status": "error", "error": "Photo not found" }
+  ```
+
+### GET /api/v2/photo/full/:photo_id
+
+#### Returns
+
+The full-size original image file that was uploaded.
+
+#### Error Resposnes
+* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
+  ```
+    { "status": "error", "error": "Photo not found" }
+  ```
+
+
 ## Hashtag Information
 
 ### GET /api/v2/hashtag/ac/:query
@@ -1110,7 +1331,7 @@ Perform an events search against the database for results.
 
 ### User Specific types
 
-#### UserAccount
+#### UserAccount{}
 
 ```
 {
@@ -1377,7 +1598,7 @@ Creates a new post in the thread
 
 Get/post information on events.
 
-### Stream specific types
+### Event specific types
 
     JSON Event {
         "id": "id_string",

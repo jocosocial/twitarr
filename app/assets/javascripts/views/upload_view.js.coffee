@@ -16,8 +16,11 @@ Twitarr.UploadView = Ember.View.extend
         @get('controller').send('end_upload')
       done: (e, data) =>
         @get('controller').send('file_uploaded', data.result)
-      fail: ->
-        alert 'An upload has failed!'
+      fail: (e, data) ->
+        if(data.jqXHR && data.jqXHR.responseJSON && data.jqXHR.responseJSON.error)
+          alert "Upload failed: #{data.jqXHR.responseJSON.error}"
+        else
+          alert 'An upload has failed!'
 
 #    $('#photo-upload-div').click ->
 #      $('#fileupload').click()

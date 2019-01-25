@@ -17,7 +17,10 @@ class StreamPostDecorator < BaseDecorator
         parent_chain: parent_chain
     }
     unless photo.blank?
-      result[:photo] = { id: photo, animated: PhotoMetadata.find(photo).animated }
+      begin
+        result[:photo] = { id: photo, animated: PhotoMetadata.find(photo).animated }
+      rescue Mongoid::Errors::DocumentNotFound
+      end
     end
     if options.has_key? :remove
       options[:remove].each { |k| result.delete k }

@@ -4,7 +4,7 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </button>
-  {{#link-to "stream"}}
+  {{#link-to "forums"}}
     <span class="menu-brand">
       Twit-arr
     </span>
@@ -36,8 +36,9 @@
   <div class="full-screen-overlay" {{action 'menu_toggle'}} ></div>
   <div id="menu">
     <ul {{action 'menu_close'}}>
-      <li>{{#link-to "stream"}}<span class="glyphicon glyphicon-bullhorn"></span>Tweets{{/link-to}}</li>
       <li>{{#link-to "forums"}}<span class="glyphicon glyphicon-list"></span>Forums{{/link-to}}</li>
+      <li>{{#link-to "stream"}}<span class="glyphicon glyphicon-bullhorn"></span>Tweets{{/link-to}}</li>
+      <li {{bind-attr class="logged_in::hidden"}}><a href='#' {{ action 'go_to_star_feed' }}><span class="glyphicon glyphicon-star"></span>Starred Stream</a></li>
       <li>{{#link-to "schedule"}}<span class="glyphicon glyphicon-calendar"></span>Schedule{{/link-to}}</li>
       <li>{{#link-to "search"}}<span class="glyphicon glyphicon-search"></span>Search{{/link-to}}</li>
       <li>---</li>

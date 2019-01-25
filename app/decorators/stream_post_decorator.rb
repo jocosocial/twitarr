@@ -13,8 +13,7 @@ class StreamPostDecorator < BaseDecorator
         },
         timestamp: timestamp,
         text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options),
-        likes: some_likes(username, likes),
-        reactions: reaction_summary(reactions),
+        reactions: BaseDecorator.reaction_summary(reactions, username),
         parent_chain: parent_chain
     }
     unless photo.blank?

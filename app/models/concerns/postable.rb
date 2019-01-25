@@ -21,22 +21,6 @@ module Postable
       super loc
     end
 
-
-    def add_like(username)
-      self.class.where(id: id).
-        find_one_and_replace({ '$addToSet' => { lk: username } }, new: true, return_document: :after)
-    end
-
-    def remove_like(username)
-      self.class.where(id: id).
-        find_one_and_replace({ '$pull' => { lk: username } }, new: true, return_document: :after)
-    end
-
-    def likes
-      self.likes = [] if super.nil?
-      super
-    end
-
     # noinspection RubyResolve
     def parse_hash_tags
       self.entities = extract_entities_with_indices text

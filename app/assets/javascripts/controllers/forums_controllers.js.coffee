@@ -49,6 +49,12 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
       @transitionToRoute 'forums.detail', @get('prev_page')
 
 Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
+  actions:
+    like: ->
+      @get('model').react('like')
+    unlike: ->
+      @get('model').unreact('like')
+  
   unlikeable: (->
     @get('logged_in') and @get('user_likes')
   ).property('logged_in', 'user_likes')
@@ -56,12 +62,6 @@ Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
   likeable: (->
     @get('logged_in') and not @get('user_likes')
   ).property('logged_in', 'user_likes')
-
-  actions:
-    like: ->
-      @get('model').like()
-    unlike: ->
-      @get('model').unlike()
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:

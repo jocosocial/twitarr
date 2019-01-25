@@ -1,7 +1,7 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions, :likes]
+  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions]
 
   def new
     if logged_in?
@@ -187,23 +187,11 @@ class API::V2::UserController < ApplicationController
 
   def reset_mentions
     current_user.reset_mentions
-    render json: { status: 'OK', user: UserDecorator.decorate(current_user).self_hash }
+    render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash }
   end
 
   def mentions
     render json: { mentions: current_user.unnoticed_mentions }
-  end
-
-  def likes
-    limit = params[:limit] || 20
-    skip = params[:skip] || 0
-    query = current_user.liked_posts.limit(limit).skip(skip)
-    count = query.length
-    result = [status: 'ok', user: current_user.username, total_count: count, next: (skip + limit), items: query.length, likes: query]
-    respond_to do |format|
-      format.json { render json: result }
-      format.xml { render xml: result }
-    end
   end
 
   def logout

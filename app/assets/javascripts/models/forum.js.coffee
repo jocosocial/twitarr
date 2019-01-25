@@ -40,39 +40,53 @@ Twitarr.Forum.reopenClass
 
 Twitarr.ForumPost = Ember.Object.extend
   photos: []
+  reactions: []
 
   objectize: (->
     @set('photos', Ember.A(Twitarr.Photo.create(photo) for photo in @get('photos')))
   ).on('init')
 
   user_likes: (->
-    @get('likes') && @get('likes')[0] == 'You'
-  ).property('likes')
+    @get('reactions') && @get('reactions')['like'] && @get('reactions')['like'].me
+  ).property('reactions')
 
   likes_string: (->
-    likes = @get('likes')
-    return '' unless likes and likes.length > 0
-    if likes.length == 1
-      if likes[0] == 'You'
-        return 'You like this.'
-      if likes[0].indexOf('seamonkeys') > -1
-        return "#{likes[0]} like this."
-      else
-        return "#{likes[0]} likes this."
-    last = likes.pop()
-    likes.join(', ') + " and #{last} like this."
-  ).property('likes')
+    reactions = @get('reactions')
+    return '' unless reactions
 
-  like: ->
-    $.post("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/like/#{@get('id')}").then (data) =>
+    likes = reactions['like']
+    return '' unless likes
+    
+    if likes.me
+      output = 'You'
+      likes.count -= 1
+      
+      if likes.count > 0
+        output += " and #{likes.count} other"
+      else
+        output += " like this."
+        return output
+    else
+      output = "#{likes.count}"
+    
+    if likes.count > 1
+      output += " seamonkeys like this."
+    else
+      output += " seamonkey likes this."
+
+    return output
+  ).property('reactions')
+
+  react: (word) ->
+    $.post("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/react/#{@get('id')}/#{word}").then (data) =>
       if(data.status == 'ok')
-        @set('likes', data.likes)
+        @set('reactions', data.reactions)
       else
         alert data.status
 
-  unlike: ->
-    $.ajax("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/like/#{@get('id')}", method: 'DELETE').then (data) =>
+  unreact: (word) ->
+    $.ajax("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/react/#{@get('id')}/#{word}", method: 'DELETE').then (data) =>
       if(data.status == 'ok')
-        @set('likes', data.likes)
+        @set('reactions', data.reactions)
       else
         alert data.status

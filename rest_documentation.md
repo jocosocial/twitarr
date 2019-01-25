@@ -42,18 +42,13 @@ These output types are used throughout the API
   * br - Line breaks
     * `<br />`
     * If using app=plain, these will instead be returned as newline `\n`
-* likes_summary - null (if no likes), or an array
-  * First element will be "You" if current_user likes the post: ["You", ...]
-  * If fewer than MAX_LIST_LIKES, array will include usernames: ["username_string", ...] OR ["You", "username_string", ...] 
-  * If more than MAX_LIST_LIKES likes, array will have one or two elements: ["\d+ other seamonkeys"] OR ["You", "\d+ other seamonkeys"]
-* all_likes - null (if no likes), or an array
-  * First element will be "You" if current_user likes the post: ["You", ...]
-  * Array will include usernames all users who have liked the post: ["username_string", ...] OR ["You", "username_string", ...] 
-
 * ReactionsSummary{} - A JSON object showing the counts of each reaction type. Will be { } if no reactions.
   ```
   {
-      "reaction_word": \d+,
+      "reaction_word": {
+          "count": \d+,
+          "me": boolean # Will be true if current user has reacted with this reaction
+      },
       ...
   }
   ```
@@ -388,7 +383,6 @@ Get/post information on the tweet stream
     "author": UserInfo{},
     "timestamp": "ISO_8601_DATETIME",
     "text": "marked_up_text",
-    "likes": likes_summary,
     "reactions": ReactionsSummary{},
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
     "parent_chain": [ "stream_post_id_string", ... ]
@@ -403,7 +397,6 @@ Get/post information on the tweet stream
     "author": UserInfo{},
     "text": "marked up text",
     "timestamp": "ISO_8601_DATETIME",
-    "likes": likes_summary,
     "reactions": ReactionsSummary{},
     "parent_chain": [ "stream_post_id_string", ... ],
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
@@ -424,7 +417,7 @@ Get the tweets in the stream. This is an incredibly flexible endpoint that will 
 * limit=Integer - Optional (Default: 20) - How many tweets to get
 * author=username - Optional (Default: No Filter) - Filter by username specified
 * hashtag=hashtag - Optional (Default: No Filter) - Filter by hashtag
-* likes=username - Optional (Default: No Filter) - Return only posts liked by the username specified
+* reactions=username - Optional (Default: No Filter) - Return only posts reacted by the username specified
 * mentions=username - Optional (Default: No Filter) - Filter by mentions of username specified
 * include_author=true - Optional (Default: false) - When filtering by mentions, include posts mentioning *or* written by the username specified
 * starred=true - Optional (Default: false) - Return only posts by starred users (You must be logged in for this to work.)
@@ -721,93 +714,6 @@ No body.  200-OK
     }
     ```
 
-### POST /api/v2/tweet/:id/like
-
-Like a post
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameter
-
-#### Returns
-
-Current users who like the post
-
-```
-{
-    "status": "ok",
-    "likes": likes_summary
-}
-```
-
-#### Error Responses
-* status_code_only - HTTP 401 if user is not logged in
-* status_code_with_message
-  * HTTP 404 if tweet with given ID is not found
-    ```
-    {
-        "status": "error",
-        "error": "Post not found"
-    }
-    ```
-
-### DELETE /api/v2/tweet/:id/like
-
-Unlike a post
-
-#### Requires
-
-* logged in.
-  * Accepts: key query parameter
-
-#### Returns
-
-Current users who like the post
-
-```
-{
-    "status": "ok",
-    "likes": likes_summary
-}
-```
-
-#### Error Responses
-* status_code_only - HTTP 401 if user is not logged in
-* status_code_with_message
-  * HTTP 404 if tweet with given ID is not found
-    ```
-    { 
-        "status": "error", 
-        "error": "Post not found" 
-    }
-    ```
-
-### GET /api/v2/tweet/:id/like
-
-Get the current likes of a post
-
-#### Returns
-
-Current users who like the post
-
-```
-{
-    "status": "ok",
-    "likes": all_likes
-}
-```
-
-#### Error Responses
-* status_code_with_message
-  * HTTP 404 if tweet with given ID is not found
-    ```
-    { 
-        "status": "error", 
-        "error": "Post not found"
-    }
-    ```
-
 ### POST /api/v2/tweet/:id/react/:type
 
 React to a post. Type must come from the list of valid reaction words.
@@ -819,12 +725,12 @@ React to a post. Type must come from the list of valid reaction words.
 
 #### Returns
 
-All reactions that have been applied to the post.
+Summary of reactions that have been applied to the post.
 
 ```
 {
     "status": "ok",
-    "reactions": ReactionDetails{}
+    "reactions": ReactionsSummary{}
 }
 ```
 
@@ -864,12 +770,12 @@ Remove reaction from a post. If `type` is not a valid reaction word, or if it ha
 
 #### Returns
 
-All reactions that have been applied to the post.
+Summary of reactions that have been applied to the post.
 
 ```
 {
     "status": "ok",
-    "reactions": ReactionDetails{}
+    "reactions": ReactionsSummary{}
 }
 ```
 
@@ -1387,7 +1293,6 @@ Get/post new threads and posts to those threads
         "forum_id": "forum_id_string",
         "author": "author_string",
         "display_name": "display_name_string",
-        "likes": Array["username_string", ...],
         "new": boolean,
         "text": "text_string",
         "timestamp": "ISO_8601_DATETIME"
@@ -1466,36 +1371,6 @@ Creates a new post in the thread
 
   JSON Object {
           "forum_post": PostMeta {...}
-      }
-
-### GET /api/v2/forums/thread/:id/like/:post_id
-
-Likes a specific post_id
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameters
-
-#### Returns
-
-  JSON Object {
-          "likes": Array ["username_string", ...]
-      }
-
-### GET /api/v2/forums/thread/:id/unlike/:post_id
-
-Unlikes a specific post_id
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameters
-
-#### Returns
-
-  JSON Object {
-          "likes": Array ["username_string", ...]
       }
 
 ## Event Information

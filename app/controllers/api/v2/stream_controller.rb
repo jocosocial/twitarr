@@ -3,7 +3,7 @@ class API::V2::StreamController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   PAGE_LENGTH = 20
-  before_filter :login_required,  :only => [:create, :destroy, :update, :like, :unlike, :react, :unreact]
+  before_filter :login_required,  :only => [:create, :destroy, :update, :react, :unreact]
   before_filter :fetch_post, :except => [:index, :create, :view_mention, :view_hash_tag]
 
   def fetch_post
@@ -24,7 +24,7 @@ class API::V2::StreamController < ApplicationController
     if params[:starred]
       filter_authors = current_user.starred_users.reject { |x| x == current_username }
     end
-    query = {filter_author: params[:author], filter_authors: filter_authors, filter_hashtag: params[:hashtag], filter_likes: params[:likes], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
+    query = {filter_author: params[:author], filter_authors: filter_authors, filter_hashtag: params[:hashtag], filter_reactions: params[:reactions], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
     
     posts = nil
     newest = false
@@ -183,20 +183,6 @@ class API::V2::StreamController < ApplicationController
     end
   end
 
-  def like
-    @post = @post.add_like current_username
-    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username, @post.likes) }
-  end
-
-  def show_likes
-    render json: {status: 'ok', likes: @post.decorate.all_likes(current_username, @post.likes) }
-  end
-
-  def unlike
-    @post = @post.remove_like current_username
-    render json: {status: 'ok', likes: @post.decorate.some_likes(current_username, @post.likes) }
-  end
-
   def react
     unless params.has_key?(:type)
       render status: :bad_request, json: {status: 'error', error: 'Reaction type must be included.'}
@@ -204,7 +190,7 @@ class API::V2::StreamController < ApplicationController
     end
     @post.add_reaction current_username, params[:type]
     if @post.valid?
-      render json: {status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash } }
+      render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
     else
       render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"}
     end
@@ -220,7 +206,7 @@ class API::V2::StreamController < ApplicationController
       return
     end
     @post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash } }
+    render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
   end
 
   private

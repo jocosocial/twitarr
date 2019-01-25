@@ -81,9 +81,9 @@ Twitarr.StreamStarPageController = Twitarr.ObjectController.extend Twitarr.Singl
 Twitarr.StreamPostPartialController = Twitarr.ObjectController.extend
   actions:
     like: ->
-      @get('model').like()
+      @get('model').react('like')
     unlike: ->
-      @get('model').unlike()
+      @get('model').unreact('like')
     delete: ->
       @get('model').delete()
       @transitionToRoute 'stream'

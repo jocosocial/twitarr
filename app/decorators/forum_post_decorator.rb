@@ -12,13 +12,11 @@ class ForumPostDecorator < BaseDecorator
         },
         text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options)),
         timestamp: timestamp,
-        likes: some_likes(username, likes),
-        all_likes: all_likes(username, likes),
         photos: decorate_photos,
         hash_tags: hash_tags,
 #        location: location,
         mentions: mentions,
-        reactions: reaction_summary(reactions)
+        reactions: BaseDecorator.reaction_summary(reactions, username)
     }
     ret[:new] = (timestamp > last_view) unless last_view.nil?
     ret

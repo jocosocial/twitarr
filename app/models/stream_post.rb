@@ -10,7 +10,6 @@ class StreamPost
   field :au, as: :author, type: String
   field :tx, as: :text, type: String
   field :ts, as: :timestamp, type: Time
-  field :lk, as: :likes, type: Array, default: []
   field :ht, as: :hash_tags, type: Array
   field :mn, as: :mentions, type: Array
   field :et, as: :entities, type: Array
@@ -28,7 +27,6 @@ class StreamPost
   validate :validate_photo
 
   # 1 = ASC, -1 DESC
-  index likes: 1
   index timestamp: -1
   index author: 1
   index mentions: 1
@@ -44,7 +42,7 @@ class StreamPost
     query = where(:timestamp.lte => Time.at(ms_since_epoch.to_i / 1000.0))
     query = query.where(:author.in => options[:filter_authors]) if options.has_key? :filter_authors and !options[:filter_authors].nil?
     query = query.where(author: options[:filter_author]) if options.has_key? :filter_author and !options[:filter_author].nil?
-    query = query.where(likes: options[:filter_likes]) if options.has_key? :filter_likes and !options[:filter_likes].nil?
+    query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
     query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
     if options.has_key? :filter_mentions and !options[:filter_mentions].nil?
       if options[:mentions_only]
@@ -60,7 +58,7 @@ class StreamPost
     query = where(:timestamp.gte => Time.at(ms_since_epoch.to_i / 1000.0))
     query = query.where(:author.in => options[:filter_authors]) if options.has_key? :filter_authors and !options[:filter_authors].nil?
     query = query.where(author: options[:filter_author]) if options.has_key? :filter_author and !options[:filter_author].nil?
-    query = query.where(likes: options[:filter_likes]) if options.has_key? :filter_likes and !options[:filter_likes].nil?
+    query = query.where(reactions: options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
     query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
     if options.has_key? :filter_mentions and !options[:filter_mentions].nil?
       if options[:mentions_only]

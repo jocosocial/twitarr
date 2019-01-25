@@ -225,11 +225,6 @@ class User
     Seamail.where(usernames: username).length
   end
 
-  def liked_posts
-    ForumPost.where(:likes.in => [self.username]).union(StreamPost.where(:likes.in => [self.username])).order_by(timestamp: :desc)
-  end
-
-
   def number_of_tweets
     StreamPost.where(author: self.username).count
   end

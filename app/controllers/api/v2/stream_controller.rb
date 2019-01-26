@@ -45,7 +45,7 @@ class API::V2::StreamController < ApplicationController
 
     posts = posts.map { |x| x } # Execute the query, so that our results are the expected size
 
-    next_page = posts.last.nil? ? 0 : (posts.last.timestamp.to_f * 1000).to_i - 1
+    next_page = posts.last.nil? ? 0 : posts.last.timestamp.to_ms - 1
 
     if sort == :asc
       posts = posts.reverse # Restore sort direction of output to be by time descending - the opposite of what mongo gave us
@@ -209,7 +209,7 @@ class API::V2::StreamController < ApplicationController
   end
 
   def newest_posts(query)
-    start = (DateTime.now.to_f * 1000).to_i
+    start = DateTime.now.to_ms
     params[:start] = start
     older_posts(query)
   end

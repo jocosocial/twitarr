@@ -26,7 +26,7 @@ class API::V2::AlertsController < ApplicationController
       session[:last_viewed_alerts] = DateTime.now unless params[:no_reset]
     end
     render json: { tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
-                announcements: announcements, unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: (last_checked_time.to_f * 1000).to_i }
+                announcements: announcements, unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms }
   end
 
   def check

@@ -33,7 +33,7 @@ class UserDecorator < Draper::Decorator
       email: email,
       display_name: display_name,
       current_location: current_location,
-      last_login: last_login.to_ms,
+      last_login: last_login&.to_ms,
       empty_password: empty_password?,
       last_photo_updated: last_photo_updated.to_ms,
       room_number: room_number,

@@ -11,7 +11,7 @@ class SeamailMessageDecorator < BaseDecorator
           last_photo_updated: User.last_photo_updated_from_username(author),
         },
         text: replace_emoji(clean_text_with_cr(text, options), options),
-        timestamp: timestamp,
+        timestamp: timestamp.to_ms,
         read_users: read_users.map { |user| 
           {
             username: user,

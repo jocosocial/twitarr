@@ -11,7 +11,7 @@ class AnnouncementDecorator < BaseDecorator
           last_photo_updated: User.last_photo_updated_from_username(author)
         },
         text: twitarr_auto_linker(text.gsub("\n", '<br />')),
-        timestamp: timestamp
+        timestamp: timestamp.to_ms
     }
   end
 
@@ -20,8 +20,8 @@ class AnnouncementDecorator < BaseDecorator
         id: as_str(id),
         author: author,
         text: text,
-        timestamp: timestamp,
-        valid_until: valid_until.strftime('%F %l:%M%P')
+        timestamp: timestamp.to_ms,
+        valid_until: valid_until.to_ms
     }
   end
 

@@ -7,7 +7,7 @@ class PostReactionDecorator < Draper::Decorator
         user: {
           username: username,
           display_name: User.display_name_from_username(username),
-          last_photo_updated: User.last_photo_updated_from_username(username)
+          last_photo_updated: User.last_photo_updated_from_username(username).to_ms
         }
     }
   end

@@ -6,10 +6,10 @@ class EventDecorator < BaseDecorator
         id: as_str(id),
         title: title,
         location: location,
-        start_time: start_time,
+        start_time: start_time.to_ms,
         official: official
     }
-    result[:end_time] = end_time unless end_time.blank?
+    result[:end_time] = end_time.to_ms unless end_time.blank?
     result[:following] = favorites.include? username
     result
   end

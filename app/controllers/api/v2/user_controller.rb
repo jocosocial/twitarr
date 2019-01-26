@@ -28,7 +28,7 @@ class API::V2::UserController < ApplicationController
   def auth
     login_result = validate_login params[:username], params[:password]
     if login_result.has_key? :error
-      render status: :unauthorized, json: { :status => 'incorrect username or password' } and return
+      render status: :unauthorized, json: { status: 'error', error: login_result[:error] } and return
     else
       @user = login_result[:user]
       login_user @user

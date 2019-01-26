@@ -18,7 +18,13 @@ class API::V2::EventController < ApplicationController
     @event.title = params[:title] if params.has_key? :title
     @event.description = params[:description] if params.has_key? :description
     @event.location = params[:location] if params.has_key? :location
-    @event.start_time = Time.parse(params[:start_time]) if params.has_key? :start_time
+    if params.has_key? :start_time
+      if params[:start_time] =~ /^\d+$/
+        @event.start_time = Time.at(params[:start_time].to_i / 1000.0)
+      else
+        @event.start_time = DateTime.parse params[:start_time]
+      end
+    end
     @event.end_time = Time.parse(params[:end_time]) unless params[:end_time].blank?
 
     if @event.save

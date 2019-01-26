@@ -37,11 +37,13 @@ class ApplicationController < ActionController::Base
     user = User.get username
     result = {user: user}
     if user.nil?
-      result[:error] = 'User does not exist.'
-    elsif user.status != User::ACTIVE_STATUS || user.empty_password?
+      result[:error] = 'Invalid username or password.'
+    elsif user.empty_password? # We need to check this condition before comparing passwords
       result[:error] = 'User account has been disabled.'
     elsif !user.correct_password(password)
       result[:error] = 'Invalid username or password.'
+    elsif user.status != User::ACTIVE_STATUS # If a user's password is set, we only want to report they're locked if they have the right password
+      result[:error] = 'User account has been disabled.'
     else
       user.update_last_login.save
     end

@@ -12,7 +12,6 @@ These parameter types are used throughout the API
 
 * boolean - (true, false, 1, 0, yes, no)
 * datetime string - ISO 8601 date/time string, or milliseconds since the unix epoch as a string
-* ISO_8601_DATETIME - ISO 8601 date/time string
 * epoch - milliseconds since the unix epoch as an integer
 * id_string - a string for the id
 * username_string - user's username.  All lowercase word characters plus '-' and '&', at least 3 characters
@@ -105,7 +104,7 @@ These output types are used throughout the API
     "id": "seamail_message_id_string",
     "author": UserInfo{},
     "text": "string",
-    "timestamp": "ISO_8601_DATETIME", # Date and time that this message was posted
+    "timestamp": epoch, # Date and time that this message was posted
     "read_users": [
         UserInfo{}, ...
     ]
@@ -125,7 +124,7 @@ These output types are used throughout the API
         SeamailMessage{}, ...
     ],
     "message_count": integer # An integer counting the number of messages (or unread messages) in the thread
-    "timestamp": "ISO_8601_DATETIME", # Date and time of the most recent message in the thread
+    "timestamp": epoch, # Date and time of the most recent message in the thread
     "count_is_unread": boolean # If true, message_count is the number of unread messages in the thread. If false, message_count is the number of all messages in the thread.
     "is_unread": boolean # If any message in the thread is unread, this will be true
 }
@@ -381,7 +380,7 @@ Get/post information on the tweet stream
 {
     "id": "id_string",
     "author": UserInfo{},
-    "timestamp": "ISO_8601_DATETIME",
+    "timestamp": epoch,
     "text": "marked_up_text",
     "reactions": ReactionsSummary{},
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
@@ -396,7 +395,7 @@ Get/post information on the tweet stream
     "id": "id_string",
     "author": UserInfo{},
     "text": "marked up text",
-    "timestamp": "ISO_8601_DATETIME",
+    "timestamp": epoch,
     "reactions": ReactionsSummary{},
     "parent_chain": [ "stream_post_id_string", ... ],
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
@@ -413,7 +412,7 @@ Get the tweets in the stream. This is an incredibly flexible endpoint that will 
 #### Query parameters
 
 * start=epoch - Optional (Default: Now) - The start location for getting tweets
-* newer_posts=true - Optional (Default: false) - If this parameter is true, get tweets newer than start, otherwise get tweets older than start
+* newer_posts=true - Optional (Default: false) - If this parameter is true, get tweets with timestamp >= start, otherwise get tweets with timestamp <= start
 * limit=Integer - Optional (Default: 20) - How many tweets to get
 * author=username - Optional (Default: No Filter) - Filter by username specified
 * hashtag=hashtag - Optional (Default: No Filter) - Filter by hashtag
@@ -837,7 +836,7 @@ All reactions that have been applied to the post.
     "md5_hash": "md5_string",
     "original_filename": "filename_string",
     "uploader": "username_string",
-    "upload_time": "ISO_8601_DATETIME"
+    "upload_time": epoch
 }
 ```
 
@@ -1341,8 +1340,8 @@ Perform an events search against the database for results.
     "email": "email_address",  # May be null
     "display_name": "displayname_string",
     "current_location": null, # Not currently implemented
-    "last_login": "ISO_8601_DATETIME",
-    "empty_password?": boolean,
+    "last_login": epoch,
+    "empty_password": boolean,
     "last_photo_updated": epoch,
     "room_number": "string", # May be null
     "real_name": "string", # May be null
@@ -1497,12 +1496,12 @@ Get/post new threads and posts to those threads
         "last_post_username": "author_string",
         "posts": Integer,
         "subject": "subject_string",
-        "timestamp": "ISO_8601_DATETIME"
+        "timestamp": epoch
     }
 
     JSON ForumThread {
         "id": "id_string",
-        "latest_read": "ISO_8601_DATETIME", // Last time the user read the thread
+        "latest_read": epoch, // Last time the user read the thread
         "subject": "subject_string",
         "next_page": null|Integer,
         "prev_page": null|Integer,
@@ -1516,7 +1515,7 @@ Get/post new threads and posts to those threads
         "display_name": "display_name_string",
         "new": boolean,
         "text": "text_string",
-        "timestamp": "ISO_8601_DATETIME"
+        "timestamp": epoch
     }
 
 ### GET /api/v2/forums/
@@ -1606,8 +1605,8 @@ Get/post information on events.
         "display_name": "displayname_string",
         "title": "title_string",
         "location": "location_string",
-        "start_time": "ISO_8601_DATETIME",
-        "end_time": "ISO_8601_DATETIME",
+        "start_time": epoch,
+        "end_time": epoch,
         "signups": ["username_string", ...],
         "favorites": ["username_string", ...],
         "description": "marked up text",
@@ -1643,10 +1642,10 @@ Posts an event.
 
     JSON Object {
       "title": "string",
-      "start_time": "ISO_8601_DATETIME",
+      "start_time": epoch,
       "location": "string",
       "description": "string",
-      "end_time": "ISO_8601_DATETIME",
+      "end_time": epoch,
       "max_signups": integer
     }
     
@@ -1703,8 +1702,8 @@ A user may only edit their events, unless they are an admin.
     JSON Object {
       "description": "string",
       "location": "string",
-      "start_time": "ISO_8601_DATETIME",
-      "end_time": "ISO_8601_DATETIME",
+      "start_time": epoch,
+      "end_time": epoch,
       "max_signups": integer
     }
     

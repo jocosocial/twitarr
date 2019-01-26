@@ -42,7 +42,7 @@ class API::V2::PhotoController < ApplicationController
 
     query = PhotoMetadata.all.order_by([sort_by, order]).skip(limit * page).limit(limit)
     count = query.length
-    render json: {status: 'ok', total_count: count, page: page, photos: query}
+    render json: {status: 'ok', total_count: count, page: page, photos: query.map { |x| x.decorate.to_hash}}
   end
 
   def show

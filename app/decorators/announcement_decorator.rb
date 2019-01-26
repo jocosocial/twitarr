@@ -8,7 +8,7 @@ class AnnouncementDecorator < BaseDecorator
         author: {
           username: author,
           display_name: User.display_name_from_username(author),
-          last_photo_updated: User.last_photo_updated_from_username(author)
+          last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
         text: twitarr_auto_linker(text.gsub("\n", '<br />')),
         timestamp: timestamp.to_ms

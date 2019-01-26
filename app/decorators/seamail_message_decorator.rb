@@ -8,7 +8,7 @@ class SeamailMessageDecorator < BaseDecorator
         author: {
           username: author,
           display_name: User.display_name_from_username(author),
-          last_photo_updated: User.last_photo_updated_from_username(author),
+          last_photo_updated: User.last_photo_updated_from_username(author).to_ms,
         },
         text: replace_emoji(clean_text_with_cr(text, options), options),
         timestamp: timestamp.to_ms,
@@ -16,7 +16,7 @@ class SeamailMessageDecorator < BaseDecorator
           {
             username: user,
             display_name: User.display_name_from_username(user),
-            last_photo_updated: User.last_photo_updated_from_username(user)
+            last_photo_updated: User.last_photo_updated_from_username(user).to_ms
           }
         }
       }

@@ -100,7 +100,15 @@ module Postable
                 self.or({mentions: query_string}, {author: query_string})
               end
       if params[:after]
-        query = query.where(:timestamp.gt => params[:after])
+        val = nil
+        if params[:after] =~ /^\d+$/
+          val = Time.at(params[:after].to_i / 1000.0)
+        else
+          val = DateTime.parse params[:after]
+        end
+        if val
+          query = query.where(:timestamp.gt => val)
+        end
       end
       query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
     end
@@ -111,7 +119,15 @@ module Postable
       limit = params[:limit] || 20
       query = where({hash_tags: query_string})
       if params[:after]
-        query = query.where(:timestamp.gt => params[:after])
+        val = nil
+        if params[:after] =~ /^\d+$/
+          val = Time.at(params[:after].to_i / 1000.0)
+        else
+          val = DateTime.parse params[:after]
+        end
+        if val
+          query = query.where(:timestamp.gt => params[:after])
+        end
       end
       query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
     end

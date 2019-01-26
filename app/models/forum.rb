@@ -69,7 +69,15 @@ class Forum
     limit = params[:limit] || 20
     query = where(:'fp.mn' => query_string)
     if params[:after]
-      query = query.gt(:'fp.ts' => params[:after])
+      val = nil
+      if params[:after] =~ /^\d+$/
+        val = Time.at(params[:after].to_i / 1000.0)
+      else
+        val = DateTime.parse params[:after]
+      end
+      if val
+        query = query.gt(:'fp.ts' => val)
+      end
     end
     query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
   end

@@ -13,7 +13,7 @@
 
   <div class="form">
     <button class="btn" {{action 'reset_password' username}}>Reset Password</button>
-    {{#if empty_password?}}
+    {{#if empty_password}}
       <span style="color: darkred; padding-left: 1em;">
           Empty password!
         </span>

@@ -22,11 +22,11 @@ class User
   field :st, as: :status, type: String
   field :em, as: :email, type: String
   field :dn, as: :display_name, type: String
-  field :ll, as: :last_login, type: DateTime
+  field :ll, as: :last_login, type: Time, default: Time.at(0)
   field :um, as: :unnoticed_mentions, type: Integer, default: 0
-  field :al, as: :last_viewed_alerts, type: DateTime, default: Time.at(0)
+  field :al, as: :last_viewed_alerts, type: Time, default: Time.at(0)
   field :ph, as: :photo_hash, type: String
-  field :pu, as: :last_photo_updated, type: Integer, default: Time.now.to_i
+  field :pu, as: :last_photo_updated, type: Time, default: Time.now
   field :rn, as: :room_number, type: String
   field :an, as: :real_name, type: String
   field :hl, as: :home_location, type: String
@@ -107,7 +107,7 @@ class User
   end
 
   def update_last_login
-    self.last_login = Time.now.to_f
+    self.last_login = Time.now
     self
   end
 
@@ -244,7 +244,7 @@ class User
     result = PhotoStore.instance.reset_profile_photo username
     if result[:status] == 'ok'
       self.photo_hash = result[:md5_hash]
-      self.last_photo_updated = Time.now.to_i
+      self.last_photo_updated = Time.now
       save
     end
     result
@@ -254,7 +254,7 @@ class User
     result = PhotoStore.instance.upload_profile_photo(file, username)
     if result[:status] == 'ok'
       self.photo_hash = result[:md5_hash]
-      self.last_photo_updated = Time.now.to_i
+      self.last_photo_updated = Time.now
       save
     end
     result

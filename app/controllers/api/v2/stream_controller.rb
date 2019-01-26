@@ -95,10 +95,6 @@ class API::V2::StreamController < ApplicationController
       render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0, Page must be greater than or equal to 0"} and return
     end
 
-    if params[:after]
-      params[:after] = Time.at(params[:after].to_f / 1000)
-    end
-
     query = StreamPost.view_mentions params
     count = query.count
     has_next_page = count > ((params[:page] + 1) * params[:limit])
@@ -112,10 +108,6 @@ class API::V2::StreamController < ApplicationController
     params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
     if params[:limit] < 1 || params[:page] < 0
       render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0, Page must be greater than or equal to 0"} and return
-    end
-
-    if params[:after]
-      params[:after] = Time.at(params[:after].to_f / 1000)
     end
 
     query = StreamPost.view_hashtags params

@@ -1,4 +1,4 @@
-class ForumDecorator < Draper::Decorator
+class ForumDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::TextHelper
 
@@ -9,10 +9,10 @@ class ForumDecorator < Draper::Decorator
         last_post_author: {
           username: posts.last.author,
           display_name: User.display_name_from_username(posts.last.author),
-          last_photo_updated: User.last_photo_updated_from_username(posts.last.author)
+          last_photo_updated: User.last_photo_updated_from_username(posts.last.author).to_ms
         },
         posts: post_count,
-        timestamp: last_post_time,
+        timestamp: last_post_time.to_ms,
         last_post_page: 0
     }
     unless user.nil?
@@ -36,7 +36,7 @@ class ForumDecorator < Draper::Decorator
           id: id.to_s,
           subject: subject,
           posts: posts.map { |x| x.decorate.to_hash(user.username, last_view, options) },
-          latest_read: last_view
+          latest_read: last_view.to_ms
       }
     end
   end
@@ -63,7 +63,7 @@ class ForumDecorator < Draper::Decorator
           id: id.to_s,
           subject: subject,
           posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(user.username, last_view, options) },
-          latest_read: last_view,
+          latest_read: last_view.to_ms,
           next_page: next_page,
           prev_page: prev_page
       }

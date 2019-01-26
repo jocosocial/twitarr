@@ -48,7 +48,7 @@ class API::V2::SeamailController < ApplicationController
       mails = mails.map { |x| x.decorate.to_meta_hash(current_username, counting_unread) }
     end
 
-    render json: {status: 'ok', output => mails, last_checked: ((Time.now.to_f * 1000).to_i + 1)}
+    render json: {status: 'ok', output => mails, last_checked: Time.now.to_ms}
   end
 
   def threads

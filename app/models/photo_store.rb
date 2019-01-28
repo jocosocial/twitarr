@@ -53,12 +53,15 @@ class PhotoStore
       # yeah, ImageMagick throws a NPE if the photo isn't a photo
       return { status: 'error', error: 'Photo could not be opened - is it an image?' }
     end
+    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
     img.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.small_profile_path(username)
     { status: 'ok', md5_hash: temp_file.md5_hash }
+  rescue EXIFR::MalformedJPEG
+    { status: 'error', error: 'Photo extension is jpg but could not be opened as jpeg.' }
   end
 
   def reset_profile_photo(username)

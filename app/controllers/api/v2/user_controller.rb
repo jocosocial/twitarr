@@ -2,6 +2,12 @@ class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions]
+  before_filter :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
+
+  def fetch_user
+    @user = User.get params[:username]
+    render status: :not_found, json: {status: 'error', error: 'User not found.'} and return unless @user
+  end
 
   def new
     if logged_in?
@@ -39,7 +45,7 @@ class API::V2::UserController < ApplicationController
   def reset_password
     params[:username] ||= ''
     params[:registration_code] ||= ''
-    user = User.where(username: params[:username].downcase).first
+    user = User.where(username: User.format_username(params[:username])).first
     if user.nil? or user.registration_code != params[:registration_code].downcase
       sleep 10.seconds.to_i
       render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and registration code combination not found.']}} and return
@@ -79,29 +85,21 @@ class API::V2::UserController < ApplicationController
   end
 
   def show
-    user = User.get params[:username]
-    if user.nil?
-      render json: { status: "User #{params[:username]} does not exist."}
-      return
-    end
-    hash = user.decorate.public_hash.merge(
+    hash = @user.decorate.public_hash.merge(
       {
-          recent_tweets: StreamPost.where(author: user.username).desc(:id).limit(10).map { |x| x.decorate.to_hash(current_username, request_options) }
+          recent_tweets: StreamPost.where(author: @user.username).desc(:id).limit(10).map { |x| x.decorate.to_hash(current_username, request_options) }
       })
-    hash[:starred] = current_user.starred_users.include?(user.username) if logged_in? 
-    hash[:comment] = current_user.personal_comments[user.username] if logged_in?
+    hash[:starred] = current_user.starred_users.include?(@user.username) if logged_in? 
+    hash[:comment] = current_user.personal_comments[@user.username] if logged_in?
     render json: { status: 'ok', user: hash }
   end
 
   def star
-    show_username = User.format_username params[:username]
-    user = User.get show_username
-    render json: {status: 'User does not exist.'} and return unless User.exist?(params[:username])
-    starred = current_user.starred_users.include? show_username
+    starred = current_user.starred_users.include? @user.username
     if starred
-      current_user.starred_users.delete show_username
+      current_user.starred_users.delete @user.username
     else
-      current_user.starred_users << show_username
+      current_user.starred_users << @user.username
     end
     current_user.save
     render json: {status: 'ok', starred: !starred}
@@ -119,10 +117,7 @@ class API::V2::UserController < ApplicationController
   end
 
   def personal_comment
-    render json: {status: 'User does not exist.'} and return unless User.exist?(params[:username])
-
-    show_username = User.format_username params[:username]
-    current_user.personal_comments[show_username] = params[:comment]
+    current_user.personal_comments[@user.username] = params[:comment]
     current_user.save
     render json: {status: 'ok'}
   end
@@ -160,19 +155,13 @@ class API::V2::UserController < ApplicationController
   end
 
   def get_photo
-    user = User.get params[:username]
-    response.headers['Etag'] = user.photo_hash
+    response.headers['Etag'] = @user.photo_hash
     expires_in 1.second
-    if user
-      if params[:full]
-        send_file user.full_profile_picture_path, disposition: 'inline'
-      else
-        send_file user.profile_picture_path, disposition: 'inline'
-      end
-
+    
+    if params[:full]
+      send_file @user.full_profile_picture_path, disposition: 'inline'
     else
-      Rails.logger.error "get_photo: User #{params[:username]} was not found.  Using 404 image."
-      redirect_to '/img/404_file_not_found_sign_by_zutheskunk.png'
+      send_file @user.profile_picture_path, disposition: 'inline'
     end
   end
 
@@ -181,8 +170,12 @@ class API::V2::UserController < ApplicationController
   end
 
   def update_photo
-    render status: :bad_request, json: {status: 'error', error: 'Must provide a photo to upload.'} and return unless params[:file]
-    render json: current_user.update_photo(params[:file])
+    render status: :bad_request, json: {status: 'error', error: 'Must provide photo to upload.'} and return unless params[:file]
+    results = current_user.update_photo(params[:file])
+    if results.fetch(:status) == 'error'
+      render status: :bad_request, json: results
+    else
+      render json: results
   end
 
   def reset_mentions

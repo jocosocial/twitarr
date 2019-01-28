@@ -1,4 +1,4 @@
-@BASE_DATE = DateTime.now - 1.day
+@BASE_DATE = Time.now - 1.day
 puts "Using a base date of #{@BASE_DATE}"
 
 def create_registration_code(code)
@@ -67,7 +67,7 @@ end
 
 def at_time(hr, min, params = {})
   dt = @BASE_DATE
-  dt = dt - params[:offset] if params.has_key? :offset
+  dt = dt + params[:offset] if params.has_key? :offset
   params.delete :offset
   params[:hour] = hr
   params[:min] = min

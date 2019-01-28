@@ -22,7 +22,7 @@ class API::V2::EventController < ApplicationController
       if params[:start_time] =~ /^\d+$/
         @event.start_time = Time.at(params[:start_time].to_i / 1000.0)
       else
-        @event.start_time = DateTime.parse params[:start_time]
+        @event.start_time = Time.parse(params[:start_time])
       end
     end
     @event.end_time = Time.parse(params[:end_time]) unless params[:end_time].blank?

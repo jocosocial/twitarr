@@ -86,7 +86,7 @@ class API::V2::UserController < ApplicationController
     end
     hash = user.decorate.public_hash.merge(
       {
-          recent_tweets: StreamPost.where(author: user.username).desc(:timestamp).limit(10).map { |x| x.decorate.to_hash(current_username, request_options) }
+          recent_tweets: StreamPost.where(author: user.username).desc(:id).limit(10).map { |x| x.decorate.to_hash(current_username, request_options) }
       })
     hash[:starred] = current_user.starred_users.include?(user.username) if logged_in? 
     hash[:comment] = current_user.personal_comments[user.username] if logged_in?

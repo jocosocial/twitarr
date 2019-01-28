@@ -104,13 +104,13 @@ module Postable
         if params[:after] =~ /^\d+$/
           val = Time.at(params[:after].to_i / 1000.0)
         else
-          val = DateTime.parse params[:after]
+          val = Time.parse params[:after]
         end
         if val
           query = query.where(:timestamp.gt => val)
         end
       end
-      query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
+      query.order_by(id: :desc).skip(start_loc*limit).limit(limit)
     end
 
     def view_hashtags(params = {})
@@ -123,13 +123,13 @@ module Postable
         if params[:after] =~ /^\d+$/
           val = Time.at(params[:after].to_i / 1000.0)
         else
-          val = DateTime.parse params[:after]
+          val = Time.parse params[:after]
         end
         if val
           query = query.where(:timestamp.gt => params[:after])
         end
       end
-      query.order_by(timestamp: :desc).skip(start_loc*limit).limit(limit)
+      query.order_by(id: :desc).skip(start_loc*limit).limit(limit)
     end
   end
 end

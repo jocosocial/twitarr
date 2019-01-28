@@ -41,7 +41,7 @@ class API::V2::StreamController < ApplicationController
     end
 
     has_next_page = posts.count > params[:limit]
-    posts = posts.limit(0 - params[:limit]).order_by(timestamp: sort) # Limit needs to be negative, otherwise mongo will return additional posts
+    posts = posts.limit(0 - params[:limit]).order_by(id: sort) # Limit needs to be negative, otherwise mongo will return additional posts
 
     posts = posts.map { |x| x } # Execute the query, so that our results are the expected size
 
@@ -73,7 +73,7 @@ class API::V2::StreamController < ApplicationController
     show_options = request_options
     show_options[:remove] = [:parent_chain]
     has_next_page = StreamPost.where(parent_chain: params[:id]).count > ((start_loc + 1) * limit)
-    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(timestamp: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
+    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(id: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
     post_result = @post.decorate.to_hash(current_username, request_options)
     if children and children.length > 0
       post_result[:children] = children
@@ -209,7 +209,7 @@ class API::V2::StreamController < ApplicationController
   end
 
   def newest_posts(query)
-    start = DateTime.now.to_ms
+    start = Time.now.to_ms
     params[:start] = start
     older_posts(query)
   end

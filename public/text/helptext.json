@@ -29,6 +29,17 @@
                 ]
             },
             {
+                "header": "Can I follow users?",
+                "paragraphs": [
+                    {
+                        "text": "Yes, you can! We call it 'starring' users. If you're logged in, view a user's profile. You will see a star next to their username. If the star is just a black outline, you are not following the user. Click it - the star will turn yellow. You are now following the user! Clicking a yellow star will un-star the user. You can star as many users as you want. Lists of starred users are not public, but you can view a list of all users you have starred by clicking My Starred Users in the main menu."
+                    },
+                    {
+                        "text": "Once you have starred some users, you are able to view a customized tweet stream containing only tweets made by users you have starred. This is called the Starred Stream, and it can be reached through the main menu."
+                    }
+                ]
+            },
+            {
                 "header": "What's a seamail?",
                 "paragraphs": [
                     {

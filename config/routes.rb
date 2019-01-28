@@ -49,7 +49,6 @@ Twitarr::Application.routes.draw do
       get 'user/profile/:username/star', to: 'user#star'
       post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
       get 'user/ac/:query', to: 'user#auto_complete'
-      get 'user/view/:username', to: 'user#show'
       get 'user/starred', to: 'user#starred'
       get 'user/photo/:username', to: 'user#get_photo'
       post 'user/photo', to: 'user#update_photo'

@@ -11,7 +11,7 @@ This documentation is for the rest endpoints under /api/v2
 These parameter types are used throughout the API
 
 * boolean - (true, false, 1, 0, yes, no)
-* datetime string - ISO 8601 date/time string, or milliseconds since the unix epoch as a string
+* datetime_string - ISO 8601 date/time string, or milliseconds since the unix epoch as a string
 * epoch - milliseconds since the unix epoch as an integer
 * id_string - a string for the id
 * username_string - user's username.  All lowercase word characters plus '-' and '&', at least 3 characters
@@ -143,8 +143,8 @@ Gets the User's seamail metadata (Not the messages contained within, just the su
 
 #### Query parameters
 
-* unread=&lt;boolean&gt; - Optional (Default: false) - only show unread seamail if true
-* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail threads that have been updated after this point in time.
+* unread=boolean - Optional (Default: false) - only show unread seamail if true
+* after=ISO_8601_DATETIME OR epoch - Optional (Default: all messages) - Only show seamail threads that have been updated after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads created/updated since your last call. Useful if you are polling.
 
 #### Returns
@@ -178,7 +178,7 @@ Note that sending both unread=true&exclude_read_messages=true will operate ident
 
 * unread=true - Optional (Default: false) - If this parameter is included, only return threads with unread seamail, and only include unread messages in each thread.
 * exclude_read_messages=true - Optional (Default: false) - If this parameter is included, return all threads, but only include unread messages in each thread.
-* after=&lt;ISO_8601_DATETIME&gt; OR &lt;epoch&gt; - Optional (Default: all messages) - Only show seamail threads and messages after this point in time.
+* after=ISO_8601_DATETIME OR epoch - Optional (Default: all messages) - Only show seamail threads and messages after this point in time.
   * Tip: You can store last_checked from the results of this call, and pass it back as the value of the after parameter in your next call to this endpiont. You will only get threads and messages created since your last call. Useful if you are polling and storing the results client-side.
 
 #### Returns
@@ -1332,6 +1332,8 @@ Perform an events search against the database for results.
 
 #### UserAccount{}
 
+This is used by user and admin endpoints. When used with admin endpionts, unnoticed_alerts is excluded.
+
 ```
 {
     "username": "username_string",
@@ -1347,7 +1349,25 @@ Perform an events search against the database for results.
     "real_name": "string", # May be null
     "pronouns": "string", # May be null
     "home_location": "string", # May be null
-    "unnoticed_alerts": boolean
+    "unnoticed_alerts": boolean # Excluded from admin endpoints
+}
+```
+
+#### UserProfile{}
+
+```
+{
+    "username": "username_string",
+    "display_name": "displayname_string",
+    "email": "email_address",  # May be null
+    "current_location": null, # Not currently implemented
+    "number_of_tweets": integer,
+    "number_of_mentions": integer,
+    "room_number": "string", # May be null
+    "real_name": "string", # May be null
+    "pronouns": "string", # May be null
+    "home_location": "string", # May be null
+    "last_photo_updated": epoch,
 }
 ```
 
@@ -1405,23 +1425,66 @@ If the user is successfully created, a JSON object will be returned with the aut
   }
   ```
 
-### GET /api/v2/user/auth
+### GET or POST /api/v2/user/auth
 
-Log in user, returning a 'key' that can be used in each /api/v2 request that requires authentication.  This can be used
-instead of having a session cookie.
+Log in user, returning a 'key' that can be used in each /api/v2 request that requires authentication. The key can be used instead of having a session cookie. If authenticating with GET, use Query Parameters. If authenticating with POST, use JSON Request Body.
 
-### GET /api/v2/user/logout
+#### Query Parameters
 
-Removes any session data for the request.  This really has no effect if using the 'key' style.
+* username=username_string
+* password=password_string
 
-### GET /api/v2/user/whoami
+#### JSON Request Body
+
+```
+{
+    "username": "username_string",
+    "password": "password_string"
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "username": "username_string",
+    "key": "string"
+}
+```
+
+#### Error Resposnes
+* status_code_with_message
+  * HTTP 401 with an error message. Possible messages:
+    * Invalid username or password.
+    * User account has been disabled.
+    ```
+    {
+        "status": "error", 
+        "error": "error_message"
+    }
+    ```
+
+### GET or POST /api/v2/user/logout
+
+Removes session data for the user. If your application uses 'key' for authentication, calling logout will have no effect - keys are not invalidated by this endpoint. This may change in the future. If your app uses key instead of session cookie, all you need to do for a logout is clean up any cached user data, and forget your key.
+
+#### Returns
+
+```
+{
+    "status": "ok"
+}
+```
+
+### GET /api/v2/user/whoami or /api/v2/user/profile
 
 Returns the logged in user's account information.
 
 #### Requires
 
 * logged in.
-    * Accepts: key query parameters
+    * Accepts: key query parameter
 
 #### Returns
 
@@ -1429,7 +1492,7 @@ Returns the logged in user's account information.
 {
     "stauts": "ok",
     "user": UserAccount{},
-    "need_password_change": boolean
+    "need_password_change": boolean # If this is true, the user should be prompted to change their password.
 }
 ```
 
@@ -1461,27 +1524,104 @@ Get auto completion list for usernames. :query string must be at least 1 charact
     }
     ```
 
-### GET /api/v2/user/view/:username
+### GET /api/v2/user/profile/:username
 
-View the user information
+Get a user's public profile information, including the user's 10 most recent tweets.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "user": UserProfile{},
+    "recent_tweets": [ StreamPost{}, ... ],
+    "starred": boolean, # Only present if current user is logged in
+    "comment": string or null # Only present if current user is logged in
+}
+```
+
+#### Error Resposnes
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
 
 ### GET /api/v2/user/photo/:username
 
-Get the user's profile picture
+Get a cropped thumbnail of a user's profile photo.
 
-#### Query args
-* full=true - Optional(Default: false) - Returns a larger version of the profile image
+#### Query Parameters
+
+* full=boolean - Optional. If true, the query will return uncropped full size image.
 
 #### Returns
-[ binary data that makes up the photo ]
+
+An image file.
+
+#### Error Resposnes
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
 
 ### POST /api/v2/user/photo
 
-Modify the user's profile photo
+Replace the user's profile photo.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### Post parameters
+* file=photo_file - The form-data image file you are uploading
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "md5_hash": "string"
+}
+```
+
+#### Error Resposnes
+
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 400 with a message indicating what went wrong. Possible messages:
+  * Must provide photo to upload.
+  * File must be uploaded as form-data.
+  * File was not an allowed image type - only jpg, gif, and png accepted.
+  * Photo could not be opened - is it an image?
+  * File exceeds maximum file size of 10MB.
+  * Photo extension is jpg but could not be opened as jpeg.
+  ```
+  {
+      "status": "error",
+      "error": "error_message"
+  }
+  ```
 
 ### DELETE /api/v2/user/photo
 
-Reset the user's profile to the default identicon image
+Reset the user's profile photo to their default identicon image.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "md5_hash": "string"
+}
+```
+
+#### Error Resposnes
+
+* status_code_only - HTTP 401 if user is not logged in
 
 ## Forum information
 
@@ -1544,7 +1684,7 @@ Creates a forum and it's first post.
 ### Requires
 
 * logged in.
-    * Accepts: key query parameters
+    * Accepts: key query parameter
 
 #### Json Request Body
 
@@ -1578,7 +1718,7 @@ Creates a new post in the thread
 ### Requires
 
 * logged in.
-    * Accepts: key query parameters
+    * Accepts: key query parameter
 
 #### Json Request Body
 

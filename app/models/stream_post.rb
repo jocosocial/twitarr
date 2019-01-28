@@ -83,7 +83,7 @@ class StreamPost
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
     criteria = StreamPost.or({ author: /^#{search_text}.*/ }, { '$text' => { '$search' => "\"#{search_text}\"" } })
-    limit_criteria(criteria, params).order_by(timestamp: :desc)
+    limit_criteria(criteria, params).order_by(id: :desc)
   end
 
   def validate_photo

@@ -18,12 +18,12 @@ class API::V2::AlertsController < ApplicationController
         current_user.save!
       end
     else
-      last_checked_time = session[:last_viewed_alerts] || Time.at(0).to_datetime
+      last_checked_time = session[:last_viewed_alerts] || Time.at(0)
       tweet_mentions = []
       forum_mentions = []
       unread_seamail = []
       upcoming_events = []
-      session[:last_viewed_alerts] = DateTime.now unless params[:no_reset]
+      session[:last_viewed_alerts] = Time.now unless params[:no_reset]
     end
     render json: { tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
                 announcements: announcements, unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms }
@@ -33,7 +33,7 @@ class API::V2::AlertsController < ApplicationController
     if logged_in?
       render json: { status: 'ok', user: current_user.decorate.alerts_meta }
     else
-      last_checked_time = session[:last_viewed_alerts] || Time.at(0).to_datetime
+      last_checked_time = session[:last_viewed_alerts] || Time.at(0)
       render json: { status: 'ok', user:{unnoticed_announcements:Announcement.new_announcements(last_checked_time).count} }
     end
 

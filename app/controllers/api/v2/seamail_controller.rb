@@ -28,7 +28,7 @@ class API::V2::SeamailController < ApplicationController
       if params[:after] =~ /^\d+$/
         val = Time.at(params[:after].to_i / 1000.0)
       else
-        val = DateTime.parse params[:after]
+        val = Time.parse(params[:after])
       end
       if val
         extra_query[:after] = val

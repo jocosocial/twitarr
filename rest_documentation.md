@@ -840,7 +840,9 @@ All reactions that have been applied to the post.
 }
 ```
 
-### GET /api/v2/photo
+### GET /api/v2/photo - DISABLED
+
+Gets a list of images that have been uploaded to the server. This endpoint is currently disabled, since adequate image management tools do not currently exist.
 
 #### Query parameters
 
@@ -1499,6 +1501,14 @@ Returns the logged in user's account information.
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
 
+### POST /api/v2/user/profile
+
+Updates the user's profile.
+
+### POST /api/v2/user/change_password
+
+Allows the user to change their password.
+
 ### GET /api/v2/user/ac/:query
 
 Get auto completion list for usernames. :query string must be at least 1 character long. If the @ symbol is included, it will be ignored and not counted towards the length. It will return a maximum of 10 results.
@@ -1622,6 +1632,8 @@ Reset the user's profile photo to their default identicon image.
 #### Error Resposnes
 
 * status_code_only - HTTP 401 if user is not logged in
+
+
 
 ## Forum information
 

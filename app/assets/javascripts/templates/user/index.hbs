@@ -47,6 +47,9 @@
         </div>
       </div>
     </div>
+    <div class="row" style="margin: 0.5em 1em;">
+      <button class="btn" {{action 'save'}}>Save Changes</button>
+    </div>
 
     <div class="row" style="margin: 0.5em 1em;">
       <button class="btn" id="show-change-password" onclick="$('#change-password').show(); $('#show-change-password').hide()">Change password</button>
@@ -56,19 +59,34 @@
           <div class="form-group">
             <label for="current_password">Current Password</label>
             {{ input type="password" value=current_password class='input' name="current_password" }}
+            {{#if errors.current_password}}
+              <ul class="alert alert-warning" style="padding-left: 2em;">
+                {{#each error in errors.current_password}}
+                  <li>{{error}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
           </div>
           <div class="form-group">
             <label for="new_password">New Password</label>
             {{ input type="password" value=new_password class='input' name="new_password" }}
+            {{#if errors.new_password}}
+              <ul class="alert alert-warning" style="padding-left: 2em;">
+                {{#each error in errors.new_password}}
+                  <li>{{error}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
           </div>
           <div class="form-group">
             <label for="confirm_password">Confirm New Password</label>
             {{ input type="password" value=confirm_password class='input' name="confirm_password" }}
           </div>
+
+          <div class="row" style="margin: 0.5em 1em;">
+            <button class="btn" {{action 'change_password'}}>Submit Password Change</button>
+          </div>
         </div>
-    </div>
-    <div class="row" style="margin: 0.5em 1em;">
-      <button class="btn" {{action 'save'}}>Save Changes</button>
     </div>
   </div>
   

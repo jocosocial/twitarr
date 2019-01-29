@@ -2,6 +2,7 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
   needs: ['application']
 
   count: 0
+  errors: null
 
   profile_pic: (->
     "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
@@ -20,6 +21,27 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
             alert 'Profile was saved.'
           else
             alert response.status
+
+    change_password: ->
+      self = this
+
+      if @get('new_password') != @get('confirm_password')
+        alert "New Password and Confirm New Password do not match!"
+        return
+      
+      result = @get('model').change_password(
+        @get('current_password'), @get('new_password')
+      ).fail (response) =>
+        self.set 'errors', response.responseJSON.errors
+      .then (response) =>
+        if response.status is 'ok'
+          self.set('errors', Ember.A())
+          self.set('current_password', null)
+          self.set('new_password', null)
+          self.set('confirm_password', null)
+          alert 'Password changed.'
+        else
+          alert 'Something went wrong. Try again later.'
 
     file_uploaded: ->
       @incrementProperty('count')

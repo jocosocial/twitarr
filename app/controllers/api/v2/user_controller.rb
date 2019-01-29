@@ -1,7 +1,7 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :reset_photo, :update_photo, :reset_mentions, :mentions]
+  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions]
   before_filter :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
 
   def fetch_user
@@ -123,32 +123,38 @@ class API::V2::UserController < ApplicationController
   end
 
   def update_profile
-    message = 'Profile Updated.'
-
-    password_change = false
-    if params[:new_password] && params[:current_password]
-      render status: :unauthorized, json: { status: 'Current password is incorrect.' } and return unless current_user.correct_password(params[:current_password])
-      current_user.password = params[:new_password]
-      password_change = true
-    end
-
     current_user.current_location = params[:current_location] if params.has_key? :current_location
-    current_user.display_name = params[:display_name] if params.has_key? :display_name
+    # current_user.display_name = params[:display_name] if params.has_key? :display_name
     current_user.email = params[:email] if params.has_key? :email
     current_user.home_location = params[:home_location] if params.has_key? :home_location
     current_user.real_name = params[:real_name] if params.has_key? :real_name
     current_user.pronouns = params[:pronouns] if params.has_key? :pronouns
     current_user.room_number = params[:room_number] if params.has_key? :room_number
-    if current_user.valid?
-      if password_change
-        current_user.set_password params[:new_password]
-        message += ' Password changed.'
-      end
-      current_user.save
-      render json: { status: message, user: UserDecorator.decorate(current_user).self_hash } and return
-    else
-      render json: { status: 'Error', errors: current_user.errors.full_messages } and return
+
+    render json: { status: 'error', errors: current_user.errors } and return unless current_user.valid?
+
+    current_user.save
+    render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash } and return
+  end
+
+  def change_password
+    errors = {}
+
+    unless params[:current_password] && current_user.correct_password(params[:current_password])
+      errors[:current_password] = ["Current password is incorrect."]
     end
+
+    current_user.password = params[:new_password]
+
+    unless current_user.valid?
+      errors[:new_password] = ["New password must be at least six characters long."]
+    end
+
+    render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.length == 0
+
+    current_user.set_password params[:new_password]
+    current_user.save
+    render json: { status: 'ok' } and return
   end
 
   def get_photo

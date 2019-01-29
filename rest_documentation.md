@@ -1509,6 +1509,41 @@ Updates the user's profile.
 
 Allows the user to change their password.
 
+#### JSON Request Body
+
+```
+{
+	"current_password": "password_string",
+	"new_password": "password_string"
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok"
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_parameter_errors
+  * HTTP 400 if there were any errors with updating the password
+  ```
+  { 
+    "status": "error", 
+    "errors": {
+        "current_password": [
+            "Current password is incorrect."
+        ],
+        "new_password": [
+            "New password must be at least six characters long."
+        ]
+    }
+  }
+  ```
+
 ### GET /api/v2/user/ac/:query
 
 Get auto completion list for usernames. :query string must be at least 1 character long. If the @ symbol is included, it will be ignored and not counted towards the length. It will return a maximum of 10 results.

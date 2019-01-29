@@ -123,8 +123,11 @@ class API::V2::UserController < ApplicationController
   end
 
   def update_profile
-    current_user.current_location = params[:current_location] if params.has_key? :current_location
-    # current_user.display_name = params[:display_name] if params.has_key? :display_name
+    # current_user.current_location = params[:current_location] if params.has_key? :current_location
+    current_user.display_name = params[:display_name] if params.has_key? :display_name
+    if current_user.display_name.blank?
+      current_user.display_name = current_user.username
+    end
     current_user.email = params[:email] if params.has_key? :email
     current_user.home_location = params[:home_location] if params.has_key? :home_location
     current_user.real_name = params[:real_name] if params.has_key? :real_name

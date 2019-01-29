@@ -51,6 +51,7 @@ class User
   validate :valid_location?
   validates :email, allow_blank: true, format: { with: URI::MailTo::EMAIL_REGEXP, message: 'E-mail address is not valid.' }
   validate :valid_password?
+  validate :valid_room_number?
   
   def self.valid_username?(username)
     return false unless username
@@ -94,6 +95,12 @@ class User
     Location.valid_location? user_location
   end
 
+  def valid_room_number?
+    unless self[:room_number].empty? || (true if self[:room_number] =~ /\A\d+\Z/)
+      errors.add(:room_number, 'Room number must be blank or an integer.')
+    end
+  end
+
   def empty_password?
     password.nil? || password.empty?
   end
@@ -121,18 +128,6 @@ class User
 
   def display_name=(val)
     super val.andand.strip
-  end
-
-  def room_number=(val)
-    if val.nil? || val.empty? || (val.is_a? Numeric)
-      return super val
-    else
-      if val.andand.strip.to_i > 0
-        return super val.andand.strip.to_i
-      else
-        return nil
-      end
-    end
   end
 
   def real_name=(val)

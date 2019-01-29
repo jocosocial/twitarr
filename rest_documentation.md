@@ -1505,6 +1505,38 @@ Returns the logged in user's account information.
 
 Updates the user's profile.
 
+#### JSON Request Body
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "user": UserAccount{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_parameter_errors
+  * HTTP 400 if there were any errors with profile data
+  ```
+  { 
+    "status": "error", 
+    "errors": {
+        "display_name": [
+            "If display name is entered, it must be three or more characters and cannot include any of ~!@#$%^*()+=<>{}[]\|;:/?"
+        ],
+        "email": [
+            "E-mail address is not valid."
+        ],
+        "room_number": [
+            "Room number must be blank or an integer."
+        ]
+    }
+  }
+  ```
+
 ### POST /api/v2/user/change_password
 
 Allows the user to change their password.
@@ -1590,7 +1622,6 @@ Get a user's public profile information, including the user's 10 most recent twe
   ```
     { "status": "error", "error": "User not found." }
   ```
-
 
 ### GET /api/v2/user/photo/:username
 

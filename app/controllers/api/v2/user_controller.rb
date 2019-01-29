@@ -187,11 +187,11 @@ class API::V2::UserController < ApplicationController
 
   def reset_mentions
     current_user.reset_mentions
-    render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash }
+    render json: { status: 'ok', mentions: current_user.unnoticed_mentions }
   end
 
   def mentions
-    render json: { mentions: current_user.unnoticed_mentions }
+    render json: { status: 'ok', mentions: current_user.unnoticed_mentions }
   end
 
   def logout

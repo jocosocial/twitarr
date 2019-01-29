@@ -1365,7 +1365,7 @@ This is used by user and admin endpoints. When used with admin endpionts, unnoti
     "current_location": null, # Not currently implemented
     "number_of_tweets": integer,
     "number_of_mentions": integer,
-    "room_number": "string", # May be null
+    "room_number": "integer", # String representation of an integer. May be null
     "real_name": "string", # May be null
     "pronouns": "string", # May be null
     "home_location": "string", # May be null
@@ -1503,9 +1503,20 @@ Returns the logged in user's account information.
 
 ### POST /api/v2/user/profile
 
-Updates the user's profile.
+Updates the user's profile. All fields are optional - anything left out of the request will not be updated. To clear a field, send null or a blank string.
 
 #### JSON Request Body
+
+```
+{
+	"display_name": "display_name_string",
+	"email": "email_string",
+	"home_location": "string",
+	"real_name": "string",
+	"pronouns": "string",
+	"room_number": Integer # Also accepts string representation of an integer
+}
+```
 
 #### Returns
 
@@ -1575,6 +1586,38 @@ Allows the user to change their password.
     }
   }
   ```
+
+### GET /api/v2/user/mentions
+
+Gets a count of how many times the user has been mentioned. This count is increased by 1 for a user any time another user includes @username in a tweet or forum post.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "mentions": Integer
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+
+### DELETE /api/v2/user/mentions
+
+Resets the count of how many times the user has been mentioned to 0.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "mentions": Integer
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
 
 ### GET /api/v2/user/ac/:query
 
@@ -1698,7 +1741,6 @@ Reset the user's profile photo to their default identicon image.
 #### Error Resposnes
 
 * status_code_only - HTTP 401 if user is not logged in
-
 
 
 ## Forum information

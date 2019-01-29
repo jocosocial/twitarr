@@ -96,7 +96,7 @@ class User
   end
 
   def valid_room_number?
-    unless self[:room_number].empty? || (true if self[:room_number] =~ /\A\d+\Z/)
+    unless self[:room_number].nil? || self[:room_number].empty? || (Integer(self[:room_number]) rescue false)
       errors.add(:room_number, 'Room number must be blank or an integer.')
     end
   end

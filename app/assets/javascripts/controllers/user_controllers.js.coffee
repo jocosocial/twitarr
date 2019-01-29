@@ -43,6 +43,18 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
         else
           alert 'Something went wrong. Try again later.'
 
+    remove_photo: ->
+      self = this
+
+      if confirm('Are you sure you want to remove your profile photo?')
+        @get('model').remove_photo().fail (response) =>
+          alert 'Unable to remove photo. Try again later.'
+        .then (response) =>
+          if response.status is 'ok'
+            self.set('count', 0)
+          else
+            alert 'Something went wrong. Try again later.'
+
     file_uploaded: ->
       @incrementProperty('count')
 

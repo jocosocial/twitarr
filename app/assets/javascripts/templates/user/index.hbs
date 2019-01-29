@@ -12,6 +12,9 @@
     {{/if}}
   </div>
   <input id="profile-photo-upload" type="file" name="file" {{bind-attr data-url=profile_pic_upload_url}} accept="image/*" style="display: none;">
+  <div class="row" style="margin: 0.5em 1em;">
+    <button class="btn" {{action 'remove_photo'}}>Remove profile photo</button>
+  </div>
 
   <div class="body" style="padding: 1em;">
     <div class="row" style="margin: 1em 0;">

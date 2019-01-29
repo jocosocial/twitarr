@@ -16,6 +16,9 @@ Twitarr.User = Ember.Object.extend
       new_password: new_password
     }
     $.post("#{Twitarr.api_path}/user/change_password", post_data)
+  
+  remove_photo: ->
+    $.ajax("#{Twitarr.api_path}/user/photo", method: 'DELETE')
 
 Twitarr.User.reopenClass
   get: ->

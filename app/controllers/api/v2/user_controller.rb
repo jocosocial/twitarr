@@ -127,10 +127,7 @@ class API::V2::UserController < ApplicationController
 
     password_change = false
     if params[:new_password] && params[:current_password]
-      unless current_user.correct_password(params[:current_password])
-        render status: :unauthorized, json: { status: 'Current password is incorrect.' }
-        return
-      end
+      render status: :unauthorized, json: { status: 'Current password is incorrect.' } and return unless current_user.correct_password(params[:current_password])
       current_user.password = params[:new_password]
       password_change = true
     end
@@ -176,6 +173,7 @@ class API::V2::UserController < ApplicationController
       render status: :bad_request, json: results
     else
       render json: results
+    end
   end
 
   def reset_mentions
@@ -191,4 +189,5 @@ class API::V2::UserController < ApplicationController
     logout_user
     render json: {status: 'ok'}
   end
+
 end

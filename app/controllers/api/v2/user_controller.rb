@@ -54,15 +54,15 @@ class API::V2::UserController < ApplicationController
     # Check validity of new password
     new_pass = params[:new_password]
     user.password = new_pass
-    render status: :bad_request, json: { :status => 'error', errors: {password: ['Your password must be at least six characters long.']}} and return unless user.valid?
+    render status: :bad_request, json: { :status => 'error', errors: {password: ['New password must be at least six characters long.']}} and return unless user.valid?
 
     user.set_password params[:new_password]
     user.save!
-    render json: { :status => 'ok', message: 'Your password has been changed!' }
+    render json: { status: 'ok', message: 'Your password has been changed.' }
   end
 
   def new_seamail
-    render json: {:status => 'ok', email_count: current_user.seamail_unread_count}
+    render json: {status: 'ok', email_count: current_user.seamail_unread_count}
   end
 
   def auto_complete
@@ -85,12 +85,10 @@ class API::V2::UserController < ApplicationController
   end
 
   def show
-    hash = @user.decorate.public_hash.merge(
+    hash = @user.decorate.public_hash(current_user).merge(
       {
           recent_tweets: StreamPost.where(author: @user.username).desc(:id).limit(10).map { |x| x.decorate.to_hash(current_username, request_options) }
       })
-    hash[:starred] = current_user.starred_users.include?(@user.username) if logged_in? 
-    hash[:comment] = current_user.personal_comments[@user.username] if logged_in?
     render json: { status: 'ok', user: hash }
   end
 
@@ -119,7 +117,7 @@ class API::V2::UserController < ApplicationController
   def personal_comment
     current_user.personal_comments[@user.username] = params[:comment]
     current_user.save
-    render json: {status: 'ok'}
+    render json: {status: 'ok', user: @user.decorate.public_hash(current_user)}
   end
 
   def update_profile

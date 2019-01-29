@@ -1370,6 +1370,8 @@ This is used by user and admin endpoints. When used with admin endpionts, unnoti
     "pronouns": "string", # May be null
     "home_location": "string", # May be null
     "last_photo_updated": epoch,
+    "starred": boolean, # Only returned if current user is logged in.
+    "comment": "string" # Only returned if current user is logged in. May be null.
 }
 ```
 
@@ -1505,6 +1507,10 @@ Returns the logged in user's account information.
 
 Updates the user's profile. All fields are optional - anything left out of the request will not be updated. To clear a field, send null or a blank string.
 
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
 #### JSON Request Body
 
 ```
@@ -1552,6 +1558,10 @@ Updates the user's profile. All fields are optional - anything left out of the r
 
 Allows the user to change their password.
 
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
 #### JSON Request Body
 
 ```
@@ -1587,9 +1597,53 @@ Allows the user to change their password.
   }
   ```
 
+### POST /api/v2/user/reset_password
+
+Allows a user to use their registration code to reset their password.
+
+#### JSON Request Body
+
+```
+{
+    "username": "username_string",
+	"registration_code": "string",
+	"new_password": "password_string"
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "message": "Your password has been changed."
+}
+```
+
+#### Error Resposnes
+* status_code_with_parameter_errors
+  * HTTP 400 if there were any errors
+  ```
+  { 
+    "status": "error", 
+    "errors": {
+        "username": [
+            "Username and registration code combination not found."
+        ],
+        "new_password": [
+            "New password must be at least six characters long."
+        ]
+    }
+  }
+  ```
+
 ### GET /api/v2/user/mentions
 
-Gets a count of how many times the user has been mentioned. This count is increased by 1 for a user any time another user includes @username in a tweet or forum post.
+Gets the count of the user's unnoticed mentions. This count is increased by 1 for a user any time another user includes @username in a tweet or forum post.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
 
 #### Returns
 
@@ -1605,7 +1659,11 @@ Gets a count of how many times the user has been mentioned. This count is increa
 
 ### DELETE /api/v2/user/mentions
 
-Resets the count of how many times the user has been mentioned to 0.
+Resets the user's unnoticed mention count to 0.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
 
 #### Returns
 
@@ -1665,6 +1723,85 @@ Get a user's public profile information, including the user's 10 most recent twe
   ```
     { "status": "error", "error": "User not found." }
   ```
+
+### POST /api/v2/user/profile/:username/personal_comment
+
+Allows the current user to save a private comment about another user. Whenever the current user retrieves the other user's profile, this comment will be included.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+    "comment": "string"
+}
+```
+
+#### Returns
+```
+{
+    "status": "ok",
+    "user": UserProfile{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### POST /api/v2/user/profile/:username/star
+
+Toggles the starred status of the user - used to follow and unfollow a particular user.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "starred": boolean
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### GET /api/v2/user/starred
+
+Gets an abbreviated listing of users starred by the current user, along with any personal comments.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "users": [
+        UserInfo{
+            "comment": "string" # The comment field is appended to the UserInfo{} type
+        }, ...
+    ]
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
 
 ### GET /api/v2/user/photo/:username
 

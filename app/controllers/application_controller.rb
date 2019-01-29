@@ -8,14 +8,14 @@ class ApplicationController < ActionController::Base
   end
 
   def current_username
-    return @user.username if @user
+    return @current_user.username if @current_user
     return session[:username] if session[:username]
     return get_username(params[:key]) if valid_key?(params[:key])
     return nil
   end
 
   def current_user
-    @user ||= User.get current_username
+    @current_user ||= User.get current_username
   end
 
   def login_user(user)

@@ -41,7 +41,7 @@ Twitarr.UserMeta = Ember.Object.extend
 #  location_timestamp: null
 
   star: ->
-    $.getJSON("#{Twitarr.api_path}/user/profile/#{@get('username')}/star").then (data) =>
+    $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/star").then (data) =>
       if(data.status == 'ok')
         @set('starred', data.starred)
       else

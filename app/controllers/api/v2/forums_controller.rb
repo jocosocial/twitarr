@@ -17,7 +17,7 @@ class API::V2::ForumsController < ApplicationController
       page = 0
     end
 
-    query = Forum.all.desc(:last_post_time).offset(page * page_size).limit(page_size)
+    query = Forum.all.order_by(:sticky => :desc, :last_post_time => :desc).offset(page * page_size).limit(page_size)
     page_count = (Forum.all.count.to_f / page_size).ceil
 
     next_page = if Forum.count > (page + 1) * page_size

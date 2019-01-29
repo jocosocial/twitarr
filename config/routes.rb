@@ -45,8 +45,9 @@ Twitarr::Application.routes.draw do
       get 'user/whoami', to: 'user#whoami'
       get 'user/profile', to: 'user#whoami'
       post 'user/profile', to: 'user#update_profile'
+      post 'user/change_password', to: 'user#change_password'
       get 'user/profile/:username', to: 'user#show'
-      get 'user/profile/:username/star', to: 'user#star'
+      post 'user/profile/:username/star', to: 'user#star'
       post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
       get 'user/ac/:query', to: 'user#auto_complete'
       get 'user/starred', to: 'user#starred'
@@ -77,7 +78,7 @@ Twitarr::Application.routes.draw do
       get 'reactions', to: 'text#reactions'
       get 'announcements', to: 'text#announcements'
 
-      resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
+      resources :photo, only: [:create, :destroy, :update, :show], :defaults => { :format => 'json' } # :index endpoint exists, but is disabled
       get 'photo/small_thumb/:id', to: 'photo#small_thumb'
       get 'photo/medium_thumb/:id', to: 'photo#medium_thumb'
       get 'photo/full/:id', to: 'photo#full'

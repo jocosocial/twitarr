@@ -8,16 +8,17 @@ Twitarr.User = Ember.Object.extend
       pronouns: @get('pronouns'),
       home_location: @get('home_location')
     }
+    $.post("#{Twitarr.api_path}/user/profile", post_data)
 
-    if @get('current_password') and @get('new_password') and @get('confirm_password')
-      if @get('new_password') != @get('confirm_password')
-        alert "New Password and Confirm New Password do not match!"
-        return
-      post_data["current_password"] = @get('current_password')
-      post_data["new_password"] = @get('new_password')
-
-    $.post("#{Twitarr.api_path}/user/profile", post_data).fail (response) -> 
-      alert JSON.parse(response.responseText).status;
+  change_password: (current_password, new_password) ->
+    post_data = {
+      current_password: current_password,
+      new_password: new_password
+    }
+    $.post("#{Twitarr.api_path}/user/change_password", post_data)
+  
+  remove_photo: ->
+    $.ajax("#{Twitarr.api_path}/user/photo", method: 'DELETE')
 
 Twitarr.User.reopenClass
   get: ->
@@ -40,7 +41,7 @@ Twitarr.UserMeta = Ember.Object.extend
 #  location_timestamp: null
 
   star: ->
-    $.getJSON("#{Twitarr.api_path}/user/profile/#{@get('username')}/star").then (data) =>
+    $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/star").then (data) =>
       if(data.status == 'ok')
         @set('starred', data.starred)
       else

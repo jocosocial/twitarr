@@ -1,8 +1,8 @@
 class UserDecorator < Draper::Decorator
   delegate_all
 
-  def public_hash
-    {
+  def public_hash(current_user = nil)
+    ret = {
       username: username,
       display_name: display_name,
       email: email,
@@ -15,6 +15,11 @@ class UserDecorator < Draper::Decorator
       home_location: home_location,
       last_photo_updated: last_photo_updated
     }
+    unless current_user.nil?
+      ret[:starred] = current_user.starred_users.include?(username)
+      ret[:comment] = current_user.personal_comments[username]
+    end
+    ret
   end
 
   def gui_hash

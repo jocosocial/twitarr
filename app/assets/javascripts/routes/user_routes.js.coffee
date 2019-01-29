@@ -1,6 +1,14 @@
 Twitarr.UserIndexRoute = Ember.Route.extend
   model: (params) ->
     Twitarr.User.get()
+  
+  setupController: (controller, model) ->
+    # Clear state when loading this form
+    controller.errors = Ember.A()
+    model.current_password = null
+    model.new_password = null
+    model.confirm_password = null
+    controller.set('model', model)
 
 Twitarr.UserProfileRoute = Ember.Route.extend
   model: (params) ->

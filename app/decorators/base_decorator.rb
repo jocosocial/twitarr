@@ -13,7 +13,7 @@ class BaseDecorator < Draper::Decorator
 
   def clean_text_with_cr(text, options)
     if options[:app] == 'plain'
-      CGI.escapeHTML(text)
+      text
     else
       CGI.escapeHTML(text || '').gsub("\n", '<br />')
     end

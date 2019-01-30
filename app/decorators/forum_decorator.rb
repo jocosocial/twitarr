@@ -13,6 +13,7 @@ class ForumDecorator < BaseDecorator
         },
         posts: post_count,
         timestamp: last_post_time.to_ms,
+        sticky: sticky,
         last_post_page: 0
     }
     unless user.nil?

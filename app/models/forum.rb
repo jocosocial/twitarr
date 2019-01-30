@@ -6,6 +6,7 @@ class Forum
 
   field :sj, as: :subject, type: String
   field :lp, as: :last_post_time, type: Time
+  field :st, as: :sticky, type: Boolean, default: false
 
   embeds_many :posts, class_name: 'ForumPost', store_as: :fp, order: :timestamp.asc, validate: false
 
@@ -14,7 +15,8 @@ class Forum
   index 'fp.au' => 1
   index 'fp.lk' => 1
   index 'fp.ts' => -1
-
+  index ({:sticky => -1, :last_post_time => -1})
+  
   validates :subject, presence: true
   validate :validate_posts
 

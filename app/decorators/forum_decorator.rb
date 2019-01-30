@@ -29,6 +29,7 @@ class ForumDecorator < BaseDecorator
       {
           id: id.to_s,
           subject: subject,
+          sticky: sticky,
           posts: posts.map { |x| x.decorate.to_hash(user, nil, options) }
       }
     else
@@ -36,8 +37,9 @@ class ForumDecorator < BaseDecorator
       {
           id: id.to_s,
           subject: subject,
-          posts: posts.map { |x| x.decorate.to_hash(user.username, last_view, options) },
-          latest_read: last_view.to_ms
+          sticky: sticky,
+          latest_read: last_view.to_ms,
+          posts: posts.map { |x| x.decorate.to_hash(user.username, last_view, options) }
       }
     end
   end
@@ -54,19 +56,21 @@ class ForumDecorator < BaseDecorator
       {
           id: id.to_s,
           subject: subject,
-          posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(nil, nil, options) },
+          sticky: sticky,
           next_page: next_page,
-          prev_page: prev_page
+          prev_page: prev_page,
+          posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(nil, nil, options) }
       }
     else
       last_view = user.last_forum_view(id.to_s)
       {
           id: id.to_s,
           subject: subject,
-          posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(user.username, last_view, options) },
-          latest_read: last_view.to_ms,
+          sticky: sticky,
           next_page: next_page,
-          prev_page: prev_page
+          prev_page: prev_page,
+          latest_read: last_view.to_ms,
+          posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(user.username, last_view, options) }
       }
     end
   end

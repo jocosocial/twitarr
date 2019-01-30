@@ -1,16 +1,15 @@
 class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  POST_COUNT = 20
   before_filter :login_required, :only => [:create, :update_post, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create, :show]
   
   def index
-    page_size = (params[:limit] || POST_COUNT).to_i
+    page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
     page = (params[:page] || 0).to_i
 
     if page_size <= 0
-      page_size = POST_COUNT
+      page_size = Forum::PAGE_SIZE
     end
 
     if page < 0
@@ -30,15 +29,15 @@ class API::V2::ForumsController < ApplicationController
                 else
                   nil
                 end
-    render json: {forum_meta: query.map { |x| x.decorate.to_meta_hash(current_user) }, next_page: next_page, prev_page: prev_page, pages: page_count}
+    render json: {forum_meta: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page, prev_page: prev_page, pages: page_count}
   end
 
   def show
-    limit = (params[:limit] || POST_COUNT).to_i
+    limit = (params[:limit] || Forum::PAGE_SIZE).to_i
     start_loc = (params[:page] || 0).to_i
 
     if limit <= 0
-      limit = POST_COUNT
+      limit = Forum::PAGE_SIZE
     end
 
     if start_loc < 0

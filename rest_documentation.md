@@ -1886,34 +1886,51 @@ Get/post new threads and posts to those threads
 
 ### Forum Specific types
 
-    JSON ForumThreadMeta {
-        "id": "id_string",
-        "last_post_display_name": "display_name_string",
-        "last_post_page": Integer,
-        "last_post_username": "author_string",
-        "posts": Integer,
-        "subject": "subject_string",
-        "timestamp": epoch
-    }
+#### ForumThreadMeta
 
-    JSON ForumThread {
-        "id": "id_string",
-        "latest_read": epoch, // Last time the user read the thread
-        "subject": "subject_string",
-        "next_page": null|Integer,
-        "prev_page": null|Integer,
-        "posts": Array[PostMeta {...}, ...]
+```
+{
+    "id": "forum_id_string",
+    "subject": "subject_string",
+    "sticky": boolean,
+    "last_post_author": {
+        UserInfo{}
     }
+    "posts": Integer, # A count of posts in the thread
+    "timestamp": epoch, # Timestamp of the last post in the thread
+    "last_post_page": Integer, # Will be 0 if user is not logged in
+    "count": Integer, # Number of posts since user's last view, only included if user is logged in
+    "new_posts": boolean # Only included if user is logged in
+}
+```
 
-    JSON ForumPost {
-        "id": "id_string",
-        "forum_id": "forum_id_string",
-        "author": "author_string",
-        "display_name": "display_name_string",
-        "new": boolean,
-        "text": "text_string",
-        "timestamp": epoch
-    }
+#### ForumThread
+
+```
+{
+    "id": "forum_id_string"
+    "subject": "subject_string",
+    "sticky": boolean,
+    "next_page": null|Integer, # Only included if paging was requested
+    "prev_page": null|Integer, # ONly included if paging was requested
+    "posts": [ ForumPost{}, ... ],
+    "latest_read": epoch, # Timestamp of when the user last viewed the thread, only included if user is logged in
+}
+```
+
+#### ForumPost
+
+```
+{
+    "id": "post_id_string",
+    "forum_id": "forum_id_string",
+    "author": UserInfo{},
+    "text": "string",
+    "timestamp": epoch, # Timestamp of when the post was made
+    "photos": [ PhotoDetails{}, ... ],
+    "new": boolean # Only included if the user is logged in
+}
+```
 
 ### GET /api/v2/forums/
 

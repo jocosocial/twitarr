@@ -1912,7 +1912,8 @@ Get/post new threads and posts to those threads
     "subject": "subject_string",
     "sticky": boolean,
     "next_page": null|Integer, # Only included if paging was requested
-    "prev_page": null|Integer, # ONly included if paging was requested
+    "prev_page": null|Integer, # Only included if paging was requested
+    "page_count": Integer, # Only included if paging was requested
     "posts": [ ForumPost{}, ... ],
     "latest_read": epoch, # Timestamp of when the user last viewed the thread, only included if user is logged in
 }

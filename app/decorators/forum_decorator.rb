@@ -48,6 +48,7 @@ class ForumDecorator < BaseDecorator
 
     next_page = page + 1 if posts.offset((page + 1) * per_page).limit(per_page).to_a.count != 0
     prev_page = page - 1 unless (offset - 1) < 0
+    page_count = (posts.count.to_f / per_page).ceil
 
     ret = {
       id: id.to_s,
@@ -55,6 +56,7 @@ class ForumDecorator < BaseDecorator
       sticky: sticky,
       next_page: next_page,
       prev_page: prev_page,
+      page_count: page_count,
       posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(user, last_view, options) }
     }
     unless user.nil?

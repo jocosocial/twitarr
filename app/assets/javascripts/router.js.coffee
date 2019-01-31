@@ -6,8 +6,8 @@ Twitarr.Router.map ()->
   @resource 'forums', ->
     @route 'page', { path: ':page' }
     @route 'new_post', { path: ':id/new' }
-    @route 'detail', { path: 'thread/:id' }
     @route 'detail', { path: 'thread/:id/:page'}
+    @route 'edit', { path: 'thread/:forum_id/edit/:post_id'}
     @route 'new'
 
   @resource 'stream', ->

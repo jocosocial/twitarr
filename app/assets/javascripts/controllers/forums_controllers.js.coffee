@@ -19,7 +19,7 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
   has_prev_page: (->
     @get('prev_page') isnt null or undefined
   ).property('prev_page')
-
+  
   actions:
     new: ->
       if @get('controllers.application.uploads_pending')
@@ -54,6 +54,23 @@ Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
       @get('model').react('like')
     unlike: ->
       @get('model').unreact('like')
+    edit: ->
+      @transitionToRoute 'forums.edit', @get('forum_id'), @get('id')
+    page: ->
+      alert @get('model.page')
+    delete: ->
+      self = this
+      @get('model').delete(@get('forum_id'), @get('id')).fail((response) =>
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else
+          alert 'Post could not be deleted. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        if response.thread_deleted
+          @transitionToRoute('forums.page', 0)
+        else
+          self.get('target.target.router').refresh();
+      )
   
   unlikeable: (->
     @get('logged_in') and @get('user_likes')
@@ -62,6 +79,14 @@ Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
   likeable: (->
     @get('logged_in') and not @get('user_likes')
   ).property('logged_in', 'user_likes')
+
+  editable: (->
+    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('login_admin'))
+  ).property('logged_in', 'author.username', 'login_user', 'login_admin')
+
+  deleteable: (->
+    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('login_admin'))
+  ).property('logged_in', 'author.username', 'login_user', 'login_admin')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:
@@ -115,3 +140,45 @@ Twitarr.ForumsMetaPartialController = Twitarr.ObjectController.extend
     else
       "#{@get('posts')} #{post_word}"
   ).property('posts', 'new_posts') 
+
+Twitarr.ForumsEditController = Twitarr.ObjectController.extend
+  errors: Ember.A()
+  photo_ids: Ember.A()
+
+  photos: (->
+    pics = @get('photo_ids')
+    if pics
+      Twitarr.Photo.create({id: id}) for id in pics
+    else
+      []
+  ).property('photo_ids.@each')
+
+  actions:
+    cancel: ->
+      @transitionToRoute 'forums.detail', @get('forum_id'), 0
+    
+    save: ->
+      if @get('controllers.application.uploads_pending')
+        alert('Please wait for uploads to finish.')
+        return
+      return if @get('posting')
+      @set 'posting', true
+      Twitarr.ForumPost.edit(@get('forum_id'), @get('id'), @get('text'), @get('photo_ids')).fail((response) =>
+        @set 'posting', false
+        if response.responseJSON?.errors?
+          @set 'errors', response.responseJSON.errors
+        else
+          alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        Ember.run =>
+          @get('errors').clear()
+          @set 'posting', false
+          @transitionToRoute 'forums.detail', @get('forum_id'), 0
+      )
+
+    file_uploaded: (data) ->
+      if data.photo?.id
+        @get('photo_ids').pushObject(data.photo.id)
+
+    remove_photo: (id) ->
+      @get('photo_ids').removeObject(id)

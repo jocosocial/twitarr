@@ -29,6 +29,8 @@
     <div>
       <button {{action 'unlike' bubbles=false}} {{bind-attr class="unlikeable::hidden :btn-link"}}>Unlike</button>
       <button {{action 'like' bubbles=false}} {{bind-attr class="likeable::hidden :btn-link"}}>Like</button>
+      <button {{action 'edit' id bubbles=false}} {{bind-attr class="editable::hidden :btn-link"}}>Edit</button>
+      <button {{action 'delete' id bubbles=false}} {{bind-attr class="deleteable::hidden :btn-link"}}>Delete</button>
     </div>
   </div>
   

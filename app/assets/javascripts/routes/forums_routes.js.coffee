@@ -19,3 +19,16 @@ Twitarr.ForumsDetailRoute = Ember.Route.extend
   actions:
     reload: ->
       @refresh()
+
+Twitarr.ForumsEditRoute = Ember.Route.extend
+  model: (params) ->
+    Twitarr.ForumPost.get params.forum_id, params.post_id
+  
+  setupController: (controller, model) ->
+    if(model.status isnt 'ok')
+      alert model.status
+      return
+    controller.set 'model', model.forum_post
+    pics = Ember.A()
+    pics.push (photo.id) for photo in model.forum_post.photos
+    controller.set('photo_ids', pics)

@@ -1,8 +1,9 @@
 class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:create, :update_post, :react, :unreact]
+  before_filter :login_required, :only => [:create, :update_post, :delete_post, :react, :unreact]
   before_filter :fetch_forum, :except => [:index, :create]
+  before_filter :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
   
   def index
     page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
@@ -83,37 +84,59 @@ class API::V2::ForumsController < ApplicationController
       @forum.save
       render json: {status: 'ok', forum_post: post.decorate.to_hash(current_user, nil, request_options)}
     else
-      render json: {status: 'error', errors: post.errors.full_messages}
+      render status: :bad_request, json: {status: 'error', errors: post.errors.full_messages}
     end
   end
 
-  def react
-    unless params.has_key?(:type)
-      render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'}
-      return
+  def get_post
+    render json: {status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options)}
+  end
+
+  def update_post
+    unless @post.author == current_username or is_admin?
+      render status: :forbidden, json: {status:'error', error: "You can not edit other users' posts."} and return
     end
-    post = @forum.posts.find(params[:post_id])
-    post.add_reaction current_username, params[:type]
-    if post.valid?
-      render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(post.reactions, current_username)}
+    @post[:text] = params[:text]
+    @post[:photos] = params[:photos]
+    if @post.valid?
+      @post.save
+      render json: {status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options)}
+    else
+      render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages} 
+    end
+  end
+
+  def delete_post
+    unless @post.author == current_username or is_admin?
+      render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts."} and return
+    end
+    thread_deleted = false
+    @post.destroy
+    if @forum.posts.count == 0
+      @forum.destroy
+      thread_deleted = true
+    end
+    render json: {status: 'ok', thread_deleted: thread_deleted}
+  end
+
+  def react
+    render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'} and return unless params.has_key?(:type)
+    @post.add_reaction current_username, params[:type]
+    if @post.valid?
+      render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username)}
     else
       render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"}
     end
   end
 
   def show_reacts
-    post = @forum.posts.find(params[:post_id])
-    render json: {status: 'ok', reactions: post.reactions.map {|x| x.decorate.to_hash }}
+    render json: {status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash }}
   end
 
   def unreact
-    unless params.has_key?(:type)
-      render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'}
-      return
-    end
-    post = @forum.posts.find(params[:post_id])
-    post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(post.reactions, current_username)}
+    render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'} and return unless params.has_key?(:type)
+    @post.remove_reaction current_username, params[:type]
+    render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username)}
   end
     
   private
@@ -122,6 +145,14 @@ class API::V2::ForumsController < ApplicationController
       @forum = Forum.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
       render status: :not_found, json: {status:'error', error: "Forum thread not found."}
+    end
+  end
+
+  def fetch_post
+    begin
+      @post = @forum.posts.find(params[:post_id])
+    rescue Mongoid::Errors::DocumentNotFound
+      render status: :not_found, json: {status:'error', error: "Post not found."}
     end
   end
 end

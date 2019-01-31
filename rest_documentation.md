@@ -2077,6 +2077,116 @@ Creates a new post in the thread.
 }
 ```
 
+### GET /api/v2/forums/:id/:post_id
+
+Returns a single post from a forum thread. Useful for getting the current state of a post before performing an edit.
+
+#### Returns
+  
+```
+{
+    "status": "ok",
+    "forum_post": ForumPost{}
+}
+```
+
+#### Error Resposnes
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+   * HTTP 404 if post with given Post ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
+
+### POST /api/v2/forums/:id/:post_id
+
+Edits a post in the thread.
+
+### Requires
+* logged in as either the post author or admin
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+    "text": "string",
+    "photos": ["photo_id_string", ...]
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "forum_post": ForumPost{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+   * HTTP 404 if post with given Post ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
+   * HTTP 401 if the current user is not the post author or an admin
+   ```
+    { "status": "error", "error": "You can not edit other users' posts." }
+   ```
+* status_code_with_error_list - HTTP 400 with a list of problems
+```
+{
+    "status": "error",
+    "errors": [
+        "Text can't be blank",
+        "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
+    ]
+}
+```
+
+### DELETE /api/v2/forums/:id/:post_id
+
+Deletes a post from a thread. If the post was the only post in the thread, the thread will also be deleted.
+
+### Requires
+* logged in as either the post author or admin
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "thread_deleted": boolean # Will be true if the thread was also deleted
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+   * HTTP 404 if post with given Post ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
+   * HTTP 401 if the current user is not the post author or an admin
+   ```
+    { "status": "error", "error": "You can not delete other users' posts." }
+   ```
+
+
 ## Event Information
 
 Get/post information on events.

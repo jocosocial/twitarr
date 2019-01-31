@@ -89,3 +89,14 @@ Twitarr.ForumPost = Ember.Object.extend
         @set('reactions', data.reactions)
       else
         alert data.status
+  
+  delete: (forum_id, post_id) ->
+    $.ajax("#{Twitarr.api_path}/forums/#{forum_id}/#{post_id}", method: 'DELETE')
+
+Twitarr.ForumPost.reopenClass
+  get: (forum_id, post_id) ->
+    $.getJSON("#{Twitarr.api_path}/forums/#{forum_id}/#{post_id}?app=plain").then (data) =>
+      data
+
+  edit: (forum_id, post_id, text, photo_ids) ->
+    $.post("#{Twitarr.api_path}/forums/#{forum_id}/#{post_id}", { text: text, photos: photo_ids })

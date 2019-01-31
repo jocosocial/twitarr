@@ -18,9 +18,9 @@ Twitarr::Application.routes.draw do
       get 'forums/:id/:post_id', to: 'forums#get_post'
       post 'forums/:id/:post_id', to: 'forums#update_post'
       delete 'forums/:id/:post_id', to: 'forums#delete_post'
-      post 'forums/:id/react/:post_id/:type', to: 'forums#react'
-      delete 'forums/:id/react/:post_id/:type', to: 'forums#unreact'
-      get 'forums/:id/react/:post_id', to: 'forums#show_reacts'
+      post 'forums/:id/:post_id/react/:type', to: 'forums#react'
+      delete 'forums/:id/:post_id/react/:type', to: 'forums#unreact'
+      get 'forums/:id/:post_id/react', to: 'forums#show_reacts'
 
       resources :stream, only: [:new, :create]
       get 'stream', to: 'stream#index'

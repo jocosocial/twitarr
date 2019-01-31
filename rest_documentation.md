@@ -2186,6 +2186,111 @@ Deletes a post from a thread. If the post was the only post in the thread, the t
     { "status": "error", "error": "You can not delete other users' posts." }
    ```
 
+### POST /api/v2/forums/:id/:post_id/react/:type
+
+React to a post. Type must come from the list of valid reaction words.
+
+#### Requires
+
+* logged in.
+    * Accepts: key query parameter
+
+#### Returns
+
+Summary of reactions that have been applied to the post.
+
+```
+{
+    "status": "ok",
+    "reactions": ReactionsSummary{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+   * HTTP 404 if post with given Post ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
+  * HTTP 400 if `type` is not included
+    ```
+    { "status": "error", "error": "Reaction type must be included." }
+    ```
+  * HTTP 400 if `type` is not a valid reaction word
+    ```
+    {
+        "status": "error",
+        "error": "Invalid reaction: type}" # type will be replaced with the posted type
+    }
+    ```
+
+### DELETE /api/v2/forums/:id/:post_id/react/:type
+
+Remove reaction from a forum post. If `type` is not a valid reaction word, or if it has not been added to the forum post by the current user, this request will report success without making any modifications to the forum post.
+
+#### Requires
+
+* logged in.
+  * Accepts: key query parameter
+
+#### Returns
+
+Summary of reactions that have been applied to the forum post.
+
+```
+{
+    "status": "ok",
+    "reactions": ReactionsSummary{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+   * HTTP 404 if post with given Post ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
+  * HTTP 400 if `type` is not included
+    ```
+    { "status": "error", "error": "Reaction type must be included." }
+    ```
+
+### GET /api/v2/forums/:id/:post_id/react
+
+Get the list of reactions that have been applied to a forum post
+
+#### Returns
+
+All reactions that have been applied to the forum post.
+
+```
+{
+    "status": "ok",
+    "reactions": ReactionDetails{}
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+   * HTTP 404 if post with given Post ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
+
 
 ## Event Information
 

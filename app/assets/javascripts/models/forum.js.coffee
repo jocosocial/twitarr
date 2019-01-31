@@ -77,14 +77,14 @@ Twitarr.ForumPost = Ember.Object.extend
   ).property('reactions')
 
   react: (word) ->
-    $.post("#{Twitarr.api_path}/forums/#{@get('forum_id')}/react/#{@get('id')}/#{word}").then (data) =>
+    $.post("#{Twitarr.api_path}/forums/#{@get('forum_id')}/#{@get('id')}/react/#{word}").then (data) =>
       if(data.status == 'ok')
         @set('reactions', data.reactions)
       else
         alert data.status
 
   unreact: (word) ->
-    $.ajax("#{Twitarr.api_path}/forums/#{@get('forum_id')}/react/#{@get('id')}/#{word}", method: 'DELETE').then (data) =>
+    $.ajax("#{Twitarr.api_path}/forums/#{@get('forum_id')}/#{@get('id')}/react/#{word}", method: 'DELETE').then (data) =>
       if(data.status == 'ok')
         @set('reactions', data.reactions)
       else

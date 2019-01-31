@@ -1911,9 +1911,10 @@ Get/post new threads and posts to those threads
     "id": "forum_id_string"
     "subject": "subject_string",
     "sticky": boolean,
-    "next_page": null|Integer, # Only included if paging was requested
-    "prev_page": null|Integer, # Only included if paging was requested
-    "page_count": Integer, # Only included if paging was requested
+    "next_page": null|Integer, # Only included if paging was requested through query parameters
+    "prev_page": null|Integer, # Only included if paging was requested through query parameters
+    "page_count": Integer, # Only included if paging was requested through query parameters
+    "post_count": Integer,
     "posts": [ ForumPost{}, ... ],
     "latest_read": epoch, # Timestamp of when the user last viewed the thread, only included if user is logged in
 }
@@ -1935,78 +1936,146 @@ Get/post new threads and posts to those threads
 
 ### GET /api/v2/forums/
 
-Returns the index of all threads. Can be paginated or mass list.
-
-#### Requires
+Returns a page of forum threads.
 
 #### Query parameters
 
-* page=integer - Optional - Used in conjunction with limit query, if not present will respond with all threads
-* limit=integer - Optional - Used in conjunction with page query, will determine how many threads are shown per page
+* page=integer - Optional, default 0 - Pages are 0-indexed
+* limit=integer - Optional, default 20 - Number of threads per page
 
 #### Returns
 
-    JSON Object {
-        "forums_meta": Array[ ForumThreadMeta {...}, ... ],
-        "next_page": Integer,
-        "prev_page": Integer
-    }
+```
+{
+    "status": "ok",
+    "forum_threads": [ ForumThreadMeta{}, ... ],
+    "next_page": Integer, # Will be null if there is no next page
+    "prev_page": Integer, # Will be null if there is no previous page
+    "thread_count": Integer,
+    "page_count": Integer
+}
+```
 
-### PUT /api/v2/forums
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of problems
+```
+{ 
+    "status": "error", 
+    "errors": [
+        "Page size must be greater than zero.",
+        "Page must be greater than or equal to zero."
+    ]
+}
+```
 
-Creates a forum and it's first post.
+### POST /api/v2/forums
+
+Creates a forum thread and its first post.
 
 ### Requires
 
 * logged in.
-    * Accepts: key query parameter
+  * Accepts: key query parameter
 
-#### Json Request Body
+#### JSON Request Body
 
-    JSON Object {
-      "subject": "string",
-      "text": "string",
-      "photos": Array ["string", ...]
-    }
+```
+{
+    "subject": "string",
+    "text": "string",
+    "photos": ["photo_id_string", ...]
+}
+```
 
-### GET /api/v2/forums/thread/:id
+#### Returns
 
-Returns a thread and it's contained posts.
+```
+{
+    "status": "ok",
+    "forum_thread": ForumThread{}
+}
+```
 
-#### Requires
+#### Error Resposnes
+* status_code_with_error_list - HTTP 400 with a list of problems
+```
+{
+    "status": "error",
+    "errors": [
+        "Subject can't be blank",
+        "Text can't be blank",
+        "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
+    ]
+}
+```
+
+### GET /api/v2/forums/:id
+
+Returns a forum thread and its posts.
 
 #### Query parameters
 
-* page=integer - Optional - Used in conjunction with limit query, if not present will respond with all posts in the thread
-* limit=integer - Optional - Used in conjunction with page query, will determine how many posts are shown per page
+* page=integer - Optional - 0-indexed. If not present, will respond with all posts in the thread.
+* limit=integer - Optional, default 20 - When used in conjunction with page parameter, will determine how many posts are shown per page
 
 #### Returns
   
-    JSON Object {
-        "forum": ForumThreadMeta {...}
-    }
+```
+{
+    "status": "ok",
+    "forum_thread": ForumThread{}
+}
+```
 
-### POST /api/v2/forums/thread/:id
+#### Error Resposnes
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
 
-Creates a new post in the thread
+### POST /api/v2/forums/:id
+
+Creates a new post in the thread.
 
 ### Requires
-
 * logged in.
     * Accepts: key query parameter
 
-#### Json Request Body
+#### JSON Request Body
 
-    JSON Object {
-      "text": "string",
-      "photos": Array ["string", ...]
-    }
+```
+{
+    "text": "string",
+    "photos": ["photo_id_string", ...]
+}
+```
 
 #### Returns
 
-  JSON Object {
-          "forum_post": PostMeta {...}
-      }
+```
+{
+    "status": "ok",
+    "forum_post": ForumPost{}
+}
+```
+
+#### Error Resposnes
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+* status_code_with_error_list - HTTP 400 with a list of problems
+```
+{
+    "status": "error",
+    "errors": [
+        "Text can't be blank",
+        "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
+    ]
+}
+```
 
 ## Event Information
 

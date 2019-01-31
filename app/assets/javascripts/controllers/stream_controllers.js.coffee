@@ -20,7 +20,7 @@ Twitarr.StreamViewController = Twitarr.ObjectController.extend Twitarr.SinglePho
       @set 'posting', true
       Twitarr.StreamPost.reply(@get('id'), @get('reply_text'), @get('photo_id')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON.errors?
+        if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
@@ -56,7 +56,7 @@ Twitarr.StreamPageController = Twitarr.ObjectController.extend Twitarr.SinglePho
       @set 'posting', true
       Twitarr.StreamPost.new_post(@get('new_post'), @get('photo_id')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON.errors?
+        if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
@@ -134,7 +134,7 @@ Twitarr.StreamEditController = Twitarr.ObjectController.extend
       @set 'posting', true
       Twitarr.StreamPost.edit(@get('id'), @get('text'), @get('photo_id')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON.errors?
+        if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'

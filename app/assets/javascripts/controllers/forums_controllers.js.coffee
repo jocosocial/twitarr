@@ -29,7 +29,7 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
       @set 'posting', true
       Twitarr.Forum.new_post(@get('forum.id'), @get('new_post'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON.errors?
+        if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
@@ -73,7 +73,7 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
       @set 'posting', true
       Twitarr.Forum.new_forum(@get('subject'), @get('text'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON.errors?
+        if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Forum could not be added. Please try again later. Or try again someplace without so many seamonkeys.'
@@ -84,7 +84,7 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
           @set 'text', ''
           @get('errors').clear()
           @get('photo_ids').clear()
-          @transitionToRoute('forums.detail', response.forum_meta.id, 0)
+          @transitionToRoute('forums.detail', response.forum.id, 0)
       )
 
 Twitarr.ForumsPageController = Twitarr.ObjectController.extend

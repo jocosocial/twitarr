@@ -7,11 +7,11 @@ Twitarr.ForumMeta = Ember.Object.extend
 Twitarr.ForumMeta.reopenClass
   list: ->
     $.getJSON("#{Twitarr.api_path}/forums").then (data) =>
-      Ember.A(@create(meta)) for meta in data.forum_meta
+      Ember.A(@create(meta)) for meta in data.forum_threads
 
   page: (page) ->
     $.getJSON("#{Twitarr.api_path}/forums?page=#{page}").then (data) =>
-      { forums: Ember.A(@create(meta)) for meta in data.forum_meta, next_page: data.next_page, prev_page: data.prev_page }
+      { forums: Ember.A(@create(meta)) for meta in data.forum_threads, next_page: data.next_page, prev_page: data.prev_page }
 
 Twitarr.Forum = Ember.Object.extend
   id: null
@@ -25,18 +25,17 @@ Twitarr.Forum = Ember.Object.extend
 
 Twitarr.Forum.reopenClass
   get: (id, page = 0) ->
-    $.getJSON("#{Twitarr.api_path}/forums/thread/#{id}?page=#{page}").then (data) =>
-      { forum: @create(data.forum), next_page: data.forum.next_page, prev_page: data.forum.prev_page }
+    $.getJSON("#{Twitarr.api_path}/forums/#{id}?page=#{page}").then (data) =>
+      { forum: @create(data.forum_thread), next_page: data.forum_thread.next_page, prev_page: data.forum_thread.prev_page }
 
   new_post: (forum_id, text, photos) ->
-    $.post("#{Twitarr.api_path}/forums/thread/#{forum_id}", { text: text, photos: photos }).then (data) =>
+    $.post("#{Twitarr.api_path}/forums/#{forum_id}", { text: text, photos: photos }).then (data) =>
       data.forum_post = Twitarr.ForumPost.create(data.forum_post) if data.forum_post?
       data
 
   new_forum: (subject, text, photos) ->
     $.post("#{Twitarr.api_path}/forums", { subject: subject, text: text, photos: photos }).then (data) =>
-      data.forum_meta = Twitarr.ForumMeta.create(data.forum_meta) if data.forum_meta?
-      data
+      { forum: @create(data.forum_thread), next_page: null, prev_page: null }
 
 Twitarr.ForumPost = Ember.Object.extend
   photos: []
@@ -78,14 +77,14 @@ Twitarr.ForumPost = Ember.Object.extend
   ).property('reactions')
 
   react: (word) ->
-    $.post("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/react/#{@get('id')}/#{word}").then (data) =>
+    $.post("#{Twitarr.api_path}/forums/#{@get('forum_id')}/react/#{@get('id')}/#{word}").then (data) =>
       if(data.status == 'ok')
         @set('reactions', data.reactions)
       else
         alert data.status
 
   unreact: (word) ->
-    $.ajax("#{Twitarr.api_path}/forums/thread/#{@get('forum_id')}/react/#{@get('id')}/#{word}", method: 'DELETE').then (data) =>
+    $.ajax("#{Twitarr.api_path}/forums/#{@get('forum_id')}/react/#{@get('id')}/#{word}", method: 'DELETE').then (data) =>
       if(data.status == 'ok')
         @set('reactions', data.reactions)
       else

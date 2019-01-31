@@ -26,10 +26,12 @@ class ForumDecorator < BaseDecorator
 
   def to_hash(user = nil, options = {})
     last_view = user&.last_forum_view(id.to_s)
+    post_count = posts.count
     ret = {
       id: id.to_s,
       subject: subject,
       sticky: sticky,
+      post_count: post_count,
       posts: posts.map { |x| x.decorate.to_hash(user, last_view, options) }
     }
     unless user.nil?
@@ -57,6 +59,7 @@ class ForumDecorator < BaseDecorator
       next_page: next_page,
       prev_page: prev_page,
       page_count: page_count,
+      post_count: post_count,
       posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(user, last_view, options) }
     }
     unless user.nil?

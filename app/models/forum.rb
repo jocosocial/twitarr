@@ -4,6 +4,8 @@ class Forum
   include Mongoid::Paranoia
   include Searchable
 
+  PAGE_SIZE = 20
+
   field :sj, as: :subject, type: String
   field :lp, as: :last_post_time, type: Time
   field :st, as: :sticky, type: Boolean, default: false

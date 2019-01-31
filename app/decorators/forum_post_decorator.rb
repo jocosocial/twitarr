@@ -1,7 +1,7 @@
 class ForumPostDecorator < BaseDecorator
   delegate_all
 
-  def to_hash(username = nil, last_view = nil, options = {})
+  def to_hash(user = nil, last_view = nil, options = {})
     ret = {
         id: id.to_s,
         forum_id: forum.id.to_s,
@@ -13,10 +13,7 @@ class ForumPostDecorator < BaseDecorator
         text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options),
         timestamp: timestamp.to_ms,
         photos: decorate_photos,
-        hash_tags: hash_tags,
-#        location: location,
-        mentions: mentions,
-        reactions: BaseDecorator.reaction_summary(reactions, username)
+        reactions: BaseDecorator.reaction_summary(reactions, user&.username)
     }
     ret[:new] = (timestamp > last_view) unless last_view.nil?
     ret
@@ -26,7 +23,10 @@ class ForumPostDecorator < BaseDecorator
     return [] unless photos
     photos.map { |x| 
       begin
-        { id: x, animated: !x.blank? && PhotoMetadata.find(x).animated } 
+        { 
+          id: x, 
+          animated: !x.blank? && PhotoMetadata.find(x).animated
+        } 
       rescue Mongoid::Errors::DocumentNotFound
       end
     }.compact

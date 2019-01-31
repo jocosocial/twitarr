@@ -1,24 +1,29 @@
 class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  POST_COUNT = 20
   before_filter :login_required, :only => [:create, :update_post, :react, :unreact]
-  before_filter :fetch_forum, :except => [:index, :create, :show]
+  before_filter :fetch_forum, :except => [:index, :create]
   
   def index
-    page_size = (params[:limit] || POST_COUNT).to_i
+    page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
     page = (params[:page] || 0).to_i
 
+    errors = []
     if page_size <= 0
-      page_size = POST_COUNT
+      errors.push "Limit must be greater than zero."
     end
 
     if page < 0
-      page = 0
+      errors.push "Page must be greater than or equal to zero."
+    end
+
+    if errors.count > 0
+      render status: :bad_request, json: {status: "error", errors: errors} and return
     end
 
     query = Forum.all.order_by(:sticky => :desc, :last_post_time => :desc).offset(page * page_size).limit(page_size)
-    page_count = (Forum.all.count.to_f / page_size).ceil
+    thread_count = Forum.all.count
+    page_count = (thread_count.to_f / page_size).ceil
 
     next_page = if Forum.count > (page + 1) * page_size
                   page + 1
@@ -30,53 +35,45 @@ class API::V2::ForumsController < ApplicationController
                 else
                   nil
                 end
-    render json: {forum_meta: query.map { |x| x.decorate.to_meta_hash(current_user) }, next_page: next_page, prev_page: prev_page, pages: page_count}
+    render json: {status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page, prev_page: prev_page, thread_count: thread_count, page_count: page_count}
   end
 
   def show
-    limit = (params[:limit] || POST_COUNT).to_i
-    start_loc = (params[:page] || 0).to_i
-
+    limit = (params[:limit] || Forum::PAGE_SIZE).to_i
+    page = (params[:page] || 0).to_i
+    
+    errors = []
     if limit <= 0
-      limit = POST_COUNT
+      errors.push "Limit must be greater than zero."
     end
 
-    if start_loc < 0
-      start_loc = 0
+    if page < 0
+      errors.push "Page must be greater than or equal to zero."
     end
 
-    query = Forum.find(params[:id]).decorate
-    page_count = if params.has_key?(:page)
-                    (query.posts.count.to_f / limit).ceil
-                  else
-                    nil
-                  end
+    if errors.count > 0
+      render status: :bad_request, json: {status: "error", errors: errors} and return
+    end
+
+    query = @forum.decorate
       
-    if current_user
-      if params.has_key?(:page)
-        result = query.to_paginated_hash(start_loc, limit, current_user, request_options)
-      else
-        result = query.to_hash(current_user, request_options)
-      end
+    if params.has_key?(:page)
+      result = query.to_paginated_hash(page, limit, current_user, request_options)
     else
-      if params.has_key?(:page)
-        result = query.to_paginated_hash(start_loc, limit, nil, request_options)
-      else
-        result = query.to_hash(nil, request_options)
-      end
+      result = query.to_hash(current_user, request_options)
     end
 
     current_user.update_forum_view(params[:id]) if logged_in?
 
-    render json: {forum: result, pages: page_count}
+    render json: {status: 'ok', forum_thread: result}
   end
 
   def create
     forum = Forum.create_new_forum current_username, params[:subject], params[:text], params[:photos]
     if forum.valid?
-      render json: {forum_meta: forum.decorate.to_meta_hash}
+      render json: {status: 'ok', forum_thread: forum.decorate.to_hash(current_user, request_options)}
     else
-      render json: {errors: forum.errors.full_messages}
+      render json: {status: 'error', errors: forum.errors.full_messages}
     end
   end
 
@@ -84,15 +81,15 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.add_post current_username, params[:text], params[:photos]
     if post.valid?
       @forum.save
-      render json: {forum_post: post.decorate.to_hash(current_user, nil, request_options)}
+      render json: {status: 'ok', forum_post: post.decorate.to_hash(current_user, nil, request_options)}
     else
-      render json: {errors: post.errors.full_messages}
+      render json: {status: 'error', errors: post.errors.full_messages}
     end
   end
 
   def react
     unless params.has_key?(:type)
-      render status: :bad_request, json: {error:'Reaction type must be included.'}
+      render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'}
       return
     end
     post = @forum.posts.find(params[:post_id])
@@ -100,7 +97,7 @@ class API::V2::ForumsController < ApplicationController
     if post.valid?
       render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(post.reactions, current_username)}
     else
-      render status: :bad_request, json: {error: "Invalid reaction: #{params[:type]}"}
+      render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"}
     end
   end
 
@@ -111,7 +108,7 @@ class API::V2::ForumsController < ApplicationController
 
   def unreact
     unless params.has_key?(:type)
-      render status: :bad_request, json: {error:'Reaction type must be included.'}
+      render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'}
       return
     end
     post = @forum.posts.find(params[:post_id])
@@ -121,6 +118,10 @@ class API::V2::ForumsController < ApplicationController
     
   private
   def fetch_forum
-    @forum = Forum.find(params[:id])
+    begin
+      @forum = Forum.find(params[:id])
+    rescue Mongoid::Errors::DocumentNotFound
+      render status: :not_found, json: {status:'error', error: "Forum thread not found."}
+    end
   end
 end

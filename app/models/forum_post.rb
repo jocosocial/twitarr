@@ -21,6 +21,7 @@ class ForumPost
 
   validates :text, :author, :timestamp, presence: true
   validate :validate_author
+  validate :validate_photos
 
   before_validation :parse_hash_tags
   after_create :post_create_operations
@@ -28,6 +29,15 @@ class ForumPost
   def photos
     self.photos = [] if super.nil?
     super
+  end
+
+  def validate_photos
+    return if photos.count == 0
+    photos.each do |photo|
+      unless PhotoMetadata.exist? photo
+        errors[:base] << "#{photo} is not a valid photo id"
+      end
+    end
   end
 
 end

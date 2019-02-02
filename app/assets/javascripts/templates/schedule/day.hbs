@@ -12,11 +12,11 @@
 </div>
 
 <div class="display_card">
-{{#each event in events}}
+  {{#each event in events}}
     {{render "schedule.meta_partial" event}}
-{{else}}
-  <div class="card-section">No events scheduled for this day.</div>
-{{/each}}
+  {{else}}
+    <div class="card-section">No events scheduled for this day.</div>
+  {{/each}}
 </div>
 
 {{#if events}}

@@ -3,8 +3,9 @@ Twitarr::Application.routes.draw do
 
   namespace :api do
     namespace :v2 do
-      resources :event, only: [:index, :update, :destroy]
+      resources :event, only: [:index, :destroy]
       get 'event/:id', to: 'event#show'
+      post 'event/:id', to: 'event#update'
       get 'event/:id/ical', to: 'event#ical'
       post 'event/:id/favorite', to: 'event#follow'
       delete 'event/:id/favorite', to: 'event#unfollow'

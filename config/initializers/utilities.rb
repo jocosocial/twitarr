@@ -32,4 +32,12 @@ class Time
   def to_ms
     (self.to_f * 1000.0).to_i
   end
+
+  def self.from_param(input)
+    if input =~ /^\d+$/
+      Time.at(input.to_i / 1000.0)
+    else
+      Time.parse(input)
+    end
+  end
 end

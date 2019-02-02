@@ -12,7 +12,7 @@ class StreamPostDecorator < BaseDecorator
           last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
         timestamp: timestamp.to_ms,
-        text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options),
+        text: format_text(text, options),
         reactions: BaseDecorator.reaction_summary(reactions, username),
         parent_chain: parent_chain
     }

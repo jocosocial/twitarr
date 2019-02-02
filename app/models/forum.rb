@@ -73,12 +73,7 @@ class Forum
     limit = params[:limit] || 20
     query = where(:'fp.mn' => query_string)
     if params[:after]
-      val = nil
-      if params[:after] =~ /^\d+$/
-        val = Time.at(params[:after].to_i / 1000.0)
-      else
-        val = Time.parse params[:after]
-      end
+      val = Time.from_param(params[:after])
       if val
         query = query.gt(:'fp.ts' => val)
       end

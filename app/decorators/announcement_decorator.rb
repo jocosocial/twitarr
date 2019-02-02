@@ -2,7 +2,7 @@ class AnnouncementDecorator < BaseDecorator
   delegate_all
   include Twitter::Autolink
 
-  def to_hash
+  def to_hash(options = {})
     {
         id: as_str(id),
         author: {
@@ -10,7 +10,7 @@ class AnnouncementDecorator < BaseDecorator
           display_name: User.display_name_from_username(author),
           last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
-        text: twitarr_auto_linker(text.gsub("\n", '<br />')),
+        text: format_text(text, options),
         timestamp: timestamp.to_ms
     }
   end

@@ -10,7 +10,7 @@ class ForumPostDecorator < BaseDecorator
           display_name: User.display_name_from_username(author),
           last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
-        text: twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options),
+        text: format_text(text, options),
         timestamp: timestamp.to_ms,
         photos: decorate_photos,
         reactions: BaseDecorator.reaction_summary(reactions, user&.username)

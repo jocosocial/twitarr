@@ -7,11 +7,11 @@ class BaseDecorator < Draper::Decorator
   @@emojiReplace = '<img src="/img/emoji/small/\1.png" class="emoji" />'
   @@emojiReplaceCM = '<cm-emoji type="\1" />'
 
-  def clean_text(text)
-    CGI.escapeHTML(text)
+  def format_text(text, options = {})
+    twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options)
   end
 
-  def clean_text_with_cr(text, options)
+  def clean_text_with_cr(text, options = {})
     if options[:app] == 'plain'
       text
     else
@@ -19,7 +19,7 @@ class BaseDecorator < Draper::Decorator
     end
   end
   
-  def replace_emoji(text, options)
+  def replace_emoji(text, options = {})
     if options[:app] == 'CM'
       text.gsub(@@emojiRE, @@emojiReplaceCM)
     elsif options[:app] == 'plain'

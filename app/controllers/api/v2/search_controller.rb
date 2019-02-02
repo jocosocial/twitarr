@@ -16,7 +16,7 @@ class API::V2::SearchController < ApplicationController
       seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
       tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_username, request_options) },
       forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash(current_user) },
-      events: do_search(params, Event) { |e| e.decorate.to_hash(current_username) }
+      events: do_search(params, Event) { |e| e.decorate.to_hash(current_username, request_options) }
     }
   end
 
@@ -66,7 +66,7 @@ class API::V2::SearchController < ApplicationController
     render json: { 
       status: 'ok',
       query: params[:query],
-      events: do_search(params, Event) { |e| e.decorate.to_hash(current_username) }
+      events: do_search(params, Event) { |e| e.decorate.to_hash(current_username, request_options) }
     }
   end
 

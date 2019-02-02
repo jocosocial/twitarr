@@ -24,12 +24,7 @@ class API::V2::SeamailController < ApplicationController
       counting_unread = true
     end
     if params[:after]
-      val = nil
-      if params[:after] =~ /^\d+$/
-        val = Time.at(params[:after].to_i / 1000.0)
-      else
-        val = Time.parse(params[:after])
-      end
+      val = Time.from_param(params[:after])
       if val
         extra_query[:after] = val
       end

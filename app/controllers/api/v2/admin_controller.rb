@@ -70,7 +70,7 @@ class API::V2::AdminController < ApplicationController
 	def upload_schedule
 		upload = params[:schedule].tempfile.read
 		temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
-		Icalendar.parse(temp).first.events.map { |x| Event.create_from_ics x }
+		Icalendar::Calendar.parse(temp).first.events.map { |x| Event.create_from_ics x }
 		render json: {status: 'ok'}
 	end
 end

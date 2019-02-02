@@ -44,8 +44,8 @@ class Event
           _id: ics_event.uid
       )
     end
-    event.title = ics_event.summary
-    event.description = ics_event.description
+    event.title = ics_event.summary.force_encoding('utf-8')
+    event.description = ics_event.description.force_encoding('utf-8')
     if ics_event.dtstart.andand.to_date == FIRST_CRUISE_DATE
       event.start_time = ics_event.dtstart + 1.hour
       event.end_time = ics_event.dtend + 1.hour unless ics_event.dtend.nil?
@@ -55,7 +55,7 @@ class Event
     end
     event.official = !ics_event.categories.include?('SHADOW CRUISE')
     # locations tend to have trailing commas for some reason
-    event.location = ics_event.location.strip.gsub(/,$/, '')
+    event.location = ics_event.location.force_encoding('utf-8').strip.gsub(/,$/, '')
     event.save
   end
 

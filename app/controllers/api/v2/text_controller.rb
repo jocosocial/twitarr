@@ -3,20 +3,26 @@ class API::V2::TextController < ApplicationController
 	
 	def index
 		filename = params['filename'].strip.downcase.gsub(/[^\w-]/, '')
-		render status: :not_found, json: {error: 'file not found'}  and return unless File.exists?("public/text/#{filename}.json")
+		render status: :not_found, json: {status: 'error', error: 'File not found.'} and return unless File.exists?("public/text/#{filename}.json")
 		file = File.read("public/text/#{filename}.json")
 		render json: file
 	end
 	
 	def time
-		render json: {time: Time.now.strftime('%B %d, %l:%M %P %Z'), offset: Time.now.utc_offset / 3600}
+		now = Time.now
+		render json: {
+			status: 'ok',
+			epoch: now.to_ms, 
+			time: now.strftime('%B %d, %l:%M %P %Z'), 
+			offset: now.utc_offset / 3600
+		}
 	end
 
 	def reactions
-		render json: {reactions: Reaction.all.map { |x| x.id }}
+		render json: {status: 'ok', reactions: Reaction.all.map { |x| x.id }}
 	end
 
 	def announcements
-		render json: {announcements: Announcement.valid_announcements.map { |x| x.decorate.to_hash }}
+		render json: {status: 'ok', announcements: Announcement.valid_announcements.map { |x| x.decorate.to_hash(request_options) }}
  	end
 end

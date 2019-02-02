@@ -65,6 +65,15 @@ These output types are used throughout the API
       "animated": boolean
   }
   ```
+* Announcement{} - A JSON object representing an announcement
+  ```
+  {
+      "id": "id_string",
+      "author": UserInfo{},
+      "text": "string", # Marked up string
+      "timestamp": epoch
+  }
+  ```
 
 ## Error Type Definitions
 * status_code_only
@@ -2511,3 +2520,82 @@ Allows the user to remove their favorite from an event.
    ```
     { "status": "error", "error": "Event not found." }
    ```
+
+
+## Text Information
+
+A collection of text endpoints.
+
+### GET /api/v2/text/:filename
+
+Returns text for display to the user. Valid filenames can be found in /public/text - do not include the .json extension. For example: `/api/v2/text/codeofconduct`
+
+Each section can have an optional header, and an optional array of paragraphs. Each paragraph can include text and/or a list. If both are present, when presenting to a user, the intent is to display text first, then the list.
+
+#### Returns
+
+```
+{
+    "filename_string": { # Will be replaced with the submitted :filename
+        "sections": [
+            {
+                "header": "string",
+                "paragraphs": [
+                    {
+                        "text": "string",
+                        "list": ["string", ...]
+                    }, ...
+                ]
+            }, ...
+        ]
+    }
+}
+```
+
+#### Error Resposnes
+* status_code_with_message
+  * HTTP 404 if the file is not found
+    ```
+    { "status": "error", "error": "File not found." }
+    ```
+
+### GET /api/v2/time
+
+Returns the server time.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "epoch": epoch,
+    "time": "time_string", # Uses this ruby format: '%B %d, %l:%M %P %Z'
+    "offset": Integer # Server timezone offset
+}
+```
+
+### GET /api/v2/reactions
+
+Returns a list of valid reaction words.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "reactions": ["reaction_word", ...]
+}
+```
+
+### GET /api/v2/announcements
+
+Returns currently active announcements.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "announcements": [Announcement{}, ...]
+}
+```

@@ -1,8 +1,8 @@
 Ember.Handlebars.helper 'pretty_time', (timestamp) ->
-  moment(timestamp).format('lll')
+  moment(timestamp).format('llll')
 
 Ember.Handlebars.helper 'pretty_timestamp', (timestamp) ->
-  new Ember.Handlebars.SafeString("<span class='timestamp' title='#{timestamp}'>#{moment(timestamp).fromNow(true)} ago</span>")
+  new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(timestamp).format('llll')}'>#{moment(timestamp).fromNow(true)} ago</span>")
 
 Ember.Handlebars.helper 'pretty_timespan', (start_time, end_time) ->
   if end_time

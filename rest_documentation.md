@@ -2524,8 +2524,6 @@ Allows the user to remove their favorite from an event.
 
 ## Text Information
 
-A collection of text endpoints.
-
 ### GET /api/v2/text/:filename
 
 Returns text for display to the user. Valid filenames can be found in /public/text - do not include the .json extension. For example: `/api/v2/text/codeofconduct`

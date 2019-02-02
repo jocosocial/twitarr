@@ -10,7 +10,7 @@ Twitarr::Application.routes.draw do
       post 'event/:id/favorite', to: 'event#follow'
       delete 'event/:id/favorite', to: 'event#unfollow'
       get 'event/mine/:day', to: 'event#mine'
-      get 'event/all/:day', to: 'event#all'
+      get 'event/day/:day', to: 'event#day'
 
       get 'forums', to: 'forums#index'
       post 'forums', to: 'forums#create'

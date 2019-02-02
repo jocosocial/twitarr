@@ -29,7 +29,7 @@ Twitarr.EventMeta.reopenClass
       {events: Ember.A(@create(event)) for event in data.events, today: data.today, prev_day: data.prev_day, next_day: data.next_day }
 
   all: (date = moment().valueOf()) ->
-    $.getJSON("#{Twitarr.api_path}/event/all/#{date}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/event/day/#{date}").then (data) =>
       {events: Ember.A(@create(event)) for event in data.events, today: data.today, prev_day: data.prev_day, next_day: data.next_day }
 
 Twitarr.Event = Twitarr.EventMeta.extend

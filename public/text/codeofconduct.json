@@ -4,38 +4,54 @@
 			{
 				"header": "Be excellent to each other.",
 				"paragraphs": [
-					"Treat your fellow Sea Monkeys with kindness and respect. This is an enthusiastic and supportive community, and we hope it will always to be this way. Invite people into your conversations and activities; be supportive when your fellow Sea Monkeys try new things; participate, say hello, help out. Events like these can feel lonely and intimidating when you’re new and don’t know anybody. Be welcoming, inclusive and friendly!"
+					{
+						"text": "Treat your fellow Sea Monkeys with kindness and respect. This is an enthusiastic and supportive community, and we hope it will always to be this way. Invite people into your conversations and activities; be supportive when your fellow Sea Monkeys try new things; participate, say hello, help out. Events like these can feel lonely and intimidating when you’re new and don’t know anybody. Be welcoming, inclusive and friendly!"
+					}
 				]
 			},
 			{
 				"header": "Don’t harass others.",
 				"paragraphs": [
-					"Some things that are not OK: any kind of physical, verbal, or psychological abuse; threats, intimidation, and bullying; slurs about race, gender, or sexuality; unwanted romantic attention, sexual harassment, and generally creepy or stalky behavior; and photographing anyone or engaging in physical interactions (hugging, tickling, backrubs, etc.) without consent. If someone asks you to stop doing something and you keep doing it, that’s harassment."
+					{
+						"text": "Some things that are not OK: any kind of physical, verbal, or psychological abuse; threats, intimidation, and bullying; slurs about race, gender, or sexuality; unwanted romantic attention, sexual harassment, and generally creepy or stalky behavior; and photographing anyone or engaging in physical interactions (hugging, tickling, backrubs, etc.) without consent. If someone asks you to stop doing something and you keep doing it, that’s harassment."
+					}
 				]
 			},
 			{
 				"header": "Be excellent to the ship’s staff and anyone you encounter at a port of call.",
 				"paragraphs": [
-					"Bad behavior by individuals reflects poorly on our group as a whole. Please don’t be the person who makes the Sea Monkeys look bad to the HAL staff and/or the locals."
+					{
+						"text": "Bad behavior by individuals reflects poorly on our group as a whole. Please don’t be the person who makes the Sea Monkeys look bad to the HAL staff and/or the locals."
+					}
 				]
 			},
 			{
 				"header": "Don’t steal things.",
 				"paragraphs": [
-					"I mean, obviously."
+					{
+						"text": "I mean, obviously."
+					}
 				]
 			},
 			{
 				"header": "Don’t use illegal substances or bring them onboard.",
 				"paragraphs": [
-					"No exceptions."
+					{
+						"text": "No exceptions."
+					}
 				]
 			},
 			{
 				"paragraphs":[
-					"**The ship’s management has the final say. The officers and crew of the Oosterdam all want you to have fun, but they’re also responsible for the safety and well-being of every person on board. Don’t hesitate to come to us if you need help dealing with an issue, but know that if it involves the ship and its operations, or the health or well-being of passengers and/or crew, ultimately we must defer to the Oosterdam management.",
-					"In general we expect that, as in years past, JoCo Cruisers will act responsibly and look after one another. But in the event of a breach of this Code of Conduct, we reserve the right to take action, including (but not limited to) limiting access to events, expulsion without refund, and/or permanent banning from JoCo Cruise events.",
-					"During the cruise, if you witness behavior contrary to this Code of Conduct, are concerned about another JoCo Cruise attendee’s behavior, or feel that you are being or have been harassed, contact any Helper Monkey or member of the JoCo Cruise management team (Drew, Paul, Storm, Thera or Anna). Off-ship, email JoCo Cruise management at info@jococruise.com."
+					{
+						"text": "**The ship’s management has the final say. The officers and crew of the Oosterdam all want you to have fun, but they’re also responsible for the safety and well-being of every person on board. Don’t hesitate to come to us if you need help dealing with an issue, but know that if it involves the ship and its operations, or the health or well-being of passengers and/or crew, ultimately we must defer to the Oosterdam management."
+					},
+					{
+						"text": "In general we expect that, as in years past, JoCo Cruisers will act responsibly and look after one another. But in the event of a breach of this Code of Conduct, we reserve the right to take action, including (but not limited to) limiting access to events, expulsion without refund, and/or permanent banning from JoCo Cruise events."
+					},
+					{
+						"text": "During the cruise, if you witness behavior contrary to this Code of Conduct, are concerned about another JoCo Cruise attendee’s behavior, or feel that you are being or have been harassed, contact any Helper Monkey or member of the JoCo Cruise management team (Drew, Paul, Storm, Thera or Anna). Off-ship, email JoCo Cruise management at info@jococruise.com."
+					}
 				]
 			}
 		]

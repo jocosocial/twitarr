@@ -4,7 +4,7 @@ class API::V2::EventController < ApplicationController
 
   before_filter :login_required, :only => [:follow, :unfollow, :mine]
   before_filter :admin_required, :only => [:destroy, :update]
-  before_filter :fetch_event, :except => [:index, :csv, :all, :mine]
+  before_filter :fetch_event, :only => [:update, :destroy, :ical, :follow, :unfollow, :show]
 
   def update
     @event.title = params[:title] if params.has_key? :title
@@ -55,7 +55,7 @@ class API::V2::EventController < ApplicationController
   def follow
     @event.follow current_username
     if @event.save
-      render json: {status: 'ok'}
+      render json: {status: 'ok', event: @event}
     else
       render status: :bad_request, json: {status: 'error', error: 'Unable to follow event.'}
     end
@@ -64,17 +64,14 @@ class API::V2::EventController < ApplicationController
   def unfollow
     @event.unfollow current_username
     if @event.save
-      render json: {status: 'ok'}
+      render json: {status: 'ok', event: @event}
     else
       render :bad_request, json: {status: 'error', error: 'Unable to unfollow event.'}
     end
   end
 
   def index
-    sort_by = (params[:sort_by] || 'start_time').to_sym
-    order = (params[:order] || 'desc').to_sym
-    query = Event.all.order_by([sort_by, order])
-    filtered_query = query.map { |x| x.decorate.to_hash(current_username, request_options) }
+    filtered_query = Event.all.map { |x| x.decorate.to_hash(current_username, request_options) }
     render json: {status: 'ok', total_count: filtered_query.length, events: filtered_query}
   end
 
@@ -85,13 +82,13 @@ class API::V2::EventController < ApplicationController
   def mine
     day = Time.from_param(params[:day])
     events = Event.where(:start_time.gte => day.beginning_of_day).where(:start_time.lt => day.end_of_day).where(favorites: current_username).order_by(:start_time.asc)
-    render json: {status: 'ok', events: events.map { |x| x.decorate.to_meta_hash(current_username) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms}
+    render json: {status: 'ok', events: events.map { |x| x.decorate.to_hash(current_username, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms}
   end
 
-  def all
+  def day
     day = Time.from_param(params[:day])
     events = Event.where(:start_time.gte => day.beginning_of_day).where(:start_time.lt => day.end_of_day).order_by(:start_time.asc)
-    render json: {status: 'ok', events: events.map { |x| x.decorate.to_meta_hash(current_username) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms}
+    render json: {status: 'ok', events: events.map { |x| x.decorate.to_hash(current_username, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms}
   end
 
   private

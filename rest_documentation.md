@@ -2294,153 +2294,171 @@ All reactions that have been applied to the forum post.
 
 ## Event Information
 
-Get/post information on events.
+View and manage the schedule of events.
 
 ### Event specific types
 
-    JSON Event {
-        "id": "id_string",
-        "author": "username_string",
-        "display_name": "displayname_string",
-        "title": "title_string",
-        "location": "location_string",
-        "start_time": epoch,
-        "end_time": epoch,
-        "signups": ["username_string", ...],
-        "favorites": ["username_string", ...],
-        "description": "marked up text",
-        "max_signups": null|Integer
-    }
+#### Event
 
-### GET /api/v2/event/
+```
+{
+    "id": "id_string",
+    "title": "title_string",
+    "location": "location_string",
+    "start_time": epoch,
+    "end_time": epoch or null, # This will be null if the event has no end time.
+    "official": boolean # True if the event is an official event. False if the event is a shadow event.
+    "description": "string", # Only present if the event has a description. Uses the same markup as post text.
+    "following": boolean
+}
+```
 
-#### Requires
+### GET /api/v2/event
 
-#### Query parameters
-
-* sort_by=variable name - Optional (Default: start_time) - First variable query is sorted by
-* order=asc|desc - Optional (Default: desc) - Second variable query is searched by, ascending or descending
+Returns a list of all events. No filtering or sorting - just a straight events dump.
 
 #### Returns
 
-    JSON Object { "total_count": 5,
-                  "events": Array[ Event {...}, ... ],
-                }
+```
+{
+    "status": "ok",
+    "total_count": Integer,
+    "events": [Event{}, ...]
+}
+```
 
+### GET /api/v2/event/day/:epoch
 
-### POST /api/v2/event/
-
-Posts an event.
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameter
-
-#### Json Request Body
-
-    JSON Object {
-      "title": "string",
-      "start_time": epoch,
-      "location": "string",
-      "description": "string",
-      "end_time": epoch,
-      "max_signups": integer
-    }
-    
-
-* Description, end_time and max_signups are all optional fields. 
+Gets a list of all events with a start time on the same day as :epoch.
 
 #### Returns
 
-    JSON Event {...}
+```
+{
+    "status": "ok",
+    "events": [Event{}, ...],
+    "today": epoch,
+    "prev_day": epoch,
+    "next_day": epoch
+}
+```
 
+### GET /api/v2/event/mine/:epoch
+
+Gets a list of favorited events with a start time on the same day as :epoch.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "events": [Event{}, ...],
+    "today": epoch,
+    "prev_day": epoch,
+    "next_day": epoch
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
 
 ### GET /api/v2/event/:id
 
 Get details of an event.
 
-#### Requires
+#### Returns
 
-#### Query parameters
+```
+{
+    "status": "ok",
+    "event": Event{}
+}
+```
+
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if event with given ID is not found
+   ```
+    { "status": "error", "error": "Event not found." }
+   ```
+
+### GET /api/v2/event/:id/ical
+
+Get details of an event as an ical file.
 
 #### Returns
 
-    JSON Event {...}
+File download: event_name.ics
 
+#### Error Responses
+* status_code_with_message
+  * HTTP 404 if event with given ID is not found
+   ```
+    { "status": "error", "error": "Event not found." }
+   ```
 
 ### DELETE /api/v2/event/:id
 
-Destroy an owned event.
+Remove an event. Only admins may remove events.
 
 #### Requires
 
-* logged in.
+* logged in as an admin.
     * Accepts: key query parameter
-
-A user may only delete their events, unless they are an admin.
 
 #### Returns
 
-No body. 200-OK
+```
+{
+    "status": "ok"
+}
+```
 
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message
+  * HTTP 404 if event with given ID is not found
+   ```
+    { "status": "error", "error": "Event not found." }
+   ```
 
-### PUT /api/v2/event/:id
+### POST /api/v2/event/:id
 
-Allows the user to edit the description, location, start and end times and max signups. Title is not modifyable.
+Allows an admin to edit the title, description, location, start time, and end time of an event.
 
 #### Requires
 
-* logged in.
+* logged in as an admin.
     * Accepts: key query parameter
-
-A user may only edit their events, unless they are an admin.
 
 #### Json Request Body
 
-    JSON Object {
-      "description": "string",
-      "location": "string",
-      "start_time": epoch,
-      "end_time": epoch,
-      "max_signups": integer
-    }
-    
+```
+{
+    "title": "string",
+    "description": "string",
+    "location": "string",
+    "start_time": epoch,
+    "end_time": epoch
+}
+```    
 
 #### Returns
 
-    JSON Event {...}
+```
+{
+    "status": "ok",
+    "event": Event{}
+}
+```
 
-
-### POST /api/v2/event/:id/signup
-
-Allows the user to signup to an event.
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameter
-
-#### Query parameters
-
-#### Returns
-
-    JSON Event {...}
-
-### DELETE /api/v2/event/:id/signup
-
-Allows the user to remove their signup from an event.
-
-#### Requires
-
-* logged in.
-    * Accepts: key query parameter
-
-#### Query parameters
-
-#### Returns
-
-    JSON Event {...}
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message
+  * HTTP 404 if event with given ID is not found
+   ```
+    { "status": "error", "error": "Event not found." }
+   ```
 
 ### POST /api/v2/event/:id/favorite
 
@@ -2451,11 +2469,22 @@ Allows the user to favorite an event.
 * logged in.
     * Accepts: key query parameter
 
-#### Query parameters
-
 #### Returns
 
-    JSON Event {...}
+```
+{
+    "status": "ok",
+    "event": Event{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if event with given ID is not found
+   ```
+    { "status": "error", "error": "Event not found." }
+   ```
 
 ### DELETE /api/v2/event/:id/favorite
 
@@ -2466,8 +2495,19 @@ Allows the user to remove their favorite from an event.
 * logged in.
     * Accepts: key query parameter
 
-#### Query parameters
-
 #### Returns
 
-    JSON Event {...}
+```
+{
+    "status": "ok",
+    "event": Event{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message
+  * HTTP 404 if event with given ID is not found
+   ```
+    { "status": "error", "error": "Event not found." }
+   ```

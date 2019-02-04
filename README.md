@@ -1,6 +1,6 @@
 # twitarr
 
-Twit-arr is a micro-blogging site that is set up for [JoCo Cruise](https://jococruise.com/)
+Twit-arr is a micro-blogging site that is set up for [JoCo Cruise](https://jococruise.com/). Originally developed by [walkeriniraq](https://github.com/walkeriniraq/twitarr).
 
 ## Description
 

@@ -61,10 +61,10 @@ class UserDecorator < Draper::Decorator
 
   def alerts_meta
     {
-      seamail_unread_count: seamail_unread_count,
-      unnoticed_mentions: unnoticed_mentions,
-      unnoticed_alerts: unnoticed_alerts,
       unnoticed_announcements: unnoticed_announcements,
+      unnoticed_alerts: unnoticed_alerts,
+      seamail_unread_count: seamail_unread_count,
+      unnoticed_mentions: unnoticed_mentions,      
       unnoticed_upcoming_events: unnoticed_upcoming_events
     }
   end

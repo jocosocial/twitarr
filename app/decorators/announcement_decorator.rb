@@ -15,11 +15,11 @@ class AnnouncementDecorator < BaseDecorator
     }
   end
 
-  def to_admin_hash
+  def to_admin_hash(options = {})
     {
         id: as_str(id),
         author: author,
-        text: text,
+        text: format_text(text, options),
         timestamp: timestamp.to_ms,
         valid_until: valid_until.to_ms
     }

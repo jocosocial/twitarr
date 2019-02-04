@@ -129,9 +129,7 @@ These output types are used throughout the API
         UserInfo{}, ...
     ],
     "subject": "string",
-    "messages": [ # Sorted by message timestamp descending. May be excluded from some endpoints that only return metadata.
-        SeamailMessage{}, ...
-    ],
+    "messages": [ SeamailMessage{}, ...], # Sorted by message timestamp descending. Excluded from some endpoints that only return metadata.
     "message_count": integer # An integer counting the number of messages (or unread messages) in the thread
     "timestamp": epoch, # Date and time of the most recent message in the thread
     "count_is_unread": boolean # If true, message_count is the number of unread messages in the thread. If false, message_count is the number of all messages in the thread.
@@ -2524,8 +2522,6 @@ Allows the user to remove their favorite from an event.
 
 ## Text Information
 
-A collection of text endpoints.
-
 ### GET /api/v2/text/:filename
 
 Returns text for display to the user. Valid filenames can be found in /public/text - do not include the .json extension. For example: `/api/v2/text/codeofconduct`
@@ -2597,5 +2593,60 @@ Returns currently active announcements.
 {
     "status": "ok",
     "announcements": [Announcement{}, ...]
+}
+```
+
+
+## Alerts Information
+
+Alerts endpoints behave differently depending on whether or not the user is logged in. 
+
+If the user is not logged in, the user will only get alerts for announcements. Additionally, the last time the user viewed alerts (accessed the `/api/v2/alerts` endpoint) will be stored in a cookie. That cookie's value will be used for determining which announcements are considered new when accessing the `check` endpoint. If your client does not allow cookies, you should store the `last_checked_time` value returned by the `/api/v2/alerts` endpoint and pass it in to future calls of `alerts` and `check`. If the `last_checked_time` is not submitted through a parameter or the cookie, the server will use the beginning of time when computing which announcements are new - that is, the unauthenticated user will be told ALL announcements are new.
+
+If the user is logged in, the last viewed time is stored in the user's account, and there is no need to pass a value or a cookie to the alerts endpoints.
+
+### GET /api/v2/alerts
+
+Returns the data for the user's current alerts, along with all active announcements. If the `no_reset` parameter is not set, the current time will be stored as the user's `last_checked_time`.
+
+#### Query parameters
+
+* last_checked_time=epoch - Optional, default: beginning of time. Ignored if user is logged in or if cookie with this value is present.
+* no_reset=true - Optional. If this parameter is present, the last_checked_time will not be updated for the user, or in the cookie if unauthenticated.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "announcements": [Announcement{}, ...],
+    "tweet_mentions": [StreamPost{}, ...], # Will be an empty array if user is unauthenticated.
+    "forum_mentions": [ForumThreadMeta{}, ...], # Will be an empty array if user is unauthenticated.
+    "unread_seamail": [SeamailThread{ WITHOUT messages }, ...], # Will be an empty array if user is unauthenticated.
+    "upcoming_events": [Event{}, ...], # Will be an empty array if user is unauthenticated.
+    "last_checked_time": epoch
+}
+```
+
+### GET /api/v2/alerts/check
+
+Returns a count of new alerts since the user last accessed the alerts endpoint (see notes above about how `last_checked_time` is handled for authenticated vs unauthenticated users).
+
+#### Query parameters
+
+* last_checked_time=epoch - Optional, default: beginning of time. Ignored if user is logged in or if cookie with this value is present.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "alerts": {
+        "unnoticed_announcements": Integer,
+        "unnoticed_alerts": boolean, # True if the user has any unnoticed alerts. Only present if user is logged in.
+        "seamail_unread_count": Integer, # Only present if user is logged in.
+        "unnoticed_mentions": Integer, # Only present if user is logged in.
+        "unnoticed_upcoming_events": Integer # Only present if user is logged in.
+    }
 }
 ```

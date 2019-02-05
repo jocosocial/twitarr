@@ -22,31 +22,73 @@
         <div class="form-group">
           <label for="display_name">Display Name</label>
           {{ input value=display_name class='input' name="display_name"}}
+          {{#if errors.display_name}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.display_name}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
         </div>
 
         <div class="form-group">
           <label for="real_name">Real Name (Optional, public)</label>
           {{ input value=real_name class='input' name="real_name"}}
+          {{#if errors.real_name}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.real_name}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
         </div>
       </div>
       <div class="col-md-4">
         <div class="form-group">
           <label for="pronouns">Preferred Pronouns (Optional, public)</label>
           {{ input value=pronouns class='input' name="pronouns"}}
+          {{#if errors.pronouns}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.pronouns}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
         </div>
         <div class="form-group">
           <label for="room_number">Room Number (Optional, public)</label>
           {{ input value=room_number class='input' name="room_number"}}
+          {{#if errors.room_number}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.room_number}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
         </div>        
       </div>
       <div class="col-md-4">
         <div class="form-group">
           <label for="home_location">Where are you from? (Optional, public)</label>
           {{ input value=home_location class='input' name="home_location"}}
+          {{#if errors.home_location}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.home_location}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
         </div>
         <div class="form-group">
           <label for="email">Email (Optional, public)</label>
           {{ input value=email class='input' name="email"}}
+          {{#if errors.email}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.email}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
         </div>
       </div>
     </div>

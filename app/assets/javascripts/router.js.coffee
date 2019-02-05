@@ -29,6 +29,7 @@ Twitarr.Router.map ()->
     @route 'upload_schedule'
     @route 'search', { path: 'users' }
     @route 'users', { path: 'users/:text' }
+    @route 'profile', { path: 'users/:username/profile' }
 
   @resource 'schedule', ->
     @route 'today', { path: 'today' }

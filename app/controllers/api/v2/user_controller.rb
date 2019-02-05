@@ -129,7 +129,7 @@ class API::V2::UserController < ApplicationController
     current_user.pronouns = params[:pronouns] if params.has_key? :pronouns
     current_user.room_number = params[:room_number] if params.has_key? :room_number
 
-    render json: { status: 'error', errors: current_user.errors } and return unless current_user.valid?
+    render status: :bad_request, json: { status: 'error', errors: current_user.errors } and return unless current_user.valid?
 
     current_user.save
     render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash } and return

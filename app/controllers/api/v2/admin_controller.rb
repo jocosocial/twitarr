@@ -2,7 +2,7 @@ class API::V2::AdminController < ApplicationController
 	skip_before_action :verify_authenticity_token
 	
 	before_filter :admin_required
-	before_filter :fetch_user, :only => [:update_user, :activate, :reset_password]
+	before_filter :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo]
 	
 	def users
 		render json: {status: 'ok', list: User.all.asc(:username).map { |x| x.decorate.admin_hash }}
@@ -13,16 +13,28 @@ class API::V2::AdminController < ApplicationController
 		user_query = User.search(params)
 		render json: {status: 'ok', search_text: search_text, users: user_query.map{|x| x.decorate.admin_hash }}
 	end
+
+	def profile
+		render json: {status: 'ok', user: @user.decorate.admin_hash}
+	end
 	
 	def update_user
-		@user.is_admin = params[:is_admin] == 'true'
+		@user.is_admin = params[:is_admin] == 'true' if params.has_key? :status
 		
 		# don't let the user turn off his own admin status
 		@user.is_admin = true if @user.username == current_username
 		
-		@user.status = params[:status]
-		@user.email = params[:email]
-		@user.display_name = params[:display_name]
+		@user.status = params[:status] if params.has_key? :status
+
+		@user.display_name = params[:display_name] if params.has_key? :display_name
+    if @user.display_name.blank?
+      @user.display_name = @user.username
+    end
+    @user.email = params[:email] if params.has_key? :email
+    @user.home_location = params[:home_location] if params.has_key? :home_location
+    @user.real_name = params[:real_name] if params.has_key? :real_name
+    @user.pronouns = params[:pronouns] if params.has_key? :pronouns
+    @user.room_number = params[:room_number] if params.has_key? :room_number
 		
 		render status: :bad_request, json: {status: 'error', errors: @user.errors.messages} and return unless @user.valid?
 
@@ -40,6 +52,10 @@ class API::V2::AdminController < ApplicationController
 		@user.password = BCrypt::Password.create User::RESET_PASSWORD
 		@user.save
 		render json: {status: 'ok'}
+	end
+
+	def reset_photo
+		render json: @user.reset_photo
 	end
 	
 	def announcements

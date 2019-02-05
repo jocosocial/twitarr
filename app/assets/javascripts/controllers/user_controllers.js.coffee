@@ -81,6 +81,9 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
     
     save_comment: ->
       $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })
+    
+    admin_profile: (username) ->
+      @transitionToRoute('admin.profile', username)
 
 Twitarr.UserNewController = Twitarr.ObjectController.extend
   errors: null

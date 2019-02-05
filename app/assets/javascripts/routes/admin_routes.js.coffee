@@ -15,11 +15,11 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
     
     edit_profile: (username) ->
       if !!username
-        @transitionTo('admin.profile', username)
+        @transitionToRoute('admin.profile', username)
     
     search: (text) ->
       if !!text
-        @transitionTo('admin.users', text)
+        @transitionToRoute('admin.users', text)
 
 Twitarr.AdminProfileRoute = Ember.Route.extend
   model: (params) ->

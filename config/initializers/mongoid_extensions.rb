@@ -1,3 +1,4 @@
+# Be sure to restart your server when you modify this file.
 module Mongoid::Document
   def as_str(v)
     return v.to_str if v.is_a? BSON::ObjectId

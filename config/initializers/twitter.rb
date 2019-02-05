@@ -1,3 +1,4 @@
+# Be sure to restart your server when you modify this file.
 module Twitter::Autolink
   # this generates a warning, but I much prefer that to setting these EVERYWHERE
   DEFAULT_OPTIONS = {

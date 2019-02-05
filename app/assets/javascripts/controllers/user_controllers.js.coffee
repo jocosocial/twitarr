@@ -2,7 +2,7 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
   needs: ['application']
 
   count: 0
-  errors: null
+  errors: Ember.A()
 
   profile_pic: (->
     "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
@@ -14,13 +14,19 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
 
   actions:
     save: ->
-      result = @get('model').save()
-      if(result)
-        result.then (response) =>
-          if response.status is 'ok'
-            alert 'Profile was saved.'
-          else
-            alert response.status
+      self = this
+      @get('model').save().fail((response) =>
+        if response.responseJSON?.errors?
+          self.set('errors', response.responseJSON.errors)
+        else
+          alert 'Something went wrong. Try again later.'
+      ).then((response) =>
+        if response.status is 'ok'
+          self.set('errors', Ember.A())
+          alert 'Profile saved.'
+        else
+          alert response.status
+      )
 
     change_password: ->
       self = this
@@ -75,6 +81,9 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
     
     save_comment: ->
       $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })
+    
+    admin_profile: (username) ->
+      @transitionToRoute('admin.profile', username)
 
 Twitarr.UserNewController = Twitarr.ObjectController.extend
   errors: null

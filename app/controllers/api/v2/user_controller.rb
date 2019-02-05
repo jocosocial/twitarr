@@ -20,15 +20,12 @@ class API::V2::UserController < ApplicationController
     user = User.new username: new_username, display_name: display_name, password: params[:new_password],
                      is_admin: false, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
     
-    if !user.valid?
-      render status: :bad_request, json: {status: "error", errors: user.errors.messages}
-      return
-    else
-      user.set_password params[:new_password]
-      user.update_last_login.save
-      login_user user
-      render json: { :status => 'ok', :key => build_key(user.username), user: UserDecorator.decorate(user).self_hash }
-    end
+    render status: :bad_request, json: {status: "error", errors: user.errors.messages} and return unless user.valid?
+    
+    user.set_password params[:new_password]
+    user.update_last_login.save
+    login_user user
+    render json: { :status => 'ok', :key => build_key(user.username), user: UserDecorator.decorate(user).self_hash }
   end
 
   def auth
@@ -132,7 +129,7 @@ class API::V2::UserController < ApplicationController
     current_user.pronouns = params[:pronouns] if params.has_key? :pronouns
     current_user.room_number = params[:room_number] if params.has_key? :room_number
 
-    render json: { status: 'error', errors: current_user.errors } and return unless current_user.valid?
+    render status: :bad_request, json: { status: 'error', errors: current_user.errors } and return unless current_user.valid?
 
     current_user.save
     render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash } and return

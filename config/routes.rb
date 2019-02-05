@@ -88,10 +88,12 @@ Twitarr::Application.routes.draw do
       get 'photo/full/:id', to: 'photo#full'
 
       get 'admin/users', to: 'admin#users'
-      get 'admin/users/:username', to: 'admin#user'
+      get 'admin/users/:query', to: 'admin#user'
+      get 'admin/users/:username/profile', to: 'admin#profile'
       post 'admin/users/:username', to: 'admin#update_user'
       post 'admin/users/:username/activate', to: 'admin#activate'
       post 'admin/users/:username/reset_password', to: 'admin#reset_password'
+      post 'admin/users/:username/reset_photo', to: 'admin#reset_photo'
       
       get 'admin/announcements', to: 'admin#announcements'
       post 'admin/announcements', to: 'admin#new_announcement'

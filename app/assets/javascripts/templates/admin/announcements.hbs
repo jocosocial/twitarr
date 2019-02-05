@@ -3,16 +3,17 @@
 </div>
 <div class="display_card">
   <div class="card-section">
+    Message
     {{textarea value=text rows='3' class='input' placeholder='text'}}
-    Display hours
-    {{input value=hours class='input input-short'}}
+    Valid until
+    {{input value=valid_until type='datetime-local' class='input'}}
     <ul class="errors-list">
       {{#each error in errors}}
         <li>{{error}}</li>
       {{/each}}
     </ul>
     <div class="controls">
-      <button class="btn" {{action 'new' text hours}}>Announce</button>
+      <button class="btn" {{action 'new' text valid_until}}>Announce</button>
     </div>
   </div>
 </div>

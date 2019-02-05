@@ -20,15 +20,12 @@ class API::V2::UserController < ApplicationController
     user = User.new username: new_username, display_name: display_name, password: params[:new_password],
                      is_admin: false, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
     
-    if !user.valid?
-      render status: :bad_request, json: {status: "error", errors: user.errors.messages}
-      return
-    else
-      user.set_password params[:new_password]
-      user.update_last_login.save
-      login_user user
-      render json: { :status => 'ok', :key => build_key(user.username), user: UserDecorator.decorate(user).self_hash }
-    end
+    render status: :bad_request, json: {status: "error", errors: user.errors.messages} and return unless user.valid?
+    
+    user.set_password params[:new_password]
+    user.update_last_login.save
+    login_user user
+    render json: { :status => 'ok', :key => build_key(user.username), user: UserDecorator.decorate(user).self_hash }
   end
 
   def auth

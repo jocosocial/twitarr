@@ -57,18 +57,25 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
 
   setupController: (controller, model) ->
     controller.set('text', null)
-    controller.set('hours', 4)
+    controller.set('valid_until', moment().add(4, 'hours').format('YYYY-MM-DDTHH:mm'))
     if model.status isnt 'ok'
       alert model.status
     else
       controller.set('model', model.list)
 
   actions:
-    new: (text, hours) ->
-      $.post("#{Twitarr.api_path}/admin/announcements", { text: text, hours: hours }).then (data) =>
-        if (data.status isnt 'ok')
-          alert data.status
+    new: (text, valid_until) ->
+      self = this
+      $.post("#{Twitarr.api_path}/admin/announcements", { text: text, valid_until: valid_until }).fail((response) =>
+        if response.responseJSON?.errors?
+          self.controller.set('errors', response.responseJSON.errors)
+        else
+          alert 'Announcement could not be created. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        if (response.status isnt 'ok')
+          alert response.status
         else
           @refresh()
+      )
 
 Twitarr.AdminUploadScheduleRoute = Ember.Route.extend()

@@ -103,7 +103,7 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
     if model.status isnt 'ok'
       alert model.status
     else
-      controller.set('model', model.list)
+      controller.set('model', model.announcements)
 
   actions:
     new: (text, valid_until) ->

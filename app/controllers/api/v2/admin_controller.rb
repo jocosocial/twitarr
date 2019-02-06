@@ -6,7 +6,7 @@ class API::V2::AdminController < ApplicationController
 	before_filter :fetch_announcement, :only => [:announcement, :update_announcement, :delete_announcement]
 	
 	def users
-		render json: {status: 'ok', list: User.all.asc(:username).map { |x| x.decorate.admin_hash }}
+		render json: {status: 'ok', users: User.all.asc(:username).map { |x| x.decorate.admin_hash }}
 	end
 	
 	def user
@@ -60,7 +60,7 @@ class API::V2::AdminController < ApplicationController
 	end
 	
 	def announcements
-		render json: {status: 'ok', list: Announcement.all.desc(:timestamp).map { |x| x.decorate.to_admin_hash(request_options) }}
+		render json: {status: 'ok', announcements: Announcement.all.desc(:timestamp).map { |x| x.decorate.to_admin_hash(request_options) }}
 	end
 	
 	def new_announcement

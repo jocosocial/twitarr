@@ -97,6 +97,9 @@ Twitarr::Application.routes.draw do
       
       get 'admin/announcements', to: 'admin#announcements'
       post 'admin/announcements', to: 'admin#new_announcement'
+      get 'admin/announcements/:id', to: 'admin#announcement'
+      post 'admin/announcements/:id', to: 'admin#update_announcement'
+      delete 'admin/announcements/:id', to: 'admin#delete_announcement'
       
       post 'admin/schedule', to: 'admin#upload_schedule'
     end

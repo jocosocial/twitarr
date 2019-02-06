@@ -74,7 +74,7 @@ class User
   end
 
   def valid_registration_code?
-    if new_record? && !RegistrationCode.valid_code?(registration_code)
+    if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.where(registration_code: registration_code).exists?)
       errors.add(:registration_code, 'Invalid registration code.')
     end
   end

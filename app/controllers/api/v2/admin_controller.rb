@@ -109,7 +109,7 @@ class API::V2::AdminController < ApplicationController
 		if @announcement.save
 			render json: {status: 'ok', announcement: @announcement.decorate.to_admin_hash(request_options)}
 		else
-			render status: :bad_request json: {status: 'error', errors: @announcement.errors.full_messages}
+			render status: :bad_request, json: {status: 'error', errors: @announcement.errors.full_messages}
 		end
 	end
 

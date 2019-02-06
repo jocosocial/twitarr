@@ -40,6 +40,7 @@ class User
 
   index username: 1
   index display_name: 1
+  index registration_code: 1
   index :display_name => 'text'
 
   # noinspection RubyResolve

@@ -1883,7 +1883,6 @@ Reset the user's profile photo to their default identicon image.
 ```
 
 #### Error Resposnes
-
 * status_code_only - HTTP 401 if user is not logged in
 
 
@@ -2650,3 +2649,409 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
     }
 }
 ```
+
+
+## Admin Information
+
+### Admin Specific Types
+
+#### UserAdmin{}
+
+```
+{
+    "username": "username_string",
+    "is_admin": boolean,
+    "status": "string",
+    "email": "email_address",  # May be null
+    "display_name": "displayname_string",
+    "current_location": null, # Not currently implemented
+    "last_login": epoch,
+    "empty_password": boolean,
+    "last_photo_updated": epoch,
+    "room_number": "integer", # String representation of an integer. May be null
+    "real_name": "string", # May be null
+    "pronouns": "string", # May be null
+    "home_location": "string" # May be null
+}
+```
+
+#### AnnouncementAdmin{}
+
+```
+{
+    "id": "id_string",
+    "author": "username_string",
+    "text": "formatted_string",
+    "timestamp": epoch, # Timestamp of when the announcement was created
+    "valid_until": epoch # Timestamp of when the announcement will disappear
+}
+```
+
+### GET /api/v2/admin/users
+
+Returns a list of all users. No paging. Most clients shouldn't implement this.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "users": [UserAdmin{}, ...]
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
+
+### GET /api/v2/admin/users/:query
+
+Returns a list of users matching `:query`. Searches username and display name.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "search_text": "string", # Will usually match :query, may be slightly transformed
+    "users": [UserAdmin{}, ...]
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
+
+### GET /api/v2/admin/users/:username/profile
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "user": UserAdmin{}
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### POST /api/v2/admin/users/:username
+
+Allows an admin to edit a user's public profile fields. All fields in the JSON request body are optional - only present fields will be updated.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+    "is_admin": boolean, # Allows admins to toggle admin status of other users. Admins cannot de-admin themselves.
+    "status": "status_string",
+	"display_name": "display_name_string",
+	"email": "email_string",
+	"home_location": "string",
+	"real_name": "string",
+	"pronouns": "string",
+	"room_number": Integer # Also accepts string representation of an integer
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "user": UserAdmin{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+* status_code_with_parameter_errors
+  * HTTP 400 if there were any errors with profile data
+  ```
+  { 
+    "status": "error", 
+    "errors": {
+        "display_name": [
+            "If display name is entered, it must be three or more characters and cannot include any of ~!@#$%^*()+=<>{}[]\|;:/?"
+        ],
+        "email": [
+            "E-mail address is not valid."
+        ],
+        "room_number": [
+            "Room number must be blank or an integer."
+        ]
+    }
+  }
+  ```
+
+### POST /api/v2/admin/users/:username/activate
+
+Sets a user's status to ACTIVE.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "user": UserAdmin{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### POST /api/v2/admin/users/:username/reset_password
+
+Resets a user's password to the default password.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "stauts": "ok"
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### POST /api/v2/admin/users/:username/reset_photo
+
+Reset the user's profile photo to their default identicon image.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "md5_hash": "md5_string"
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### GET /api/v2/admin/announcements
+
+Returns a list of all announcements, including expired announcements.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "announcements": [AnnouncementAdmin{}, ...]
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+
+### POST /api/v2/admin/announcements
+
+Creates a new announcement. Announcement will be displayed to users until the timestamp `valid_until`.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+    "text": "string",
+    "valid_until": epoch
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "announcement": AnnouncementAdmin{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Text is required.",
+            "Unable to parse valid until.",
+            "Valid until must be in the future."
+        ]
+    }
+  ```
+
+### GET /api/v2/admin/announcements/:id
+
+Get a single announcement by its id.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "announcement": AnnouncementAdmin{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the announcement is not found
+  ```
+    { "status": "error", "error": "Announcement not found." }
+  ```
+
+### POST /api/v2/admin/announcements/:id
+
+Update an announcement. All fields are required. If no changes for a field, just send the existing data.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+    "text": "string",
+    "valid_until": epoch
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "announcement": AnnouncementAdmin{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the announcement is not found
+  ```
+    { "status": "error", "error": "Announcement not found." }
+  ```
+* status_code_with_error_list - HTTP 400 with a list of any problems
+  ```
+    {
+        "status": "error",
+        "errors": [
+            "Text is required.",
+            "Unable to parse valid until.",
+            "Valid until must be in the future."
+        ]
+    }
+  ```
+
+### DELETE /api/v2/admin/announcements/:id
+
+Delete an announcement.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok"
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 404 if the announcement is not found
+  ```
+    { "status": "error", "error": "Announcement not found." }
+  ```
+
+### POST /api/v2/admin/schedule
+
+Upload an .ics schedule. Schedule should be uploaded as form-data. Creates new events, and updates existing events with matching IDs.
+
+#### Requires
+* logged in as admin.
+    * Accepts: key query parameter
+
+#### Query parameters
+* schedule=file - The from-data schedule file.
+
+#### Returns
+
+```
+{ "status": "ok" }
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_with_message - HTTP 400 if the uploaded schedule could not be parsed
+  ```
+    { 
+        "status": "error", 
+        "error": "Unable to parse schedule: errorMessage" # Error message will be replaced with a hopefully helpful message describing what went wrong
+    }
+  ```

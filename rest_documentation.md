@@ -17,6 +17,7 @@ These parameter types are used throughout the API
 * username_string - user's username.  All lowercase word characters plus '-' and '&', at least 3 characters
 * displayname_string - user's display name. All word characters plus '.', '&', '-', and space, at least 3 characters, max 40 characters.
 * password_string - user's password. Minimum length 6 characters.
+* role_string - one of the following roles: "admin", "tho", "moderator", "user", "muted", "banned"
 
 ## Output Type Definitions
 
@@ -1346,8 +1347,7 @@ This is used by user and admin endpoints. When used with admin endpionts, unnoti
 ```
 {
     "username": "username_string",
-    "is_admin": boolean,
-    "status": "status_string",
+    "role": "role_string",
     "email": "email_address",  # May be null
     "display_name": "displayname_string",
     "current_location": null, # Not currently implemented
@@ -2660,8 +2660,7 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
 ```
 {
     "username": "username_string",
-    "is_admin": boolean,
-    "status": "string",
+    "role": "role_string",
     "email": "email_address",  # May be null
     "display_name": "displayname_string",
     "current_location": null, # Not currently implemented
@@ -2672,6 +2671,7 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
     "real_name": "string", # May be null
     "pronouns": "string", # May be null
     "home_location": "string" # May be null
+    "ban_reason": "string" # May be null, required if user role is banned
 }
 ```
 
@@ -2762,14 +2762,15 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
 
 ```
 {
-    "is_admin": boolean, # Allows admins to toggle admin status of other users. Admins cannot de-admin themselves.
+    "role": "role_string", # Allows priviliged users to change the role of other users. Users cannot change their own roles.
     "status": "status_string",
 	"display_name": "display_name_string",
 	"email": "email_string",
 	"home_location": "string",
 	"real_name": "string",
 	"pronouns": "string",
-	"room_number": Integer # Also accepts string representation of an integer
+	"room_number": Integer # Also accepts string representation of an integer,
+    "ban_reason": "string" # Required if user role is "banned"
 }
 ```
 
@@ -2802,14 +2803,17 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
         ],
         "room_number": [
             "Room number must be blank or an integer."
+        ],
+        "ban_reason": [
+            "When user is banned, ban reason is required."
         ]
     }
   }
   ```
 
-### POST /api/v2/admin/users/:username/activate
+### POST /api/v2/admin/users/:username/activate DISABLED
 
-Sets a user's status to ACTIVE.
+Sets a user's status to ACTIVE. Currently disabled.
 
 #### Requires
 * logged in as admin.

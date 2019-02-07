@@ -38,8 +38,8 @@ class UserDecorator < Draper::Decorator
     end
     {
       username: username,
-      is_admin: is_admin,
-      status: status,
+      role: User::Role.as_string(role),
+      # status: status,
       email: email,
       display_name: display_name,
       current_location: current_location,
@@ -49,12 +49,14 @@ class UserDecorator < Draper::Decorator
       room_number: room_number,
       real_name: real_name,
       pronouns: pronouns,
-      home_location: home_location
+      home_location: home_location,
+      ban_reason: ban_reason
     }
   end
 
   def self_hash
     hsh = admin_hash
+    hsh.delete(:ban_reason)
     hsh[:unnoticed_alerts] = unnoticed_alerts
     hsh
   end

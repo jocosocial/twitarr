@@ -20,12 +20,10 @@ class API::V2::AdminController < ApplicationController
 	end
 	
 	def update_user
-		@user.is_admin = params[:is_admin] == 'true' if params.has_key? :status
+		# Priviliged users cannot change their own role.
+		@user.set_role(params[:role]) if (@user.username != current_username) && (params.has_key? :role)
 		
-		# don't let the user turn off his own admin status
-		@user.is_admin = true if @user.username == current_username
-		
-		@user.status = params[:status] if params.has_key? :status
+		# @user.status = params[:status] if params.has_key? :status
 
 		@user.display_name = params[:display_name] if params.has_key? :display_name
     if @user.display_name.blank?
@@ -35,7 +33,8 @@ class API::V2::AdminController < ApplicationController
     @user.home_location = params[:home_location] if params.has_key? :home_location
     @user.real_name = params[:real_name] if params.has_key? :real_name
     @user.pronouns = params[:pronouns] if params.has_key? :pronouns
-    @user.room_number = params[:room_number] if params.has_key? :room_number
+		@user.room_number = params[:room_number] if params.has_key? :room_number
+		@user.ban_reason = params[:ban_reason] if params.has_key? :ban_reason
 		
 		render status: :bad_request, json: {status: 'error', errors: @user.errors.messages} and return unless @user.valid?
 

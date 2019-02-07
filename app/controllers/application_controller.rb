@@ -115,7 +115,7 @@ class ApplicationController < ActionController::Base
     CHECK_DAYS_BACK.times do |x|
       if build_key(username, x) == key
         login_with_key key
-        return false if @current_user.role == User::Role::BANNED
+        return false if (@current_user.nil? || @current_user.role == User::Role::BANNED)
         return true
       end
     end

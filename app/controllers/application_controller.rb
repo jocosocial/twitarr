@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   end
   
   def logged_in?
-    !current_username.nil? && !current_user.nil?
+    !current_username.nil? && !current_user.nil? && current_user.role != User::Role::BANNED
   end
 
   def current_username
@@ -20,17 +20,25 @@ class ApplicationController < ActionController::Base
 
   def login_user(user)
     session[:username] = user.username
-    session[:is_admin] = user.is_admin
+    session[:role] = user.role
     puts "Successful login for user: #{current_username}"
   end
 
   def logout_user
     session.delete :username
-    session.delete :is_admin
+    session.delete :role
   end
 
   def is_admin?
-    (current_user&.is_admin) || session[:is_admin]
+    (current_user&.role <= User::Role::ADMIN) || (session[:role] <= User::Role::ADMIN)
+  end
+
+  def is_tho?
+    (current_user&.role <= User::Role::THO) || (session[:role] <= User::Role::THO)
+  end
+
+  def is_moderator?
+    (current_user&.role <= User::Role::MODERATOR) || (session[:role] <= User::Role::MODERATOR)
   end
 
   def validate_login(username, password)
@@ -44,6 +52,8 @@ class ApplicationController < ActionController::Base
       result[:error] = 'Invalid username or password.'
     elsif user.status != User::ACTIVE_STATUS # If a user's password is set, we only want to report they're locked if they have the right password
       result[:error] = 'User account has been disabled.'
+    elsif user.role == User::Role::BANNED
+      result[:error] = "User account has been banned. Reason: #{user.ban_reason}"
     else
       user.update_last_login.save
     end
@@ -56,6 +66,14 @@ class ApplicationController < ActionController::Base
 
   def admin_required
 		head :unauthorized unless logged_in? && is_admin?
+  end
+  
+  def tho_required
+		head :unauthorized unless logged_in? && is_tho?
+  end
+  
+  def moderator_required
+		head :unauthorized unless logged_in? && is_moderator?
 	end
 
   def read_only_mode
@@ -86,7 +104,7 @@ class ApplicationController < ActionController::Base
   end
 
   def login_with_key(key)
-    @user = User.get get_username(key)
+    @current_user = User.get get_username(key)
   end
 
   def valid_key?(key)
@@ -97,6 +115,7 @@ class ApplicationController < ActionController::Base
     CHECK_DAYS_BACK.times do |x|
       if build_key(username, x) == key
         login_with_key key
+        return false if @current_user.role == User::Role::BANNED
         return true
       end
     end

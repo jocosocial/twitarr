@@ -50,7 +50,7 @@ Twitarr.ApplicationController = Ember.Controller.extend
   login: (user) ->
     Ember.run =>
       @set 'login_user', user.username
-      @set 'login_admin', user.is_admin
+      @set 'login_admin', (user.role == 'admin')
       @set 'display_name', user.display_name
     @tick()
 

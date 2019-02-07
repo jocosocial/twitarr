@@ -15,11 +15,11 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
     
     edit_profile: (username) ->
       if !!username
-        @transitionToRoute('admin.profile', username)
+        @transitionTo('admin.profile', username)
     
     search: (text) ->
       if !!text
-        @transitionToRoute('admin.users', text)
+        @transitionTo('admin.users', text)
 
 Twitarr.AdminProfileRoute = Ember.Route.extend
   model: (params) ->
@@ -39,14 +39,15 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
     save: (user) ->
       self = this
       $.post("#{Twitarr.api_path}/admin/users/#{user.username}", {
-        is_admin: user.is_admin
+        role: user.role
         status: user.status
         email: user.email
         display_name: user.display_name,
         real_name: user.real_name,
         pronouns: user.pronouns,
         home_location: user.home_location,
-        room_number: user.room_number
+        room_number: user.room_number,
+        ban_reason: user.ban_reason
       }).fail((response) =>
         if response.responseJSON?.errors?
           self.controller.set('errors', response.responseJSON.errors)

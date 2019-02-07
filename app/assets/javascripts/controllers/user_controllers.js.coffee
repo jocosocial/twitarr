@@ -116,7 +116,10 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
     login: ->
       self = this
       Twitarr.UserLogin.login(@get('username'), @get('password')).fail (response) ->
-        self.set 'error', response.responseJSON.status
+        if response.responseJSON?.error?
+          self.set 'error', response.responseJSON.error
+        else
+          self.set 'error', 'Something went wrong. Try again later.'
         return
       .then (response) ->
         if response.status is 'ok'

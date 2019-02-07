@@ -91,7 +91,7 @@ Twitarr::Application.routes.draw do
       get 'admin/users/:query', to: 'admin#user'
       get 'admin/users/:username/profile', to: 'admin#profile'
       post 'admin/users/:username', to: 'admin#update_user'
-      post 'admin/users/:username/activate', to: 'admin#activate'
+      # post 'admin/users/:username/activate', to: 'admin#activate'
       post 'admin/users/:username/reset_password', to: 'admin#reset_password'
       post 'admin/users/:username/reset_photo', to: 'admin#reset_photo'
       

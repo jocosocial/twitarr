@@ -95,11 +95,28 @@
         </div>
       </div>
       <div>
-        {{input checked=is_admin type="checkbox" name="is_admin"}} Admin
-        {{input value=status class='input input-short' placeholder='Status' }}
-        {{#unless is_active}}
-          <button class="btn" {{action 'activate' username}}>Activate</button>
-        {{/unless}}
+        <div class="form-group">
+          <label for="role">Role:</label>
+            {{view "select" id="role" content=roles optionLabelPath="content.label" optionValuePath="content.value" value=role}}
+            {{#if errors.role}}
+              <ul class="alert alert-warning" style="padding-left: 2em;">
+                {{#each error in errors.role}}
+                  <li>{{error}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
+        </div>
+        <div {{bind-attr class="is_banned::hidden :form-group"}}>
+          <label for="ban_reason">Ban Reason:</label>
+            {{ input value=ban_reason class='input' name="ban_reason"}}
+            {{#if errors.ban_reason}}
+              <ul class="alert alert-warning" style="padding-left: 2em;">
+                {{#each error in errors.ban_reason}}
+                  <li>{{error}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
+        </div>
       </div>
       <div class="row" style="margin: 0.5em 1em;">
         <button class="btn" {{action 'save' model}}>Save Changes</button>

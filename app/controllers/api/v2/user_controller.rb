@@ -18,7 +18,7 @@ class API::V2::UserController < ApplicationController
     display_name = params[:display_name] 
     display_name = params[:new_username] if params[:display_name].blank?
     user = User.new username: new_username, display_name: display_name, password: params[:new_password],
-                     is_admin: false, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
+                     role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
     
     render status: :bad_request, json: {status: "error", errors: user.errors.messages} and return unless user.valid?
     

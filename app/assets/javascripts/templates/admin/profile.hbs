@@ -1,30 +1,30 @@
 <div class="display_card">
   <div class="card-section section-with-photo">
     <div class="section-photo">
-      {{user_picture username last_photo_updated}}
+      {{user_picture model.username model.last_photo_updated}}
     </div>
 
-    {{#if last_login}}
-      {{pretty_timestamp last_login}}
+    {{#if model.last_login}}
+      {{pretty_timestamp model.last_login}}
     {{/if}}
 
     <span class="title big-title">
-      {{display_name_plus_username username display_name}}
+      {{display_name_plus_username model.username model.display_name}}
     </span>
 
     <div class="form">
-      <button {{bind-attr class="role_tho::hidden :btn"}} {{action 'reset_password' username}}>Reset Password</button>
-      {{#if empty_password}}
+      <button {{bind-attr class="role_tho::hidden :btn"}} {{action 'reset_password' model.username}}>Reset Password</button>
+      {{#if model.empty_password}}
         <span style="color: darkred; padding-left: 1em;">
           Empty password!
         </span>
       {{/if}}
-      <button class="btn" {{action 'reset_photo' username}}>Reset Photo</button>
+      <button class="btn" {{action 'reset_photo' model.username}}>Reset Photo</button>
       <div class="row" style="margin: 1em 0;">
         <div class="col-md-4">
           <div class="form-group">
             <label for="display_name">Display Name</label>
-            {{ input value=display_name class='input' name="display_name"}}
+            {{ input value=model.display_name class='input' name="display_name"}}
             {{#if errors.display_name}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.display_name}}
@@ -35,7 +35,7 @@
           </div>
           <div class="form-group">
             <label for="real_name">Real Name</label>
-            {{ input value=real_name class='input' name="real_name"}}
+            {{ input value=model.real_name class='input' name="real_name"}}
             {{#if errors.real_name}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.real_name}}
@@ -48,7 +48,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="pronouns">Preferred Pronouns</label>
-            {{ input value=pronouns class='input' name="pronouns"}}
+            {{ input value=model.pronouns class='input' name="pronouns"}}
             {{#if errors.pronouns}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.pronouns}}
@@ -59,7 +59,7 @@
           </div>
           <div class="form-group">
             <label for="room_number">Room Number</label>
-            {{ input value=room_number class='input' name="room_number"}}
+            {{ input value=model.room_number class='input' name="room_number"}}
             {{#if errors.room_number}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.room_number}}
@@ -72,7 +72,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="home_location">Home Location</label>
-            {{ input value=home_location class='input' name="home_location"}}
+            {{ input value=model.home_location class='input' name="home_location"}}
             {{#if errors.home_location}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.home_location}}
@@ -83,7 +83,7 @@
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            {{ input value=email class='input' name="email"}}
+            {{ input value=model.email class='input' name="email"}}
             {{#if errors.email}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.email}}
@@ -97,7 +97,7 @@
       <div>
         <div class="form-group">
           <label for="role">Role:</label>
-            {{view "select" id="role" content=roles optionLabelPath="content.label" optionValuePath="content.value" value=role}}
+            {{view "select" id="role" content=roles optionLabelPath="content.label" optionValuePath="content.value" value=model.role}}
             {{#if errors.role}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.role}}
@@ -108,7 +108,7 @@
         </div>
         <div {{bind-attr class="is_muted::hidden :form-group"}}>
           <label for="mute_reason">Mute Reason:</label>
-            {{ input value=mute_reason class='input' name="mute_reason"}}
+            {{ input value=model.mute_reason class='input' name="mute_reason"}}
             {{#if errors.mute_reason}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.mute_reason}}
@@ -119,7 +119,7 @@
         </div>
         <div {{bind-attr class="is_banned::hidden :form-group"}}>
           <label for="ban_reason">Ban Reason:</label>
-            {{ input value=ban_reason class='input' name="ban_reason"}}
+            {{ input value=model.ban_reason class='input' name="ban_reason"}}
             {{#if errors.ban_reason}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.ban_reason}}

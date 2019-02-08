@@ -1,17 +1,17 @@
-<div class="card-section section-with-photo" {{action 'edit_profile' username}}>
+<div class="card-section section-with-photo" {{action 'edit_profile' model.username}}>
   <div class="section-photo">
-    {{user_picture username last_photo_updated}}
+    {{user_picture model.username model.last_photo_updated}}
   </div>
 
-  {{#if last_login}}
-    {{pretty_timestamp_labeled last_login 'Last Login'}}
+  {{#if model.last_login}}
+    {{pretty_timestamp_labeled model.last_login 'Last Login'}}
   {{/if}}
 
   <span class="title big-title">
-    {{display_name_plus_username username display_name}}
+    {{display_name_plus_username model.username model.display_name}}
   </span>
 
   <div class="form">
-    Role: {{role}}
+    Role: {{model.role}}
   </div>
 </div>

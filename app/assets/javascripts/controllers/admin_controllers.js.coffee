@@ -1,6 +1,6 @@
 Twitarr.AdminUsersController = Twitarr.ArrayController.extend()
 
-Twitarr.AdminProfileController = Twitarr.ObjectController.extend
+Twitarr.AdminProfileController = Twitarr.Controller.extend
   errors: Ember.A()
   roles: [
     {label: "Admin", value: "admin"},
@@ -12,12 +12,12 @@ Twitarr.AdminProfileController = Twitarr.ObjectController.extend
   ]
 
   is_banned: (->
-    @get('role') is 'banned'
-  ).property('role')
+    @get('model.role') is 'banned'
+  ).property('model.role')
 
   is_muted: (->
-    @get('role') is 'muted'
-  ).property('role')
+    @get('model.role') is 'muted'
+  ).property('model.role')
 
 Twitarr.AdminAnnouncementsController = Twitarr.Controller.extend()
 

@@ -1,6 +1,7 @@
 class Event
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Paranoia
   include Searchable
 
   FIRST_CRUISE_DATE = Date.new 2019, 3, 9

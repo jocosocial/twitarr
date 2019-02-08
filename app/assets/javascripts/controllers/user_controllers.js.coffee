@@ -115,26 +115,25 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
   actions:
     login: ->
       self = this
-      Twitarr.UserLogin.login(@get('username'), @get('password')).fail (response) ->
+      Twitarr.UserLogin.login(@get('username'), @get('password')).fail((response) ->
         if response.responseJSON?.error?
           self.set 'error', response.responseJSON.error
         else
           self.set 'error', 'Something went wrong. Try again later.'
         return
-      .then (response) ->
-        if response.status is 'ok'
-          self.set('username', '')
-          self.set('password', '')
-          self.set('error', null)
-          $.getJSON("#{Twitarr.api_path}/user/whoami").then (data) =>
-            self.get('controllers.application').login(data.user)
-            if data.need_password_change
-              self.transitionToRoute('user')
-              alert('You need to change your password before you continue')
-            else
-              self.transitionToRoute('index')
-        else 
-           self.set 'error', response.status
+      ).then((response) ->
+        self.set('username', '')
+        self.set('password', '')
+        self.set('error', null)
+        $.getJSON("#{Twitarr.api_path}/user/whoami").then((data) =>
+          self.get('controllers.application').login(data.user)
+          if data.need_password_change
+            self.transitionToRoute('user')
+            alert('You need to change your password before you continue.')
+          else
+            self.transitionToRoute('index')
+        )
+      )
 
 Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
   errors: Ember.A()
@@ -151,10 +150,10 @@ Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
       @set('loading', true)
       Twitarr.UserForgotPassword.resetPassword(
         @get('username'), @get('registration_code'), @get('new_password')
-      ).fail (response) ->
+      ).fail((response) ->
         self.set('loading', false)
         self.set 'errors', response.responseJSON.errors
-      .then (response) ->
+      ).then((response) ->
         self.set('loading', false)
         if response.status is 'ok'
           self.set('errors', Ember.A())
@@ -162,3 +161,4 @@ Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
           self.transitionToRoute('user.login')
         else
           alert 'Something went wrong. Try again later.'
+      )

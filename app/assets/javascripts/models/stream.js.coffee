@@ -56,27 +56,36 @@ Twitarr.StreamPost = Ember.Object.extend
   ).property('reactions')
 
   react: (word) ->
-    $.post("#{Twitarr.api_path}/tweet/#{@get('id')}/react/#{word}").then (data) =>
-      if(data.status == 'ok')
-        @set('reactions', data.reactions)
+    $.post("#{Twitarr.api_path}/tweet/#{@get('id')}/react/#{word}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
       else
-        alert data.error
+        alert 'Unable to add reaction. Please try again later.'
+    ).then((response) =>
+      @set('reactions', response.reactions)
+    )
 
   unreact: (word) ->
-    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}/react/#{word}", method: 'DELETE').then (data) =>
-      if(data.status == 'ok')
-        @set('reactions', data.reactions)
+    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}/react/#{word}", method: 'DELETE').fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
       else
-        alert data.error
+        alert 'Unable to remove reaction. Please try again later.'
+    ).then((response) =>
+      @set('reactions', response.reactions)
+    )
 
   delete: ->
-    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}", method: 'DELETE').then (data) =>
-      if(data.status == 'ok')
-        for child in @get('children')
-          child.parent_chain = []
-        alert("Successfully deleted")
+    $.ajax("#{Twitarr.api_path}/tweet/#{@get('id')}", method: 'DELETE').fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
       else
-        alert data.status
+        alert 'Unable to delete tweet. Please try again later.'
+    ).then((data) =>
+      for child in @get('children')
+        child.parent_chain = []
+      alert("Successfully deleted")
+    )
 
 Twitarr.StreamPost.reopenClass
   page: (page) ->
@@ -89,7 +98,8 @@ Twitarr.StreamPost.reopenClass
 
   view: (post_id) ->
     $.getJSON("#{Twitarr.api_path}/thread/#{post_id}").then (data) =>
-      @create(data.post)
+      if(data.post?)
+        @create(data.post)
 
   get: (post_id) ->
     $.getJSON("#{Twitarr.api_path}/tweet/#{post_id}?app=plain").then (data) =>

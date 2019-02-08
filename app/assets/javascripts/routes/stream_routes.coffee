@@ -32,9 +32,9 @@ Twitarr.StreamViewRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
-    controller.set 'model', model
-    controller.set 'base_reply_text', "@#{model.author.username} "
-    controller.set 'reply_text', "@#{model.author.username} "
+    controller.set('model', model)
+    controller.set('model.base_reply_text', "@#{model.author.username} ")
+    controller.set('model.reply_text', "@#{model.author.username} ")
 
   actions:
     reload: ->

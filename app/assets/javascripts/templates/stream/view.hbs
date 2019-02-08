@@ -8,9 +8,9 @@
   {{render "stream.post_partial" model}}
 </div>
 
-{{#if children}}
+{{#if model.children}}
   <div class="display_card">
-    {{#each child in children}}
+    {{#each child in model.children}}
       {{render "stream.post_partial" child}}
     {{/each}}
   </div>
@@ -21,7 +21,7 @@
     <div class="card-section">
       <div class="title big-title">Reply</div>
       <div class="form">
-        {{textarea value=reply_text rows='3' class='input'}}
+        {{textarea value=model.reply_text rows='3' class='input'}}
         {{view 'upload'}}
 
         <ul class="errors-list">

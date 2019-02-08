@@ -1,6 +1,6 @@
-Twitarr.StreamPostPartialView = Ember.View.extend
-  tagName: ''
+# Twitarr.StreamPostPartialView = Ember.View.extend
+#   tagName: ''
 
-  didInsertElement: ->
-    @$('.body a').click (e) ->
-      e.stopPropagation()
+#   didInsertElement: ->
+#     @$('.body a').click (e) ->
+#       e.stopPropagation()

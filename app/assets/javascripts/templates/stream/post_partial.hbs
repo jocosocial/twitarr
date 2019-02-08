@@ -1,39 +1,39 @@
 <div class="card-section section-with-photo clickable" {{action 'view_thread' model bubbles=false}}>
 
   <div class="section-photo">
-    {{#link-to 'user.profile' author.username}}
-      {{unbound user_picture author.username author.last_photo_updated}}
+    {{#link-to 'user.profile' model.author.username}}
+      {{unbound user_picture model.author.username model.author.last_photo_updated}}
     {{/link-to}}
   </div>
 
   <span class="title">
-    {{#link-to 'user.profile' author.username}}
-      {{unbound pretty_username author.username author.display_name}}
+    {{#link-to 'user.profile' model.author.username}}
+      {{unbound pretty_username model.author.username model.author.display_name}}
     {{/link-to}}
   </span>
 
-  {{unbound pretty_timestamp timestamp}}
+  {{unbound pretty_timestamp model.timestamp}}
 
   <div class="body">
     <div class="body-section">
-      {{{unbound text}}}
+      {{{unbound model.text}}}
     </div>
     <div class="body-section photos">
-      {{#if photo}}
-        {{render 'photo_mini' photo }}
+      {{#if model.photo}}
+        {{render 'photo_mini' model.photo }}
       {{/if}}
     </div>
   </div>
   <div class="controls">
     <div>
-      {{likes_string}}
+      {{model.likes_string}}
     </div>
     <div>
       <button {{action 'unlike' model bubbles=false}} {{bind-attr class="unlikeable::hidden :btn-link"}}>Unlike</button>
       <button {{action 'like' model bubbles=false}} {{bind-attr class="likeable::hidden :btn-link"}}>Like</button>
-      <button {{action 'edit' id bubbles=false}} {{bind-attr class="editable::hidden :btn-link"}}>Edit</button>
-      <button {{action 'display_tweet' id bubbles=false}} {{bind-attr class="logged_in::hidden :btn-link"}}>Reply</button>
-      <button {{action 'delete' id bubbles=false}} {{bind-attr class="deleteable::hidden :btn-link"}}>Delete</button>
+      <button {{action 'edit' model.id bubbles=false}} {{bind-attr class="editable::hidden :btn-link"}}>Edit</button>
+      <button {{action 'display_tweet' model.id bubbles=false}} {{bind-attr class="logged_in::hidden :btn-link"}}>Reply</button>
+      <button {{action 'delete' model.id bubbles=false}} {{bind-attr class="deleteable::hidden :btn-link"}}>Delete</button>
     </div>
   </div>
 </div>

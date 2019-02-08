@@ -1,2 +1,3 @@
-Ember.Handlebars.helper 'pretty_message_count', (message_count, count_is_unread) ->
-	'' + message_count + (if count_is_unread then ' new' else '') + (if message_count > 1 then ' messages' else ' message')
+Twitarr.PrettyMessageCountHelper = Ember.Helper.helper((params) ->
+	'' + params[0] + (if params[1] then ' new' else '') + (if params[0] > 1 then ' messages' else ' message')
+)

@@ -5,9 +5,9 @@
 </div>
 
 <div class="display_card calendar-nav">
-  <button class="btn left" {{action 'prev_day'}}>{{unbound prev_day_text}}</button>
-  <button class="btn right" {{action 'next_day'}}>{{unbound next_day_text}}</button>
-  <div>{{unbound today_text}}</div>
+  <button class="btn left" {{action 'prev_day'}}>{{prev_day_text}}</button>
+  <button class="btn right" {{action 'next_day'}}>{{next_day_text}}</button>
+  <div>{{today_text}}</div>
 </div>
 
 <div class="display_card">
@@ -20,8 +20,8 @@
 
 {{#if model.events}}
   <div class="display_card calendar-nav">
-    <button class="btn left" {{action 'prev_day'}}>{{unbound prev_day_text}}</button>
-    <button class="btn right" {{action 'next_day'}}>{{unbound next_day_text}}</button>
-    <div>{{unbound today_text}}</div>
+    <button class="btn left" {{action 'prev_day'}}>{{prev_day_text}}</button>
+    <button class="btn right" {{action 'next_day'}}>{{next_day_text}}</button>
+    <div>{{today_text}}</div>
   </div>
 {{/if}}

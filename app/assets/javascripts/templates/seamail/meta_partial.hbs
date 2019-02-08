@@ -2,19 +2,19 @@
   <span class="title big-title">
     {{model.subject}} <span class="highlight {{if model.is_unread '' 'hidden'}}">New</span>
   </span>
-  {{pretty_timestamp model.timestamp}}
+  {{pretty-timestamp model.timestamp}}
 
   <div class="form">
     {{#each user in model.users}}
       <span class="pull-left" style="padding: 0.5em;">
-          {{pretty_username user.username user.display_name}}
+          {{pretty-username user.username user.display_name}}
         <div style="text-align: center;">
-          {{user_picture user.username user.last_photo_updated}}
+          {{user-picture user.username user.last_photo_updated}}
         </div>
         </span>
     {{/each}}
   </div>
   <div class="controls">
-    {{pretty_message_count model.message_count model.count_is_unread}}
+    {{pretty-message-count model.message_count model.count_is_unread}}
   </div>
 </div>

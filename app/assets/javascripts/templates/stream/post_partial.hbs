@@ -2,17 +2,17 @@
 
   <div class="section-photo">
     {{#link-to 'user.profile' model.author.username}}
-      {{user_picture model.author.username model.author.last_photo_updated}}
+      {{user-picture model.author.username model.author.last_photo_updated}}
     {{/link-to}}
   </div>
 
   <span class="title">
     {{#link-to 'user.profile' model.author.username}}
-      {{pretty_username model.author.username model.author.display_name}}
+      {{pretty-username model.author.username model.author.display_name}}
     {{/link-to}}
   </span>
 
-  {{pretty_timestamp model.timestamp}}
+  {{pretty-timestamp model.timestamp}}
 
   <div class="body">
     <div class="body-section">

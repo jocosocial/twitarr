@@ -1,14 +1,18 @@
-Ember.Handlebars.helper 'pretty_time', (timestamp) ->
-  moment(timestamp).format('llll')
+Twitarr.PrettyTimeHelper = Ember.Helper.helper((params) ->
+  moment(params[0]).format('llll')
+)
 
-Ember.Handlebars.helper 'pretty_timestamp', (timestamp) ->
-  new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(timestamp).format('llll')}'>#{moment(timestamp).fromNow(true)} ago</span>")
+Twitarr.PrettyTimestampHelper = Ember.Helper.helper((params) ->
+  new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(params[0]).format('llll')}'>#{moment(params[0]).fromNow(true)} ago</span>")
+)
 
-Ember.Handlebars.helper 'pretty_timestamp_labeled', (timestamp, label) ->
-  new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(timestamp).format('llll')}'>#{label}: #{moment(timestamp).fromNow(true)} ago</span>")
+Twitarr.PrettyTimestampLabelledHelper = Ember.Helper.helper((params) ->
+  new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(params[0]).format('llll')}'>#{params[1]}: #{moment(params[0]).fromNow(true)} ago</span>")
+)
 
-Ember.Handlebars.helper 'pretty_timespan', (start_time, end_time) ->
-  if end_time
-    new Ember.Handlebars.SafeString("<span class='timestamp'>#{moment(start_time).format('LT')} - #{moment(end_time).format('LT')}</span>")
+Twitarr.PrettyTimespanHelper = Ember.Helper.helper((params) ->
+  if params[1]
+    new Ember.Handlebars.SafeString("<span class='timestamp'>#{moment(params[0]).format('LT')} - #{moment(params[1]).format('LT')}</span>")
   else
-    new Ember.Handlebars.SafeString("<span class='timestamp'>#{moment(start_time).format('LT')}</span>")
+    new Ember.Handlebars.SafeString("<span class='timestamp'>#{moment(params[0]).format('LT')}</span>")
+)

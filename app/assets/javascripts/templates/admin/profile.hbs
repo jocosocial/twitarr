@@ -1,15 +1,15 @@
 <div class="display_card">
   <div class="card-section section-with-photo">
     <div class="section-photo">
-      {{user_picture model.username model.last_photo_updated}}
+      {{user-picture model.username model.last_photo_updated}}
     </div>
 
     {{#if model.last_login}}
-      {{pretty_timestamp model.last_login}}
+      {{pretty-timestamp model.last_login}}
     {{/if}}
 
     <span class="title big-title">
-      {{display_name_plus_username model.username model.display_name}}
+      {{display-name-plus-username model.username model.display_name}}
     </span>
 
     <div class="form">

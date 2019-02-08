@@ -38,7 +38,7 @@ class User
 
   field :un, as: :username, type: String
   field :pw, as: :password, type: String
-  field :re, as: :role, type: Integer
+  field :ro, as: :role, type: Integer
   field :st, as: :status, type: String
   field :em, as: :email, type: String
   field :dn, as: :display_name, type: String

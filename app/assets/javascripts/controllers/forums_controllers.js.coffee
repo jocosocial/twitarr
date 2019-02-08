@@ -159,7 +159,7 @@ Twitarr.ForumsEditController = Twitarr.ObjectController.extend
 
   actions:
     cancel: ->
-      @transitionToRoute 'forums.detail', @get('forum_id'), 0
+      window.history.back()
     
     save: ->
       if @get('controllers.application.uploads_pending')

@@ -1,6 +1,4 @@
 Twitarr.UserIndexController = Twitarr.Controller.extend
-  needs: ['application']
-
   count: 0
   errors: Ember.A()
 
@@ -11,6 +9,26 @@ Twitarr.UserIndexController = Twitarr.Controller.extend
   profile_pic_upload_url: (->
     "#{Twitarr.api_path}/user/photo"
   ).property()
+
+  setupUpload: (->
+    Ember.run.scheduleOnce('afterRender', @, =>
+      $('#profile-photo-upload').fileupload
+        dataType: 'json'
+        dropZone: $('#profile-photo-upload-div')
+        add: (e, data) =>
+          @send('start_upload')
+          data.submit()
+        always: =>
+          @send('end_upload')
+        done: (e, data) =>
+          @send('file_uploaded', data.result)
+        fail: ->
+          alert 'An upload has failed!'
+
+      $('#profile-photo-upload-div').click ->
+        $('#profile-photo-upload').click()
+    )
+  )
 
   actions:
     save: ->

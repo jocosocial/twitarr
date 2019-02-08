@@ -16,6 +16,7 @@ Twitarr.UserIndexRoute = Ember.Route.extend
     model.new_password = null
     model.confirm_password = null
     controller.set('model', model)
+    controller.setupUpload()
 
 Twitarr.UserProfileRoute = Ember.Route.extend
   model: (params) ->

@@ -45,10 +45,10 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
       )        
     next_page: ->
       return if @get('model.next_page') is null or undefined
-      @transitionToRoute 'forums.detail', @get('model.next_page')
+      @transitionToRoute('forums.detail', @get('model.next_page'))
     prev_page: ->
       return if @get('model.prev_page') is null or undefined
-      @transitionToRoute 'forums.detail', @get('model.prev_page')
+      @transitionToRoute('forums.detail', @get('model.prev_page'))
 
 Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
   actions:
@@ -57,7 +57,7 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
     unlike: ->
       @get('model').unreact('like')
     edit: ->
-      @transitionToRoute 'forums.edit', @get('forum_id'), @get('id')
+      @transitionToRoute('forums.edit', @get('model.forum_id'), @get('model.id'))
     page: ->
       alert @get('model.page')
     delete: ->
@@ -145,7 +145,7 @@ Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
       "#{@get('model.posts')} #{post_word}"
   ).property('model.posts', 'model.new_posts') 
 
-Twitarr.ForumsEditController = Twitarr.ObjectController.extend
+Twitarr.ForumsEditController = Twitarr.Controller.extend
   errors: Ember.A()
   photo_ids: Ember.A()
 
@@ -159,7 +159,7 @@ Twitarr.ForumsEditController = Twitarr.ObjectController.extend
 
   actions:
     cancel: ->
-      @transitionToRoute 'forums.detail', @get('forum_id'), 0
+      window.history.back()
     
     save: ->
       if @get('controllers.application.uploads_pending')
@@ -167,7 +167,7 @@ Twitarr.ForumsEditController = Twitarr.ObjectController.extend
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.ForumPost.edit(@get('forum_id'), @get('id'), @get('text'), @get('photo_ids')).fail((response) =>
+      Twitarr.ForumPost.edit(@get('model.forum_id'), @get('model.id'), @get('model.text'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]

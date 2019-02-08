@@ -4,7 +4,7 @@
 <div class="display_card">
   <div class="card-section">
     <div class="form">
-      {{textarea value=text rows='3' class='input'}}
+      {{textarea value=model.text rows='3' class='input'}}
       {{view 'upload'}}
       <ul class="errors-list">
         {{#each error in errors}}

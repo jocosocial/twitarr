@@ -1,18 +1,18 @@
 Twitarr.EventsDayController = Twitarr.ObjectController.extend
   today_text: (->
-    moment(@get('today')).format('ddd MMM Do')
-  ).property('today')
+    moment(@get('model.today')).format('ddd MMM Do')
+  ).property('model.today')
   next_day_text: (->
-    moment(@get('next_day')).format('ddd >')
-  ).property('next_day')
+    moment(@get('model.next_day')).format('ddd >')
+  ).property('model.next_day')
   prev_day_text: (->
-    moment(@get('prev_day')).format('< ddd')
-  ).property('prev_day')
+    moment(@get('model.prev_day')).format('< ddd')
+  ).property('model.prev_day')
 
   actions:
     next_day: ->
-      @transitionToRoute 'events.day', @get('next_day')
+      @transitionToRoute('events.day', @get('model.next_day'))
     prev_day: ->
-      @transitionToRoute 'events.day', @get('prev_day')
+      @transitionToRoute('events.day', @get('model.prev_day'))
 
 Twitarr.EventsTodayController = Twitarr.EventsDayController.extend()

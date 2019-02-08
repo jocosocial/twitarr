@@ -14,21 +14,21 @@
       </ul>
       <div class="form row">
         <div class="col-xs-12">
-          <h4>{{unbound title}}</h4>
-          {{input value=location class='input' placeholder='Location'}}
-          {{textarea value=description rows='3' class='input' placeholder='Description'}}
+          <h4>{{unbound model.title}}</h4>
+          {{input value=model.location class='input' placeholder='Location'}}
+          {{textarea value=model.description rows='3' class='input' placeholder='Description'}}
         </div>
       </div>
 
       <div class="form row">
         <div class="col-xs-6">
           Start Time*
-          {{input value=start_time type='datetime-local' class='input'}}
+          {{input value=model.start_time type='datetime-local' class='input'}}
         </div>
 
         <div class="col-xs-6">
           End Time
-          {{input value=end_time type='datetime-local' class='input'}}
+          {{input value=model.end_time type='datetime-local' class='input'}}
         </div>
       </div>
       <span class="controls">

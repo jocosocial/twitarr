@@ -1,30 +1,30 @@
-Twitarr.ScheduleDayController = Twitarr.ObjectController.extend
+Twitarr.ScheduleDayController = Twitarr.Controller.extend
   today_text: (->
-    moment(@get('today')).format('ddd MMM Do')
-  ).property('today')
+    moment(@get('model.today')).format('ddd MMM Do')
+  ).property('model.today')
   next_day_text: (->
-    moment(@get('next_day')).format('ddd >')
-  ).property('next_day')
+    moment(@get('model.next_day')).format('ddd >')
+  ).property('model.next_day')
   prev_day_text: (->
-    moment(@get('prev_day')).format('< ddd')
-  ).property('prev_day')
+    moment(@get('model.prev_day')).format('< ddd')
+  ).property('model.prev_day')
 
   actions:
     next_day: ->
-      @transitionToRoute 'schedule.day', @get('next_day')
+      @transitionToRoute('schedule.day', @get('model.next_day'))
     prev_day: ->
-      @transitionToRoute 'schedule.day', @get('prev_day')
+      @transitionToRoute('schedule.day', @get('model.prev_day'))
 
 Twitarr.ScheduleTodayController = Twitarr.ScheduleDayController.extend()
 
-Twitarr.ScheduleMetaPartialController = Twitarr.ObjectController.extend
+Twitarr.ScheduleMetaPartialController = Twitarr.Controller.extend
   followable: (->
-    @get('logged_in') and not @get('following')
-  ).property('logged_in', 'following')
+    @get('logged_in') and not @get('model.following')
+  ).property('logged_in', 'model.following')
 
   unfollowable: (->
-    @get('logged_in') and @get('following')
-  ).property('logged_in', 'following')
+    @get('logged_in') and @get('model.following')
+  ).property('logged_in', 'model.following')
 
   actions:
     follow: ->
@@ -34,10 +34,10 @@ Twitarr.ScheduleMetaPartialController = Twitarr.ObjectController.extend
       Ember.run =>
         @get('model').unfollow()
 
-Twitarr.ScheduleDetailController = Twitarr.ObjectController.extend
+Twitarr.ScheduleDetailController = Twitarr.Controller.extend
   editable: (->
     @get('role_tho')
-  ).property('login_role')
+  ).property('controllers.application.login_role')
 
   actions:
     follow: ->
@@ -45,7 +45,7 @@ Twitarr.ScheduleDetailController = Twitarr.ObjectController.extend
     unfollow: ->
       @get('model').unfollow()
     edit: ->
-      @transitionToRoute 'schedule.edit', @get('id')
+      @transitionToRoute('schedule.edit', @get('model.id'))
     delete: ->
       if(confirm("Are you sure you want to delete this event?"))
         r=@get('model').delete()
@@ -53,14 +53,14 @@ Twitarr.ScheduleDetailController = Twitarr.ObjectController.extend
     ical: ->
       window.location.replace("#{Twitarr.api_path}/event/#{@get('id')}/ical")
 
-Twitarr.ScheduleEditController = Twitarr.ObjectController.extend
+Twitarr.ScheduleEditController = Twitarr.Controller.extend
   errors: Ember.A()
 
   actions:
     save: ->
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Event.edit(@get('id'), @get('description'), @get('location'), @get('start_time'), @get('end_time')).fail((response) =>
+      Twitarr.Event.edit(@get('model.id'), @get('model.description'), @get('model.location'), @get('model.start_time'), @get('model.end_time')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -72,7 +72,7 @@ Twitarr.ScheduleEditController = Twitarr.ObjectController.extend
         Ember.run =>
           @get('errors').clear()
           @set 'posting', false
-          @transitionToRoute 'schedule.detail', @get('id')
+          @transitionToRoute 'schedule.detail', @get('model.id')
       )
 
 getUsableTimeValue = -> d = new Date(); d.toISOString().replace('Z', '').replace(/:\d{2}\.\d{3}/, '')

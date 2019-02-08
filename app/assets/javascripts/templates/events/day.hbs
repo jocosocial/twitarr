@@ -11,14 +11,14 @@
 </div>
 
 <div class="display_card">
-{{#each event in events}}
+{{#each event in model.events}}
     {{render "schedule.meta_partial" event}}
 {{else}}
   <div class="card-section">You aren't following any events for this day.</div>
 {{/each}}
 </div>
 
-{{#if events}}
+{{#if model.events}}
   <div class="display_card calendar-nav">
     <button class="btn left" {{action 'prev_day'}}>{{unbound prev_day_text}}</button>
     <button class="btn right" {{action 'next_day'}}>{{unbound next_day_text}}</button>

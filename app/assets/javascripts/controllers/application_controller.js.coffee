@@ -118,7 +118,7 @@ Twitarr.AlertsController = Twitarr.Controller.extend
 
 Twitarr.TagController = Twitarr.Controller.extend()
 
-Twitarr.StarredController = Twitarr.ObjectController.extend
+Twitarr.StarredController = Twitarr.Controller.extend
   actions:
     save: (user) ->
       user.save().then (response) =>
@@ -127,11 +127,11 @@ Twitarr.StarredController = Twitarr.ObjectController.extend
         else
           alert response.status
 
-Twitarr.TimeController = Twitarr.ObjectController.extend
+Twitarr.TimeController = Twitarr.Controller.extend
 
   server_time: (->
-    @get('time')
-  ).property('time')
+    @get('model.time')
+  ).property('model.time')
 
   device_time: (->
     moment().format('MMMM Do, h:mm a')

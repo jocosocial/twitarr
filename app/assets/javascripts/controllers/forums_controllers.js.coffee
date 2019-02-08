@@ -29,7 +29,9 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
       @set 'posting', true
       Twitarr.Forum.new_post(@get('forum.id'), @get('new_post'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
@@ -98,7 +100,9 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
       @set 'posting', true
       Twitarr.Forum.new_forum(@get('subject'), @get('text'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Forum could not be added. Please try again later. Or try again someplace without so many seamonkeys.'
@@ -175,7 +179,7 @@ Twitarr.ForumsEditController = Twitarr.ObjectController.extend
         Ember.run =>
           @get('errors').clear()
           @set 'posting', false
-          @transitionToRoute 'forums.detail', @get('forum_id'), 0
+          window.history.back()
       )
 
     file_uploaded: (data) ->

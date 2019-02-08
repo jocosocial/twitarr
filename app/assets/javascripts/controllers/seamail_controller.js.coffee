@@ -15,7 +15,9 @@ Twitarr.SeamailDetailController = Twitarr.ObjectController.extend
       @set 'posting', true
       Twitarr.Seamail.new_message(@get('id'), @get('text')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Message could not be sent! Please try again later. Or try again someplace without so many seamonkeys.'
@@ -58,7 +60,9 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
       users = @get('toUsers').filter((user) -> !!user).map((user) -> user.username)
       Twitarr.Seamail.new_seamail(users, @get('subject'), @get('text')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Message could not be sent. Please try again later. Or try again someplace without so many seamonkeys.'

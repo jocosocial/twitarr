@@ -5,6 +5,7 @@ class API::V2::PhotoController < ApplicationController
 
   PAGE_LENGTH = 20
   before_filter :login_required, :only => [:create, :destroy, :update]
+  before_filter :not_muted, :only => [:create, :update]
   before_filter :fetch_photo, :except => [:index, :create]
 
   def fetch_photo

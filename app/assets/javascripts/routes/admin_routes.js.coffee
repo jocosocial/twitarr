@@ -66,7 +66,9 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
         mute_reason: user.mute_reason,
         ban_reason: user.ban_reason
       }).fail((response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else if response.responseJSON?.errors?
           self.controller.set('errors', response.responseJSON.errors)
         else
           alert 'Something went wrong. Try again later.'
@@ -154,7 +156,9 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
     new: (text, valid_until) ->
       self = this
       $.post("#{Twitarr.api_path}/admin/announcements", { text: text, valid_until: valid_until }).fail((response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          self.controller.set('errors', [response.responseJSON.error])
+        else if response.responseJSON?.errors?
           self.controller.set('errors', response.responseJSON.errors)
         else
           alert 'Announcement could not be created. Please try again later. Or try again someplace without so many seamonkeys.'

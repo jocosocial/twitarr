@@ -62,7 +62,9 @@ Twitarr.ScheduleEditController = Twitarr.ObjectController.extend
       @set 'posting', true
       Twitarr.Event.edit(@get('id'), @get('description'), @get('location'), @get('start_time'), @get('end_time')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Event could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'

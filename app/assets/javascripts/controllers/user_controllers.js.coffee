@@ -16,7 +16,9 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
     save: ->
       self = this
       @get('model').save().fail((response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else if response.responseJSON?.errors?
           self.set('errors', response.responseJSON.errors)
         else
           alert 'Something went wrong. Try again later.'
@@ -38,7 +40,9 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
       result = @get('model').change_password(
         @get('current_password'), @get('new_password')
       ).fail (response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else if response.responseJSON?.errors?
           self.set 'errors', response.responseJSON.errors
         else
           alert('Unable to change password. Please try again later.')
@@ -101,7 +105,9 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
         @get('display_name'),
         @get('new_password')
       ).fail((response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else if response.responseJSON?.errors?
           self.set('errors', response.responseJSON?.errors)
         else
           alert 'Something went wrong. Try again later.'

@@ -116,34 +116,34 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
           @transitionToRoute('forums.detail', response.forum.id, 0)
       )
 
-Twitarr.ForumsPageController = Twitarr.ObjectController.extend
+Twitarr.ForumsPageController = Twitarr.Controller.extend
   has_next_page: (->
-    @get('next_page') isnt null or undefined
-  ).property('next_page')
+    @get('model.next_page') isnt null or undefined
+  ).property('model.next_page')
 
   has_prev_page: (->
-    @get('prev_page') isnt null or undefined
-  ).property('prev_page')
+    @get('model.prev_page') isnt null or undefined
+  ).property('model.prev_page')
 
   actions:
     next_page: ->
-      return if @get('next_page') is null or undefined
-      @transitionToRoute 'forums.page', @get('next_page')
+      return if @get('model.next_page') is null or undefined
+      @transitionToRoute 'forums.page', @get('model.next_page')
     prev_page: ->
-      return if @get('prev_page') is null or undefined
-      @transitionToRoute 'forums.page', @get('prev_page')
+      return if @get('model.prev_page') is null or undefined
+      @transitionToRoute 'forums.page', @get('model.prev_page')
     create_forum: ->
       @transitionToRoute 'forums.new'
 
-Twitarr.ForumsMetaPartialController = Twitarr.ObjectController.extend
+Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
   posts_sentence: (->
     post_word = 'post'
-    post_word = 'posts' if @get('posts') > 1
-    if @get('new_posts') != undefined
-      "#{@get('posts')} #{post_word}, #{@get('new_posts')} <b class=\"highlight\">new</b>"
+    post_word = 'posts' if @get('model.posts') > 1
+    if @get('model.new_posts') != undefined
+      "#{@get('model.posts')} #{post_word}, #{@get('model.new_posts')} <b class=\"highlight\">new</b>"
     else
-      "#{@get('posts')} #{post_word}"
-  ).property('posts', 'new_posts') 
+      "#{@get('model.posts')} #{post_word}"
+  ).property('model.posts', 'model.new_posts') 
 
 Twitarr.ForumsEditController = Twitarr.ObjectController.extend
   errors: Ember.A()

@@ -6,6 +6,9 @@ Twitarr.StreamViewController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
   ).property('logged_in')
 
   actions:
+    handleKeyDown: (v,e) ->
+      @send('new') if e.ctrlKey and e.keyCode == 13
+
     show_new_post: ->
       @set 'new_post_visible', true
 
@@ -18,7 +21,7 @@ Twitarr.StreamViewController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
         return
       return if @get('model.posting')
       @set 'model.posting', true
-      Twitarr.StreamPost.reply(@get('model.id'), @get('model.reply_text'), @get('model.photo_id')).fail((response) =>
+      Twitarr.StreamPost.reply(@get('model.id'), @get('model.reply_text'), @get('photo_id')).fail((response) =>
         @set 'model.posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -31,7 +34,7 @@ Twitarr.StreamViewController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
           @get('errors').clear()
           @set 'model.posting', false
           @set 'model.reply_text', @get('model.base_reply_text')
-          @set 'model.photo_id', null
+          @set 'photo_id', null
           [p, ...] = response.stream_post['parent_chain']
           @send 'reload'
       )
@@ -44,6 +47,9 @@ Twitarr.StreamPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
   ).property('logged_in', 'new_post_visible')
 
   actions:
+    handleKeyDown: (v,e) ->
+      @send('new') if e.ctrlKey and e.keyCode == 13
+
     show_new_post: ->
       @set 'new_post_visible', true
 
@@ -56,7 +62,7 @@ Twitarr.StreamPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
         return
       return if @get('model.posting')
       @set 'model.posting', true
-      Twitarr.StreamPost.new_post(@get('model.new_post'), @get('model.photo_id')).fail((response) =>
+      Twitarr.StreamPost.new_post(@get('model.new_post'), @get('photo_id')).fail((response) =>
         @set 'model.posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -69,13 +75,13 @@ Twitarr.StreamPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
           @get('errors').clear()
           @set 'model.posting', false
           @set 'model.new_post', null
-          @set 'model.photo_id', null
+          @set 'photo_id', null
           @set 'new_post_visible', false
           @send 'reload'
       )
 
     next_page: ->
-      @transitionToRoute 'stream.page', @get('next_page')
+      @transitionToRoute 'stream.page', @get('model.next_page')
 
 Twitarr.StreamStarPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUploadMixin,
   actions:
@@ -89,8 +95,9 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
     unlike: ->
       @get('model').unreact('like')
     delete: ->
-      @get('model').delete()
-      @transitionToRoute 'stream'
+      if confirm('Are you sure you want to delete this post?')
+        @get('model').delete()
+        @transitionToRoute 'stream'
     view: ->
       @transitionToRoute('stream.view', @get('model.id'))
     edit: ->
@@ -114,7 +121,7 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
-Twitarr.StreamEditController = Twitarr.Controller.extend
+Twitarr.StreamEditController = Twitarr.Controller.extend Twitarr.SinglePhotoUploadMixin,
   errors: Ember.A()
 
   photos: (->
@@ -126,6 +133,9 @@ Twitarr.StreamEditController = Twitarr.Controller.extend
   ).property('model.photo_id')
 
   actions:
+    handleKeyDown: (v,e) ->
+      @send('save') if e.ctrlKey and e.keyCode == 13
+
     save: ->
       if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')

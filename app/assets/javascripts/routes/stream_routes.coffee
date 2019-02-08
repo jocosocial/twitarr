@@ -11,6 +11,10 @@ Twitarr.StreamPageRoute = Ember.Route.extend
   actions:
     reload: ->
       @transitionTo('stream.page', mostRecentTime())
+  
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.setupUpload()
 
 Twitarr.StreamStarPageRoute = Ember.Route.extend
   model: (params) ->
@@ -36,6 +40,7 @@ Twitarr.StreamViewRoute = Ember.Route.extend
     controller.set('model', model)
     controller.set('model.base_reply_text', "@#{model.author.username} ")
     controller.set('model.reply_text', "@#{model.author.username} ")
+    controller.setupUpload()
 
   actions:
     reload: ->
@@ -58,5 +63,6 @@ Twitarr.StreamEditRoute = Ember.Route.extend
       alert model.status
       return
     controller.set 'model', model.post
+    controller.setupUpload()
 
 mostRecentTime = -> Math.ceil(new Date().valueOf() + 1000)

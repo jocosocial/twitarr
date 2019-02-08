@@ -12,11 +12,6 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
 
   setupController: (controller, model) ->
     this._super(controller, model)
-    if model.status isnt 'ok'
-      alert model.status
-    else
-      controller.set('search_text', model.search_text)
-      controller.set('model', model.users)
 
   actions:
     reload: ->
@@ -128,6 +123,9 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
         )
 
 Twitarr.AdminSearchRoute = Ember.Route.extend
+  model: (params) ->
+    text: params.text
+
   actions:
     search: (text) ->
       if !!text
@@ -147,13 +145,13 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
 
   setupController: (controller, model) ->
     this._super(controller, model)
-    controller.set('text', null)
-    controller.set('valid_until', moment().add(4, 'hours').format('YYYY-MM-DDTHH:mm'))
-    controller.set('errors', Ember.A())
     if model.status isnt 'ok'
       alert model.status
     else
       controller.set('model', model.announcements)
+    controller.set('model.text', null)
+    controller.set('model.valid_until', moment().add(4, 'hours').format('YYYY-MM-DDTHH:mm'))
+    controller.set('model.errors', Ember.A())
 
   actions:
     new: (text, valid_until) ->

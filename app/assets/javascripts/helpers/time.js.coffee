@@ -6,7 +6,7 @@ Twitarr.PrettyTimestampHelper = Ember.Helper.helper((params) ->
   new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(params[0]).format('llll')}'>#{moment(params[0]).fromNow(true)} ago</span>")
 )
 
-Twitarr.PrettyTimestampLabelledHelper = Ember.Helper.helper((params) ->
+Twitarr.PrettyTimestampLabeledHelper = Ember.Helper.helper((params) ->
   new Ember.Handlebars.SafeString("<span class='timestamp' title='#{moment(params[0]).format('llll')}'>#{params[1]}: #{moment(params[0]).fromNow(true)} ago</span>")
 )
 

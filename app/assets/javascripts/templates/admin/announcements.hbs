@@ -4,16 +4,16 @@
 <div class="display_card">
   <div class="card-section">
     Message
-    {{textarea value=text rows='3' class='input' placeholder='text'}}
+    {{textarea value=model.text rows='3' class='input' placeholder='text'}}
     Valid until
-    {{input value=valid_until type='datetime-local' class='input'}}
+    {{input value=model.valid_until type='datetime-local' class='input'}}
     <ul class="errors-list">
-      {{#each error in errors}}
+      {{#each error in model.errors}}
         <li>{{error}}</li>
       {{/each}}
     </ul>
     <div class="controls">
-      <button class="btn" {{action 'new' text valid_until}}>Announce</button>
+      <button class="btn" {{action 'new' model.text model.valid_until}}>Announce</button>
     </div>
   </div>
 </div>

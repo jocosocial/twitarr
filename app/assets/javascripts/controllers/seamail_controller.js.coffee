@@ -10,6 +10,9 @@ Twitarr.SeamailDetailController = Twitarr.Controller.extend
   text: null
 
   actions:
+    handleKeyDown: (v,e) ->
+      @send('post') if e.ctrlKey and e.keyCode == 13
+
     post: ->
       return if @get('posting')
       @set 'posting', true
@@ -51,6 +54,41 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
   ).observes('toInput')
 
   actions:
+    handleKeyDown: (v,e) ->
+      @send('new') if e.ctrlKey and e.keyCode == 13
+    
+    handleKeyUp: (v,e) ->
+      switch e.keyCode
+        when 40
+          return @send('moveDown')
+        when 38
+          return @send('moveUp')
+        when 27
+          @send('cancel_autocomplete')
+          $('#seamail-user-autocomplete').focus()
+          return false
+    
+    listKeyUp: (e) ->
+      @send('handleKeyUp', null , e)
+    
+    moveUp: ->
+      if $('#seamail-user-autocomplete').is(':focus')
+        $('.seamail-user-autocomplete-item:last').children('a').focus()
+      else if $('.seamail-user-autocomplete-anchor:first').is(':focus')
+        $('#seamail-user-autocomplete').focus()
+      else
+        $('.seamail-user-autocomplete-anchor:focus').parent().prev().children('a').focus()
+      return false
+
+    moveDown: ->
+      if $('#seamail-user-autocomplete').is(':focus')
+        $('.seamail-user-autocomplete-item:first').children('a').focus()
+      else if $('.seamail-user-autocomplete-anchor:last').is(':focus')
+        $('#seamail-user-autocomplete').focus()
+      else
+        $('.seamail-user-autocomplete-anchor:focus').parent().next().children('a').focus()
+      return false
+
     cancel_autocomplete: ->
       @get('searchResults').clear()
 
@@ -86,5 +124,3 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
       @get('searchResults').clear()
       @last_search = ''
       $('#seamail-user-autocomplete').focus()
-
-

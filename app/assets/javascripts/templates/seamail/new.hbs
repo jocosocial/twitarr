@@ -6,12 +6,12 @@
     <div class="form">
       <span class="label">Users</span>
       <div class="seamail-autocomplete-parent">
-        {{ input value=toInput id='seamail-user-autocomplete' class='input' autocomplete='off' placeholder='start typing a name'}}
+        {{ input value=toInput id='seamail-user-autocomplete' class='input' autocomplete='off' placeholder='start typing a name' key-up='handleKeyUp'}}
         {{#if searchResults}}
           <ul class="seamail-user-autocomplete-list">
             {{#each result in searchResults}}
               <li class="seamail-user-autocomplete-item" {{ action 'select' result }}>
-                <a class="seamail-user-autocomplete-anchor" href="#" {{ action 'select' result }}>{{display-name-plus-username result.username result.display_name}}</a>
+                <a class="seamail-user-autocomplete-anchor" href="#" {{ action 'select' result }} onkeyup={{action 'listKeyUp'}} >{{display-name-plus-username result.username result.display_name}}</a>
               </li>
             {{/each}}
           </ul>
@@ -26,8 +26,8 @@
           </span>
         {{/each}}
       </div>
-      {{input value=subject class='input' placeholder='Subject'}}
-      {{textarea value=text rows='5' class='input' placeholder='First message'}}
+      {{input value=subject class='input' placeholder='Subject' key-down='handleKeyDown'}}
+      {{textarea value=text rows='5' class='input' placeholder='First message' key-down='handleKeyDown'}}
       <ul class="errors-list">
         {{#each error in errors}}
           <li>{{error}}</li>

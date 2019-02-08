@@ -20,7 +20,7 @@
   </div>
   <div class="card-section">
     <div class="form">
-      {{textarea value=model.text rows='2' class='input' placeholder='Send a message'}}
+      {{textarea value=model.text rows='2' class='input' placeholder='Send a message' key-down='handleKeyDown'}}
       <ul class="errors-list">
         {{#each error in errors}}
           <li>{{error}}</li>

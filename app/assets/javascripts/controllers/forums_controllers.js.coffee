@@ -1,24 +1,24 @@
-Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.MultiplePhotoUploadMixin,
+Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   has_new_posts: (->
-    for post in @get('forum.posts')
-      return true if post.timestamp > @get('forum.latest_read')
+    for post in @get('model.forum.posts')
+      return true if post.timestamp > @get('model.forum.latest_read')
     false
-  ).property('forum.posts', 'forum.latest_read')
+  ).property('model.forum.posts', 'model.forum.latest_read')
 
   calculate_first_unread_post: (->
-    for post in @get('forum.posts')
-      if post.timestamp > @get('forum.latest_read')
+    for post in @get('model.forum.posts')
+      if post.timestamp > @get('model.forum.latest_read')
         post.set('first_unread', true)
         return
-  ).observes('forum.posts', 'forum.latest_read')
+  ).observes('model.forum.posts', 'model.forum.latest_read')
 
   has_next_page: (->
-    @get('next_page') isnt null or undefined
-  ).property('next_page')
+    @get('model.next_page') isnt null or undefined
+  ).property('model.next_page')
 
   has_prev_page: (->
-    @get('prev_page') isnt null or undefined
-  ).property('prev_page')
+    @get('model.prev_page') isnt null or undefined
+  ).property('model.prev_page')
   
   actions:
     new: ->
@@ -27,7 +27,7 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Forum.new_post(@get('forum.id'), @get('new_post'), @get('photo_ids')).fail((response) =>
+      Twitarr.Forum.new_post(@get('model.forum.id'), @get('model.new_post'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -38,19 +38,19 @@ Twitarr.ForumsDetailController = Twitarr.ObjectController.extend Twitarr.Multipl
       ).then((response) =>
         Ember.run =>
           @set 'posting', false
-          @set 'new_post', ''
+          @set 'model.new_post', ''
           @get('errors').clear()
           @get('photo_ids').clear()
           @send 'reload'
       )        
     next_page: ->
-      return if @get('next_page') is null or undefined
-      @transitionToRoute 'forums.detail', @get('next_page')
+      return if @get('model.next_page') is null or undefined
+      @transitionToRoute 'forums.detail', @get('model.next_page')
     prev_page: ->
-      return if @get('prev_page') is null or undefined
-      @transitionToRoute 'forums.detail', @get('prev_page')
+      return if @get('model.prev_page') is null or undefined
+      @transitionToRoute 'forums.detail', @get('model.prev_page')
 
-Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
+Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
   actions:
     like: ->
       @get('model').react('like')
@@ -75,20 +75,20 @@ Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
       )
   
   unlikeable: (->
-    @get('logged_in') and @get('user_likes')
-  ).property('logged_in', 'user_likes')
+    @get('logged_in') and @get('model.user_likes')
+  ).property('logged_in', 'model.user_likes')
 
   likeable: (->
-    @get('logged_in') and not @get('user_likes')
-  ).property('logged_in', 'user_likes')
+    @get('logged_in') and not @get('model.user_likes')
+  ).property('logged_in', 'model.user_likes')
 
   editable: (->
-    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('role_tho'))
-  ).property('logged_in', 'author.username', 'login_user', 'login_role')
+    @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_tho'))
+  ).property('logged_in', 'model.author.username', 'login_user', 'login_role')
 
   deleteable: (->
-    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'author.username', 'login_user', 'login_role')
+    @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
+  ).property('logged_in', 'model.author.username', 'login_user', 'login_role')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:

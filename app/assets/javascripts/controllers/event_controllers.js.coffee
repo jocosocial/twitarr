@@ -1,4 +1,4 @@
-Twitarr.EventsDayController = Twitarr.ObjectController.extend
+Twitarr.EventsDayController = Twitarr.Controller.extend
   today_text: (->
     moment(@get('model.today')).format('ddd MMM Do')
   ).property('model.today')

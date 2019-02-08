@@ -10,7 +10,7 @@ Twitarr.ScheduleTodayRoute = Ember.Route.extend
 
   actions:
     reload: ->
-      @transitionTo 'schedule.today'
+      @refresh()
 
 Twitarr.ScheduleDayRoute = Ember.Route.extend
   model: (params) ->

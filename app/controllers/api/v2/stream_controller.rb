@@ -3,9 +3,9 @@ class API::V2::StreamController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   PAGE_LENGTH = 20
-  before_filter :login_required,  :only => [:create, :destroy, :update, :react, :unreact]
-  before_filter :not_muted,  :only => [:create, :update, :react]
-  before_filter :fetch_post, :except => [:index, :create, :view_mention, :view_hash_tag]
+  before_action :login_required,  :only => [:create, :destroy, :update, :react, :unreact]
+  before_action :not_muted,  :only => [:create, :update, :react]
+  before_action :fetch_post, :except => [:index, :create, :view_mention, :view_hash_tag]
 
   def fetch_post
     begin

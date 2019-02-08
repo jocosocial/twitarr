@@ -1,10 +1,10 @@
 class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
-  before_filter :not_muted, :only => [:create, :new_post, :update_post, :react]
-  before_filter :fetch_forum, :except => [:index, :create]
-  before_filter :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
+  before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
+  before_action :not_muted, :only => [:create, :new_post, :update_post, :react]
+  before_action :fetch_forum, :except => [:index, :create]
+  before_action :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
   
   def index
     page_size = (params[:limit] || Forum::PAGE_SIZE).to_i

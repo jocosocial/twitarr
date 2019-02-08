@@ -1,9 +1,9 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions]
-  before_filter :not_muted, :only => [:update_photo]
-  before_filter :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
+  before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions]
+  before_action :not_muted, :only => [:update_photo]
+  before_action :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
 
   def fetch_user
     @user = User.get params[:username]

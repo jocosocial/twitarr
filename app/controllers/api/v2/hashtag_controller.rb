@@ -1,7 +1,7 @@
 class API::V2::HashtagController < ApplicationController
   # noinspection RailsParamDefResolve
   skip_before_action :verify_authenticity_token
-  before_filter :admin_required, :only => [:populate_hashtags]
+  before_action :admin_required, :only => [:populate_hashtags]
 
   def populate_hashtags
     Hashtag.repopulate_hashtags

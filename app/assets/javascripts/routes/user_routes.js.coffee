@@ -9,12 +9,14 @@ Twitarr.UserIndexRoute = Ember.Route.extend
     )
   
   setupController: (controller, model) ->
+    this._super(controller, model)
     # Clear state when loading this form
     controller.errors = Ember.A()
     model.current_password = null
     model.new_password = null
     model.confirm_password = null
     controller.set('model', model)
+    controller.setupUpload()
 
 Twitarr.UserProfileRoute = Ember.Route.extend
   model: (params) ->
@@ -32,6 +34,7 @@ Twitarr.UserNewRoute = Ember.Route.extend
     Twitarr.UserNew.load()
   
   setupController: (controller, model) ->
+    this._super(controller, model)
     # Clear state when loading this form
     controller.errors = Ember.A()
     controller.set('model', model)
@@ -45,6 +48,7 @@ Twitarr.UserForgotPasswordRoute = Ember.Route.extend
     Twitarr.UserForgotPassword
     
   setupController: (controller, model) ->
+    this._super(controller, model)
     # Clear state when loading this form
     controller.errors = Ember.A()
     controller.loading = false

@@ -5,13 +5,13 @@
 </div>
 
 <div class="display_card">
-  {{#each post in posts}}
+  {{#each post in model.posts}}
     {{render "stream.post_partial" post}}
   {{/each}}
 </div>
 
 <div class="footer-controls">
-  {{#if has_next_page}}
+  {{#if model.has_next_page}}
     <div class="card-section">
       <button class="controls btn" {{action 'next_page'}}>Older</button>
     </div>

@@ -21,7 +21,7 @@ Twitarr.EventsTodayRoute = Ember.Route.extend
 
   actions:
     reload: ->
-      @transitionTo 'events.today'
+      @refresh()
 
 Twitarr.EventsDayRoute = Ember.Route.extend
   model: (params) ->

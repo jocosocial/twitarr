@@ -1,28 +1,28 @@
 <div class="main-page-header">
-  <span class="controls">
-    <button class="btn" {{action 'reload'}}>Refresh</button>
-  </span>
+  <div class="title">{{#link-to 'stream' }}Tweets{{/link-to}} > Thread
+    <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
+  </div>
 </div>
 
 <div class="display_card">
   {{render "stream.post_partial" model}}
 </div>
 
-{{#if children}}
+{{#if model.children}}
   <div class="display_card">
-    {{#each child in children}}
+    {{#each child in model.children}}
       {{render "stream.post_partial" child}}
     {{/each}}
   </div>
 {{/if}}
 
-<div {{bind-attr class="logged_in_visible::hidden"}}>
+<div class="{{if logged_in_visible '' 'hidden'}}">
   <div class="display_card">
     <div class="card-section">
       <div class="title big-title">Reply</div>
       <div class="form">
-        {{textarea value=reply_text rows='3' class='input'}}
-        {{view 'upload'}}
+        {{textarea value=model.reply_text rows='3' class='input' key-down='handleKeyDown'}}
+        {{partial 'upload'}}
 
         <ul class="errors-list">
           {{#each error in errors}}

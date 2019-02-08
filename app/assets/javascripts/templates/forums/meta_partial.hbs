@@ -1,13 +1,13 @@
-<div class="card-section clickable" {{action 'display_forum' id last_post_page}}  {{!-- Should link to last unread post page, not the first --}}>
+<div class="card-section clickable" {{action 'display_forum' model.id model.last_post_page}}  {{!-- Should link to last unread post page, not the first --}}>
   <span class="title big-title">
-    {{unbound subject}}
+    {{model.subject}}
   </span>
-  {{unbound pretty_timestamp timestamp}}
+  {{pretty-timestamp model.timestamp}}
 
   <div class="form">
-    {{{unbound posts_sentence}}}
+    {{{posts_sentence}}}
     <div class="controls">
-      Most recent: {{unbound pretty_username last_post_author.username last_post_author.display_name }}
+      Most recent: {{pretty-username model.last_post_author.username model.last_post_author.display_name }}
     </div>
   </div>
 

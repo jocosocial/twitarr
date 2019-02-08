@@ -1,41 +1,41 @@
 <div class="main-page-header header-with-controls">
   <span class="controls">
-    {{#if has_prev_page}}
+    {{#if model.has_prev_page}}
       <button class="btn" {{action 'prev_page'}}>Older</button>
     {{/if}}
-    {{#if has_next_page}}
+    {{#if model.has_next_page}}
       <button class="btn" {{action 'next_page'}}>Newer</button>
     {{/if}}
   </span>
-  <div class="title">{{#link-to 'forums' }}Forums{{/link-to}} > {{forum.subject}}
+  <div class="title">{{#link-to 'forums' }}Forums{{/link-to}} > {{model.forum.subject}}
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
   </div>
 </div>
 
 <div class="display_card">
-  {{#each post in forum.posts}}
+  {{#each post in model.forum.posts}}
     {{render "forums.post_partial" post}}
   {{/each}}
 
 </div>
 
-<div {{bind-attr class="logged_in::hidden has_next_page:hidden has_new_posts::scroll_to :display_card"}}>
+<div class="display_card {{if logged_in '' 'hidden'}} {{if has_next_page 'hidden'}} {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">
     <span class="title big-title">Post a message</span>
-    {{textarea value=new_post rows='3' class='input'}}
+    {{textarea value=model.new_post rows='3' class='input' key-down='handleKeyDown'}}
     <ul class="errors-list">
-      {{#each error in forum.errors}}
+      {{#each error in model.forum.errors}}
         <li>{{error}}</li>
       {{/each}}
     </ul>
-    {{view 'upload'}}
+    {{partial 'upload'}}
     <span class="controls">
       <button class="btn" {{action 'new'}}>Post</button>
     </span>
   </div>
 </div>
 
-<div {{bind-attr class="has_new_posts::scroll_to :footer-controls"}}>
+<div class="footer-controls {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">
     {{#if has_prev_page}}
       <button class="controls btn" {{action 'prev_page'}}>Older</button>

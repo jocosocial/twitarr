@@ -5,19 +5,19 @@
   </div>
 </div>
 
-{{#if announcements}}
+{{#if model.announcements}}
   <div class="display_card">
     <div class="card_title">Announcements</div>
-    {{#each announcement in announcements}}
+    {{#each announcement in model.announcements}}
       <div class="card-section section-with-photo">
 
         <div class="section-photo">
-          {{user_picture announcement.author.username announcement.author.last_photo_updated}}
+          {{user-picture announcement.author.username announcement.author.last_photo_updated}}
         </div>
 
         <span class="title">
           {{#link-to 'user.profile' announcement.author.username}}
-            {{pretty_username announcement.author.username announcement.author.display_name}}
+            {{pretty-username announcement.author.username announcement.author.display_name}}
           {{/link-to}}
         </span>
 
@@ -33,7 +33,7 @@
 
 <div class="display_card">
   <div class="card_title">Unread Seamail</div>
-  {{#each seamail in unread_seamail}}
+  {{#each seamail in model.unread_seamail}}
     {{render "seamail.meta_partial" seamail}}
   {{else}}
     <div class="card-section">
@@ -49,7 +49,7 @@
 
 <div class="display_card">
   <div class="card_title">Upcoming Events</div>
-  {{#each event in e.events}}
+  {{#each event in model.e.events}}
     {{render "events.meta_partial" event}}
   {{else}}
     <div class="card-section">
@@ -65,14 +65,14 @@
 
 <div class="display_card">
   <div class="card_title">Tweet Mentions</div>
-  {{#each tweet in tweet_mentions}}
+  {{#each tweet in model.tweet_mentions}}
     {{render "stream.post_partial" tweet}}
   {{/each}}
 </div>
 
 <div class="display_card">
   <div class="card_title">Forum Mentions</div>
-  {{#each forum in forum_mentions}}
+  {{#each forum in model.forum_mentions}}
     {{render "forums.meta_partial" forum}}
   {{/each}}
 </div>

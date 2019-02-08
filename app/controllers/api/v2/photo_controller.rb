@@ -4,8 +4,9 @@ class API::V2::PhotoController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   PAGE_LENGTH = 20
-  before_filter :login_required, :only => [:create, :destroy, :update]
-  before_filter :fetch_photo, :except => [:index, :create]
+  before_action :login_required, :only => [:create, :destroy, :update]
+  before_action :not_muted, :only => [:create, :update]
+  before_action :fetch_photo, :except => [:index, :create]
 
   def fetch_photo
     begin

@@ -1,11 +1,11 @@
 class API::V2::AdminController < ApplicationController
 	skip_before_action :verify_authenticity_token
 	
-	before_filter :moderator_required, :only => [:users, :user, :profile, :update_user, :reset_photo]
-	before_filter :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement]
-	before_filter :admin_required, :only => [:upload_schedule]
-	before_filter :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo]
-	before_filter :fetch_announcement, :only => [:announcement, :update_announcement, :delete_announcement]
+	before_action :moderator_required, :only => [:users, :user, :profile, :update_user, :reset_photo]
+	before_action :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement]
+	before_action :admin_required, :only => [:upload_schedule]
+	before_action :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo]
+	before_action :fetch_announcement, :only => [:announcement, :update_announcement, :delete_announcement]
 	
 	def users
 		render json: {status: 'ok', users: User.all.asc(:username).map { |x| x.decorate.admin_hash }}

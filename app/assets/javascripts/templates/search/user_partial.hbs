@@ -1,11 +1,11 @@
-<div class="card-section section-with-photo clickable" {{action 'display_user' username}}>
+<div class="card-section section-with-photo clickable" {{action 'display_user' model.username}}>
 
   <div class="section-photo">
-    {{user_picture username last_photo_updated}}
+    {{user-picture model.username model.last_photo_updated}}
   </div>
 
   <span class="title">
-    {{pretty_username username display_name}}
+    {{pretty-username model.username model.display_name}}
   </span>
 
 </div>

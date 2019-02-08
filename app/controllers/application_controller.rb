@@ -41,6 +41,10 @@ class ApplicationController < ActionController::Base
     (current_user&.role >= User::Role::MODERATOR) || (session[:role] >= User::Role::MODERATOR)
   end
 
+  def is_muted?
+    (current_user&.role == User::Role::MUTED) || (session[:role] == User::Role::MUTED)
+  end
+
   def validate_login(username, password)
     user = User.get username
     result = {user: user}
@@ -74,7 +78,11 @@ class ApplicationController < ActionController::Base
   
   def moderator_required
 		head :unauthorized unless logged_in? && is_moderator?
-	end
+  end
+  
+  def not_muted
+    render status: :forbidden, json: { status: 'error', error: 'You have been muted. Check your seamail or see the help page for more information.' } unless logged_in? && !is_muted?
+  end
 
   def read_only_mode
     render json: { status: 'Twit-arr is in storage (read-only) mode.' }

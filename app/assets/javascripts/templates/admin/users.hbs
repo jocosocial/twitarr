@@ -12,17 +12,17 @@
           <span class="glyphicon glyphicon-search"></span>
         </td>
         <td>
-          {{input value=search_text class='input' placeholder='Search...'}}
+          {{input value=model.search_text class='input' placeholder='Search...'}}
         </td>
         <td style="width: 3em; padding-left: 1em;">
-          <button class="btn" {{action 'search' search_text}}>Go</button>
+          <button class="btn" {{action 'search' model.search_text}}>Go</button>
         </td>
       </tr>
     </table>
   </form>
 </div>
   
-{{#each user in model}}
+{{#each user in model.users}}
   <div class="display_card">
     {{render "admin.user_partial" user}}
   </div>

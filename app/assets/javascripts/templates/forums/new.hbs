@@ -4,9 +4,9 @@
 <div class="display_card">
   <div class="card-section">
     <div class="form">
-      {{input value=subject class='input' placeholder='Subject'}}
-      {{textarea value=text rows='3' class='input' placeholder='First post'}}
-      {{view 'upload'}}
+      {{input value=subject class='input' placeholder='Subject' key-down='handleKeyDown'}}
+      {{textarea value=text rows='3' class='input' placeholder='First post' key-down='handleKeyDown'}}
+      {{partial 'upload'}}
 
       <ul class="errors-list">
         {{#each error in errors}}
@@ -19,4 +19,3 @@
     </div>
   </div>
 </div>
-

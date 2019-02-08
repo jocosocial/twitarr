@@ -6,10 +6,10 @@
           <span class="glyphicon glyphicon-search"></span>
         </td>
         <td>
-          {{input value=query class='input' placeholder='Search...'}}
+          {{input value=model.query class='input' placeholder='Search...'}}
         </td>
         <td style="width: 3em; padding-left: 1em;">
-          <button class="btn" {{action 'search' query}}>Go</button>
+          <button class="btn" {{action 'search' model.query}}>Go</button>
         </td>
       </tr>
     </table>

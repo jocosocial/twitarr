@@ -1,23 +1,23 @@
 <div class="display_card">
   <div class="card-section section-with-profile-photo">
     <div class="section-photo">
-      <img {{bind-attr src=photo_path}} {{action 'display_photo' model bubbles=false}} />
+      <img src="{{photo_path}}" {{action 'display_photo' model bubbles=false}} />
     </div>
     <div class="title big-title">
       {{! I know what you're thinking, this is the grossest thing in the world, but bear with me here}}
       {{! I need to text-stroke the unicode star, this is really only possible in chrome and I dont want that}}
       {{! So, I could use a PNG here but I dont want another http request... so inline SVG! }}
       {{! Because SVG actually gets text-stroke in every browser ever... Good consistency.}} 
-      {{display_name_plus_username username display_name}}<svg {{bind-attr class=":star logged_in_visible::hidden"}} style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.3 18.59"><defs><style>.star {font-size:15.05px;fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:1px;font-family:Arial;}.true {fill:gold;stroke:gold;}</style></defs><text {{action "star"}} {{bind-attr class=":star starred:true"}} transform="translate(0.13 13.37)">★</text></svg>
+      {{display-name-plus-username model.username model.display_name}}<svg class="star {{if logged_in_visible '' 'hidden'}}" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.3 18.59"><defs><style>.star {font-size:15.05px;fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:1px;font-family:Arial;}.true {fill:gold;stroke:gold;}</style></defs><text {{action "star"}} class="star {{if model.starred 'true'}}" transform="translate(0.13 13.37)">★</text></svg>
       {{#if role_moderator}}
-        <span class='controls'><button class="btn" {{action 'admin_profile' username}}>Administer User</button></span>
+        <span class='controls'><button class="btn" {{action 'admin_profile' model.username}}>Administer User</button></span>
       {{/if}}
     </div>
-    <div {{bind-attr class="logged_in_visible::hidden"}}>
+    <div class="{{if logged_in_visible '' 'hidden'}}">
       <div class="body">
         <div class="label">Personal comment:</div>
         <div class="body-section">
-          {{textarea value=comment rows='2' class='input'}}
+          {{textarea value=model.comment rows='2' class='input'}}
         </div>
       </div>
       <div class="controls">
@@ -29,44 +29,44 @@
     <div class="form row">
       <div class="col-xs-6">
         <div class="label">Tweets</div>
-        <div class="data">{{number_of_tweets}}</div>
+        <div class="data">{{model.number_of_tweets}}</div>
       </div>
       <div class="col-xs-6">
         <div class="label">Mentions</div>
-        <div class="data">{{number_of_mentions}}</div>
+        <div class="data">{{model.number_of_mentions}}</div>
       </div>
     </div>
   </div>
   <div class="card-section">
     <div class="form row">
-      {{#if real_name}}
+      {{#if model.real_name}}
         <div class="col-xs-6">
           <div class="label">Real name</div>
-          <div class="data">{{real_name}}</div>
+          <div class="data">{{model.real_name}}</div>
         </div>
       {{/if}}
-      {{#if pronouns}}
+      {{#if model.pronouns}}
         <div class="col-xs-6">
           <div class="label">Preferred Pronouns</div>
-          <div class="data">{{pronouns}}</div>
+          <div class="data">{{model.pronouns}}</div>
       </div>
       {{/if}}
-      {{#if email}}
+      {{#if model.email}}
         <div class="col-xs-6">
           <div class="label">Email</div>
-          <div class="data">{{email}}</div>
+          <div class="data">{{model.email}}</div>
         </div>
       {{/if}}
-      {{#if home_location}}
+      {{#if model.home_location}}
         <div class="col-xs-6">
           <div class="label">Lives in</div>
-          <div class="data">{{home_location}}</div>
+          <div class="data">{{model.home_location}}</div>
         </div>
       {{/if}}        
-      {{#if room_number}}
+      {{#if model.room_number}}
         <div class="col-xs-6">
           <div class="label">Room number</div>
-          <div class="data">{{room_number}}</div>
+          <div class="data">{{model.room_number}}</div>
         </div>
       {{/if}}
     </div>
@@ -74,7 +74,7 @@
 </div>
 <div class="display_card">
   <div class="card_title">Recent Tweets</div>
-  {{#each tweet in recent_tweets}}
+  {{#each tweet in model.recent_tweets}}
     {{render "stream.post_partial" tweet}}
   {{else}}
     <div class="card-section">

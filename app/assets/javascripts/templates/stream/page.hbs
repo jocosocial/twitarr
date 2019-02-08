@@ -1,6 +1,6 @@
 <div class="main-page-header header-with-controls">
   <div class="controls">
-    <button {{action 'show_new_post'}} {{bind-attr class="new_post_button_visible::hidden :btn"}}>New Post</button>
+    <button {{action 'show_new_post'}} class="btn {{if new_post_button_visible '' 'hidden'}}">New Post</button>
   </div>
 
   <div class="title">Tweets
@@ -8,11 +8,11 @@
   </div>
 </div>
 
-<div {{bind-attr class="new_post_visible::hidden :display_card"}}>
+<div class="display_card {{if new_post_visible '' 'hidden'}}">
   <div class="card-section">
     <div class="form">
-      {{textarea value=new_post rows='3' class='input'}}
-      {{view 'upload'}}
+      {{textarea value=model.new_post rows='3' class='input' key-down='handleKeyDown'}}
+      {{partial 'upload'}}
 
       <ul class="errors-list">
         {{#each error in errors}}
@@ -28,13 +28,13 @@
 </div>
 
 <div class="display_card">
-  {{#each post in posts}}
+  {{#each post in model.posts}}
     {{render "stream.post_partial" post}}
   {{/each}}
 </div>
 
 <div class="footer-controls">
-  {{#if has_next_page}}
+  {{#if model.has_next_page}}
     <div class="card-section">
       <button class="controls btn" {{action 'next_page'}}>Older</button>
     </div>

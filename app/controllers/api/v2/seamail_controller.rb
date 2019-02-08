@@ -2,8 +2,9 @@ class API::V2::SeamailController < ApplicationController
   # noinspection RailsParamDefResolve
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required
-  before_filter :fetch_seamail, :only => [:show, :new_message, :recipients]
+  before_action :login_required
+  before_action :not_muted, :only => [:create, :new_message, :recipients]
+  before_action :fetch_seamail, :only => [:show, :new_message, :recipients]
 
   def fetch_seamail
     begin

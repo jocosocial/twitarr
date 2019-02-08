@@ -1,8 +1,9 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_filter :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions]
-  before_filter :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
+  before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions]
+  before_action :not_muted, :only => [:update_photo]
+  before_action :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
 
   def fetch_user
     @user = User.get params[:username]
@@ -119,17 +120,39 @@ class API::V2::UserController < ApplicationController
 
   def update_profile
     # current_user.current_location = params[:current_location] if params.has_key? :current_location
-    current_user.display_name = params[:display_name] if params.has_key? :display_name
-    if current_user.display_name.blank?
-      current_user.display_name = current_user.username
-    end
-    current_user.email = params[:email] if params.has_key? :email
-    current_user.home_location = params[:home_location] if params.has_key? :home_location
-    current_user.real_name = params[:real_name] if params.has_key? :real_name
-    current_user.pronouns = params[:pronouns] if params.has_key? :pronouns
-    current_user.room_number = params[:room_number] if params.has_key? :room_number
 
-    render status: :bad_request, json: { status: 'error', errors: current_user.errors } and return unless current_user.valid?
+    # Muted users are allowed to set fields to blank or make no change, but they are not allowed to change fields to new text 
+    if params.has_key?(:display_name)
+      current_user.display_name = params[:display_name] unless mutedChange ||= (is_muted? && !params[:display_name].blank? && current_user.display_name != params[:display_name])
+      if current_user.display_name.blank?
+        current_user.display_name = current_user.username
+      end
+    end
+
+    if params.has_key?(:email)
+      current_user.email = params[:email] unless mutedChange ||= (is_muted? && !params[:email].blank? && current_user.email != params[:email])
+    end
+
+    if params.has_key?(:home_location)
+      current_user.home_location = params[:home_location] unless mutedChange ||= (is_muted? && !params[:home_location].blank? && current_user.home_location != params[:home_location])
+    end
+    
+    if params.has_key?(:real_name)
+      current_user.real_name = params[:real_name] unless mutedChange ||= (is_muted? && !params[:real_name].blank? && current_user.real_name != params[:real_name])
+    end
+
+    if params.has_key?(:pronouns)
+      current_user.pronouns = params[:pronouns] unless mutedChange ||= (is_muted? && !params[:pronouns].blank? && current_user.pronouns != params[:pronouns])
+    end
+
+    if params.has_key?(:room_number)
+      current_user.room_number = params[:room_number] unless mutedChange ||= (is_muted? && !params[:room_number].blank? && current_user.room_number != params[:room_number])
+    end
+
+    if !current_user.valid? || mutedChange
+      current_user.errors.add(:general, 'You have been muted. You may set fields to blank, but you may not otherwise change them.') if mutedChange
+      render status: :bad_request, json: { status: 'error', errors: current_user.errors } and return 
+    end
 
     current_user.save
     render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash } and return

@@ -11,11 +11,7 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
-    if model.status isnt 'ok'
-      alert model.status
-    else
-      controller.set('search_text', model.search_text)
-      controller.set('model', model.users)
+    this._super(controller, model)
 
   actions:
     reload: ->
@@ -42,6 +38,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
     )
   
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status isnt 'ok'
       if model.error?
         alert model.error
@@ -66,7 +63,9 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
         mute_reason: user.mute_reason,
         ban_reason: user.ban_reason
       }).fail((response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else if response.responseJSON?.errors?
           self.controller.set('errors', response.responseJSON.errors)
         else
           alert 'Something went wrong. Try again later.'
@@ -124,6 +123,9 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
         )
 
 Twitarr.AdminSearchRoute = Ember.Route.extend
+  model: (params) ->
+    text: params.text
+
   actions:
     search: (text) ->
       if !!text
@@ -142,19 +144,22 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
-    controller.set('text', null)
-    controller.set('valid_until', moment().add(4, 'hours').format('YYYY-MM-DDTHH:mm'))
-    controller.set('errors', Ember.A())
+    this._super(controller, model)
     if model.status isnt 'ok'
       alert model.status
     else
       controller.set('model', model.announcements)
+    controller.set('model.text', null)
+    controller.set('model.valid_until', moment().add(4, 'hours').format('YYYY-MM-DDTHH:mm'))
+    controller.set('model.errors', Ember.A())
 
   actions:
     new: (text, valid_until) ->
       self = this
       $.post("#{Twitarr.api_path}/admin/announcements", { text: text, valid_until: valid_until }).fail((response) =>
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          self.controller.set('errors', [response.responseJSON.error])
+        else if response.responseJSON?.errors?
           self.controller.set('errors', response.responseJSON.errors)
         else
           alert 'Announcement could not be created. Please try again later. Or try again someplace without so many seamonkeys.'
@@ -165,4 +170,7 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
           @refresh()
       )
 
-Twitarr.AdminUploadScheduleRoute = Ember.Route.extend()
+Twitarr.AdminUploadScheduleRoute = Ember.Route.extend
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.setupUpload()

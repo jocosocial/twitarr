@@ -1,14 +1,17 @@
-Ember.Handlebars.helper 'user_picture', (username, last_time) ->
-  new Ember.Handlebars.SafeString("<img class='profile_photo' src='#{Twitarr.api_path}/user/photo/#{username}?bust=#{last_time}'/>")
-  
-Ember.Handlebars.helper 'pretty_username', (username, display_name) ->
-  if !!display_name && username isnt display_name
-    new Ember.Handlebars.SafeString "<span title='@#{username}'>#{display_name} (@#{username})</span>"
-  else
-    '@' + username
+Twitarr.UserPictureHelper = Ember.Helper.helper((params) ->
+  new Ember.Handlebars.SafeString("<img class='profile_photo' src='#{Twitarr.api_path}/user/photo/#{params[0]}?bust=#{params[1]}'/>")
+)
 
-Ember.Handlebars.helper 'display_name_plus_username', (username, display_name) ->
-  if !!display_name && username isnt display_name
-    "#{display_name} (@#{username})"
+Twitarr.PrettyUsernameHelper = Ember.Helper.helper((params) ->
+  if !!params[1] && params[0] isnt params[1]
+    new Ember.Handlebars.SafeString "<span title='@#{params[0]}'>#{params[1]} (@#{params[0]})</span>"
   else
-    '@' + username
+    '@' + params[0]
+)
+
+Twitarr.DisplayNamePlusUsernameHelper = Ember.Helper.helper((params) ->
+  if !!params[1] && params[0] isnt params[1]
+    "#{params[1]} (@#{params[0]})"
+  else
+    '@' + params[0]
+)

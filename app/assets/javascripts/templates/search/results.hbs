@@ -1,14 +1,14 @@
 {{partial 'search/search'}}
 <div class="display_card">
   <div class="card_title">Events</div>
-  {{#each event in events.matches}}
+  {{#each event in model.events.matches}}
     {{render "schedule.meta_partial" event}}
   {{else}}
     <div class="card-section">
       No results.
     </div>
   {{/each}}
-  {{#if events.more}}
+  {{#if model.events.more}}
     <div class="card-section clickable" {{action 'event_search'}}>
       View all matching events...
     </div>
@@ -16,14 +16,14 @@
 </div>
 <div class="display_card">
   <div class="card_title">Users</div>
-  {{#each user in users.matches}}
+  {{#each user in model.users.matches}}
     {{render 'search.user_partial' user}}
   {{else}}
     <div class="card-section">
       No results.
     </div>
   {{/each}}
-  {{#if users.more}}
+  {{#if model.users.more}}
     <div class="card-section clickable" {{action 'user_search'}}>
       View all matching users...
     </div>
@@ -31,14 +31,14 @@
 </div>
 <div class="display_card">
   <div class="card_title">Forums</div>
-  {{#each forum in forums.matches}}
+  {{#each forum in model.forums.matches}}
     {{render "forums.meta_partial" forum}}
   {{else}}
     <div class="card-section">
       No results.
     </div>
   {{/each}}
-  {{#if forums.more}}
+  {{#if model.forums.more}}
     <div class="card-section clickable" {{action 'forum_search'}}>
       View all matching forums...
     </div>
@@ -46,14 +46,14 @@
 </div>
 <div class="display_card">
   <div class="card_title">Your Seamail</div>
-  {{#each seamail in seamails.matches}}
+  {{#each seamail in model.seamails.matches}}
     {{render "seamail.meta_partial" seamail}}
   {{else}}
     <div class="card-section">
       No results.
     </div>
   {{/each}}
-  {{#if seamails.more}}
+  {{#if model.seamails.more}}
     {{#link-to "seamail"}}
       <div class="card-section clickable">
         View all seamail...
@@ -63,14 +63,14 @@
 </div>
 <div class="display_card">
   <div class="card_title">Tweets</div>
-  {{#each tweet in tweets.matches}}
+  {{#each tweet in model.tweets.matches}}
     {{render "stream.post_partial" tweet}}
   {{else}}
     <div class="card-section">
       No results.
     </div>
   {{/each}}
-  {{#if tweets.more}}
+  {{#if model.tweets.more}}
     <div class="card-section clickable" {{action 'tweet_search'}}>
       View all matching tweets...
     </div>

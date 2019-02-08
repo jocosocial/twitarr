@@ -1,6 +1,6 @@
-<div {{bind-attr class=":main-page-header logged_in:header-with-controls"}}>
-  <span {{bind-attr class=":controls logged_in::hidden"}}>
-    {{#unless following}}
+<div class="main-page-header {{if logged_in 'header-with-controls'}}">
+  <span class="controls {{if logged_in '' 'hidden'}}">
+    {{#unless model.following}}
       <button class="btn" {{action 'follow'}}>Follow</button>
     {{else}}
       <button class="btn" {{action 'unfollow'}}>Unfollow</button>
@@ -10,13 +10,13 @@
       <button class="btn" {{action 'delete'}}>Delete</button>
     {{/if}}
   </span>
-  <div class="title">{{title}}</div>
+  <div class="title">{{model.title}}</div>
 </div>
 
 <div class="display_card">
   <div class="card-section">
-    <div {{bind-attr class=":title :big-title official:official"}}>
-      {{unbound title}}
+    <div class="title big-title {{if model.official 'official'}}">
+      {{model.title}}
       <button class="btn btn-link right" {{action 'ical'}}><span class="glyphicon glyphicon-calendar right" title="Export as iCal"></span>
       </button>
     </div>
@@ -24,30 +24,30 @@
   <div class="card-section">
     <div class="form row">
       <div class="col-xs-12">
-        <p>{{{unbound description}}}</p>
+        <p>{{{model.description}}}</p>
       </div>
     </div>
     <div class="form row">
       <div class="col-xs-6">
-        {{#if location}}
+        {{#if model.location}}
           <div class="label">Location</div>
-          <div class="data">{{unbound location}}</div>
+          <div class="data">{{model.location}}</div>
         {{/if}}
       </div>
       <div class="col-xs-6">
         <div class="label">Start Time</div>
-        <div class="data">{{pretty_time start_time}}</div>
-        {{#if end_time}}
+        <div class="data">{{pretty-time model.start_time}}</div>
+        {{#if model.end_time}}
           <div class="label">End Time</div>
-          <div class="data">{{pretty_time end_time}}</div>
+          <div class="data">{{pretty-time model.end_time}}</div>
         {{/if}}
       </div>
     </div>
     <div class="icons">
-      <span {{bind-attr class="official::hidden :glyphicon :glyphicon-flag :official"}} title="Official event">
+      <span class="{{if model.official '' 'hidden'}} glyphicon glyphicon-flag official" title="Official event">
         Official Event
       </span>
-      <span {{bind-attr class="official:hidden :glyphicon :glyphicon-adjust :shadow"}} title="Shadow cruise event">
+      <span class="{{if model.official 'hidden'}} glyphicon glyphicon-adjust shadow" title="Shadow cruise event">
         Shadow Cruise Event
       </span>
     </div>

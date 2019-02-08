@@ -1,5 +1,5 @@
 <div class="main-page-header">
-  <div class="title">{{#link-to 'seamail' }}Seamail{{/link-to}} > {{subject}}
+  <div class="title">{{#link-to 'seamail' }}Seamail{{/link-to}} > {{model.subject}}
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span>
     </button>
   </div>
@@ -7,33 +7,33 @@
 
 <div class="display_card">
   <div class="card-section">
-    {{#each user in users}}
+    {{#each user in model.users}}
       {{#link-to 'user.profile' user.username}}
         <span class="pull-left" style="padding: 0.5em;">
-              {{unbound pretty_username user.username user.display_name}}
+          {{unbound pretty_username user.username user.display_name}}
           <div style="text-align: center;">
             {{unbound user_picture user.username user.last_photo_updated}}
           </div>
-          </span>
+        </span>
       {{/link-to}}
     {{/each}}
   </div>
   <div class="card-section">
     <div class="form">
-      {{textarea value=text rows='2' class='input' placeholder='Send a message'}}
+      {{textarea value=model.text rows='2' class='input' placeholder='Send a message'}}
       <ul class="errors-list">
         {{#each error in errors}}
           <li>{{error}}</li>
         {{/each}}
       </ul>
       <span class="footer">
-      <button class="btn right" {{action 'post' text}}>Send</button>
+      <button class="btn right" {{action 'post' model.text}}>Send</button>
     </span>
     </div>
   </div>
 </div>
 <div class="display_card">
-  {{#each message in messages}}
+  {{#each message in model.messages}}
     <div class="card-section section-with-photo">
       <div class="section-photo">
         {{unbound user_picture message.author.username message.author.last_photo_updated}}

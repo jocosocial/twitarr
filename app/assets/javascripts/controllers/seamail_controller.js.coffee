@@ -3,9 +3,9 @@ Twitarr.SeamailIndexController = Twitarr.ArrayController.extend
     compose_seamail: ->
       @transitionToRoute('seamail.new')
 
-Twitarr.SeamailMetaPartialController = Twitarr.ObjectController.extend()
+Twitarr.SeamailMetaPartialController = Twitarr.Controller.extend()
 
-Twitarr.SeamailDetailController = Twitarr.ObjectController.extend
+Twitarr.SeamailDetailController = Twitarr.Controller.extend
   errors: Ember.A()
   text: null
 
@@ -13,7 +13,7 @@ Twitarr.SeamailDetailController = Twitarr.ObjectController.extend
     post: ->
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Seamail.new_message(@get('id'), @get('text')).fail((response) =>
+      Twitarr.Seamail.new_message(@get('model.id'), @get('model.text')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -24,7 +24,7 @@ Twitarr.SeamailDetailController = Twitarr.ObjectController.extend
       ).then((response) =>
         Ember.run =>
           @set 'posting', false
-          @set 'text', null
+          @set 'model.text', null
           @get('errors').clear()
           @send('reload')
       )

@@ -1,4 +1,4 @@
-<div {{bind-attr class="model.first_unread:scroll_to :card-section :section-with-photo"}}>
+<div class="card-section section-with-photo {{if model.first_unread 'scroll_to'}}">
   <div class="section-photo">
     {{#link-to 'user.profile' model.author.username}}
       {{unbound user_picture model.author.username model.author.last_photo_updated}}
@@ -23,14 +23,14 @@
   </div>
   <div class="controls">
     <div>
-      <span {{bind-attr class="model.new::hidden"}} style="color: red;">new</span>
+      <span class="{{if model.new '' 'hidden'}}" style="color: red;">new</span>
       {{model.likes_string}}
     </div>
     <div>
-      <button {{action 'unlike' bubbles=false}} {{bind-attr class="unlikeable::hidden :btn-link"}}>Unlike</button>
-      <button {{action 'like' bubbles=false}} {{bind-attr class="likeable::hidden :btn-link"}}>Like</button>
-      <button {{action 'edit' id bubbles=false}} {{bind-attr class="editable::hidden :btn-link"}}>Edit</button>
-      <button {{action 'delete' id bubbles=false}} {{bind-attr class="deleteable::hidden :btn-link"}}>Delete</button>
+      <button {{action 'unlike' bubbles=false}} class="btn-link {{if likeable 'hidden'}}">Unlike</button>
+      <button {{action 'like' bubbles=false}} class="btn-link {{if likeable '' 'hidden'}}">Like</button>
+      <button {{action 'edit' model.id bubbles=false}} class="btn-link {{if editable '' 'hidden'}}">Edit</button>
+      <button {{action 'delete' model.id bubbles=false}} class="btn-link {{if deleteable '' 'hidden'}}">Delete</button>
     </div>
   </div>
   

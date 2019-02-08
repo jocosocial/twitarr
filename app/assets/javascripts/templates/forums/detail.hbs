@@ -19,7 +19,7 @@
 
 </div>
 
-<div {{bind-attr class="logged_in::hidden has_next_page:hidden has_new_posts::scroll_to :display_card"}}>
+<div class="display_card {{if logged_in '' 'hidden'}} {{if has_next_page 'hidden'}} {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">
     <span class="title big-title">Post a message</span>
     {{textarea value=model.new_post rows='3' class='input'}}
@@ -35,7 +35,7 @@
   </div>
 </div>
 
-<div {{bind-attr class="has_new_posts::scroll_to :footer-controls"}}>
+<div class="footer-controls {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">
     {{#if has_prev_page}}
       <button class="controls btn" {{action 'prev_page'}}>Older</button>

@@ -22,10 +22,6 @@ Twitarr.ScheduleMetaPartialController = Twitarr.Controller.extend
     @get('logged_in') and not @get('model.following')
   ).property('logged_in', 'model.following')
 
-  unfollowable: (->
-    @get('logged_in') and @get('model.following')
-  ).property('logged_in', 'model.following')
-
   actions:
     follow: ->
       @get('model').follow()

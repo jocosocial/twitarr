@@ -29,11 +29,11 @@
       {{model.likes_string}}
     </div>
     <div>
-      <button {{action 'unlike' model bubbles=false}} {{bind-attr class="unlikeable::hidden :btn-link"}}>Unlike</button>
-      <button {{action 'like' model bubbles=false}} {{bind-attr class="likeable::hidden :btn-link"}}>Like</button>
-      <button {{action 'edit' model.id bubbles=false}} {{bind-attr class="editable::hidden :btn-link"}}>Edit</button>
-      <button {{action 'display_tweet' model.id bubbles=false}} {{bind-attr class="logged_in::hidden :btn-link"}}>Reply</button>
-      <button {{action 'delete' model.id bubbles=false}} {{bind-attr class="deleteable::hidden :btn-link"}}>Delete</button>
+      <button {{action 'unlike' bubbles=false}} class="btn-link {{if likeable 'hidden'}}">Unlike</button>
+      <button {{action 'like' bubbles=false}} class="btn-link {{if likeable '' 'hidden'}}">Like</button>
+      <button {{action 'edit' model.id bubbles=false}} class="btn-link {{if editable '' 'hidden'}}">Edit</button>
+      <button {{action 'display_tweet' model.id bubbles=false}} class="btn-link {{if logged_in '' 'hidden'}}">Reply</button>
+      <button {{action 'delete' model.id bubbles=false}} class="btn-link {{if deleteable '' 'hidden'}}">Delete</button>
     </div>
   </div>
 </div>

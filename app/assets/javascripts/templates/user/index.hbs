@@ -4,14 +4,14 @@
   </div>
 
   <div id="profile-photo-upload-div" class="card-section">
-    <img {{bind-attr src=profile_pic}} class="profile-pic"/>
+    <img src={{profile_pic}} class="profile-pic"/>
     {{#if controllers.application.uploads_pending}}
       <div class="uploading">Uploading...</div>
     {{else}}
       Click to change profile photo
     {{/if}}
   </div>
-  <input id="profile-photo-upload" type="file" name="file" {{bind-attr data-url=profile_pic_upload_url}} accept="image/*" style="display: none;">
+  <input id="profile-photo-upload" type="file" name="file" data-url={{profile_pic_upload_url}} accept="image/*" style="display: none;">
   <div class="row" style="margin: 0.5em 1em;">
     <button class="btn" {{action 'remove_photo'}}>Remove profile photo</button>
   </div>

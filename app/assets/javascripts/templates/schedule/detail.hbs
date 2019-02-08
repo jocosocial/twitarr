@@ -1,5 +1,5 @@
-<div {{bind-attr class=":main-page-header logged_in:header-with-controls"}}>
-  <span {{bind-attr class=":controls logged_in::hidden"}}>
+<div class="main-page-header {{if logged_in 'header-with-controls'}}">
+  <span class="controls {{if logged_in '' 'hidden'}}">
     {{#unless model.following}}
       <button class="btn" {{action 'follow'}}>Follow</button>
     {{else}}
@@ -15,7 +15,7 @@
 
 <div class="display_card">
   <div class="card-section">
-    <div {{bind-attr class=":title :big-title model.official:official"}}>
+    <div class="title big-title {{if model.official 'official'}}">
       {{unbound model.title}}
       <button class="btn btn-link right" {{action 'ical'}}><span class="glyphicon glyphicon-calendar right" title="Export as iCal"></span>
       </button>
@@ -44,10 +44,10 @@
       </div>
     </div>
     <div class="icons">
-      <span {{bind-attr class="model.official::hidden :glyphicon :glyphicon-flag :official"}} title="Official event">
+      <span class="{{if model.official '' 'hidden'}} glyphicon glyphicon-flag official" title="Official event">
         Official Event
       </span>
-      <span {{bind-attr class="model.official:hidden :glyphicon :glyphicon-adjust :shadow"}} title="Shadow cruise event">
+      <span class="{{if model.official 'hidden'}} glyphicon glyphicon-adjust shadow" title="Shadow cruise event">
         Shadow Cruise Event
       </span>
     </div>

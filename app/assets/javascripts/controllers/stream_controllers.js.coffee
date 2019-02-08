@@ -106,10 +106,6 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
   ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
 
-  unlikeable: (->
-    @get('logged_in') and @get('model.user_likes')
-  ).property('logged_in', 'model.user_likes')
-
   likeable: (->
     @get('logged_in') and not @get('model.user_likes')
   ).property('logged_in', 'model.user_likes')

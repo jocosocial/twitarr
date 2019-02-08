@@ -11,11 +11,11 @@
     </div>
   </div>
   <div class="controls">
-    <button {{action 'follow' model.id bubbles=false}} {{bind-attr class="followable::hidden :btn"}}>Follow</button>
-    <button {{action 'unfollow' model.id bubbles=false}} {{bind-attr class="unfollowable::hidden :btn"}}>Unfollow</button>
+    <button {{action 'follow' model.id bubbles=false}} class="btn {{if followable '' 'hidden'}}">Follow</button>
+    <button {{action 'unfollow' model.id bubbles=false}} class="btn {{if followable 'hidden'}}">Unfollow</button>
   </div>
   <div class="icons">
-    <span {{bind-attr class="model.official::hidden :glyphicon :glyphicon-flag :official"}} title="Official event"></span>
-    <span {{bind-attr class="model.official:hidden :glyphicon :glyphicon-adjust :shadow"}} title="Shadow cruise event"></span>
+    <span class="{{if model.official '' 'hidden'}} glyphicon glyphicon-flag official" title="Official event"></span>
+    <span class="{{if model.official 'hidden'}} glyphicon glyphicon-adjust shadow" title="Shadow cruise event"></span>
   </div>
 </div>

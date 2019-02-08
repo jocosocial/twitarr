@@ -16,7 +16,7 @@
   </div>
 {{/if}}
 
-<div {{bind-attr class="logged_in_visible::hidden"}}>
+<div class="{{if logged_in_visible '' 'hidden'}}">
   <div class="display_card">
     <div class="card-section">
       <div class="title big-title">Reply</div>

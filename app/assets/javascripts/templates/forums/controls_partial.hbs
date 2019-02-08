@@ -1,4 +1,4 @@
-<button {{bind-attr class="model.logged_in::hidden :btn"}} {{action 'create_forum'}}>Create Forum</button>
+<button class="btn {{if model.logged_in '' 'hidden'}}" {{action 'create_forum'}}>Create Forum</button>
 {{#if model.has_prev_page}}
     <button class="btn" {{action 'prev_page'}}>More Recent</button>
 {{/if}}

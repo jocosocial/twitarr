@@ -73,10 +73,6 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
         else
           self.get('target.target.router').refresh();
       )
-  
-  unlikeable: (->
-    @get('logged_in') and @get('model.user_likes')
-  ).property('logged_in', 'model.user_likes')
 
   likeable: (->
     @get('logged_in') and not @get('model.user_likes')

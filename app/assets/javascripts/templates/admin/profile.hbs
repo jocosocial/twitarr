@@ -13,7 +13,7 @@
     </span>
 
     <div class="form">
-      <button {{bind-attr class="role_tho::hidden :btn"}} {{action 'reset_password' model.username}}>Reset Password</button>
+      <button class="btn {{if role_tho '' 'hidden'}}" {{action 'reset_password' model.username}}>Reset Password</button>
       {{#if model.empty_password}}
         <span style="color: darkred; padding-left: 1em;">
           Empty password!
@@ -106,7 +106,7 @@
               </ul>
             {{/if}}
         </div>
-        <div {{bind-attr class="is_muted::hidden :form-group"}}>
+        <div class="form-group {{if is_muted '' 'hidden'}}">
           <label for="mute_reason">Mute Reason:</label>
             {{ input value=model.mute_reason class='input' name="mute_reason"}}
             {{#if errors.mute_reason}}
@@ -117,7 +117,7 @@
               </ul>
             {{/if}}
         </div>
-        <div {{bind-attr class="is_banned::hidden :form-group"}}>
+        <div class="form-group {{if is_banned '' 'hidden'}}">
           <label for="ban_reason">Ban Reason:</label>
             {{ input value=model.ban_reason class='input' name="ban_reason"}}
             {{#if errors.ban_reason}}

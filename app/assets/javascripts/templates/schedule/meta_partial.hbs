@@ -1,13 +1,13 @@
 <div class="card-section clickable" {{action 'display_event' model.id}}>
   <span class="title">
-    {{unbound model.location}}
+    {{model.location}}
   </span>
 
-  {{unbound pretty_timespan model.start_time model.end_time}}
+  {{pretty_timespan model.start_time model.end_time}}
 
   <div class="body">
     <div class="body-section">
-      {{unbound model.title}}
+      {{model.title}}
     </div>
   </div>
   <div class="controls">

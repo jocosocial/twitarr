@@ -16,7 +16,7 @@
 <div class="display_card">
   <div class="card-section">
     <div class="title big-title {{if model.official 'official'}}">
-      {{unbound model.title}}
+      {{model.title}}
       <button class="btn btn-link right" {{action 'ical'}}><span class="glyphicon glyphicon-calendar right" title="Export as iCal"></span>
       </button>
     </div>
@@ -24,14 +24,14 @@
   <div class="card-section">
     <div class="form row">
       <div class="col-xs-12">
-        <p>{{{unbound model.description}}}</p>
+        <p>{{{model.description}}}</p>
       </div>
     </div>
     <div class="form row">
       <div class="col-xs-6">
         {{#if model.location}}
           <div class="label">Location</div>
-          <div class="data">{{unbound model.location}}</div>
+          <div class="data">{{model.location}}</div>
         {{/if}}
       </div>
       <div class="col-xs-6">

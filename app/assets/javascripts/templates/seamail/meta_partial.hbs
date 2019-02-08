@@ -1,20 +1,20 @@
 <div class="card-section clickable" {{action 'display_seamail' model.id}}>
   <span class="title big-title">
-    {{unbound model.subject}} <span class="highlight {{if model.is_unread '' 'hidden'}}">New</span>
+    {{model.subject}} <span class="highlight {{if model.is_unread '' 'hidden'}}">New</span>
   </span>
-  {{unbound pretty_timestamp model.timestamp}}
+  {{pretty_timestamp model.timestamp}}
 
   <div class="form">
     {{#each user in model.users}}
       <span class="pull-left" style="padding: 0.5em;">
-          {{unbound pretty_username user.username user.display_name}}
+          {{pretty_username user.username user.display_name}}
         <div style="text-align: center;">
-          {{unbound user_picture user.username user.last_photo_updated}}
+          {{user_picture user.username user.last_photo_updated}}
         </div>
         </span>
     {{/each}}
   </div>
   <div class="controls">
-    {{unbound pretty_message_count model.message_count model.count_is_unread}}
+    {{pretty_message_count model.message_count model.count_is_unread}}
   </div>
 </div>

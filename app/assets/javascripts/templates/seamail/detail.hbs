@@ -10,9 +10,9 @@
     {{#each user in model.users}}
       {{#link-to 'user.profile' user.username}}
         <span class="pull-left" style="padding: 0.5em;">
-          {{unbound pretty_username user.username user.display_name}}
+          {{pretty_username user.username user.display_name}}
           <div style="text-align: center;">
-            {{unbound user_picture user.username user.last_photo_updated}}
+            {{user_picture user.username user.last_photo_updated}}
           </div>
         </span>
       {{/link-to}}
@@ -36,17 +36,17 @@
   {{#each message in model.messages}}
     <div class="card-section section-with-photo">
       <div class="section-photo">
-        {{unbound user_picture message.author.username message.author.last_photo_updated}}
+        {{user_picture message.author.username message.author.last_photo_updated}}
       </div>
 
       <span class="title">
-        {{unbound pretty_username message.author.username message.author.display_name}}
+        {{pretty_username message.author.username message.author.display_name}}
       </span>
-      {{unbound pretty_timestamp message.timestamp}}
+      {{pretty_timestamp message.timestamp}}
 
       <div class="body">
         <div class="body-section">
-          {{{unbound message.text}}}
+          {{{message.text}}}
         </div>
       </div>
     </div>

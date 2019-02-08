@@ -2,12 +2,12 @@
   <span class="title big-title">
     {{unbound model.subject}}
   </span>
-  {{unbound pretty_timestamp model.timestamp}}
+  {{pretty_timestamp model.timestamp}}
 
   <div class="form">
     {{{unbound posts_sentence}}}
     <div class="controls">
-      Most recent: {{unbound pretty_username model.last_post_author.username model.last_post_author.display_name }}
+      Most recent: {{pretty_username model.last_post_author.username model.last_post_author.display_name }}
     </div>
   </div>
 

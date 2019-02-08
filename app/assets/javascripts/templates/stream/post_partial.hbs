@@ -2,21 +2,21 @@
 
   <div class="section-photo">
     {{#link-to 'user.profile' model.author.username}}
-      {{unbound user_picture model.author.username model.author.last_photo_updated}}
+      {{user_picture model.author.username model.author.last_photo_updated}}
     {{/link-to}}
   </div>
 
   <span class="title">
     {{#link-to 'user.profile' model.author.username}}
-      {{unbound pretty_username model.author.username model.author.display_name}}
+      {{pretty_username model.author.username model.author.display_name}}
     {{/link-to}}
   </span>
 
-  {{unbound pretty_timestamp model.timestamp}}
+  {{pretty_timestamp model.timestamp}}
 
   <div class="body">
     <div class="body-section">
-      {{{unbound model.text}}}
+      {{{model.text}}}
     </div>
     <div class="body-section photos">
       {{#if model.photo}}

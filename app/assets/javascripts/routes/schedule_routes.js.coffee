@@ -14,7 +14,14 @@ Twitarr.ScheduleTodayRoute = Ember.Route.extend
 
 Twitarr.ScheduleDayRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.EventMeta.all params.date
+    Twitarr.EventMeta.all(params.date).fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
 
   actions:
     reload: ->
@@ -22,8 +29,22 @@ Twitarr.ScheduleDayRoute = Ember.Route.extend
 
 Twitarr.ScheduleDetailRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.Event.get params.id
+    Twitarr.Event.get(params.id).fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
 
 Twitarr.ScheduleEditRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.Event.get_edit(params.id)
+    Twitarr.Event.get_edit(params.id).fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )

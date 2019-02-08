@@ -1,6 +1,14 @@
 Twitarr.AdminUsersRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.text}")
+    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.text}").fail((response)=>
+      if response.status? && response.status == 401
+        alert('Access Denied.')
+        @transitionTo('index')
+        return
+      alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
 
   setupController: (controller, model) ->
     if model.status isnt 'ok'
@@ -23,7 +31,15 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
 
 Twitarr.AdminProfileRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.username}/profile")
+    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.username}/profile").fail((response)=>
+      if response.status? && response.status == 401
+        alert('Access Denied.')
+        @transitionTo('index')
+        return
+      alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
   
   setupController: (controller, model) ->
     if model.status isnt 'ok'
@@ -63,30 +79,49 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
           @refresh()
       )
 
-    activate: (username) ->
-      $.post("#{Twitarr.api_path}/admin/users/#{username}/activate").then (data) =>
-        if (data.status isnt 'ok')
-          alert data.status
-        else
-          @refresh()
+    # activate: (username) ->
+    #   $.post("#{Twitarr.api_path}/admin/users/#{username}/activate").then (data) =>
+    #     if (data.status isnt 'ok')
+    #       alert data.status
+    #     else
+    #       @refresh()
 
     reset_password: (username) ->
       if confirm('Are you sure you want to reset this user\'s password to "seamonkey"?')
-        $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_password").then (data) =>
-          if (data.status isnt 'ok')
-            alert data.status
+        $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_password").fail((response) =>
+          if response.status? && response.status == 401
+            alert('Access Denied.')
+            @transitionTo('index')
+            return
+          else if response.responseJSON?.error?
+            alert(response.responseJSON.error)
           else
-            alert('Password reset.')
-            @refresh()
+            alert 'Something went wrong. Try again later.'
+          return
+        ).then((data) =>
+          alert('Password reset.')
+          @refresh()
+        )
 
     reset_photo: (username) ->
       if confirm('Are you sure you want to reset this user\'s photo?')
-        $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_photo").then (data) =>
+        $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_photo").fail((response) =>
+          if response.status? && response.status == 401
+            alert('Access Denied.')
+            @transitionTo('index')
+            return
+          else if response.responseJSON?.error?
+            alert(response.responseJSON.error)
+          else
+            alert 'Something went wrong. Try again later.'
+          return
+        ).then((data) =>
           if (data.status isnt 'ok')
             alert data.status
           else
             alert('Photo reset.')
             @refresh()
+        )
 
 Twitarr.AdminSearchRoute = Ember.Route.extend
   actions:
@@ -96,7 +131,15 @@ Twitarr.AdminSearchRoute = Ember.Route.extend
 
 Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
   model: ->
-    $.getJSON("#{Twitarr.api_path}/admin/announcements")
+    $.getJSON("#{Twitarr.api_path}/admin/announcements").fail((response)=>
+      if response.status? && response.status == 401
+        alert('Access Denied.')
+        @transitionTo('index')
+        return
+      alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
 
   setupController: (controller, model) ->
     controller.set('text', null)

@@ -1,6 +1,12 @@
 Twitarr.UserIndexRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.User.get()
+    Twitarr.User.get().fail((response)=>
+      if response.status? && response.status == 401
+        alert('You must be logged in to view your profile.')
+      else
+        alert('Something went wrong. Please try again later.')
+      @transitionTo('index')
+    )
   
   setupController: (controller, model) ->
     # Clear state when loading this form
@@ -12,7 +18,14 @@ Twitarr.UserIndexRoute = Ember.Route.extend
 
 Twitarr.UserProfileRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.UserProfile.get(params.username)
+    Twitarr.UserProfile.get(params.username).fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
 
 Twitarr.UserNewRoute = Ember.Route.extend
   model: ->

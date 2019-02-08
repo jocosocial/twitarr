@@ -60,11 +60,11 @@
         <li>{{#link-to "user.login"}}Login{{/link-to}}</li>
         <li>{{#link-to "user.new"}}Sign up{{/link-to}}</li>
       </div>
-      <div {{bind-attr class="login_admin::hidden"}}>
+      <div {{bind-attr class="role_moderator::hidden"}}>
         <li>---</li>
-        <li>{{#link-to "admin.search"}}User administration{{/link-to}}</li>
-        <li>{{#link-to "admin.announcements"}}New announcement{{/link-to}}</li>
-        <li>{{#link-to "admin.upload_schedule"}}Upload Schedule{{/link-to}}</li>
+        <li {{bind-attr class="role_moderator::hidden"}}>{{#link-to "admin.search"}}User administration{{/link-to}}</li>
+        <li {{bind-attr class="role_tho::hidden"}}>{{#link-to "admin.announcements"}}New announcement{{/link-to}}</li>
+        <li {{bind-attr class="role_admin::hidden"}}>{{#link-to "admin.upload_schedule"}}Upload Schedule{{/link-to}}</li>
       </div>
       <li>---</li>
       <li>{{#link-to 'help'}}<span class="glyphicon glyphicon-question-sign"></span>Help{{/link-to}}</li>

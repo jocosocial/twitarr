@@ -30,15 +30,15 @@ class ApplicationController < ActionController::Base
   end
 
   def is_admin?
-    (current_user&.role <= User::Role::ADMIN) || (session[:role] <= User::Role::ADMIN)
+    (current_user&.role == User::Role::ADMIN) || (session[:role] == User::Role::ADMIN)
   end
 
   def is_tho?
-    (current_user&.role <= User::Role::THO) || (session[:role] <= User::Role::THO)
+    (current_user&.role >= User::Role::THO) || (session[:role] >= User::Role::THO)
   end
 
   def is_moderator?
-    (current_user&.role <= User::Role::MODERATOR) || (session[:role] <= User::Role::MODERATOR)
+    (current_user&.role >= User::Role::MODERATOR) || (session[:role] >= User::Role::MODERATOR)
   end
 
   def validate_login(username, password)

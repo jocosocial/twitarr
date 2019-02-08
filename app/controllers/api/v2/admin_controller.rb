@@ -1,7 +1,9 @@
 class API::V2::AdminController < ApplicationController
 	skip_before_action :verify_authenticity_token
 	
-	before_filter :admin_required
+	before_filter :moderator_required, :only => [:users, :user, :profile, :update_user, :reset_photo]
+	before_filter :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement]
+	before_filter :admin_required, :only => [:upload_schedule]
 	before_filter :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo]
 	before_filter :fetch_announcement, :only => [:announcement, :update_announcement, :delete_announcement]
 	
@@ -20,8 +22,28 @@ class API::V2::AdminController < ApplicationController
 	end
 	
 	def update_user
-		# Priviliged users cannot change their own role.
-		@user.set_role(params[:role]) if (@user.username != current_username) && (params.has_key? :role)
+		roleErrors = []
+		if params.has_key?(:role)
+			newRole = User::Role.from_string(params[:role])
+			
+			# You cannot change your own role
+			roleErrors.push('You cannot change your own role.') if @user.username == current_username && @user.role != newRole
+			
+			if @current_user.role == User::Role::MODERATOR
+
+				# Moderators cannot ban/unban users
+				if newRole == User::Role::BANNED || (@user.role == User::Role::BANNED && newRole != User::Role::BANNED)
+					roleErrors.push('Only Admin and THO can ban or unban users.')
+				end
+				
+				# Moderators cannot alter priviliged roles
+				if @user.role != newRole && (@user.role >= User::Role::MODERATOR || newRole >= User::Role::MODERATOR)
+					roleErrors.push('Only Admin and THO can change priviliged roles.')
+				end
+			end
+			
+			@user.role = newRole
+		end
 		
 		# @user.status = params[:status] if params.has_key? :status
 
@@ -34,9 +56,15 @@ class API::V2::AdminController < ApplicationController
     @user.real_name = params[:real_name] if params.has_key? :real_name
     @user.pronouns = params[:pronouns] if params.has_key? :pronouns
 		@user.room_number = params[:room_number] if params.has_key? :room_number
+		@user.mute_reason = params[:mute_reason] if params.has_key? :mute_reason
 		@user.ban_reason = params[:ban_reason] if params.has_key? :ban_reason
 		
-		render status: :bad_request, json: {status: 'error', errors: @user.errors.messages} and return unless @user.valid?
+		if !@user.valid? || roleErrors.count > 0
+			roleErrors.each do |x|
+				@user.errors.add(:role, x)
+			end
+			render status: :bad_request, json: {status: 'error', errors: @user.errors.messages} and return
+		end
 
 		@user.save
 		render json: {status: 'ok', user: @user.decorate.admin_hash}

@@ -2671,6 +2671,7 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
     "real_name": "string", # May be null
     "pronouns": "string", # May be null
     "home_location": "string" # May be null
+    "mute_reason": "string" # May be null, required if user role is muted
     "ban_reason": "string" # May be null, required if user role is banned
 }
 ```
@@ -2770,6 +2771,7 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
 	"real_name": "string",
 	"pronouns": "string",
 	"room_number": Integer # Also accepts string representation of an integer,
+    "mute_reason": "string" # Required if user role is "muted"
     "ban_reason": "string" # Required if user role is "banned"
 }
 ```
@@ -2803,6 +2805,15 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
         ],
         "room_number": [
             "Room number must be blank or an integer."
+        ],
+        "role": [
+            "You cannot change your own role.",
+            "Invalid role. Must be one of: [role_strings].", # [role_strings] will be replaced with a list of valid roles
+            "Only Admin and THO can ban or unban users.",
+            "Only Admin and THO can change priviliged roles."
+        ],
+        "mute_reason": [
+            "When user is muted, mute reason is required."
         ],
         "ban_reason": [
             "When user is banned, ban reason is required."

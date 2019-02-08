@@ -1,12 +1,12 @@
-Twitarr.UserIndexController = Twitarr.ObjectController.extend
+Twitarr.UserIndexController = Twitarr.Controller.extend
   needs: ['application']
 
   count: 0
   errors: Ember.A()
 
   profile_pic: (->
-    "#{Twitarr.api_path}/user/photo/#{@get('username')}?bust=#{@get('count')}"
-  ).property('username', 'count')
+    "#{Twitarr.api_path}/user/photo/#{@get('model.username')}?bust=#{@get('count')}"
+  ).property('model.username', 'count')
 
   profile_pic_upload_url: (->
     "#{Twitarr.api_path}/user/photo"
@@ -33,12 +33,12 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
     change_password: ->
       self = this
 
-      if @get('new_password') != @get('confirm_password')
+      if @get('model.new_password') != @get('model.confirm_password')
         alert "New Password and Confirm New Password do not match!"
         return
       
       result = @get('model').change_password(
-        @get('current_password'), @get('new_password')
+        @get('model.current_password'), @get('model.new_password')
       ).fail (response) =>
         if response.responseJSON?.error?
           alert response.responseJSON.error
@@ -49,9 +49,9 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
       .then (response) =>
         if response.status is 'ok'
           self.set('errors', Ember.A())
-          self.set('current_password', null)
-          self.set('new_password', null)
-          self.set('confirm_password', null)
+          self.set('model.current_password', null)
+          self.set('model.new_password', null)
+          self.set('model.confirm_password', null)
           alert 'Password changed.'
         else
           alert 'Something went wrong. Try again later.'
@@ -72,8 +72,8 @@ Twitarr.UserIndexController = Twitarr.ObjectController.extend
       @incrementProperty('count')
 
 
-Twitarr.UserProfileController = Twitarr.ObjectController.extend
-  photo_path: (-> "#{Twitarr.api_path}/user/photo/#{@get('username')}?full=true").property("username")
+Twitarr.UserProfileController = Twitarr.Controller.extend
+  photo_path: (-> "#{Twitarr.api_path}/user/photo/#{@get('model.username')}?full=true").property("model.username")
 
   logged_in_visible: (->
     @get('logged_in')
@@ -84,26 +84,26 @@ Twitarr.UserProfileController = Twitarr.ObjectController.extend
       @get('model').star()
     
     save_comment: ->
-      $.post("#{Twitarr.api_path}/user/profile/#{@get('username')}/personal_comment", { comment: @get('comment') })
+      $.post("#{Twitarr.api_path}/user/profile/#{@get('model.username')}/personal_comment", { comment: @get('model.comment') })
     
     admin_profile: (username) ->
       @transitionToRoute('admin.profile', username)
 
-Twitarr.UserNewController = Twitarr.ObjectController.extend
+Twitarr.UserNewController = Twitarr.Controller.extend
   errors: null
 
   actions:
     save: ->
-      if @get('new_password') != @get('new_password2')
+      if @get('model.new_password') != @get('model.new_password2')
         alert "New Password and Confirm New Password do not match!"
         return
 
       self = this
       Twitarr.UserNew.save(
-        @get('registration_code'),
-        @get('new_username'),
-        @get('display_name'),
-        @get('new_password')
+        @get('model.registration_code'),
+        @get('model.new_username'),
+        @get('model.display_name'),
+        @get('model.new_password')
       ).fail((response) =>
         if response.responseJSON?.error?
           alert response.responseJSON.error
@@ -115,21 +115,21 @@ Twitarr.UserNewController = Twitarr.ObjectController.extend
         self.get('controllers.application').login(response.user)
         self.transitionToRoute('index')
 
-Twitarr.UserLoginController = Twitarr.ObjectController.extend
+Twitarr.UserLoginController = Twitarr.Controller.extend
   error: null
 
   actions:
     login: ->
       self = this
-      Twitarr.UserLogin.login(@get('username'), @get('password')).fail((response) ->
+      Twitarr.UserLogin.login(@get('model.username'), @get('model.password')).fail((response) ->
         if response.responseJSON?.error?
           self.set 'error', response.responseJSON.error
         else
           self.set 'error', 'Something went wrong. Try again later.'
         return
       ).then((response) ->
-        self.set('username', '')
-        self.set('password', '')
+        self.set('model.username', '')
+        self.set('model.password', '')
         self.set('error', null)
         $.getJSON("#{Twitarr.api_path}/user/whoami").then((data) =>
           self.get('controllers.application').login(data.user)
@@ -141,7 +141,7 @@ Twitarr.UserLoginController = Twitarr.ObjectController.extend
         )
       )
 
-Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
+Twitarr.UserForgotPasswordController = Twitarr.Controller.extend
   errors: Ember.A()
   loading: false
 
@@ -149,22 +149,19 @@ Twitarr.UserForgotPasswordController = Twitarr.ObjectController.extend
     user_reset_password: ->
       self = this
 
-      if @get('new_password') != @get('confirm_password')
+      if @get('model.new_password') != @get('model.confirm_password')
         alert "New Password and Confirm New Password do not match!"
         return
 
       @set('loading', true)
       Twitarr.UserForgotPassword.resetPassword(
-        @get('username'), @get('registration_code'), @get('new_password')
+        @get('model.username'), @get('model.registration_code'), @get('model.new_password')
       ).fail((response) ->
         self.set('loading', false)
-        self.set 'errors', response.responseJSON.errors
+        self.set('errors', response.responseJSON.errors)
       ).then((response) ->
         self.set('loading', false)
-        if response.status is 'ok'
-          self.set('errors', Ember.A())
-          alert(response.message)
-          self.transitionToRoute('user.login')
-        else
-          alert 'Something went wrong. Try again later.'
+        self.set('errors', Ember.A())
+        alert(response.message)
+        self.transitionToRoute('user.login')
       )

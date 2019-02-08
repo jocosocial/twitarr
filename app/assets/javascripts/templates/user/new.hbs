@@ -5,7 +5,7 @@
 <form {{action "save" on="submit"}}>
   <div class="form-group">
     <label for="registration_code">Registration code</label>
-    {{input class="input" value=registration_code name="registration_code"}}
+    {{input class="input" value=model.registration_code name="registration_code"}}
     {{#if errors.registration_code}}
         <ul class="alert alert-warning" style="padding-left: 2em;">
           {{#each error in errors.registration_code}}
@@ -16,7 +16,7 @@
   </div>
   <div class="form-group">
     <label for="new_username">Username</label>
-    {{input class="input" value=new_username name="new_username"}}
+    {{input class="input" value=model.new_username name="new_username"}}
     {{#if errors.username}}
         <ul class="alert alert-warning" style="padding-left: 2em;">
           {{#each error in errors.username}}
@@ -27,7 +27,7 @@
   </div>
   <div class="form-group">
     <label for="display_name">Display Name (optional)</label>
-    {{input class="input" value=display_name name="display_name"}}
+    {{input class="input" value=model.display_name name="display_name"}}
     {{#if errors.display_name}}
         <ul class="alert alert-warning" style="padding-left: 2em;">
           {{#each error in errors.display_name}}
@@ -50,7 +50,7 @@
   </div>
   <div class="form-group">
     <label for="new_password">Password</label>
-    {{input type="password" value=new_password class='input' name="new_password"}}
+    {{input type="password" value=model.new_password class='input' name="new_password"}}
     {{#if errors.password}}
         <ul class="alert alert-warning" style="padding-left: 2em;">
           {{#each error in errors.password}}
@@ -61,7 +61,7 @@
   </div>
   <div class="form-group">
     <label for="new_password2">Confirm Password</label>
-    {{input type="password" value=new_password2 class='input' name="new_password2" }}
+    {{input type="password" value=model.new_password2 class='input' name="new_password2" }}
   </div>
   <div style="margin-top: 1em;">
     {{#if errors.general}}

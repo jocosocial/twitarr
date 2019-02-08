@@ -2,7 +2,7 @@
   <div style="height: 10%;"></div>
   <div id="photo-modal">
     <img class="close" {{action 'close_photo'}} src="/img/close-icon.png" />
-    {{#unless animated}}
+    {{#unless model.animated}}
       <button class="btn open-full-size" {{action 'open_full'}}>open full size</button>
     {{/unless}}
     <div id="photo-holder">

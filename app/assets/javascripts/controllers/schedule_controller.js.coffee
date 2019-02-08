@@ -31,7 +31,7 @@ Twitarr.ScheduleMetaPartialController = Twitarr.Controller.extend
 Twitarr.ScheduleDetailController = Twitarr.Controller.extend
   editable: (->
     @get('role_tho')
-  ).property('controllers.application.login_role')
+  ).property('application.login_role')
 
   actions:
     follow: ->

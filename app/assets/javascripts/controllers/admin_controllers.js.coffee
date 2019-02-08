@@ -30,6 +30,6 @@ Twitarr.AdminUploadScheduleController = Twitarr.Controller.extend
     file_uploaded: (data) ->
       alert data.status unless data.status is 'ok'
     start_upload: ->
-      @get('controllers.application').send('start_upload')
+      @get('application').send('start_upload')
     end_upload: ->
-      @get('controllers.application').send('end_upload')
+      @get('application').send('end_upload')

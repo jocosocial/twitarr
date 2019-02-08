@@ -1,4 +1,4 @@
-Twitarr.ApplicationController = Twitarr.Controller.extend
+Twitarr.ApplicationController = Ember.Controller.extend
   login_user: null
   login_role: null
   alerts: false
@@ -113,7 +113,7 @@ Twitarr.PhotoMiniController = Twitarr.Controller.extend
 
 Twitarr.AlertsController = Twitarr.Controller.extend
   reset_alerts: (->
-    @set 'controllers.application.alerts', false
+    @set 'application.alerts', false
   ).on('init')
 
 Twitarr.TagController = Twitarr.Controller.extend()

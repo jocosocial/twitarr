@@ -5,7 +5,7 @@
 
   <div id="profile-photo-upload-div" class="card-section">
     <img src={{profile_pic}} class="profile-pic"/>
-    {{#if controllers.application.uploads_pending}}
+    {{#if application.uploads_pending}}
       <div class="uploading">Uploading...</div>
     {{else}}
       Click to change profile photo

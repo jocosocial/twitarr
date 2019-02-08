@@ -13,7 +13,7 @@ Twitarr.StreamViewController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
       @set 'new_post_visible', false
 
     new: ->
-      if @get('controllers.application.uploads_pending')
+      if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
         return
       return if @get('model.posting')
@@ -51,7 +51,7 @@ Twitarr.StreamPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
       @set 'new_post_visible', false
 
     new: ->
-      if @get('controllers.application.uploads_pending')
+      if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
         return
       return if @get('model.posting')
@@ -104,7 +104,7 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
 
   editable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
+  ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
   likeable: (->
     @get('logged_in') and not @get('model.user_likes')
@@ -112,7 +112,7 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
 
   deleteable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
+  ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
 Twitarr.StreamEditController = Twitarr.Controller.extend
   errors: Ember.A()
@@ -127,7 +127,7 @@ Twitarr.StreamEditController = Twitarr.Controller.extend
 
   actions:
     save: ->
-      if @get('controllers.application.uploads_pending')
+      if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
         return
       return if @get('model.posting')

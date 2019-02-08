@@ -22,7 +22,7 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
   
   actions:
     new: ->
-      if @get('controllers.application.uploads_pending')
+      if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
         return
       return if @get('posting')
@@ -80,16 +80,16 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
 
   editable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_tho'))
-  ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
+  ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
   deleteable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
+  ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:
     new: ->
-      if @get('controllers.application.uploads_pending')
+      if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
         return
       return if @get('posting')
@@ -158,7 +158,7 @@ Twitarr.ForumsEditController = Twitarr.Controller.extend
       window.history.back()
     
     save: ->
-      if @get('controllers.application.uploads_pending')
+      if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
         return
       return if @get('posting')

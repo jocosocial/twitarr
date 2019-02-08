@@ -112,7 +112,7 @@ Twitarr.UserNewController = Twitarr.Controller.extend
         else
           alert 'Something went wrong. Try again later.'
       ).then (response) -> 
-        self.get('controllers.application').login(response.user)
+        self.get('application').login(response.user)
         self.transitionToRoute('index')
 
 Twitarr.UserLoginController = Twitarr.Controller.extend
@@ -132,7 +132,7 @@ Twitarr.UserLoginController = Twitarr.Controller.extend
         self.set('model.password', '')
         self.set('error', null)
         $.getJSON("#{Twitarr.api_path}/user/whoami").then((data) =>
-          self.get('controllers.application').login(data.user)
+          self.get('application').login(data.user)
           if data.need_password_change
             self.transitionToRoute('user')
             alert('You need to change your password before you continue.')

@@ -172,4 +172,7 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
           @refresh()
       )
 
-Twitarr.AdminUploadScheduleRoute = Ember.Route.extend()
+Twitarr.AdminUploadScheduleRoute = Ember.Route.extend
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.setupUpload()

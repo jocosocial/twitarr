@@ -1,4 +1,4 @@
-Twitarr.ApplicationController = Ember.Controller.extend
+Twitarr.ApplicationController = Twitarr.Controller.extend
   login_user: null
   login_role: null
   alerts: false

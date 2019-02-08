@@ -151,7 +151,7 @@ Twitarr.ForumsEditController = Twitarr.Controller.extend
       Twitarr.Photo.create({id: id}) for id in pics
     else
       []
-  ).property('photo_ids.@each')
+  ).property('photo_ids.[]')
 
   actions:
     cancel: ->

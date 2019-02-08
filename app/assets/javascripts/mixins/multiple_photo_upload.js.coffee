@@ -6,7 +6,7 @@ Twitarr.MultiplePhotoUploadMixin = Ember.Mixin.create
 
   photos: (->
     Twitarr.Photo.create({id: id}) for id in @get('photo_ids')
-  ).property('photo_ids.@each')
+  ).property('photo_ids.[]')
 
   actions:
     file_uploaded: (data) ->

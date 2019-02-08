@@ -762,7 +762,7 @@ Summary of reactions that have been applied to the post.
     ```
     {
         "status": "error",
-        "error": "Invalid reaction: type}" # type will be replaced with the posted type
+        "error": "Invalid reaction: type" # type will be replaced with the posted type
     }
     ```
 
@@ -2231,7 +2231,7 @@ Summary of reactions that have been applied to the post.
     ```
     {
         "status": "error",
-        "error": "Invalid reaction: type}" # type will be replaced with the posted type
+        "error": "Invalid reaction: type" # type will be replaced with the posted type
     }
     ```
 

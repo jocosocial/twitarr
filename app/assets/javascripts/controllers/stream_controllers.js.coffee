@@ -134,7 +134,9 @@ Twitarr.StreamEditController = Twitarr.ObjectController.extend
       @set 'posting', true
       Twitarr.StreamPost.edit(@get('id'), @get('text'), @get('photo_id')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'

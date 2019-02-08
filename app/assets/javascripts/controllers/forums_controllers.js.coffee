@@ -165,7 +165,9 @@ Twitarr.ForumsEditController = Twitarr.ObjectController.extend
       @set 'posting', true
       Twitarr.ForumPost.edit(@get('forum_id'), @get('id'), @get('text'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
-        if response.responseJSON?.errors?
+        if response.responseJSON?.error?
+          @set 'errors', [response.responseJSON.error]
+        else if response.responseJSON?.errors?
           @set 'errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'

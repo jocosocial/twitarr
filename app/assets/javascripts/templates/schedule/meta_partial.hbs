@@ -11,8 +11,8 @@
     </div>
   </div>
   <div class="controls">
-    <button {{action 'follow' model bubbles=false}} {{bind-attr class="followable::hidden :btn"}}>Follow</button>
-    <button {{action 'unfollow' model bubbles=false}} {{bind-attr class="unfollowable::hidden :btn"}}>Unfollow</button>
+    <button {{action 'follow' model.id bubbles=false}} {{bind-attr class="followable::hidden :btn"}}>Follow</button>
+    <button {{action 'unfollow' model.id bubbles=false}} {{bind-attr class="unfollowable::hidden :btn"}}>Unfollow</button>
   </div>
   <div class="icons">
     <span {{bind-attr class="model.official::hidden :glyphicon :glyphicon-flag :official"}} title="Official event"></span>

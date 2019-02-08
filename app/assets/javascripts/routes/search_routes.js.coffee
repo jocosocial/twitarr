@@ -76,12 +76,14 @@ Twitarr.SearchEventResultsRoute = Ember.Route.extend
         @transitionTo('search.event_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/events/#{encodeURIComponent(params.text)}")
+    $.getJSON("#{Twitarr.api_path}/search/events/#{encodeURIComponent(params.text)}").then((data)=>
+      {status: data.status, query: data.query, events: {matches: Ember.A(Twitarr.EventMeta.create(event)) for event in data.events.matches, count: data.count, more: data.more }}
+    )
 
   setupController: (controller, model) ->
     if model.status is 'ok'
       @controllerFor('search').set('text', model.text)
       controller.set('error', null)
-      controller.set('model', { events: (Twitarr.EventMeta.create(event) for event in model.events) })
+      controller.set('model', model)
     else
       controller.set('error', model.status)

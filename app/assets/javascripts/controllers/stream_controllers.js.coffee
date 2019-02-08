@@ -104,7 +104,7 @@ Twitarr.StreamPostPartialController = Twitarr.ObjectController.extend
 
   editable: (->
     @get('logged_in') and (@get('author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'author.username', 'login_user', 'login_role')
+  ).property('logged_in', 'author.username', 'login_user', 'controllers.application.login_role')
 
   unlikeable: (->
     @get('logged_in') and @get('user_likes')
@@ -116,7 +116,7 @@ Twitarr.StreamPostPartialController = Twitarr.ObjectController.extend
 
   deleteable: (->
     @get('logged_in') and (@get('author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'author.username', 'login_user', 'login_role')
+  ).property('logged_in', 'author.username', 'login_user', 'controllers.application.login_role')
 
 Twitarr.StreamEditController = Twitarr.ObjectController.extend
   errors: Ember.A()

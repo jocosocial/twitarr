@@ -84,11 +84,11 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
 
   editable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_tho'))
-  ).property('logged_in', 'model.author.username', 'login_user', 'login_role')
+  ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
 
   deleteable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
-  ).property('logged_in', 'model.author.username', 'login_user', 'login_role')
+  ).property('logged_in', 'model.author.username', 'login_user', 'controllers.application.login_role')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:

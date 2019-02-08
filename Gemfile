@@ -27,7 +27,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'mongoid'
 
 gem 'ember-rails', '~> 0.20.0'
-gem 'ember-source', '~> 1.12.0'
+gem 'ember-source', '~> 1.13.0'
 gem 'ember-data-source', '~> 1.13.0'
 gem 'handlebars-source'
 

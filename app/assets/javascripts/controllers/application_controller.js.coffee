@@ -111,7 +111,7 @@ Twitarr.PhotoMiniController = Twitarr.Controller.extend
     Twitarr.ApplicationController.sm_photo_path @get('model.id')
   ).property('photo')
 
-Twitarr.AlertsController = Twitarr.ObjectController.extend
+Twitarr.AlertsController = Twitarr.Controller.extend
   reset_alerts: (->
     @set 'controllers.application.alerts', false
   ).on('init')

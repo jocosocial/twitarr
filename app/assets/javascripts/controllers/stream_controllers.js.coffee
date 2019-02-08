@@ -77,10 +77,10 @@ Twitarr.StreamPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
     next_page: ->
       @transitionToRoute 'stream.page', @get('next_page')
 
-Twitarr.StreamStarPageController = Twitarr.ObjectController.extend Twitarr.SinglePhotoUploadMixin,
+Twitarr.StreamStarPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUploadMixin,
   actions:
     next_page: ->
-      @transitionToRoute 'stream.star_page', @get('next_page')
+      @transitionToRoute('stream.star_page', @get('model.next_page'))
 
 Twitarr.StreamPostPartialController = Twitarr.Controller.extend
   actions:

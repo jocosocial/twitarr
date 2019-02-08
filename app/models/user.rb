@@ -3,14 +3,14 @@ require 'bcrypt'
 class User
 
   class Role
-    ADMIN = 0
-    THO = 1
-    MODERATOR = 2
-    USER = 3
-    MUTED = 4
-    BANNED = 5
+    ADMIN = 5
+    THO = 4
+    MODERATOR = 3
+    USER = 2
+    MUTED = 1
+    BANNED = 0
 
-    STRINGS = ["admin", "tho", "moderator", "user", "muted", "banned"]
+    STRINGS = ["banned", "muted", "user", "moderator", "tho", "admin"]
     
     def self.as_string(role)
       return STRINGS[role]
@@ -38,7 +38,7 @@ class User
 
   field :un, as: :username, type: String
   field :pw, as: :password, type: String
-  field :re, as: :role, type: Integer
+  field :ro, as: :role, type: Integer
   field :st, as: :status, type: String
   field :em, as: :email, type: String
   field :dn, as: :display_name, type: String
@@ -57,6 +57,7 @@ class User
   field :ea, as: :acknowledged_event_alerts, type: Array, default: []
   field :rc, as: :registration_code, type: String
   field :pr, as: :pronouns, type: String
+  field :mr, as: :mute_reason, type: String
   field :br, as: :ban_reason, type: String
 
   index username: 1
@@ -68,6 +69,7 @@ class User
   after_save :update_display_name_cache
 
   validate :valid_role?
+  validate :valid_mute_reason?
   validate :valid_ban_reason?
   validate :valid_registration_code?
   validate :valid_username?
@@ -80,6 +82,12 @@ class User
   def valid_role?
     if role.nil? || User::Role.as_string(role).nil?
       errors.add(:role, "Invalid role. Must be one of: #{User::Role::STRINGS*", "}.")
+    end
+  end
+
+  def valid_mute_reason?
+    if role == User::Role::MUTED && (mute_reason.nil? || mute_reason.empty?)
+      errors.add(:mute_reason, "When user is muted, mute reason is required.")
     end
   end
 

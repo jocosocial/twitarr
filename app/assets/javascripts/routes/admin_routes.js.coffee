@@ -47,6 +47,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
         pronouns: user.pronouns,
         home_location: user.home_location,
         room_number: user.room_number,
+        mute_reason: user.mute_reason,
         ban_reason: user.ban_reason
       }).fail((response) =>
         if response.responseJSON?.errors?

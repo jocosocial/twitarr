@@ -1,6 +1,6 @@
-Twitarr.ApplicationController = Ember.Controller.extend
+Twitarr.ApplicationController = Twitarr.Controller.extend
   login_user: null
-  login_admin: false
+  login_role: null
   alerts: false
   display_name: null
   read_only: false
@@ -50,14 +50,14 @@ Twitarr.ApplicationController = Ember.Controller.extend
   login: (user) ->
     Ember.run =>
       @set 'login_user', user.username
-      @set 'login_admin', (user.role == 'admin')
+      @set 'login_role', user.role
       @set 'display_name', user.display_name
     @tick()
 
   logout: ->
     Ember.run =>
       @set 'login_user', null
-      @set 'login_admin', false
+      @set 'login_role', null
       @set 'display_name', null
       @set 'alerts', false
     clearTimeout(@timer)

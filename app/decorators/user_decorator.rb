@@ -50,12 +50,14 @@ class UserDecorator < Draper::Decorator
       real_name: real_name,
       pronouns: pronouns,
       home_location: home_location,
+      mute_reason: mute_reason,
       ban_reason: ban_reason
     }
   end
 
   def self_hash
     hsh = admin_hash
+    hsh.delete(:mute_reason)
     hsh.delete(:ban_reason)
     hsh[:unnoticed_alerts] = unnoticed_alerts
     hsh

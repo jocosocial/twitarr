@@ -81,12 +81,12 @@ Twitarr.ForumsPostPartialController = Twitarr.ObjectController.extend
   ).property('logged_in', 'user_likes')
 
   editable: (->
-    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('login_admin'))
-  ).property('logged_in', 'author.username', 'login_user', 'login_admin')
+    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('role_tho'))
+  ).property('logged_in', 'author.username', 'login_user', 'login_role')
 
   deleteable: (->
-    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('login_admin'))
-  ).property('logged_in', 'author.username', 'login_user', 'login_admin')
+    @get('logged_in') and (@get('author.username') is @get('login_user') or @get('role_moderator'))
+  ).property('logged_in', 'author.username', 'login_user', 'login_role')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:

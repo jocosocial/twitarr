@@ -36,8 +36,8 @@ Twitarr.ScheduleMetaPartialController = Twitarr.ObjectController.extend
 
 Twitarr.ScheduleDetailController = Twitarr.ObjectController.extend
   editable: (->
-    @get('login_admin')
-  ).property('login_admin')
+    @get('role_tho')
+  ).property('login_role')
 
   actions:
     follow: ->

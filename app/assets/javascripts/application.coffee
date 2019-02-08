@@ -12,6 +12,7 @@
 
 #= require ./store
 #= require_tree ./mixins
+#= require_tree ./components
 #= require_tree ./controllers
 #= require_tree ./helpers
 #= require_tree ./models

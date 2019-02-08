@@ -4,7 +4,8 @@ Twitarr.SearchRoute = Ember.Route.extend
       if !!text
         @transitionTo('search.results', text)
 
-  setupController: (controller) ->
+  setupController: (controller, model) ->
+    this._super(controller, model)
     controller.set('text', '')
 
 Twitarr.SearchResultsRoute = Ember.Route.extend
@@ -12,6 +13,7 @@ Twitarr.SearchResultsRoute = Ember.Route.extend
     $.getJSON("#{Twitarr.api_path}/search/all/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status is 'ok'
       controller.set('error', null)
       controller.set('model', model)
@@ -28,6 +30,7 @@ Twitarr.SearchUserResultsRoute = Ember.Route.extend
     $.getJSON("#{Twitarr.api_path}/search/users/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status is 'ok'
       @controllerFor('search').set('text', model.text)
       controller.set('error', null)
@@ -45,6 +48,7 @@ Twitarr.SearchTweetResultsRoute = Ember.Route.extend
     $.getJSON("#{Twitarr.api_path}/search/tweets/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status is 'ok'
       @controllerFor('search').set('text', model.text)
       controller.set('error', null)
@@ -62,6 +66,7 @@ Twitarr.SearchForumResultsRoute = Ember.Route.extend
     $.getJSON("#{Twitarr.api_path}/search/forums/#{encodeURIComponent(params.text)}")
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status is 'ok'
       @controllerFor('search').set('text', model.text)
       controller.set('error', null)
@@ -81,6 +86,7 @@ Twitarr.SearchEventResultsRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status is 'ok'
       @controllerFor('search').set('text', model.text)
       controller.set('error', null)

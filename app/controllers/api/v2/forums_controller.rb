@@ -75,7 +75,7 @@ class API::V2::ForumsController < ApplicationController
     if forum.valid?
       render json: {status: 'ok', forum_thread: forum.decorate.to_hash(current_user, request_options)}
     else
-      render json: {status: 'error', errors: forum.errors.full_messages}
+      render status: :bad_request, json: {status: 'error', errors: forum.errors.full_messages}
     end
   end
 

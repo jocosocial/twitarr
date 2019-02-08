@@ -32,6 +32,7 @@ Twitarr.StreamViewRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     controller.set('model', model)
     controller.set('model.base_reply_text', "@#{model.author.username} ")
     controller.set('model.reply_text', "@#{model.author.username} ")
@@ -52,6 +53,7 @@ Twitarr.StreamEditRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if(model.status isnt 'ok')
       alert model.status
       return

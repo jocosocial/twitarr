@@ -1,4 +1,11 @@
 Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
+  scroll: (->
+    Ember.run.scheduleOnce('afterRender', @, =>
+      position = $('.scroll_to').offset().top - 60
+      window.scrollTo(0, position)
+    )
+  )
+  
   has_new_posts: (->
     for post in @get('model.forum.posts')
       return true if post.timestamp > @get('model.forum.latest_read')
@@ -21,6 +28,9 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
   ).property('model.prev_page')
   
   actions:
+    handleKeyDown: (v,e) ->
+      @send('new') if e.ctrlKey and e.keyCode == 13
+
     new: ->
       if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
@@ -88,6 +98,9 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   actions:
+    handleKeyDown: (v,e) ->
+      @send('new') if e.ctrlKey and e.keyCode == 13
+
     new: ->
       if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
@@ -141,7 +154,7 @@ Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
       "#{@get('model.posts')} #{post_word}"
   ).property('model.posts', 'model.new_posts') 
 
-Twitarr.ForumsEditController = Twitarr.Controller.extend
+Twitarr.ForumsEditController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   errors: Ember.A()
   photo_ids: Ember.A()
 
@@ -154,6 +167,9 @@ Twitarr.ForumsEditController = Twitarr.Controller.extend
   ).property('photo_ids.[]')
 
   actions:
+    handleKeyDown: (v,e) ->
+      @send('save') if e.ctrlKey and e.keyCode == 13
+
     cancel: ->
       window.history.back()
     

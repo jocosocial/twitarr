@@ -11,6 +11,7 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status isnt 'ok'
       alert model.status
     else
@@ -42,6 +43,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
     )
   
   setupController: (controller, model) ->
+    this._super(controller, model)
     if model.status isnt 'ok'
       if model.error?
         alert model.error
@@ -144,6 +146,7 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
     )
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     controller.set('text', null)
     controller.set('valid_until', moment().add(4, 'hours').format('YYYY-MM-DDTHH:mm'))
     controller.set('errors', Ember.A())

@@ -55,6 +55,7 @@ Twitarr.TagRoute = Ember.Route.extend
       data
 
   setupController: (controller, model) ->
+    this._super(controller, model)
     controller.set 'tag_name', model.tag_name
     if model.status is 'ok'
       controller.set 'recent_tweets', model.posts

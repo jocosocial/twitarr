@@ -22,6 +22,11 @@ Twitarr.ForumsDetailRoute = Ember.Route.extend
       @transitionTo('forums')
     )
 
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.scroll()
+    controller.setupUpload()
+
   actions:
     reload: ->
       @refresh()
@@ -37,6 +42,7 @@ Twitarr.ForumsEditRoute = Ember.Route.extend
     )
   
   setupController: (controller, model) ->
+    this._super(controller, model)
     if(model.status isnt 'ok')
       alert model.status
       return
@@ -44,3 +50,9 @@ Twitarr.ForumsEditRoute = Ember.Route.extend
     pics = Ember.A()
     pics.push (photo.id) for photo in model.forum_post.photos
     controller.set('photo_ids', pics)
+    controller.setupUpload()
+
+Twitarr.ForumsNewRoute = Ember.Route.extend
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.setupUpload()

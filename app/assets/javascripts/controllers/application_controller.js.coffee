@@ -106,12 +106,9 @@ Twitarr.PhotoViewController = Twitarr.ObjectController.extend
       else
         window.open Twitarr.ApplicationController.full_photo_path(@get('id'))
 
-Twitarr.PhotoMiniController = Twitarr.ObjectController.extend
+Twitarr.PhotoMiniController = Twitarr.Controller.extend
   sm_photo_path: (->
-    if(@get('animated'))
-      "background: url('#{Twitarr.ApplicationController.sm_photo_path @get('id')}') no-repeat center center black;"
-    else
-      Twitarr.ApplicationController.sm_photo_path @get('id')
+    Twitarr.ApplicationController.sm_photo_path @get('model.id')
   ).property('photo')
 
 Twitarr.AlertsController = Twitarr.ObjectController.extend

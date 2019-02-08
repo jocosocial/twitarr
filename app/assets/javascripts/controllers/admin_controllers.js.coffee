@@ -1,4 +1,4 @@
-Twitarr.AdminUsersController = Twitarr.ArrayController.extend()
+Twitarr.AdminUsersController = Twitarr.Controller.extend()
 
 Twitarr.AdminProfileController = Twitarr.Controller.extend
   errors: Ember.A()

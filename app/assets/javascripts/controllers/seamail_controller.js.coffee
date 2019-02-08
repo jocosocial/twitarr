@@ -1,4 +1,4 @@
-Twitarr.SeamailIndexController = Twitarr.ArrayController.extend
+Twitarr.SeamailIndexController = Twitarr.Controller.extend
   actions:
     compose_seamail: ->
       @transitionToRoute('seamail.new')

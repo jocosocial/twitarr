@@ -397,7 +397,22 @@ div#photo-display {
   }
 }
 
+div.imageOverlayContainer {
+  position: relative;
+  margin: auto;
+  width: 200px;
+  height: 200px;
+}
+
 img.photo {
+  width: 200px;
+  height: 200px;
+}
+
+img.layered {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 200px;
   height: 200px;
 }

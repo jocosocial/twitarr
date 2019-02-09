@@ -43,3 +43,8 @@ Twitarr.SeamailDetailRoute = Ember.Route.extend
   actions:
     reload: ->
       @refresh()
+  
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.set('errors', Ember.A())
+    controller.set('model.text', '')

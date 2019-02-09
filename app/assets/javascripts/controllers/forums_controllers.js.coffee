@@ -40,16 +40,16 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
       Twitarr.Forum.new_post(@get('model.forum.id'), @get('model.new_post'), @get('photo_ids')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
-          @set 'errors', [response.responseJSON.error]
+          @set 'model.errors', [response.responseJSON.error]
         else if response.responseJSON?.errors?
-          @set 'errors', response.responseJSON.errors
+          @set 'model.errors', response.responseJSON.errors
         else
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
         Ember.run =>
           @set 'posting', false
           @set 'model.new_post', ''
-          @get('errors').clear()
+          @set('model.errors', Ember.A())
           @get('photo_ids').clear()
           @send 'reload'
       )        
@@ -72,7 +72,7 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
       alert @get('model.page')
     delete: ->
       self = this
-      @get('model').delete(@get('forum_id'), @get('id')).fail((response) =>
+      @get('model').delete(@get('model.forum_id'), @get('model.id')).fail((response) =>
         if response.responseJSON?.error?
           alert response.responseJSON.error
         else
@@ -120,7 +120,7 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
           @set 'posting', false
           @set 'subject', ''
           @set 'text', ''
-          @get('errors').clear()
+          @set 'model.errors', Ember.A()
           @get('photo_ids').clear()
           @transitionToRoute('forums.detail', response.forum.id, 0)
       )
@@ -189,7 +189,7 @@ Twitarr.ForumsEditController = Twitarr.Controller.extend Twitarr.MultiplePhotoUp
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
         Ember.run =>
-          @get('errors').clear()
+          @set('model.errors', Ember.A())
           @set 'posting', false
           window.history.back()
       )

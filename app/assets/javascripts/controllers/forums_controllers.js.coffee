@@ -97,6 +97,8 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
+  errors: Ember.A()
+
   actions:
     handleKeyDown: (v,e) ->
       @send('new') if e.ctrlKey and e.keyCode == 13
@@ -120,7 +122,7 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
           @set 'posting', false
           @set 'subject', ''
           @set 'text', ''
-          @set 'model.errors', Ember.A()
+          @set 'errors', Ember.A()
           @get('photo_ids').clear()
           @transitionToRoute('forums.detail', response.forum.id, 0)
       )

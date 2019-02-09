@@ -1,5 +1,13 @@
 Twitarr.SeamailLoadingRoute = Twitarr.LoadingRoute.extend()
 
+Twitarr.SeamailNewRoute = Ember.Route.extend
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.set('errors', Ember.A())
+    controller.set('toUsers', Ember.A())
+    controller.set('subject', '')
+    controller.set('text', '')
+
 Twitarr.SeamailIndexRoute = Ember.Route.extend
   model: ->
     Twitarr.SeamailMeta.list().fail((response)=>

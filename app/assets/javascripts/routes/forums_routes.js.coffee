@@ -55,4 +55,5 @@ Twitarr.ForumsEditRoute = Ember.Route.extend
 Twitarr.ForumsNewRoute = Ember.Route.extend
   setupController: (controller, model) ->
     this._super(controller, model)
+    controller.set('errors', Ember.A())
     controller.setupUpload()

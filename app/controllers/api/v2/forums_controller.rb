@@ -113,6 +113,7 @@ class API::V2::ForumsController < ApplicationController
     end
     thread_deleted = false
     @post.destroy
+    @forum.reload
     if @forum.posts.count == 0
       @forum.destroy
       thread_deleted = true

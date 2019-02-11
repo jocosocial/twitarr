@@ -28,8 +28,8 @@ Twitarr::Application.routes.draw do
       resources :stream, only: [:new, :create]
       get 'stream', to: 'stream#index'
       get 'stream/:start', to: 'stream#index'
-      get 'stream/m/:query', to: 'stream#view_mention'
-      get 'stream/h/:query', to: 'stream#view_hash_tag'
+      get 'stream/m/:query', to: 'stream#view_mention', query: /.*/ 
+      get 'stream/h/:query', to: 'stream#view_hash_tag', query: /.*/ 
 
       get 'thread/:id', to: 'stream#show'
       get 'tweet/:id', to: 'stream#get'
@@ -55,21 +55,21 @@ Twitarr::Application.routes.draw do
       get 'user/profile/:username', to: 'user#show'
       post 'user/profile/:username/star', to: 'user#star'
       post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
-      get 'user/ac/:query', to: 'user#auto_complete'
+      get 'user/ac/:query', to: 'user#auto_complete', query: /.*/ 
       get 'user/starred', to: 'user#starred'
       get 'user/photo/:username', to: 'user#get_photo'
       post 'user/photo', to: 'user#update_photo'
       delete 'user/photo', to: 'user#reset_photo'
 
       get 'hashtag/repopulate', to: 'hashtag#populate_hashtags'
-      get 'hashtag/ac/:query', to: 'hashtag#auto_complete'
+      get 'hashtag/ac/:query', to: 'hashtag#auto_complete', query: /.*/ 
 
-      get 'search/all/:query', to: 'search#all'
-      get 'search/users/:query', to: 'search#users'
-      get 'search/seamails/:query', to: 'search#seamails'
-      get 'search/tweets/:query', to: 'search#tweets'
-      get 'search/forums/:query', to: 'search#forums'
-      get 'search/events/:query', to: 'search#events'
+      get 'search/all/:query', to: 'search#all', query: /.*/ 
+      get 'search/users/:query', to: 'search#users', query: /.*/ 
+      get 'search/seamails/:query', to: 'search#seamails', query: /.*/ 
+      get 'search/tweets/:query', to: 'search#tweets', query: /.*/ 
+      get 'search/forums/:query', to: 'search#forums', query: /.*/ 
+      get 'search/events/:query', to: 'search#events', query: /.*/ 
 
       get 'alerts', to: 'alerts#index'
       get 'alerts/check', to: 'alerts#check'
@@ -90,7 +90,7 @@ Twitarr::Application.routes.draw do
       get 'photo/full/:id', to: 'photo#full'
 
       get 'admin/users', to: 'admin#users'
-      get 'admin/users/:query', to: 'admin#user'
+      get 'admin/users/:query', to: 'admin#user', query: /.*/ 
       get 'admin/users/:username/profile', to: 'admin#profile'
       post 'admin/users/:username', to: 'admin#update_user'
       # post 'admin/users/:username/activate', to: 'admin#activate'

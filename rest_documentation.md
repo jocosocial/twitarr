@@ -2083,6 +2083,31 @@ Creates a new post in the thread.
 }
 ```
 
+### DELETE /api/v2/forum/:id
+
+Deletes an entire forum thread. Moderator or higher required.
+
+### Requires
+
+* logged in as Moderator, THO or Admin
+  * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok"
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as Moderator, THO or Admin
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+
 ### POST /api/v2/forum/:id/sticky
 
 Toggles sticky status for a forum thread. THO or Admin login required.

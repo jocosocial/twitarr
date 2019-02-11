@@ -12,6 +12,10 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
     false
   ).property('model.forum.posts', 'model.forum.latest_read')
 
+  sticky: (->
+    @get('model.forum.sticky')
+  ).property('model.forum.sticky')
+
   calculate_first_unread_post: (->
     for post in @get('model.forum.posts')
       if post.timestamp > @get('model.forum.latest_read')
@@ -59,6 +63,26 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
     prev_page: ->
       return if @get('model.prev_page') is null or undefined
       @transitionToRoute('forums.detail', @get('model.prev_page'))
+    delete_thread: ->
+      if confirm('Are you sure you want to delete this thread?')
+        $.ajax("#{Twitarr.api_path}/forums/#{@get('model.forum.id')}", method: 'DELETE').fail((response) =>
+          if response.responseJSON?.error?
+            alert response.responseJSON.error
+          else
+            alert 'Post could not be deleted. Please try again later. Or try again someplace without so many seamonkeys.'
+        ).then((response) =>
+          alert 'Thread deleted.'
+          @transitionToRoute('forums.page', 0)
+        )
+    toggle_sticky: ->
+      $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/sticky").fail((response) =>
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else
+          alert 'Could not toggle sticky status. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        @set('model.forum.sticky', !@get('model.forum.sticky'))
+      )
 
 Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
   actions:

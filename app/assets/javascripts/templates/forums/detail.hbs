@@ -1,5 +1,12 @@
 <div class="main-page-header header-with-controls">
   <span class="controls">
+    {{#if role_tho}}
+      <button class="btn {{if sticky 'hidden' ''}}" {{action 'toggle_sticky'}}>Sticky Thread</button>
+      <button class="btn {{if sticky '' 'hidden'}}" {{action 'toggle_sticky'}}>Unsticky Thread</button>
+    {{/if}}
+    {{#if role_moderator}}
+      <button class="btn" {{action 'delete_thread'}}>Delete Thread</button>
+    {{/if}}
     {{#if model.has_prev_page}}
       <button class="btn" {{action 'prev_page'}}>Older</button>
     {{/if}}

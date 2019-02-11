@@ -1,6 +1,6 @@
 Twitarr.AdminUsersRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.text}").fail((response)=>
+    $.getJSON("#{Twitarr.api_path}/admin/users/#{encodeURIComponent(params.text)}").fail((response)=>
       if response.status? && response.status == 401
         alert('Access Denied.')
         @transitionTo('index')

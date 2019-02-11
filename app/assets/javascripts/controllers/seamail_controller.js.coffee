@@ -107,11 +107,11 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
         return
       ).then((response) =>
         Ember.run =>
-          @set 'posting', false
-          @get('errors').clear()
-          @get('toUsers').clear()
-          @set 'subject', ''
-          @set 'text', ''
+          @set('posting', false)
+          @set('errors', Ember.A())
+          @set('toUsers', Ember.A())
+          @set('subject', '')
+          @set('text', '')
           @transitionToRoute('seamail.detail', response.seamail.id)
       )
 

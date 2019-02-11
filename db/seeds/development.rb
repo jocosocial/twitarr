@@ -13,32 +13,33 @@ if RegistrationCode.count == 0
   end
 end
 
+unless User.exist? 'admin'
+  puts 'Creating user admin'
+  user = User.new username: 'admin', display_name: 'admin', password: Rails.application.secrets.initial_admin_password,
+    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code1'
+  user.set_password Rails.application.secrets.initial_admin_password
+  user.save
+end
+
 unless User.exist? 'kvort'
   puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'kvort@rylath.net', registration_code: 'code1'
+    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'kvort@rylath.net', registration_code: 'code2'
   user.set_password 'kvort'
   user.save
 end
 unless User.exist? 'james'
   puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code2'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code3'
   user.set_password 'james'
   user.save
 end
 unless User.exist? 'steve'
   puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code3'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code4'
   user.set_password 'steve'
-  user.save
-end
-unless User.exist? 'admin'
-  puts 'Creating user admin'
-  user = User.new username: 'admin', display_name: 'admin', password: 'admin1',
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code4'
-  user.set_password 'admin'
   user.save
 end
 
@@ -93,7 +94,7 @@ def create_post(text, author, timestamp, photo)
   post
 end
 
-#StreamPost.delete_all
+StreamPost.delete_all
 if StreamPost.count == 0
   create_post 'This is a cute cat #catphotos', 'james', at_time(14, 31, offset:-1.day), photos[0].id
   create_post 'Joco is the best cruise ever #jococruise', 'steve', at_time(10, 9), nil
@@ -200,16 +201,29 @@ if Seamail.count == 0
   reply_seamail seamail, 'Awesome!', 'james', at_time(9, 30)
 end
 
+puts 'Creating events...'
+cal_filename = "db/seeds/all.ics"
+# fix bad encoding from sched.org
+cal_text = File.read(cal_filename)
+cal_text = cal_text.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
+if File.exists? cal_filename + ".tmp"
+  File.delete(cal_filename + ".tmp")
+end
+File.open(cal_filename + ".tmp", "w") { |file| file << cal_text }
+
+cal_file = File.open(cal_filename + ".tmp")
+Icalendar::Calendar.parse(cal_file).first.events.map { |x| Event.create_from_ics x }
+
 def create_reaction(tag)
   reaction = Reaction.add_reaction tag
   reaction.save!
   reaction
 end
+
+puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
-  create_reaction 'funny'
-  create_reaction 'helpful'
-  create_reaction 'insightful'
-  create_reaction 'cool'
+  create_reaction 'love'
+  create_reaction 'laugh'
 end

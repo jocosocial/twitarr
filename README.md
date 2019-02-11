@@ -16,7 +16,7 @@ If you're not running on linux, or just want an isolated environment, you can ru
 You'll need the Docker [toolbox](https://www.docker.com/docker-toolbox).  I (Joey) used version 1.16.1.  The default install on a Mac is Just Fine; not sure about other platforms.
 
 ### Configuration
-* Create an `application.yml`, `mongoid.yml`, and `secrets.yml` file based on the respective `examples` files. The tokens are just random hex strings (I think).
+* Create a `mongoid.yml` and `secrets.yml` file based on the respective `examples` files. The tokens are just random hex strings (I think).
 * If you want to run with local changes (so that you can change the Ruby code and not have to rebuild the world each time), modify docker-compose accordingly:
 ```
   volumes:   # Remove this for production use
@@ -46,7 +46,7 @@ After running the server once, it is no longer necessary to reseed the database.
 
 Mongo
 
-You will need to make the config/application.yml and config/mongoid.yml files.
+You will need to make the config/secrets.yml and config/mongoid.yml files.
 There's already an example with some good defaults in config/*_example.yml, you just values for your instance. You
 can generate a rails secret token using the command "rake secret".
 

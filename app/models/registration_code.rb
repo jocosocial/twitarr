@@ -2,11 +2,10 @@ class RegistrationCode
   include Mongoid::Document
 
   field :_id, type: String, as: :code
-  field :bd, as: :banned, type: Boolean, default: false
 
   def self.add_code(code)
     begin
-      doc = RegistrationCode.new(code:code)
+      doc = RegistrationCode.new(code:code.gsub(/\s+/, ""))
       doc.upsert
       doc
     rescue Exception => e
@@ -16,6 +15,6 @@ class RegistrationCode
 
   def self.valid_code?(code)
     regcode = RegistrationCode.where(code: code)
-    regcode.exists? && !regcode.first.banned
+    regcode.exists?
   end
 end

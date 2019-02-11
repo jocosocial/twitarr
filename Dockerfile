@@ -13,7 +13,6 @@ WORKDIR $app
 ADD . $app
 
 RUN chmod +x start-docker.sh
-RUN echo "SECRET_TOKEN: '$(rake secret)'" > config/application.yml
 
 # these steps are done by start.sh:
 # RUN cp config/mongoid-example.yml config/mongoid.yml

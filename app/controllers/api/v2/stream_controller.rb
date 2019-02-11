@@ -118,8 +118,8 @@ class API::V2::StreamController < ApplicationController
   end
 
   def delete
-    unless @post.author == current_username or is_admin?
-      render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts"}
+    unless @post.author == current_username or is_moderator?
+      render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts"} and return
     end
     if @post.destroy
       head :no_content, status: :ok
@@ -155,14 +155,12 @@ class API::V2::StreamController < ApplicationController
 
   # noinspection RubyResolve
   def update
-    unless @post.author == current_username or is_admin?
-      render status: :forbidden, json: {status:'error', error: "You can not modify other users' posts"}
-      return
+    unless @post.author == current_username or is_tho?
+      render status: :forbidden, json: {status:'error', error: "You can not modify other users' posts"} and return
     end
 
     unless params.has_key?(:text) or params.has_key?(:photo)
-      render status: :bad_request, json: {status:'error', error: 'Update must modify either text or photo, or both.'}
-      return
+      render status: :bad_request, json: {status:'error', error: 'Update must modify either text or photo, or both.'} and return
     end
     
     @post.text = params[:text] if params.has_key? :text

@@ -37,7 +37,7 @@ class Time
   def self.from_param(input)
     if input =~ /^\d+$/
       Time.at(input.to_i / 1000.0)
-    else
+    elsif input
       Time.parse(input)
     end
   end

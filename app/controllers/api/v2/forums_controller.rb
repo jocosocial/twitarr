@@ -2,6 +2,7 @@ class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
+  before_action :tho_required, :only => [:toggle_sticky]
   before_action :not_muted, :only => [:create, :new_post, :update_post, :react]
   before_action :fetch_forum, :except => [:index, :create]
   before_action :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
@@ -139,6 +140,15 @@ class API::V2::ForumsController < ApplicationController
     render status: :bad_request, json: {status: 'error', error:'Reaction type must be included.'} and return unless params.has_key?(:type)
     @post.remove_reaction current_username, params[:type]
     render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username)}
+  end
+
+  def toggle_sticky
+    @forum.sticky = !@forum.sticky
+    if @forum.valid? && @forum.save
+      render json: {status: 'ok', sticky: @forum.sticky}
+    else
+      render json: {status: error, errors: @forum.errors.full_messages}
+    end
   end
     
   private

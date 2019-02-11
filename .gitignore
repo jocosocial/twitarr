@@ -9,7 +9,6 @@
 # vi editor droppings
 .*.swp
 
-/config/application.yml
 /config/mongoid.yml
 /config/secrets.yml
 

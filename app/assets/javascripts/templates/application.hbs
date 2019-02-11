@@ -41,7 +41,7 @@
       <li class="{{if logged_in '' 'hidden'}}"><a href='#' {{ action 'go_to_star_feed' }}><span class="glyphicon glyphicon-star"></span>Starred Stream</a></li>
       <li>{{#link-to "schedule"}}<span class="glyphicon glyphicon-calendar"></span>Schedule{{/link-to}}</li>
       <li>{{#link-to "search"}}<span class="glyphicon glyphicon-search"></span>Search{{/link-to}}</li>
-      <li>---</li>
+      <hr />
       <div class="{{if logged_in '' 'hidden'}}">
         <li>{{#link-to "seamail"}}<span class="glyphicon glyphicon-envelope"></span>My Seamail{{/link-to}}</li>
         <li>{{#link-to "events"}}<span class="glyphicon glyphicon-calendar"></span>My Events{{/link-to}}</li>
@@ -53,7 +53,7 @@
         </li>
         <li>{{#link-to "starred"}}<span class="glyphicon glyphicon-star"></span>My Starred Users{{/link-to}}</li>
         <li>{{#link-to "user"}}<span class="glyphicon glyphicon-user"></span>{{ display_name }}{{/link-to}}</li>
-        <li>---</li>
+        <hr />
         <li class="{{if logged_in '' 'hidden'}}"><a tabindex='-1' href='#' {{ action 'logout' }}>Logout</a></li>
       </div>
       <div class="{{if logged_in 'hidden'}}">
@@ -61,12 +61,12 @@
         <li>{{#link-to "user.new"}}Sign up{{/link-to}}</li>
       </div>
       <div class="{{if role_moderator '' 'hidden'}}">
-        <li>---</li>
+        <hr />
         <li class="{{if role_moderator '' 'hidden'}}">{{#link-to "admin.search"}}User administration{{/link-to}}</li>
         <li class="{{if role_tho '' 'hidden'}}">{{#link-to "admin.announcements"}}New announcement{{/link-to}}</li>
         <li class="{{if role_admin '' 'hidden'}}">{{#link-to "admin.upload_schedule"}}Upload Schedule{{/link-to}}</li>
       </div>
-      <li>---</li>
+      <hr />
       <li>{{#link-to 'help'}}<span class="glyphicon glyphicon-question-sign"></span>Help{{/link-to}}</li>
       <li>{{#link-to 'time'}}<span class="glyphicon glyphicon-time"></span>Time zone check{{/link-to}}</li>
     </ul>

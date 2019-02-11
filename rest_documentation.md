@@ -2780,7 +2780,7 @@ Returns a list of users matching `:query`. Searches username and display name.
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in as an admin
 
-### GET /api/v2/admin/users/:username/profile
+### GET /api/v2/admin/user/:username/profile
 
 #### Requires
 * logged in as admin.
@@ -2802,7 +2802,7 @@ Returns a list of users matching `:query`. Searches username and display name.
     { "status": "error", "error": "User not found." }
   ```
 
-### POST /api/v2/admin/users/:username
+### POST /api/v2/admin/user/:username
 
 Allows an admin to edit a user's public profile fields. All fields in the JSON request body are optional - only present fields will be updated.
 
@@ -2873,7 +2873,7 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
   }
   ```
 
-### POST /api/v2/admin/users/:username/activate DISABLED
+### POST /api/v2/admin/user/:username/activate DISABLED
 
 Sets a user's status to ACTIVE. Currently disabled.
 
@@ -2897,7 +2897,7 @@ Sets a user's status to ACTIVE. Currently disabled.
     { "status": "error", "error": "User not found." }
   ```
 
-### POST /api/v2/admin/users/:username/reset_password
+### POST /api/v2/admin/user/:username/reset_password
 
 Resets a user's password to the default password.
 
@@ -2920,7 +2920,7 @@ Resets a user's password to the default password.
     { "status": "error", "error": "User not found." }
   ```
 
-### POST /api/v2/admin/users/:username/reset_photo
+### POST /api/v2/admin/user/:username/reset_photo
 
 Reset the user's profile photo to their default identicon image.
 

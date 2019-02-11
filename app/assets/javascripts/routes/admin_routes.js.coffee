@@ -27,7 +27,7 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
 
 Twitarr.AdminProfileRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/admin/users/#{params.username}/profile").fail((response)=>
+    $.getJSON("#{Twitarr.api_path}/admin/user/#{params.username}/profile").fail((response)=>
       if response.status? && response.status == 401
         alert('Access Denied.')
         @transitionTo('index')
@@ -51,7 +51,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
   actions:
     save: (user) ->
       self = this
-      $.post("#{Twitarr.api_path}/admin/users/#{user.username}", {
+      $.post("#{Twitarr.api_path}/admin/user/#{user.username}", {
         role: user.role
         status: user.status
         email: user.email
@@ -79,7 +79,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
       )
 
     # activate: (username) ->
-    #   $.post("#{Twitarr.api_path}/admin/users/#{username}/activate").then (data) =>
+    #   $.post("#{Twitarr.api_path}/admin/user/#{username}/activate").then (data) =>
     #     if (data.status isnt 'ok')
     #       alert data.status
     #     else
@@ -87,7 +87,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
 
     reset_password: (username) ->
       if confirm('Are you sure you want to reset this user\'s password to "seamonkey"?')
-        $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_password").fail((response) =>
+        $.post("#{Twitarr.api_path}/admin/user/#{username}/reset_password").fail((response) =>
           if response.status? && response.status == 401
             alert('Access Denied.')
             @transitionTo('index')
@@ -104,7 +104,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
 
     reset_photo: (username) ->
       if confirm('Are you sure you want to reset this user\'s photo?')
-        $.post("#{Twitarr.api_path}/admin/users/#{username}/reset_photo").fail((response) =>
+        $.post("#{Twitarr.api_path}/admin/user/#{username}/reset_photo").fail((response) =>
           if response.status? && response.status == 401
             alert('Access Denied.')
             @transitionTo('index')

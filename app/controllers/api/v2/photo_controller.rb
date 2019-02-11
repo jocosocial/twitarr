@@ -71,7 +71,7 @@ class API::V2::PhotoController < ApplicationController
       errors.push 'Unable to modify fields other than original_filename'
     end
 
-    unless @photo.uploader == current_username or is_admin?
+    unless @photo.uploader == current_username or is_tho?
       errors.push "You can not update other users' photos"
     end
 
@@ -91,8 +91,8 @@ class API::V2::PhotoController < ApplicationController
   end
 
   def destroy
-    unless @photo.uploader == current_username or is_admin?
-      render status: :bad_request, json: {status: "error", error: "You can not delete other users' photos"}
+    unless @photo.uploader == current_username or is_moderator?
+      render status: :bad_request, json: {status: "error", error: "You can not delete other users' photos"} and return
     end
 
     begin

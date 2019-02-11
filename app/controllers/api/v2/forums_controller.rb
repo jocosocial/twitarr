@@ -94,7 +94,7 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def update_post
-    unless @post.author == current_username or is_admin?
+    unless @post.author == current_username or is_tho?
       render status: :forbidden, json: {status:'error', error: "You can not edit other users' posts."} and return
     end
     @post[:text] = params[:text]
@@ -108,7 +108,7 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def delete_post
-    unless @post.author == current_username or is_admin?
+    unless @post.author == current_username or is_moderator?
       render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts."} and return
     end
     thread_deleted = false

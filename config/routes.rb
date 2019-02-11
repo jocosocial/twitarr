@@ -22,6 +22,7 @@ Twitarr::Application.routes.draw do
       post 'forums/:id/:post_id/react/:type', to: 'forums#react'
       delete 'forums/:id/:post_id/react/:type', to: 'forums#unreact'
       get 'forums/:id/:post_id/react', to: 'forums#show_reacts'
+      post 'forum/:id/sticky', to: 'forums#toggle_sticky'
 
       resources :stream, only: [:new, :create]
       get 'stream', to: 'stream#index'

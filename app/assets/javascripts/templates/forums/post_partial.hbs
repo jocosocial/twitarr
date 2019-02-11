@@ -27,7 +27,7 @@
       {{model.likes_string}}
     </div>
     <div>
-      <button {{action 'unlike' bubbles=false}} class="btn-link {{if likeable 'hidden'}}">Unlike</button>
+      <button {{action 'unlike' bubbles=false}} class="btn-link {{if unlikeable '' 'hidden'}}">Unlike</button>
       <button {{action 'like' bubbles=false}} class="btn-link {{if likeable '' 'hidden'}}">Like</button>
       <button {{action 'edit' model.id bubbles=false}} class="btn-link {{if editable '' 'hidden'}}">Edit</button>
       <button {{action 'delete' model.id bubbles=false}} class="btn-link {{if deleteable '' 'hidden'}}">Delete</button>

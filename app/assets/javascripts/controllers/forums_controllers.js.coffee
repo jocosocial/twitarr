@@ -112,6 +112,10 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
     @get('logged_in') and not @get('model.user_likes')
   ).property('logged_in', 'model.user_likes')
 
+  unlikeable: (->
+    @get('logged_in') and @get('model.user_likes')
+  ).property('logged_in', 'model.user_likes')
+
   editable: (->
     @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_tho'))
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')

@@ -16,6 +16,7 @@ Twitarr::Application.routes.draw do
       post 'forums', to: 'forums#create'
       get 'forums/:id', to: 'forums#show'
       post 'forums/:id', to: 'forums#new_post'
+      delete 'forums/:id', to: 'forums#delete'
       get 'forums/:id/:post_id', to: 'forums#get_post'
       post 'forums/:id/:post_id', to: 'forums#update_post'
       delete 'forums/:id/:post_id', to: 'forums#delete_post'

@@ -3,6 +3,7 @@ class API::V2::ForumsController < ApplicationController
 
   before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
   before_action :tho_required, :only => [:toggle_sticky]
+  before_action :moderator_required, :only => [:delete]
   before_action :not_muted, :only => [:create, :new_post, :update_post, :react]
   before_action :fetch_forum, :except => [:index, :create]
   before_action :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
@@ -80,6 +81,14 @@ class API::V2::ForumsController < ApplicationController
     end
   end
 
+  def delete
+    if @forum.destroy
+      render json: {status: 'ok'}
+    else
+      render status: :bad_request, json: {status: 'error', errors: @forum.errors.full_messages}
+    end
+  end
+
   def new_post
     post = @forum.add_post current_username, params[:text], params[:photos]
     if post.valid?
@@ -147,7 +156,7 @@ class API::V2::ForumsController < ApplicationController
     if @forum.valid? && @forum.save
       render json: {status: 'ok', sticky: @forum.sticky}
     else
-      render json: {status: error, errors: @forum.errors.full_messages}
+      render status: :bad_request, json: {status: error, errors: @forum.errors.full_messages}
     end
   end
     

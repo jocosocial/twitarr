@@ -1,4 +1,7 @@
 Twitarr.SearchRoute = Ember.Route.extend
+  model: (params) ->
+    text: params.text
+    
   actions:
     search: (text) ->
       if !!text

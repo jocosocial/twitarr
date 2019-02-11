@@ -96,17 +96,18 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
       alert @get('model.page')
     delete: ->
       self = this
-      @get('model').delete(@get('model.forum_id'), @get('model.id')).fail((response) =>
-        if response.responseJSON?.error?
-          alert response.responseJSON.error
-        else
-          alert 'Post could not be deleted. Please try again later. Or try again someplace without so many seamonkeys.'
-      ).then((response) =>
-        if response.thread_deleted
-          @transitionToRoute('forums.page', 0)
-        else
-          self.get('target.target.router').refresh();
-      )
+      if confirm('Are you sure you want to delete this post?')
+        @get('model').delete(@get('model.forum_id'), @get('model.id')).fail((response) =>
+          if response.responseJSON?.error?
+            alert response.responseJSON.error
+          else
+            alert 'Post could not be deleted. Please try again later. Or try again someplace without so many seamonkeys.'
+        ).then((response) =>
+          if response.thread_deleted
+            @transitionToRoute('forums.page', 0)
+          else
+            self.get('target.target.router').refresh();
+        )
 
   likeable: (->
     @get('logged_in') and not @get('model.user_likes')

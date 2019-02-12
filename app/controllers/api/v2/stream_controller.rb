@@ -25,7 +25,7 @@ class API::V2::StreamController < ApplicationController
     if params[:starred]
       filter_authors = current_user.starred_users.reject { |x| x == current_username }
     end
-    query = {filter_author: params[:author], filter_authors: filter_authors, filter_hashtag: params[:hashtag], filter_reactions: params[:reactions], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
+    query = {filter_author: params[:author], filter_authors: filter_authors, filter_hashtag: params[:hashtag], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
     
     posts = nil
     newest = false

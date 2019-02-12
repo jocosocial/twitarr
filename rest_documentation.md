@@ -426,7 +426,6 @@ Get the tweets in the stream. This is an incredibly flexible endpoint that will 
 * limit=Integer - Optional (Default: 20) - How many tweets to get
 * author=username - Optional (Default: No Filter) - Filter by username specified
 * hashtag=hashtag - Optional (Default: No Filter) - Filter by hashtag
-* reactions=username - Optional (Default: No Filter) - Return only posts reacted by the username specified
 * mentions=username - Optional (Default: No Filter) - Filter by mentions of username specified
 * include_author=true - Optional (Default: false) - When filtering by mentions, include posts mentioning *or* written by the username specified
 * starred=true - Optional (Default: false) - Return only posts by starred users (You must be logged in for this to work.)
@@ -863,7 +862,7 @@ All reactions that have been applied to the post.
 ```
 {
     "status": "ok",
-    "reactions": ReactionDetails{}
+    "reactions": [ReactionDetails{}, ...]
 }
 ```
 
@@ -2430,7 +2429,7 @@ All reactions that have been applied to the forum post.
 ```
 {
     "status": "ok",
-    "reactions": ReactionDetails{}
+    "reactions": [ReactionDetails{}, ...]
 }
 ```
 

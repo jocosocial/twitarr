@@ -388,6 +388,7 @@ Get/post information on the tweet stream
 {
     "id": "id_string",
     "author": UserInfo{},
+    "locked": boolean,
     "timestamp": epoch,
     "text": "marked_up_text",
     "reactions": ReactionsSummary{},
@@ -402,6 +403,7 @@ Get/post information on the tweet stream
 {
     "id": "id_string",
     "author": UserInfo{},
+    "locked": boolean,
     "text": "marked up text",
     "timestamp": epoch,
     "reactions": ReactionsSummary{},
@@ -598,6 +600,10 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
         "error": "stream_post_id_string  is not a valid parent id" # stream_post_id_string will be replaced with the posted parent id
     } 
     ```
+  * HTTP 403 if parent_id is included, the matching parent post is locked, and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Post is locked." }
+    ```
 * status_code_with_error_list - HTTP 400 with a list of problems
   ```
     { 
@@ -625,7 +631,7 @@ Gets a single tweet.
 * status_code_with_message
   * HTTP 404 if tweet with given ID is not found
    ```
-    { "status": "error", "error": "Post not found" }
+    { "status": "error", "error": "Post not found." }
    ```
 
 ### POST /api/v2/tweet/:id
@@ -663,7 +669,7 @@ Both text and photo are optional, however, at least one must be specified.  If o
     ```
     { 
         "status": "error", 
-        "error": "Post not found"
+        "error": "Post not found."
     }
     ```
   * HTTP 403 if the user does not have permission to modify the tweet
@@ -679,6 +685,10 @@ Both text and photo are optional, however, at least one must be specified.  If o
         "status": "error", 
         "error": "Update must modify either text or photo, or both." 
     }
+    ```
+  * HTTP 403 if the post is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Post is locked." }
     ```
   * status_code_with_error_list - HTTP 400 with a list of problems
     ```
@@ -710,7 +720,7 @@ No body.  200-OK
     ```
     { 
         "status": "error", 
-        "error": "Post not found"
+        "error": "Post not found."
     }
     ```
   * HTTP 403 if the user does not have permission to delete the tweet
@@ -720,6 +730,36 @@ No body.  200-OK
         "error": "You can not delete other users' posts" 
     }
     ```
+  * HTTP 403 if the post is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Post is locked." }
+    ```
+
+### POST /api/v2/tweet/:id/locked/:locked
+
+Changes locked status for a stream post and its children. Locked stream posts cannot be modified in any way by users (moderators and above can still modify). Moderator login required. `:locked` should be either true or false.
+
+### Requires
+
+* logged in as Moderator, THO, or Admin
+  * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "locked": boolean
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as Moderator, THO or Admin
+* status_code_with_message
+  * HTTP 404 if post with given ID is not found
+   ```
+    { "status": "error", "error": "Post not found." }
+   ```
 
 ### POST /api/v2/tweet/:id/react/:type
 
@@ -748,7 +788,7 @@ Summary of reactions that have been applied to the post.
     ```
     {
         "status": "error",
-        "error": "Post not found"
+        "error": "Post not found."
     }
     ```
   * HTTP 400 if `type` is not included
@@ -764,6 +804,10 @@ Summary of reactions that have been applied to the post.
         "status": "error",
         "error": "Invalid reaction: type" # type will be replaced with the posted type
     }
+    ```
+  * HTTP 403 if the post is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Post is locked." }
     ```
 
 ### DELETE /api/v2/tweet/:id/react/:type
@@ -793,7 +837,7 @@ Summary of reactions that have been applied to the post.
     ```
     {
         "status": "error",
-        "error": "Post not found"
+        "error": "Post not found."
     }
     ```
   * HTTP 400 if `type` is not included
@@ -802,6 +846,10 @@ Summary of reactions that have been applied to the post.
         "status": "error",
         "error": "Reaction type must be included."
     }
+    ```
+  * HTTP 403 if the post is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Post is locked." }
     ```
 
 ### GET /api/v2/tweet/:id/react
@@ -825,7 +873,7 @@ All reactions that have been applied to the post.
     ```
     { 
         "status": "error", 
-        "error": "Post not found"
+        "error": "Post not found."
     }
     ```
 

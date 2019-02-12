@@ -247,7 +247,7 @@ class API::V2::StreamController < ApplicationController
     begin
       @post = StreamPost.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status: :not_found, json: {status:'error', error: "Post not found"}
+      render status: :not_found, json: {status:'error', error: "Post not found."}
     end
   end
 

@@ -15,5 +15,8 @@ sed -e "s/127.0.0.1:27017/${MONGO_PORT#tcp://}/" config/mongoid_example.yml > co
 rake db:mongoid:create_indexes
 rake db:seed
 
+# remove any temp files left behind by previous runs
+rake tmp:clear
+
 # bind to all interfaces (this exposes ports out to docker)
 exec rails server -b 0.0.0.0

@@ -34,11 +34,11 @@ class ApplicationController < ActionController::Base
   end
 
   def is_tho?
-    (current_user&.role >= User::Role::THO) || (session[:role] >= User::Role::THO)
+    (!current_user.nil? && current_user.role >= User::Role::THO) || (!session[:role].nil? && session[:role] >= User::Role::THO)
   end
 
   def is_moderator?
-    (current_user&.role >= User::Role::MODERATOR) || (session[:role] >= User::Role::MODERATOR)
+    (!current_user.nil? && current_user.role >= User::Role::MODERATOR) || (!session[:role].nil? && session[:role] >= User::Role::MODERATOR)
   end
 
   def is_muted?

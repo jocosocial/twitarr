@@ -153,7 +153,11 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def sticky
-    @forum.sticky = params[:sticky].to_bool
+    begin
+      @forum.sticky = params[:sticky].to_bool
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
+    end
     if @forum.valid? && @forum.save
       render json: {status: 'ok', sticky: @forum.sticky}
     else
@@ -162,7 +166,11 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def locked
-    @forum.locked = params[:locked].to_bool
+    begin
+      @forum.locked = params[:locked].to_bool
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
+    end
     if @forum.valid? && @forum.save
       render json: {status: 'ok', locked: @forum.locked}
     else

@@ -34,7 +34,11 @@
       <button {{action 'unlike' bubbles=false}} class="btn-link {{if unlikeable '' 'hidden'}}">Unlike</button>
       <button {{action 'like' bubbles=false}} class="btn-link {{if likeable '' 'hidden'}}">Like</button>
       <button {{action 'edit' model.id bubbles=false}} class="btn-link {{if editable '' 'hidden'}}">Edit</button>
-      <button {{action 'display_tweet' model.id bubbles=false}} class="btn-link {{if logged_in '' 'hidden'}}">Reply</button>
+      <button {{action 'display_tweet' model.id bubbles=false}} class="btn-link {{if replyable '' 'hidden'}}">Reply</button>
+      {{#if role_moderator}}
+        <button {{action 'toggle_locked' bubbles=false}} class="btn-link {{if locked 'hidden'}}">Lock</button>
+        <button {{action 'toggle_locked' bubbles=false}} class="btn-link {{if locked '' 'hidden'}}">Unlock</button>
+      {{/if}}
       <button {{action 'delete' model.id bubbles=false}} class="btn-link {{if deleteable '' 'hidden'}}">Delete</button>
     </div>
   </div>

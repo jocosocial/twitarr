@@ -6,19 +6,19 @@ class API::V2::StreamController < ApplicationController
   before_action :login_required,  :only => [:create, :destroy, :update, :react, :unreact]
   before_action :not_muted,  :only => [:create, :update, :react]
   before_action :fetch_post, :except => [:index, :create, :view_mention, :view_hash_tag]
-
-  def fetch_post
-    begin
-      @post = StreamPost.find(params[:id])
-    rescue Mongoid::Errors::DocumentNotFound
-      render status: :not_found, json: {status:'error', error: "Post not found"}
-    end
-  end
+  before_action :moderator_required, :only => [:locked]
+  before_action :check_locked, :only => [:destroy, :update, :react, :unreact]
 
   def index
     params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
     if params[:limit] < 1
       render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0"} and return
+    end
+
+    begin
+      param_newer_posts = params.has_key?(:newer_posts) && params[:newer_posts].to_bool
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
     end
 
     filter_authors = nil
@@ -58,7 +58,7 @@ class API::V2::StreamController < ApplicationController
     # If pulled the newest posts, and newer_posts=true, it means we are getting the newest posts,
     # and expect the next_page to be posts that are even further in the future.
     # Since we can't time travel, there are no newer posts, so set expected values for has_next_page and next_page.
-    if newest && params.has_key?(:newer_posts) && params[:newer_posts].to_bool
+    if newest && params.has_key?(:newer_posts) && param_newer_posts
       results.merge!({has_next_page: false, next_page: params[:start]+1})
     end
     
@@ -80,6 +80,21 @@ class API::V2::StreamController < ApplicationController
       post_result[:children] = children
     end
     render json: {status: 'ok', post: post_result, has_next_page: has_next_page}
+  end
+
+  def locked
+    begin
+      lock = params[:locked].to_bool
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
+    end
+    @post.locked = lock
+    if @post.valid? && @post.save
+      children = StreamPost.where(parent_chain: params[:id]).update_all(locked: lock)
+      render json: {status: 'ok', locked: @post.locked}
+    else
+      render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages}
+    end
   end
 
   def get
@@ -132,10 +147,9 @@ class API::V2::StreamController < ApplicationController
     parent_chain = []
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
-      unless parent
-        render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"}
-        return
-      end
+      render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"} and return unless parent
+      render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !is_moderator?
+      
       parent_chain = parent.parent_chain + [params[:parent]]
     end
 
@@ -227,5 +241,19 @@ class API::V2::StreamController < ApplicationController
 
   def newer_posts(query)
     posts = StreamPost.at_or_after(params[:start], query)
-  end  
+  end
+
+  def fetch_post
+    begin
+      @post = StreamPost.find(params[:id])
+    rescue Mongoid::Errors::DocumentNotFound
+      render status: :not_found, json: {status:'error', error: "Post not found."}
+    end
+  end
+
+  def check_locked
+    if !is_moderator?
+      render status: :forbidden, json: {status: 'error', error: 'Post is locked.'} if @post.locked
+    end
+  end
 end

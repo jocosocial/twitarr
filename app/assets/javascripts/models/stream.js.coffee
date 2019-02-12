@@ -81,10 +81,16 @@ Twitarr.StreamPost = Ember.Object.extend
         alert(response.responseJSON.error)
       else
         alert 'Unable to delete tweet. Please try again later.'
-    ).then((data) =>
-      for child in @get('children')
-        child.parent_chain = []
+    ).then( =>
       alert("Successfully deleted")
+    )
+  
+  toggle_locked: ->
+    $.post("#{Twitarr.api_path}/tweet/#{@get('id')}/locked/#{!@get('locked')}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert 'Could not toggle locked. Please try again later. Or try again someplace without so many seamonkeys.'
     )
 
 Twitarr.StreamPost.reopenClass

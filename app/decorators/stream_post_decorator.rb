@@ -11,6 +11,7 @@ class StreamPostDecorator < BaseDecorator
           display_name: User.display_name_from_username(author),
           last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
+        locked: locked,
         timestamp: timestamp.to_ms,
         text: format_text(text, options),
         reactions: BaseDecorator.reaction_summary(reactions, username),

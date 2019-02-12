@@ -15,6 +15,7 @@ class StreamPost
   field :et, as: :entities, type: Array
   field :ed, as: :edits, type: Array, default: []
   field :lc, as: :location, type: String
+  field :lo, as: :locked, type: Boolean, default: false
 
   field :p, as: :photo, type: String
   field :pc, as: :parent_chain, type: Array, default: []
@@ -25,6 +26,8 @@ class StreamPost
   validate :validate_author
   validate :validate_location
   validate :validate_photo
+
+  after_destroy :reparent_children
 
   # 1 = ASC, -1 DESC
   index timestamp: -1
@@ -78,6 +81,10 @@ class StreamPost
   def parent_chain
     self.parent_chain = [] if super.nil?
     super
+  end
+
+  def reparent_children
+    children = StreamPost.where(parent_chain: id).pull(parent_chain: id)
   end
 
   def self.search(params = {})

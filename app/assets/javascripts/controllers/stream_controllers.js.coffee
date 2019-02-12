@@ -97,32 +97,44 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
     delete: ->
       if confirm('Are you sure you want to delete this post?')
         @get('model').delete()
-        @transitionToRoute 'stream'
+        @get('target.target.router').refresh()
     view: ->
       @transitionToRoute('stream.view', @get('model.id'))
     edit: ->
       @transitionToRoute('stream.edit', @get('model.id'))
     view_thread: ->
       @transitionToRoute('stream.view', @get('model.parent_id') or @get('model.id'))
+    toggle_locked: ->
+      @get('model').toggle_locked().then((response) =>
+        @get('target.target.router').refresh()
+      )
 
   show_parent: (->
     @get('parentController').get('parent_link_visible') && @get('parent_chain')
   ).property('parent_chain', 'new_post_visible')
 
+  locked: (->
+    @get('model.locked')
+  ).property('model.locked')
+
+  replyable: (->
+    @get('logged_in') and (not @get('model.locked') or @get('role_moderator'))
+  ).property('logged_in', 'application.login_role', 'model.locked')
+
   editable: (->
-    @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
+    @get('logged_in') and ((@get('model.author.username') is @get('login_user') and not @get('model.locked')) or @get('role_tho'))
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
   likeable: (->
-    @get('logged_in') and not @get('model.user_likes')
+    @get('logged_in') and not @get('model.user_likes') and (not @get('model.locked') or @get('role_moderator'))
   ).property('logged_in', 'model.user_likes')
 
   unlikeable: (->
-    @get('logged_in') and @get('model.user_likes')
+    @get('logged_in') and @get('model.user_likes') and (not @get('model.locked') or @get('role_moderator'))
   ).property('logged_in', 'model.user_likes')
 
   deleteable: (->
-    @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
+    @get('logged_in') and ((@get('model.author.username') is @get('login_user') and not @get('model.locked')) or @get('role_moderator'))
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
 Twitarr.StreamEditController = Twitarr.Controller.extend Twitarr.SinglePhotoUploadMixin,

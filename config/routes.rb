@@ -39,6 +39,7 @@ Twitarr::Application.routes.draw do
       get 'tweet/:id/react', to: 'stream#show_reacts'
       post 'tweet/:id/react/:type', to: 'stream#react'
       delete 'tweet/:id/react/:type', to: 'stream#unreact'
+      post 'tweet/:id/locked/:locked', to: 'stream#locked'
 
       post 'user/new', to: 'user#new'
       get 'user/new_seamail', to: 'user#new_seamail'

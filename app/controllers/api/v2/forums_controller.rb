@@ -3,10 +3,11 @@ class API::V2::ForumsController < ApplicationController
 
   before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
   before_action :tho_required, :only => [:toggle_sticky]
-  before_action :moderator_required, :only => [:delete]
+  before_action :moderator_required, :only => [:delete, :locked]
   before_action :not_muted, :only => [:create, :new_post, :update_post, :react]
   before_action :fetch_forum, :except => [:index, :create]
   before_action :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
+  before_action :check_locked, :only => [:new_post, :update_post, :delete_post, :react, :unreact]
   
   def index
     page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
@@ -93,14 +94,14 @@ class API::V2::ForumsController < ApplicationController
     post = @forum.add_post current_username, params[:text], params[:photos]
     if post.valid?
       @forum.save
-      render json: {status: 'ok', forum_post: post.decorate.to_hash(current_user, nil, request_options)}
+      render json: {status: 'ok', forum_post: post.decorate.to_hash(@forum.locked, current_user, nil, request_options)}
     else
       render status: :bad_request, json: {status: 'error', errors: post.errors.full_messages}
     end
   end
 
   def get_post
-    render json: {status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options)}
+    render json: {status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options)}
   end
 
   def update_post
@@ -111,7 +112,7 @@ class API::V2::ForumsController < ApplicationController
     @post[:photos] = params[:photos]
     if @post.valid?
       @post.save
-      render json: {status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options)}
+      render json: {status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options)}
     else
       render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages} 
     end
@@ -151,12 +152,21 @@ class API::V2::ForumsController < ApplicationController
     render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username)}
   end
 
-  def toggle_sticky
-    @forum.sticky = !@forum.sticky
+  def sticky
+    @forum.sticky = params[:sticky].to_bool
     if @forum.valid? && @forum.save
       render json: {status: 'ok', sticky: @forum.sticky}
     else
-      render status: :bad_request, json: {status: error, errors: @forum.errors.full_messages}
+      render status: :bad_request, json: {status: 'error', errors: @forum.errors.full_messages}
+    end
+  end
+
+  def locked
+    @forum.locked = params[:locked].to_bool
+    if @forum.valid? && @forum.save
+      render json: {status: 'ok', locked: @forum.locked}
+    else
+      render status: :bad_request, json: {status: 'error', errors: @forum.errors.full_messages}
     end
   end
     
@@ -174,6 +184,12 @@ class API::V2::ForumsController < ApplicationController
       @post = @forum.posts.find(params[:post_id])
     rescue Mongoid::Errors::DocumentNotFound
       render status: :not_found, json: {status:'error', error: "Post not found."}
+    end
+  end
+
+  def check_locked
+    if !is_moderator?
+      render status: :forbidden, json: {status: 'error', error: 'Forum thread is locked.'} if @forum.locked
     end
   end
 end

@@ -1899,6 +1899,7 @@ Get/post new threads and posts to those threads
     "id": "forum_id_string",
     "subject": "subject_string",
     "sticky": boolean,
+    "locked": boolean,
     "last_post_author": {
         UserInfo{}
     }
@@ -1917,6 +1918,7 @@ Get/post new threads and posts to those threads
     "id": "forum_id_string"
     "subject": "subject_string",
     "sticky": boolean,
+    "locked": boolean,
     "next_page": null|Integer, # Only included if paging was requested through query parameters
     "prev_page": null|Integer, # Only included if paging was requested through query parameters
     "page_count": Integer, # Only included if paging was requested through query parameters
@@ -1933,6 +1935,7 @@ Get/post new threads and posts to those threads
     "id": "post_id_string",
     "forum_id": "forum_id_string",
     "author": UserInfo{},
+    "thread_locked": boolean,
     "text": "string",
     "timestamp": epoch, # Timestamp of when the post was made
     "photos": [ PhotoDetails{}, ... ],
@@ -2069,9 +2072,13 @@ Creates a new post in the thread.
 #### Error Resposnes
 * status_code_with_message
   * HTTP 404 if thread with given ID is not found
-   ```
+    ```
     { "status": "error", "error": "Forum thread not found." }
-   ```
+    ```
+  * HTTP 403 if the forum thread is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Forum thread is locked." }
+    ```
 * status_code_with_error_list - HTTP 400 with a list of problems
 ```
 {
@@ -2108,9 +2115,9 @@ Deletes an entire forum thread. Moderator or higher required.
     { "status": "error", "error": "Forum thread not found." }
    ```
 
-### POST /api/v2/forum/:id/sticky
+### POST /api/v2/forum/:id/sticky/:sticky
 
-Toggles sticky status for a forum thread. THO or Admin login required.
+Changes sticky status for a forum thread. Sticky threads will be sorted before other threads. THO or Admin login required. `:sticky` should be either true or false.
 
 ### Requires
 
@@ -2128,6 +2135,32 @@ Toggles sticky status for a forum thread. THO or Admin login required.
 
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in as THO or Admin
+* status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+
+### POST /api/v2/forum/:id/locked/:locked
+
+Changes locked status for a forum thread. Locked threads cannot be modified in any way by users (moderators and above can still modify). Moderator login required. `:locked` should be either true or false.
+
+### Requires
+
+* logged in as Moderator, THO, or Admin
+  * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "locked": boolean
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as Moderator, THO or Admin
 * status_code_with_message
   * HTTP 404 if thread with given ID is not found
    ```
@@ -2199,6 +2232,10 @@ Edits a post in the thread.
    ```
     { "status": "error", "error": "You can not edit other users' posts." }
    ```
+   * HTTP 403 if the forum thread is locked and the user is not moderator or higher
+   ```
+    { "status": "error", "error": "Forum thread is locked." }
+   ```
 * status_code_with_error_list - HTTP 400 with a list of problems
 ```
 {
@@ -2241,6 +2278,10 @@ Deletes a post from a thread. If the post was the only post in the thread, the t
    * HTTP 401 if the current user is not the post author or an admin
    ```
     { "status": "error", "error": "You can not delete other users' posts." }
+   ```
+   * HTTP 403 if the forum thread is locked and the user is not moderator or higher
+   ```
+    { "status": "error", "error": "Forum thread is locked." }
    ```
 
 ### POST /api/v2/forums/:id/:post_id/react/:type
@@ -2285,6 +2326,10 @@ Summary of reactions that have been applied to the post.
         "error": "Invalid reaction: type" # type will be replaced with the posted type
     }
     ```
+  * HTTP 403 if the forum thread is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Forum thread is locked." }
+    ```
 
 ### DELETE /api/v2/forums/:id/:post_id/react/:type
 
@@ -2320,6 +2365,10 @@ Summary of reactions that have been applied to the forum post.
   * HTTP 400 if `type` is not included
     ```
     { "status": "error", "error": "Reaction type must be included." }
+    ```
+  * HTTP 403 if the forum thread is locked and the user is not moderator or higher
+    ```
+    { "status": "error", "error": "Forum thread is locked." }
     ```
 
 ### GET /api/v2/forums/:id/:post_id/react

@@ -16,6 +16,10 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
     @get('model.forum.sticky')
   ).property('model.forum.sticky')
 
+  locked: (->
+    @get('model.forum.locked')
+  ).property('model.forum.locked')
+
   calculate_first_unread_post: (->
     for post in @get('model.forum.posts')
       if post.timestamp > @get('model.forum.latest_read')
@@ -30,6 +34,10 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
   has_prev_page: (->
     @get('model.prev_page') isnt null or undefined
   ).property('model.prev_page')
+
+  can_reply: (->
+    @get('logged_in') and (@get('model.next_page') is null or undefined) and (not @get('model.forum.locked') or @get('role_moderator'))
+  ).property('logged_in', 'model.forum.locked', 'application.login_role')
   
   actions:
     handleKeyDown: (v,e) ->
@@ -75,21 +83,40 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
           @transitionToRoute('forums.page', 0)
         )
     toggle_sticky: ->
-      $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/sticky").fail((response) =>
+      $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/sticky/#{!@get('model.forum.sticky')}").fail((response) =>
         if response.responseJSON?.error?
           alert response.responseJSON.error
         else
           alert 'Could not toggle sticky status. Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
-        @set('model.forum.sticky', !@get('model.forum.sticky'))
+        @set('model.forum.sticky', response.sticky)
+      )
+    toggle_locked: ->
+      $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/locked/#{!@get('model.forum.locked')}").fail((response) =>
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else
+          alert 'Could not toggle sticky status. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        @set('model.forum.locked', response.locked)
       )
 
 Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
   actions:
     like: ->
-      @get('model').react('like')
+      @get('model').react('like').fail((response) =>
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else
+          alert 'Could not like post. Please try again later. Or try again someplace without so many seamonkeys.'
+      )
     unlike: ->
-      @get('model').unreact('like')
+      @get('model').unreact('like').fail((response) =>
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else
+          alert 'Could not unlike post. Please try again later. Or try again someplace without so many seamonkeys.'
+      )
     edit: ->
       @transitionToRoute('forums.edit', @get('model.forum_id'), @get('model.id'))
     page: ->
@@ -110,19 +137,19 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
         )
 
   likeable: (->
-    @get('logged_in') and not @get('model.user_likes')
+    @get('logged_in') and not @get('model.user_likes') and (not @get('model.thread_locked') or @get('role_moderator'))
   ).property('logged_in', 'model.user_likes')
 
   unlikeable: (->
-    @get('logged_in') and @get('model.user_likes')
+    @get('logged_in') and @get('model.user_likes') and (not @get('model.thread_locked') or @get('role_moderator'))
   ).property('logged_in', 'model.user_likes')
 
   editable: (->
-    @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_tho'))
+    @get('logged_in') and (@get('model.author.username') is @get('login_user') and not @get('model.thread_locked')) or @get('role_tho')
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
   deleteable: (->
-    @get('logged_in') and (@get('model.author.username') is @get('login_user') or @get('role_moderator'))
+    @get('logged_in') and (@get('model.author.username') is @get('login_user') and not @get('model.thread_locked')) or @get('role_moderator')
   ).property('logged_in', 'model.author.username', 'login_user', 'application.login_role')
 
 Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,

@@ -9,6 +9,7 @@ class Forum
   field :sj, as: :subject, type: String
   field :lp, as: :last_post_time, type: Time
   field :st, as: :sticky, type: Boolean, default: false
+  field :lo, as: :locked, type: Boolean, default: false
 
   embeds_many :posts, class_name: 'ForumPost', store_as: :fp, order: :timestamp.asc, validate: false
 

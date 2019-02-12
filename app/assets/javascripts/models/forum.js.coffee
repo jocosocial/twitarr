@@ -78,17 +78,11 @@ Twitarr.ForumPost = Ember.Object.extend
 
   react: (word) ->
     $.post("#{Twitarr.api_path}/forums/#{@get('forum_id')}/#{@get('id')}/react/#{word}").then (data) =>
-      if(data.status == 'ok')
-        @set('reactions', data.reactions)
-      else
-        alert data.status
+      @set('reactions', data.reactions)
 
   unreact: (word) ->
     $.ajax("#{Twitarr.api_path}/forums/#{@get('forum_id')}/#{@get('id')}/react/#{word}", method: 'DELETE').then (data) =>
-      if(data.status == 'ok')
-        @set('reactions', data.reactions)
-      else
-        alert data.status
+      @set('reactions', data.reactions)
   
   delete: (forum_id, post_id) ->
     $.ajax("#{Twitarr.api_path}/forums/#{forum_id}/#{post_id}", method: 'DELETE')

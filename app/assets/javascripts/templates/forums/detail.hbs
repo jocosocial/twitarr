@@ -5,6 +5,8 @@
       <button class="btn {{if sticky '' 'hidden'}}" {{action 'toggle_sticky'}}>Unsticky Thread</button>
     {{/if}}
     {{#if role_moderator}}
+      <button class="btn {{if locked 'hidden' ''}}" {{action 'toggle_locked'}}>Lock Thread</button>
+      <button class="btn {{if locked '' 'hidden'}}" {{action 'toggle_locked'}}>Unlock Thread</button>
       <button class="btn" {{action 'delete_thread'}}>Delete Thread</button>
     {{/if}}
     {{#if model.has_prev_page}}
@@ -26,7 +28,7 @@
 
 </div>
 
-<div class="display_card {{if logged_in '' 'hidden'}} {{if has_next_page 'hidden'}} {{if has_new_posts '' 'scroll_to'}}">
+<div class="display_card {{if can_reply '' 'hidden'}} {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">
     <span class="title big-title">Post a message</span>
     {{textarea value=model.new_post rows='3' class='input' key-down='handleKeyDown'}}

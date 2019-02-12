@@ -20,9 +20,13 @@ class API::V2::SeamailController < ApplicationController
   def index
     extra_query = {}
     counting_unread = false
-    if params[:unread] && params[:unread].to_bool
-      extra_query[:unread] = true
-      counting_unread = true
+    begin
+      if params[:unread] && params[:unread].to_bool
+        extra_query[:unread] = true
+        counting_unread = true
+      end
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
     end
     if params[:after]
       val = Time.from_param(params[:after])

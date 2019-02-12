@@ -48,14 +48,8 @@ class BaseDecorator < Draper::Decorator
       # plain wants us to not do any markup
       text
     else
-      auto_link text, AUTO_LINK_OPTIONS
+      auto_link text
     end
   end
-
-  AUTO_LINK_OPTIONS = {
-    username_url_base: "#/user/profile/",
-    url_target: "_blank",
-    username_include_symbol: true
-  }
 
 end

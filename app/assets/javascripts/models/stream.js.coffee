@@ -81,8 +81,6 @@ Twitarr.StreamPost = Ember.Object.extend
         alert(response.responseJSON.error)
       else
         alert 'Unable to delete tweet. Please try again later.'
-    ).then( =>
-      alert("Successfully deleted")
     )
   
   toggle_locked: ->

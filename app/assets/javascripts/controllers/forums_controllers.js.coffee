@@ -87,7 +87,7 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
         if response.responseJSON?.error?
           alert response.responseJSON.error
         else
-          alert 'Could not toggle sticky status. Please try again later. Or try again someplace without so many seamonkeys.'
+          alert 'Could not toggle sticky. Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
         @set('model.forum.sticky', response.sticky)
       )
@@ -96,7 +96,7 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
         if response.responseJSON?.error?
           alert response.responseJSON.error
         else
-          alert 'Could not toggle sticky status. Please try again later. Or try again someplace without so many seamonkeys.'
+          alert 'Could not toggle locked. Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
         @set('model.forum.locked', response.locked)
       )

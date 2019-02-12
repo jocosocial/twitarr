@@ -29,17 +29,6 @@ class BaseDecorator < Draper::Decorator
     end
   end
 
-  def twitarr_auto_linker(text, options = {})
-    if options[:app] == 'CM'
-      cm_auto_link text
-    elsif options[:app] == 'plain'
-      # plain wants us to not do any markup
-      text
-    else
-      auto_link text, {username_url_base: "#/user/profile/"}
-    end
-  end
-
   def self.reaction_summary(reactions, username)
     summary = Hash.new
     reactions.each do |x|
@@ -51,4 +40,22 @@ class BaseDecorator < Draper::Decorator
     end
     summary
   end
+
+  def twitarr_auto_linker(text, options = {})
+    if options[:app] == 'CM'
+      cm_auto_link text
+    elsif options[:app] == 'plain'
+      # plain wants us to not do any markup
+      text
+    else
+      auto_link text, AUTO_LINK_OPTIONS
+    end
+  end
+
+  AUTO_LINK_OPTIONS = {
+    username_url_base: "#/user/profile/",
+    url_target: "_blank",
+    username_include_symbol: true
+  }
+
 end

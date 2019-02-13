@@ -1,7 +1,7 @@
 Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   scroll: (->
     Ember.run.scheduleOnce('afterRender', @, =>
-      position = $('.scroll_to').offset().top - 60
+      position = $('.scroll_to').offset().top - 80
       window.scrollTo(0, position)
     )
   )

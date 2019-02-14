@@ -22,7 +22,7 @@ class PhotoStore
       return { status: 'error', error: 'Photo could not be opened - is it an image?' }
     end
     return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
-    photo = store(temp_file, uploader)
+    photo = store(temp_file, uploader, img.columns, img.rows)
     img.resize_to_fit(MEDIUM_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
     FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", md_thumb_path(photo.store_filename)
     img.resize_to_fill(SMALL_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
@@ -75,7 +75,7 @@ class PhotoStore
     { status: 'ok', md5_hash: Digest::MD5.file(small_profile_path).hexdigest }
   end
 
-  def store(file, uploader)
+  def store(file, uploader, width, height)
     new_filename = SecureRandom.uuid.to_s + Pathname.new(file.filename).extname.downcase
     animated_image = ImageHelpers::AnimatedImage.is_animated file.tempfile.path
     photo = PhotoMetadata.new uploader: uploader,
@@ -83,7 +83,9 @@ class PhotoStore
                               store_filename: new_filename,
                               upload_time: Time.now,
                               md5_hash: file.md5_hash,
-                              animated: animated_image
+                              animated: animated_image,
+                              width: width,
+                              height: height
     FileUtils.copy file.tempfile, photo_path(photo.store_filename)
     photo
   end

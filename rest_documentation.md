@@ -63,7 +63,9 @@ These output types are used throughout the API
   ```
   {
       "id": "photo_id_string",
-      "animated": boolean
+      "animated": boolean,
+      "width": integer, # Original photo width in pixels
+      "height": integer # Original photo height in pixels
   }
   ```
 * Announcement{} - A JSON object representing an announcement
@@ -903,7 +905,9 @@ All reactions that have been applied to the post.
     "md5_hash": "md5_string",
     "original_filename": "filename_string",
     "uploader": "username_string",
-    "upload_time": epoch
+    "upload_time": epoch,
+    "width": integer, # Original photo width in pixels
+    "height: integer # Original photo height in pixels
 }
 ```
 

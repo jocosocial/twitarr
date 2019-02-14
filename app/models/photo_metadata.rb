@@ -7,6 +7,8 @@ class PhotoMetadata
   field :ut, as: :upload_time, type: Time
   field :an, as: :animated, type: Boolean
   field :hsh, as: :md5_hash, type: String
+  field :w, as: :width, type: Integer, default: 0
+  field :h, as: :height, type: Integer, default: 0
 
   def serializable_hash(options)
     original_hash = super(options)

@@ -153,8 +153,8 @@ class API::V2::StreamController < ApplicationController
       parent_chain = parent.parent_chain + [params[:parent]]
     end
 
-    post = StreamPost.create(text: params[:text], author: current_username, timestamp: Time.now, photo: params[:photo],
-                             location: params[:location], parent_chain: parent_chain)
+    post = StreamPost.create(text: params[:text], author: post_as_user(params), timestamp: Time.now, photo: params[:photo],
+                             location: params[:location], parent_chain: parent_chain, original_author: current_username)
     if post.valid?
       if params[:location]
         # if the location field was used, update the user's last known location

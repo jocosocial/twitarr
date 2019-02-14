@@ -20,6 +20,9 @@
         {{/each}}
       </ul>
       <span class="controls">
+        {{#if role_moderator}}
+          {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
+        {{/if}}
         <button class="btn" {{action 'cancel'}}>Cancel</button>
         <button class="btn" {{action 'new'}}>Post</button>
       </span>

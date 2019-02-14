@@ -103,6 +103,13 @@ class ApplicationController < ActionController::Base
     ret
   end
 
+  def post_as_user(params)
+    if params.has_key?(:as_mod) && params[:as_mod].to_bool && is_moderator?
+      return 'moderator'
+    end
+    return current_username
+  end
+
   private
 
   def get_username(key)

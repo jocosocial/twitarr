@@ -572,13 +572,15 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
 {
     "text": "Tweet content",
     "parent": "stream_post_id_string", # Optional
-    "photo": "photo_id_string" # Optional
+    "photo": "photo_id_string", # Optional
+    "as_mod": boolean #Optional
 }
 ```
 
 * Text is required.  This will be the text of the tweet to be posted.
 * parent is optional.  If Specified, it will make this post a reply to another StreamPost by the stream_post_id_string passed in.
 * photo is optional.  If Specified, it will make this post link in the photo that has already been uploaded with the photo_id_string passed in.
+* as_mod is optional. If it is set to true, and the current user has a priviliged role, the post will appear to be made by the moderator account.
 
 #### Returns
 
@@ -2039,9 +2041,12 @@ Creates a forum thread and its first post.
 {
     "subject": "string",
     "text": "string",
-    "photos": ["photo_id_string", ...]
+    "photos": ["photo_id_string", ...], # Optional
+    "as_mod": boolean # Optional
 }
 ```
+* photos is optional.  If specified, it will make this post link in the photos that have already been uploaded with the photo_id_strings passed in.
+* as_mod is optional. If it is set to true, and the current user has a priviliged role, the post will appear to be made by the moderator account.
 
 #### Returns
 
@@ -2103,9 +2108,13 @@ Creates a new post in the thread.
 ```
 {
     "text": "string",
-    "photos": ["photo_id_string", ...]
+    "photos": ["photo_id_string", ...], # Optional
+    "as_mod": boolean
 }
 ```
+
+* photos is optional. If specified, it will make this post link in the photos that have already been uploaded with the photo_id_strings passed in.
+* as_mod is optional. If it is set to true, and the current user has a priviliged role, the post will appear to be made by the moderator account.
 
 #### Returns
 

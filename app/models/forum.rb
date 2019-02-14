@@ -52,10 +52,10 @@ class Forum
     posts.first.author
   end
 
-  def self.create_new_forum(author, subject, first_post_text, photos)
+  def self.create_new_forum(author, subject, first_post_text, photos, original_author)
     forum = Forum.new subject: subject
     forum.last_post_time = Time.now
-    forum.posts << ForumPost.new(author: author, text: first_post_text, timestamp: Time.now, photos: photos)
+    forum.posts << ForumPost.new(author: author, text: first_post_text, timestamp: Time.now, photos: photos, original_author: original_author)
     if forum.valid?
       forum.save
     end
@@ -63,9 +63,9 @@ class Forum
   end
 
   # This is just a terrible scheme
-  def add_post(author, text, photos)
+  def add_post(author, text, photos, original_author)
     self.last_post_time = Time.now
-    posts.create author: author, text: text, timestamp: Time.now, photos: photos
+    posts.create author: author, text: text, timestamp: Time.now, photos: photos, original_author: original_author
   end
 
   def self.view_mentions(params = {})

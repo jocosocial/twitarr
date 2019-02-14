@@ -13,7 +13,18 @@ module Postable
       end
     end
 
+    def validate_original_author
+      return if original_author.blank?
+      unless User.exist? original_author
+        errors[:base] << "#{original_author} is not a valid username"
+      end
+    end
+
     def author=(username)
+      super User.format_username username
+    end
+
+    def original_author=(username)
       super User.format_username username
     end
 

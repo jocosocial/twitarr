@@ -1,3 +1,5 @@
+require 'securerandom'
+
 ENV['RAILS_ENV'] = ARGV.first || ENV['RAILS_ENV'] || 'development'
 require File.expand_path(File.dirname(__FILE__) + "/../../config/environment")
 
@@ -8,7 +10,7 @@ def create_registration_code(code)
 end
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
-  for i in 1..2 do
+  for i in 1..3 do
     create_registration_code "code#{i}"
   end
 end
@@ -17,15 +19,23 @@ unless User.exist? 'TwitarrTeam'
   puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code1'
-  user.set_password Rails.application.secrets.initial_admin_password
+  user.set_password user.password
   user.save
 end
 
 unless User.exist? 'official'
   puts 'Creating user official'
-  user = User.new username: 'official', display_name: 'official', password: Rails.application.secrets.initial_official_password,
+  user = User.new username: 'official', display_name: 'official', password: SecureRandom.hex,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code2'
-  user.set_password Rails.application.secrets.initial_official_password
+  user.set_password user.password
+  user.save
+end
+
+unless User.exist? 'moderator'
+  puts 'Creating user moderator'
+  user = User.new username: 'moderator', display_name: 'moderator', password: Rails.application.secrets.initial_admin_password,
+  role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code3'
+  user.set_password user.password
   user.save
 end
 

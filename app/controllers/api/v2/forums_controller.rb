@@ -74,7 +74,7 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def create
-    forum = Forum.create_new_forum current_username, params[:subject], params[:text], params[:photos]
+    forum = Forum.create_new_forum post_as_user(params), params[:subject], params[:text], params[:photos], current_username
     if forum.valid?
       render json: {status: 'ok', forum_thread: forum.decorate.to_hash(current_user, request_options)}
     else
@@ -91,7 +91,7 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def new_post
-    post = @forum.add_post current_username, params[:text], params[:photos]
+    post = @forum.add_post post_as_user(params), params[:text], params[:photos], current_username
     if post.valid?
       @forum.save
       render json: {status: 'ok', forum_post: post.decorate.to_hash(@forum.locked, current_user, nil, request_options)}

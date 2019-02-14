@@ -18,6 +18,7 @@ Twitarr.Forum = Ember.Object.extend
   subject: null
   posts: []
   timestamp: null
+  as_mod: false
 
   objectize: (->
     @set('posts', Ember.A(Twitarr.ForumPost.create(post)) for post in @get('posts'))
@@ -28,13 +29,13 @@ Twitarr.Forum.reopenClass
     $.getJSON("#{Twitarr.api_path}/forums/#{id}?page=#{page}").then (data) =>
       { forum: @create(data.forum_thread), next_page: data.forum_thread.next_page, prev_page: data.forum_thread.prev_page }
 
-  new_post: (forum_id, text, photos) ->
-    $.post("#{Twitarr.api_path}/forums/#{forum_id}", { text: text, photos: photos }).then (data) =>
+  new_post: (forum_id, text, photos, as_mod) ->
+    $.post("#{Twitarr.api_path}/forums/#{forum_id}", { text: text, photos: photos, as_mod: as_mod }).then (data) =>
       data.forum_post = Twitarr.ForumPost.create(data.forum_post) if data.forum_post?
       data
 
-  new_forum: (subject, text, photos) ->
-    $.post("#{Twitarr.api_path}/forums", { subject: subject, text: text, photos: photos }).then (data) =>
+  new_forum: (subject, text, photos, as_mod) ->
+    $.post("#{Twitarr.api_path}/forums", { subject: subject, text: text, photos: photos, as_mod: as_mod }).then (data) =>
       { forum: @create(data.forum_thread), next_page: null, prev_page: null }
 
 Twitarr.ForumPost = Ember.Object.extend

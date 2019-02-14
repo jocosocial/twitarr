@@ -21,7 +21,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="display_name">Display Name</label>
-          {{input value=model.display_name class='input' maxlength='48' name="display_name"}}
+          {{input value=model.display_name class='input' maxlength='40' name="display_name"}}
           {{#if errors.display_name}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.display_name}}

@@ -245,8 +245,8 @@ Creates a new Seamail, with a initial message
 ```
 {
     "users": [username_string, ...],   # A list of recipient usernames. No need to include the author, it will be automatically added. Duplicates will be ignored.
-    "subject": "string",
-    "text": "string"  # The first post's of the seamail's textual content
+    "subject": "string", # Max length: 200 characters, UTF-8.
+    "text": "string"  # Max length: 10,000 characters, UTF-8. The first post's of the seamail's textual content.
 }
 ```
 
@@ -269,7 +269,9 @@ Creates a new Seamail, with a initial message
             "Must send seamail to another user of Twitarr", # No users in the user list
             "x is not a valid username", # No user exists with the username 'x'
             "Subject can't be blank",
-            "Text can't be blank"
+            "Subject is too long (maximum is 200 characters)",
+            "Text can't be blank",
+            "Text is too long (maximum is 10000 characters)"
         ]
     }
   ```
@@ -287,7 +289,7 @@ Add a new message to an existing Seamail thread
 
 ```
 {
-    "text": "string"
+    "text": "string" # Max length: 10,000 characters, UTF-8.
 }
 ```
 
@@ -309,7 +311,13 @@ Add a new message to an existing Seamail thread
     ```
 * status_code_with_error_list - HTTP 400
    ```
-   { "status": "error", "errors": [ "Text can't be blank" ]}
+   { 
+        "status": "error", 
+        "errors": [ 
+            "Text can't be blank",
+            "Text is too long (maximum is 10000 characters)"
+        ]
+   }
    ```
 
 ### POST /api/v2/seamail/:id/recipients
@@ -570,7 +578,7 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
 
 ```
 {
-    "text": "Tweet content",
+    "text": "string", # Max length: 2,000 characters, UTF-8.
     "parent": "stream_post_id_string", # Optional
     "photo": "photo_id_string", # Optional
     "as_mod": boolean #Optional
@@ -611,6 +619,7 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
         "status": "error", 
         "errors": [
             "Text can't be blank",
+            "Text is too long (maximum is 2000 characters)"
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
     }
@@ -648,7 +657,7 @@ Allows the user to edit the text or photo for this post.  Nothing else is modify
 
 ```
 {
-    "text": "Tweet content",
+    "text": "string", # Max length: 2,000 characters, UTF-8.
     "photo": "photo_id_string" # Optional
 }
 ```
@@ -697,6 +706,7 @@ Both text and photo are optional, however, at least one must be specified.  If o
         "status": "error", 
         "errors": [
             "Text can't be blank",
+            "Text is too long (maximum is 2000 characters)"
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
     }
@@ -1561,7 +1571,7 @@ Returns the logged in user's account information.
 
 ### POST /api/v2/user/profile
 
-Updates the user's profile. All fields are optional - anything left out of the request will not be updated. To clear a field, send null or a blank string.
+Updates the user's profile. All fields are optional - anything left out of the request will not be updated. To clear a field, send null or an empty string.
 
 #### Requires
 * logged in
@@ -1571,12 +1581,12 @@ Updates the user's profile. All fields are optional - anything left out of the r
 
 ```
 {
-	"display_name": "display_name_string",
+	"display_name": "display_name_string", # Min length: 3 characters, Max length: 48 characters, UTF-8. 
 	"email": "email_string",
-	"home_location": "string",
-	"real_name": "string",
-	"pronouns": "string",
-	"room_number": Integer # Also accepts string representation of an integer
+	"home_location": "string", # Max length: 100 chatarcters, UTF-8.
+	"real_name": "string", # Max length: 100 chatarcters, UTF-8.
+	"pronouns": "string", # Max length: 100 chatarcters, UTF-8.
+	"room_number": Integer # If not null/empty, Min length: 4 characters, Max length: 5 characters, UTF-8. Also accepts string representation of an integer.
 }
 ```
 
@@ -1792,7 +1802,7 @@ Allows the current user to save a private comment about another user. Whenever t
 
 ```
 {
-    "comment": "string"
+    "comment": "string" # Max length: 5,000 characters, UTF-8.
 }
 ```
 
@@ -1809,6 +1819,10 @@ Allows the current user to save a private comment about another user. Whenever t
 * status_code_with_message - HTTP 404 if the user is not found
   ```
     { "status": "error", "error": "User not found." }
+  ```
+* status_code_with_message - HTTP 400 if `comment` is too long
+  ```
+    { "status": "error", "error": "Comment is too long (maximum is 5000 characters)" }
   ```
 
 ### POST /api/v2/user/profile/:username/star
@@ -2039,8 +2053,8 @@ Creates a forum thread and its first post.
 
 ```
 {
-    "subject": "string",
-    "text": "string",
+    "subject": "string", # Max length: 200 characters, UTF-8.
+    "text": "string", # Max length: 10,000 characters, UTF-8.
     "photos": ["photo_id_string", ...], # Optional
     "as_mod": boolean # Optional
 }
@@ -2064,7 +2078,9 @@ Creates a forum thread and its first post.
     "status": "error",
     "errors": [
         "Subject can't be blank",
+        "Subject is too long (maximum is 200 characters)",
         "Text can't be blank",
+        "Text is too long (maximum is 10000 characters)",
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2107,7 +2123,7 @@ Creates a new post in the thread.
 
 ```
 {
-    "text": "string",
+    "text": "string", # Max length: 10,000 characters, UTF-8.
     "photos": ["photo_id_string", ...], # Optional
     "as_mod": boolean
 }
@@ -2141,6 +2157,7 @@ Creates a new post in the thread.
     "status": "error",
     "errors": [
         "Text can't be blank",
+        "Text is too long (maximum is 10000 characters)",
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2259,7 +2276,7 @@ Edits a post in the thread.
 
 ```
 {
-    "text": "string",
+    "text": "string", # Max length: 10,000 characters, UTF-8.
     "photos": ["photo_id_string", ...]
 }
 ```
@@ -2298,6 +2315,7 @@ Edits a post in the thread.
     "status": "error",
     "errors": [
         "Text can't be blank",
+        "Text is too long (maximum is 10000 characters)",
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2921,12 +2939,12 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
 {
     "role": "role_string", # Allows priviliged users to change the role of other users. Users cannot change their own roles.
     "status": "status_string",
-	"display_name": "display_name_string",
+	"display_name": "display_name_string", # Min length: 3 characters, Max length: 48 characters, UTF-8. 
 	"email": "email_string",
-	"home_location": "string",
-	"real_name": "string",
-	"pronouns": "string",
-	"room_number": Integer # Also accepts string representation of an integer,
+	"home_location": "string", # Max length: 100 chatarcters, UTF-8.
+	"real_name": "string", # Max length: 100 chatarcters, UTF-8.
+	"pronouns": "string", # Max length: 100 chatarcters, UTF-8.
+	"room_number": Integer # If not null/empty, Min length: 4 characters, Max length: 5 characters, UTF-8. Also accepts string representation of an integer.
     "mute_reason": "string" # Required if user role is "muted"
     "ban_reason": "string" # Required if user role is "banned"
 }

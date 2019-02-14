@@ -31,7 +31,7 @@
 <div class="display_card {{if can_reply '' 'hidden'}} {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">
     <span class="title big-title">Post a message</span>
-    {{textarea value=model.new_post rows='3' class='input' key-down='handleKeyDown'}}
+    {{textarea value=model.new_post rows='6' class='input' maxlength='10000' key-down='handleKeyDown'}}
     <ul class="errors-list">
       {{#each error in model.errors}}
         <li>{{error}}</li>

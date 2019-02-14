@@ -20,7 +20,7 @@ class Forum
   index 'fp.ts' => -1
   index ({:sticky => -1, :last_post_time => -1})
   
-  validates :subject, presence: true
+  validates :subject, presence: true, length: {maximum: 200}
   validate :validate_posts
 
   def validate_posts

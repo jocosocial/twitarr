@@ -26,8 +26,8 @@
           </span>
         {{/each}}
       </div>
-      {{input value=subject class='input' placeholder='Subject' key-down='handleKeyDown'}}
-      {{textarea value=text rows='5' class='input' placeholder='First message' key-down='handleKeyDown'}}
+      {{input value=subject class='input' placeholder='Subject' maxlength='200' key-down='handleKeyDown'}}
+      {{textarea value=text rows='6' class='input' placeholder='First message' maxlength='10000' key-down='handleKeyDown'}}
       <ul class="errors-list">
         {{#each error in errors}}
           <li>{{error}}</li>

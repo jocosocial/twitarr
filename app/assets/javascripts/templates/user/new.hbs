@@ -16,7 +16,7 @@
   </div>
   <div class="form-group">
     <label for="new_username">Username</label>
-    {{input class="input" value=model.new_username name="new_username"}}
+    {{input class="input" value=model.new_username maxlength='40' name="new_username"}}
     {{#if errors.username}}
         <ul class="alert alert-warning" style="padding-left: 2em;">
           {{#each error in errors.username}}
@@ -27,7 +27,7 @@
   </div>
   <div class="form-group">
     <label for="display_name">Display Name (optional)</label>
-    {{input class="input" value=model.display_name name="display_name"}}
+    {{input class="input" value=model.display_name maxlength='40' name="display_name"}}
     {{#if errors.display_name}}
         <ul class="alert alert-warning" style="padding-left: 2em;">
           {{#each error in errors.display_name}}

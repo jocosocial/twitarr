@@ -78,6 +78,8 @@ class User
   validates :email, allow_blank: true, format: { with: URI::MailTo::EMAIL_REGEXP, message: 'E-mail address is not valid.' }
   validate :valid_password?
   validate :valid_room_number?
+  validates :home_location, :real_name, :pronouns, length: {maximum: 100}
+  validates :room_number, allow_blank: true, length: {minimum: 4, maximum: 5}
   
   def valid_role?
     if role.nil? || User::Role.as_string(role).nil?

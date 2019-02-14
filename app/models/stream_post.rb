@@ -8,6 +8,7 @@ class StreamPost
 
   # Common fields between stream_post and forum_post
   field :au, as: :author, type: String
+  field :oa, as: :original_author, type: String, default: ->{author}
   field :tx, as: :text, type: String
   field :ts, as: :timestamp, type: Time
   field :ht, as: :hash_tags, type: Array
@@ -24,6 +25,7 @@ class StreamPost
 
   validates :text, :author, :timestamp, presence: true
   validate :validate_author
+  validate :validate_original_author
   validate :validate_location
   validate :validate_photo
 

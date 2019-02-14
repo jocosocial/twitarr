@@ -6,7 +6,8 @@ Twitarr.StreamPost = Ember.Object.extend
   photo: null
   reactions: []
   parent_chain: []
-  children: Ember.A()
+  children: Ember.A(),
+  as_mod: false
 
   objectize: (->
     photo = @get('photo')
@@ -115,12 +116,12 @@ Twitarr.StreamPost.reopenClass
       data.stream_post = Twitarr.StreamPost.create(data.stream_post) if data.stream_post?
       data
 
-  new_post: (text, photo) ->
-    $.post("#{Twitarr.api_path}/stream", text: text, photo: photo).then (data) =>
+  new_post: (text, photo, as_mod) ->
+    $.post("#{Twitarr.api_path}/stream", text: text, photo: photo, as_mod: as_mod).then (data) =>
       data.stream_post = Twitarr.StreamPost.create(data.stream_post) if data.stream_post?
       data
 
-  reply: (id, text, photo) ->
-    $.post("#{Twitarr.api_path}/stream", text: text, photo: photo, parent: id).then (data) =>
+  reply: (id, text, photo, as_mod) ->
+    $.post("#{Twitarr.api_path}/stream", text: text, photo: photo, parent: id, as_mod: as_mod).then (data) =>
       data.stream_post = Twitarr.StreamPost.create(data.stream_post) if data.stream_post?
       data

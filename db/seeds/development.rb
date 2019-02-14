@@ -1,3 +1,5 @@
+require 'securerandom'
+
 @BASE_DATE = Time.now - 1.day
 puts "Using a base date of #{@BASE_DATE}"
 
@@ -16,29 +18,37 @@ end
 unless User.exist? 'admin'
   puts 'Creating user admin'
   user = User.new username: 'admin', display_name: 'admin', password: Rails.application.secrets.initial_admin_password,
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code1'
-  user.set_password Rails.application.secrets.initial_admin_password
+    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
+  user.set_password user.password
+  user.save
+end
+
+unless User.exist? 'moderator'
+  puts 'Creating user moderator'
+  user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
+  role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
+  user.set_password user.password
   user.save
 end
 
 unless User.exist? 'kvort'
   puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'kvort@rylath.net', registration_code: 'code2'
+    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code3'
   user.set_password 'kvort'
   user.save
 end
 unless User.exist? 'james'
   puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code3'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code4'
   user.set_password 'james'
   user.save
 end
 unless User.exist? 'steve'
   puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, email: 'james@james.com', registration_code: 'code4'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code5'
   user.set_password 'steve'
   user.save
 end
@@ -152,7 +162,7 @@ def create_forum(subject, text, author, timestamp, photos)
   #force photos to be an array!
   photos = [photos] unless photos.is_a? Array
   photos = photos.map { |p| p.id.to_str }
-  forum = Forum.create_new_forum(author, subject, text, photos)
+  forum = Forum.create_new_forum(author, subject, text, photos, author)
   forum.posts.first.timestamp = timestamp
   forum.save!
   forum
@@ -162,7 +172,7 @@ def add_forum_post(forum, text, author, timestamp, photos)
   #force photos to be an array!
   photos = [photos] unless photos.is_a? Array
   photos = photos.map { |p| p.id.to_str }
-  post =  forum.add_post author, text, photos
+  post =  forum.add_post author, text, photos, author
   post.timestamp = timestamp
   post.save!
   post

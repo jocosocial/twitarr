@@ -57,3 +57,7 @@ Twitarr.ForumsNewRoute = Ember.Route.extend
     this._super(controller, model)
     controller.set('errors', Ember.A())
     controller.setupUpload()
+    controller.set('subject', null)
+    controller.set('text', null)
+    controller.set('photo_ids', Ember.A())
+    controller.set('as_mod', false)

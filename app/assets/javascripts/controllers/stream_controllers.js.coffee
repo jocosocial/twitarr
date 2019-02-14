@@ -21,7 +21,7 @@ Twitarr.StreamViewController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
         return
       return if @get('model.posting')
       @set 'model.posting', true
-      Twitarr.StreamPost.reply(@get('model.id'), @get('model.reply_text'), @get('photo_id')).fail((response) =>
+      Twitarr.StreamPost.reply(@get('model.id'), @get('model.reply_text'), @get('photo_id'), @get('model.as_mod')).fail((response) =>
         @set 'model.posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -62,7 +62,7 @@ Twitarr.StreamPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
         return
       return if @get('model.posting')
       @set 'model.posting', true
-      Twitarr.StreamPost.new_post(@get('model.new_post'), @get('photo_id')).fail((response) =>
+      Twitarr.StreamPost.new_post(@get('model.new_post'), @get('photo_id'), @get('model.as_mod')).fail((response) =>
         @set 'model.posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]

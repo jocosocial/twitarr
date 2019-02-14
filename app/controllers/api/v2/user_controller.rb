@@ -113,6 +113,7 @@ class API::V2::UserController < ApplicationController
   end
 
   def personal_comment
+    render status: :bad_request, json: {status: "error", error: "Comment is too long (maximum is 5000 characters)"} and return if !params[:comment].nil? && params[:comment].length > 5000
     current_user.personal_comments[@user.username] = params[:comment]
     current_user.save
     render json: {status: 'ok', user: @user.decorate.public_hash(current_user)}

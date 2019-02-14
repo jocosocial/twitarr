@@ -9,7 +9,8 @@ class SeamailMessage
   field :rd, as: :read_users, type: Array, default: []
   embedded_in :seamail, inverse_of: :messages
 
-  validates :text, :author, :timestamp, presence: true
+  validates :author, :timestamp, presence: true
+  validates :text, presence: true, length: {maximum: 10000}
   validate :validate_author
 
   def validate_author

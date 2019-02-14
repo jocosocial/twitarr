@@ -20,7 +20,8 @@ class ForumPost
 
   embedded_in :forum, inverse_of: :posts
 
-  validates :text, :author, :timestamp, presence: true
+  validates :author, :timestamp, presence: true
+  validates :text, presence: true, length: {maximum: 10000}
   validate :validate_author
   validate :validate_original_author
   validate :validate_photos

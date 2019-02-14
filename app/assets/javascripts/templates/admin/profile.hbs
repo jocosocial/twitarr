@@ -24,7 +24,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="display_name">Display Name</label>
-            {{ input value=model.display_name class='input' name="display_name"}}
+            {{input value=model.display_name class='input' maxlength='48' name="display_name"}}
             {{#if errors.display_name}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.display_name}}
@@ -35,7 +35,7 @@
           </div>
           <div class="form-group">
             <label for="real_name">Real Name</label>
-            {{ input value=model.real_name class='input' name="real_name"}}
+            {{input value=model.real_name class='input' maxlength='100' name="real_name"}}
             {{#if errors.real_name}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.real_name}}
@@ -48,7 +48,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="pronouns">Preferred Pronouns</label>
-            {{ input value=model.pronouns class='input' name="pronouns"}}
+            {{input value=model.pronouns class='input' maxlength='100' name="pronouns"}}
             {{#if errors.pronouns}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.pronouns}}
@@ -59,7 +59,7 @@
           </div>
           <div class="form-group">
             <label for="room_number">Room Number</label>
-            {{ input value=model.room_number class='input' name="room_number"}}
+            {{input value=model.room_number class='input' maxlength='5' name="room_number"}}
             {{#if errors.room_number}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.room_number}}
@@ -72,7 +72,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="home_location">Home Location</label>
-            {{ input value=model.home_location class='input' name="home_location"}}
+            {{input value=model.home_location class='input' maxlength='100' name="home_location"}}
             {{#if errors.home_location}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.home_location}}
@@ -83,7 +83,7 @@
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            {{ input value=model.email class='input' name="email"}}
+            {{input value=model.email class='input' name="email"}}
             {{#if errors.email}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.email}}
@@ -106,9 +106,9 @@
               </ul>
             {{/if}}
         </div>
-        <div class="form-group {{if is_muted '' 'hidden'}}">
+        <div class="{{if is_muted '' 'hidden'}}">
           <label for="mute_reason">Mute Reason:</label>
-            {{ input value=model.mute_reason class='input' name="mute_reason"}}
+            {{textarea value=model.mute_reason rows='3' class='input' name="mute_reason"}}
             {{#if errors.mute_reason}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.mute_reason}}
@@ -117,9 +117,9 @@
               </ul>
             {{/if}}
         </div>
-        <div class="form-group {{if is_banned '' 'hidden'}}">
+        <div class="{{if is_banned '' 'hidden'}}">
           <label for="ban_reason">Ban Reason:</label>
-            {{ input value=model.ban_reason class='input' name="ban_reason"}}
+            {{textarea value=model.ban_reason rows='3' class='input' name="ban_reason"}}
             {{#if errors.ban_reason}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.ban_reason}}

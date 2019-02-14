@@ -23,7 +23,8 @@ class StreamPost
 
   embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
 
-  validates :text, :author, :timestamp, presence: true
+  validates :author, :timestamp, presence: true
+  validates :text, presence: true, length: {maximum: 2000}
   validate :validate_author
   validate :validate_original_author
   validate :validate_location

@@ -21,7 +21,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="display_name">Display Name</label>
-          {{ input value=model.display_name class='input' name="display_name"}}
+          {{input value=model.display_name class='input' maxlength='48' name="display_name"}}
           {{#if errors.display_name}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.display_name}}
@@ -33,7 +33,7 @@
 
         <div class="form-group">
           <label for="real_name">Real Name (Optional, public)</label>
-          {{ input value=model.real_name class='input' name="real_name"}}
+          {{input value=model.real_name class='input' maxlength='100' name="real_name"}}
           {{#if errors.real_name}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.real_name}}
@@ -46,7 +46,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="pronouns">Preferred Pronouns (Optional, public)</label>
-          {{ input value=model.pronouns class='input' name="pronouns"}}
+          {{input value=model.pronouns class='input' maxlength='100' name="pronouns"}}
           {{#if errors.pronouns}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.pronouns}}
@@ -57,7 +57,7 @@
         </div>
         <div class="form-group">
           <label for="room_number">Room Number (Optional, public)</label>
-          {{ input value=model.room_number class='input' name="room_number"}}
+          {{input value=model.room_number class='input' maxlength='5' name="room_number"}}
           {{#if errors.room_number}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.room_number}}
@@ -70,7 +70,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="home_location">Where are you from? (Optional, public)</label>
-          {{ input value=model.home_location class='input' name="home_location"}}
+          {{input value=model.home_location class='input' maxlength='100' name="home_location"}}
           {{#if errors.home_location}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.home_location}}

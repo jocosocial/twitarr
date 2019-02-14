@@ -21,7 +21,7 @@
     <div class="card-section">
       <div class="title big-title">Reply</div>
       <div class="form">
-        {{textarea value=model.reply_text rows='3' class='input' key-down='handleKeyDown'}}
+        {{textarea value=model.reply_text rows='6' class='input' maxlength='2000' key-down='handleKeyDown'}}
         {{partial 'upload'}}
 
         <ul class="errors-list">

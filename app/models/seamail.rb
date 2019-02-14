@@ -9,7 +9,7 @@ class Seamail
   field :up, as: :last_update, type: Time
   embeds_many :messages, class_name: 'SeamailMessage', store_as: :sm, order: :timestamp.desc, validate: false
 
-  validates :subject, presence: true
+  validates :subject, presence: true, length: {maximum: 200}
   validate :validate_users
   validate :validate_messages
 

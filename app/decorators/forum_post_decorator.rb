@@ -24,9 +24,11 @@ class ForumPostDecorator < BaseDecorator
     return [] unless photos
     photos.map { |x| 
       begin
+        img = PhotoMetadata.find(x)
         { 
           id: x, 
-          animated: !x.blank? && PhotoMetadata.find(x).animated
+          animated: img.animated,
+          sizes: img.sizes
         } 
       rescue Mongoid::Errors::DocumentNotFound
       end

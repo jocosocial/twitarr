@@ -19,7 +19,8 @@ class StreamPostDecorator < BaseDecorator
     }
     unless photo.blank?
       begin
-        result[:photo] = { id: photo, animated: PhotoMetadata.find(photo).animated }
+        img = PhotoMetadata.find(photo)
+        result[:photo] = { id: photo, animated: img.animated, sizes: img.sizes }
       rescue Mongoid::Errors::DocumentNotFound
       end
     end

@@ -1,12 +1,18 @@
 <div class="main-page-header header-with-controls">
   <span class="controls">
     {{#if role_tho}}
-      <button class="btn {{if sticky 'hidden' ''}}" {{action 'toggle_sticky'}}>Sticky Thread</button>
-      <button class="btn {{if sticky '' 'hidden'}}" {{action 'toggle_sticky'}}>Unsticky Thread</button>
+      {{#if sticky}}
+        <button class="btn" {{action 'toggle_sticky'}}>Unsticky Thread</button>
+      {{else}}
+        <button class="btn" {{action 'toggle_sticky'}}>Sticky Thread</button>
+      {{/if}}
     {{/if}}
     {{#if role_moderator}}
-      <button class="btn {{if locked 'hidden' ''}}" {{action 'toggle_locked'}}>Lock Thread</button>
-      <button class="btn {{if locked '' 'hidden'}}" {{action 'toggle_locked'}}>Unlock Thread</button>
+      {{#if locked}}
+        <button class="btn" {{action 'toggle_locked'}}>Unlock Thread</button>
+      {{else}}
+        <button class="btn" {{action 'toggle_locked'}}>Lock Thread</button>
+      {{/if}}
       <button class="btn" {{action 'delete_thread'}}>Delete Thread</button>
     {{/if}}
     {{#if model.has_prev_page}}
@@ -16,7 +22,7 @@
       <button class="btn" {{action 'next_page'}}>Newer</button>
     {{/if}}
   </span>
-  <div class="title">{{#link-to 'forums' }}Forums{{/link-to}} > {{model.forum.subject}}
+  <div class="title">{{#link-to 'forums'}}Forums{{/link-to}} > {{model.forum.subject}}
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
   </div>
 </div>
@@ -28,24 +34,26 @@
 
 </div>
 
-<div class="display_card {{if can_reply '' 'hidden'}} {{if has_new_posts '' 'scroll_to'}}">
-  <div class="card-section">
-    <span class="title big-title">Post a message</span>
-    {{textarea value=model.new_post rows='6' class='input' maxlength='10000' key-down='handleKeyDown'}}
-    <ul class="errors-list">
-      {{#each error in model.errors}}
-        <li>{{error}}</li>
-      {{/each}}
-    </ul>
-    {{partial 'upload'}}
-    <span class="controls">
-      {{#if role_moderator}}
-        {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
-      {{/if}}
-      <button class="btn" {{action 'new'}}>Post</button>
-    </span>
+{{#if can_reply}}
+  <div class="display_card {{if has_new_posts '' 'scroll_to'}}">
+    <div class="card-section">
+      <span class="title big-title">Post a message</span>
+      {{textarea value=model.new_post rows='6' class='input' maxlength='10000' key-down='handleKeyDown'}}
+      <ul class="errors-list">
+        {{#each error in model.errors}}
+          <li>{{error}}</li>
+        {{/each}}
+      </ul>
+      {{partial 'upload'}}
+      <span class="controls">
+        {{#if role_moderator}}
+          {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
+        {{/if}}
+        <button class="btn" {{action 'new'}}>Post</button>
+      </span>
+    </div>
   </div>
-</div>
+{{/if}}
 
 <div class="footer-controls {{if has_new_posts '' 'scroll_to'}}">
   <div class="card-section">

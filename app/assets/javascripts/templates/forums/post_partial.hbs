@@ -23,14 +23,14 @@
   </div>
   <div class="controls">
     <div>
-      <span class="{{if model.new '' 'hidden'}}" style="color: red;">new</span>
+      {{#if model.new}}<span class="highlight">new</span>{{/if}}
       {{model.likes_string}}
     </div>
     <div>
-      <button {{action 'unlike' bubbles=false}} class="btn-link {{if unlikeable '' 'hidden'}}">Unlike</button>
-      <button {{action 'like' bubbles=false}} class="btn-link {{if likeable '' 'hidden'}}">Like</button>
-      <button {{action 'edit' model.id bubbles=false}} class="btn-link {{if editable '' 'hidden'}}">Edit</button>
-      <button {{action 'delete' model.id bubbles=false}} class="btn-link {{if deleteable '' 'hidden'}}">Delete</button>
+      {{#if unlikeable}}<button {{action 'unlike' bubbles=false}} class="btn-link">Unlike</button>{{/if}}
+      {{#if likeable}}<button {{action 'like' bubbles=false}} class="btn-link">Like</button>{{/if}}
+      {{#if editable}}<button {{action 'edit' model.id bubbles=false}} class="btn-link">Edit</button>{{/if}}
+      {{#if deleteable}}<button {{action 'delete' model.id bubbles=false}} class="btn-link">Delete</button>{{/if}}
     </div>
   </div>
   

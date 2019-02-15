@@ -13,7 +13,9 @@
     </span>
 
     <div class="form">
-      <button class="btn {{if role_tho '' 'hidden'}}" {{action 'reset_password' model.username}}>Reset Password</button>
+      {{#if role_tho}}
+        <button class="btn" {{action 'reset_password' model.username}}>Reset Password</button>
+      {{/if}}
       {{#if model.empty_password}}
         <span style="color: darkred; padding-left: 1em;">
           Empty password!
@@ -106,8 +108,9 @@
               </ul>
             {{/if}}
         </div>
-        <div class="{{if is_muted '' 'hidden'}}">
-          <label for="mute_reason">Mute Reason:</label>
+        {{#if is_muted}}
+          <div>
+            <label for="mute_reason">Mute Reason:</label>
             {{textarea value=model.mute_reason rows='3' class='input' name="mute_reason"}}
             {{#if errors.mute_reason}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
@@ -116,18 +119,21 @@
                 {{/each}}
               </ul>
             {{/if}}
-        </div>
-        <div class="{{if is_banned '' 'hidden'}}">
-          <label for="ban_reason">Ban Reason:</label>
-            {{textarea value=model.ban_reason rows='3' class='input' name="ban_reason"}}
-            {{#if errors.ban_reason}}
-              <ul class="alert alert-warning" style="padding-left: 2em;">
-                {{#each error in errors.ban_reason}}
-                  <li>{{error}}</li>
-                {{/each}}
-              </ul>
-            {{/if}}
-        </div>
+          </div>
+        {{/if}}
+        {{#if is_banned}}
+          <div>
+            <label for="ban_reason">Ban Reason:</label>
+              {{textarea value=model.ban_reason rows='3' class='input' name="ban_reason"}}
+              {{#if errors.ban_reason}}
+                <ul class="alert alert-warning" style="padding-left: 2em;">
+                  {{#each error in errors.ban_reason}}
+                    <li>{{error}}</li>
+                  {{/each}}
+                </ul>
+              {{/if}}
+          </div>
+        {{/if}}
       </div>
       <div class="row" style="margin: 0.5em 1em;">
         <button class="btn" {{action 'save' model}}>Save Changes</button>

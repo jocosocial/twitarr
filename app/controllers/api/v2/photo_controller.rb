@@ -47,7 +47,7 @@ class API::V2::PhotoController < ApplicationController
   end
 
   def show
-    render json: {status: 'ok', photo: @photo.decorate.to_hash }
+    render json: {status: 'ok', photo: @photo.decorate.to_hash}
   end
 
   def create
@@ -61,7 +61,7 @@ class API::V2::PhotoController < ApplicationController
       render status: :bad_request, json: results
     else
       photo = PhotoMetadata.find(results.fetch(:photo))
-      render json: {status: "ok", photo: photo}
+      render json: {status: "ok", photo: photo.decorate.to_hash}
     end
   end
 
@@ -84,7 +84,7 @@ class API::V2::PhotoController < ApplicationController
     render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.empty?
 
     if @photo.update_attributes!(params[:photo].inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
-      render json: { status: "ok", photo: @photo }
+      render json: { status: "ok", photo: @photo.decorate.to_hash }
     else
       render status: :bad_request, json: { status: "error", errors: @photo.errors }
     end

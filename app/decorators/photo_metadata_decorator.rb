@@ -9,9 +9,7 @@ class PhotoMetadataDecorator < Draper::Decorator
 			md5_hash: md5_hash,
 			original_filename: original_filename,
 			uploader: uploader,
-			upload_time: upload_time.to_ms,
-			width: width,
-			height: height
+			upload_time: upload_time.to_ms
 		}
   end
 end

@@ -28,7 +28,8 @@ class PhotoStore
 
     photo = store(temp_file, uploader)
     
-    tmp = img.resize_to_fit(MEDIUM_IMAGE_SIZE)
+    tmp = img
+    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if(tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE)
     sizes[:medium_thumb] = "#{tmp.columns}x#{tmp.rows}"
     tmp.write "#{Rails.root}/tmp/#{photo.store_filename}"
     FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", md_thumb_path(photo.store_filename)

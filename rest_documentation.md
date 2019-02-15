@@ -63,9 +63,18 @@ These output types are used throughout the API
   ```
   {
       "id": "photo_id_string",
-      "animated": boolean
+      "animated": boolean,
+      "sizes": [PhotoSize{}, ...]
   }
   ```
+* PhotoSize{} - A JSON object representing the resolution of a photo.
+  ```
+  {
+      "size_string": "resolution_string"
+  }
+  ```
+  * `size_string` will be "small_thumb", "medium_thumb", or "full"
+  * `resolution_string` will be the photo's resolution, width x height. Example: "800x600"
 * Announcement{} - A JSON object representing an announcement
   ```
   {
@@ -903,7 +912,8 @@ All reactions that have been applied to the post.
     "md5_hash": "md5_string",
     "original_filename": "filename_string",
     "uploader": "username_string",
-    "upload_time": epoch
+    "upload_time": epoch,
+    "sizes": [PhotoSize{}, ...]
 }
 ```
 

@@ -22,11 +22,23 @@ class PhotoStore
       return { status: 'error', error: 'Photo could not be opened - is it an image?' }
     end
     return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
+
+    sizes = {}
+    sizes[:full] = "#{img.columns}x#{img.rows}"
+
     photo = store(temp_file, uploader)
-    img.resize_to_fit(MEDIUM_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
+    
+    tmp = img.resize_to_fit(MEDIUM_IMAGE_SIZE)
+    sizes[:medium_thumb] = "#{tmp.columns}x#{tmp.rows}"
+    tmp.write "#{Rails.root}/tmp/#{photo.store_filename}"
     FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", md_thumb_path(photo.store_filename)
-    img.resize_to_fill(SMALL_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
+
+    tmp = img.resize_to_fill(SMALL_IMAGE_SIZE)
+    sizes[:small_thumb] = "#{tmp.columns}x#{tmp.rows}"
+    tmp.write "#{Rails.root}/tmp/#{photo.store_filename}"
     FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", sm_thumb_path(photo.store_filename)
+
+    photo.sizes = sizes
     photo.save
     { status: 'ok', photo: photo.id.to_s }
   rescue EXIFR::MalformedJPEG

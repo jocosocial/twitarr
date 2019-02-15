@@ -47,7 +47,7 @@ class API::V2::PhotoController < ApplicationController
   end
 
   def show
-    render json: {status: 'ok', photo: @photo.decorate.to_hash }
+    render json: {status: 'ok', photo: @photo }
   end
 
   def create

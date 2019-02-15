@@ -1,15 +1,17 @@
 <div class="main-page-header {{if logged_in 'header-with-controls'}}">
-  <span class="controls {{if logged_in '' 'hidden'}}">
-    {{#unless model.following}}
-      <button class="btn" {{action 'follow'}}>Follow</button>
-    {{else}}
-      <button class="btn" {{action 'unfollow'}}>Unfollow</button>
-    {{/unless}}
-    {{#if editable}}
-      <button class="btn" {{action 'edit'}}>Edit</button>
-      <button class="btn" {{action 'delete'}}>Delete</button>
-    {{/if}}
-  </span>
+  {{#if logged_in}}
+    <span class="controls">
+      {{#unless model.following}}
+        <button class="btn" {{action 'follow'}}>Follow</button>
+      {{else}}
+        <button class="btn" {{action 'unfollow'}}>Unfollow</button>
+      {{/unless}}
+      {{#if editable}}
+        <button class="btn" {{action 'edit'}}>Edit</button>
+        <button class="btn" {{action 'delete'}}>Delete</button>
+      {{/if}}
+    </span>
+  {{/if}}
   <div class="title">{{model.title}}</div>
 </div>
 
@@ -44,12 +46,15 @@
       </div>
     </div>
     <div class="icons">
-      <span class="{{if model.official '' 'hidden'}} glyphicon glyphicon-flag official" title="Official event">
-        Official Event
-      </span>
-      <span class="{{if model.official 'hidden'}} glyphicon glyphicon-adjust shadow" title="Shadow cruise event">
-        Shadow Cruise Event
-      </span>
+      {{#if model.official}}
+        <span class="glyphicon glyphicon-flag official" title="Official event">
+          Official Event
+        </span>
+      {{else}}
+        <span class="glyphicon glyphicon-adjust shadow" title="Shadow cruise event">
+          Shadow Cruise Event
+        </span>
+      {{/if}}
     </div>
   </div>
 </div>

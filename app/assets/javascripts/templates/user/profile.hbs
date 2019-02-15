@@ -8,12 +8,15 @@
       {{! I need to text-stroke the unicode star, this is really only possible in chrome and I dont want that}}
       {{! So, I could use a PNG here but I dont want another http request... so inline SVG! }}
       {{! Because SVG actually gets text-stroke in every browser ever... Good consistency.}} 
-      {{display-name-plus-username model.username model.display_name}}<svg class="star {{if logged_in_visible '' 'hidden'}}" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.3 18.59"><defs><style>.star {font-size:15.05px;fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:1px;font-family:Arial;}.true {fill:gold;stroke:gold;}</style></defs><text {{action "star"}} class="star {{if model.starred 'true'}}" transform="translate(0.13 13.37)">★</text></svg>
+      {{display-name-plus-username model.username model.display_name}}
+      {{#if logged_in_visible}}
+        <svg class="star" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.3 18.59"><defs><style>.star {font-size:15.05px;fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:1px;font-family:Arial;}.true {fill:gold;stroke:gold;}</style></defs><text {{action "star"}} class="star {{if model.starred 'true'}}" transform="translate(0.13 13.37)">★</text></svg>
+      {{/if}}
       {{#if role_moderator}}
         <span class='controls'><button class="btn" {{action 'admin_profile' model.username}}>Administer User</button></span>
       {{/if}}
     </div>
-    <div class="{{if logged_in_visible '' 'hidden'}}">
+    {{#if logged_in_visible}}
       <div class="body">
         <div class="label">Personal comment (only visible to you):</div>
         <div class="body-section">
@@ -23,7 +26,7 @@
       <div class="controls">
         <button class="btn" {{action 'save_comment' model}}>save</button>
       </div>
-    </div>
+    {{/if}}
   </div>
   <div class="card-section">
     <div class="form row">

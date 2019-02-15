@@ -38,35 +38,44 @@
     <ul {{action 'menu_close'}}>
       <li>{{#link-to "forums"}}<span class="glyphicon glyphicon-list"></span>Forums{{/link-to}}</li>
       <li>{{#link-to "stream"}}<span class="glyphicon glyphicon-bullhorn"></span>Tweets{{/link-to}}</li>
-      <li class="{{if logged_in '' 'hidden'}}"><a href='#' {{ action 'go_to_star_feed' }}><span class="glyphicon glyphicon-star"></span>Starred Stream</a></li>
+      {{#if logged_in}}
+        <li><a href='#' {{ action 'go_to_star_feed' }}><span class="glyphicon glyphicon-star"></span>Starred Stream</a></li>
+      {{/if}}
       <li>{{#link-to "schedule"}}<span class="glyphicon glyphicon-calendar"></span>Schedule{{/link-to}}</li>
       <li>{{#link-to "search"}}<span class="glyphicon glyphicon-search"></span>Search{{/link-to}}</li>
       <hr />
-      <div class="{{if logged_in '' 'hidden'}}">
+      {{#if logged_in}}
         <li>{{#link-to "seamail" (query-params as_mod="false")}}<span class="glyphicon glyphicon-envelope"></span>My Seamail{{/link-to}}</li>
         <li>{{#link-to "events"}}<span class="glyphicon glyphicon-calendar"></span>My Events{{/link-to}}</li>
         <li>
           {{#link-to "alerts"}}
-            <!-- If this isn't lined up this way some whitespace creeps in -->
-            <span class="{{if alerts '' 'hidden'}} glyphicon glyphicon-warning-sign" style="color: #F62E51;"></span><span class="{{if alerts 'hidden'}} glyphicon glyphicon-warning-sign"></span>My Alerts
+            {{#if alerts}}
+              <span class="glyphicon glyphicon-warning-sign" style="color: #F62E51;"></span>My Alerts
+            {{else}}
+              <span class="glyphicon glyphicon-warning-sign"></span>My Alerts
+            {{/if}}
           {{/link-to}}
         </li>
         <li>{{#link-to "starred"}}<span class="glyphicon glyphicon-star"></span>My Starred Users{{/link-to}}</li>
         <li>{{#link-to "user"}}<span class="glyphicon glyphicon-user"></span>{{ display_name }}{{/link-to}}</li>
         <hr />
-        <li class="{{if logged_in '' 'hidden'}}"><a tabindex='-1' href='#' {{ action 'logout' }}>Logout</a></li>
-      </div>
-      <div class="{{if logged_in 'hidden'}}">
-        <li>{{#link-to "user.login"}}Login{{/link-to}}</li>
-        <li>{{#link-to "user.new"}}Sign up{{/link-to}}</li>
-      </div>
-      <div class="{{if role_moderator '' 'hidden'}}">
+        <li><a tabindex='-1' href='#' {{ action 'logout' }}><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+      {{/if}}
+      {{#unless logged_in}}
+        <li>{{#link-to "user.login"}}<span class="glyphicon glyphicon-log-in"></span>Login{{/link-to}}</li>
+        <li>{{#link-to "user.new"}}<span class="glyphicon glyphicon-plus-sign"></span>Sign up{{/link-to}}</li>
+      {{/unless}}
+      {{#if role_moderator}}
         <hr />
         <li>{{#link-to "seamail" (query-params as_mod="true")}}<span class="glyphicon glyphicon-envelope"></span>Moderator Seamail{{/link-to}}</li>
-        <li>{{#link-to "admin.search"}}User administration{{/link-to}}</li>
-        <li class="{{if role_tho '' 'hidden'}}">{{#link-to "admin.announcements"}}New announcement{{/link-to}}</li>
-        <li class="{{if role_admin '' 'hidden'}}">{{#link-to "admin.upload_schedule"}}Upload Schedule{{/link-to}}</li>
-      </div>
+        <li>{{#link-to "admin.search"}}<span class="glyphicon glyphicon-user"></span>User administration{{/link-to}}</li>
+        {{#if role_tho}}
+          <li>{{#link-to "admin.announcements"}}<span class="glyphicon glyphicon-bullhorn"></span>New announcement{{/link-to}}</li>
+        {{/if}}
+        {{#if role_admin}}
+          <li>{{#link-to "admin.upload_schedule"}}<span class="glyphicon glyphicon-calendar"></span>Upload Schedule{{/link-to}}</li>
+        {{/if}}
+      {{/if}}
       <hr />
       <li>{{#link-to 'help'}}<span class="glyphicon glyphicon-question-sign"></span>Help{{/link-to}}</li>
       <li>{{#link-to 'time'}}<span class="glyphicon glyphicon-time"></span>Time zone check{{/link-to}}</li>

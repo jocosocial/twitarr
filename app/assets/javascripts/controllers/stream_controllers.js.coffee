@@ -1,9 +1,9 @@
 Twitarr.StreamViewController = Twitarr.Controller.extend Twitarr.SinglePhotoUploadMixin,
   parent_link_visible: true
 
-  logged_in_visible: (->
-    @get('logged_in')
-  ).property('logged_in')
+  replyable: (->
+    @get('logged_in') and (not @get('model.locked') or @get('role_moderator'))
+  ).property('logged_in', 'application.login_role', 'model.locked')
 
   actions:
     handleKeyDown: (v,e) ->

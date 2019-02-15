@@ -1,6 +1,6 @@
 <div class="card-section clickable" {{action 'display_seamail' model.id}}>
   <span class="title big-title">
-    {{model.subject}} <span class="highlight {{if model.is_unread '' 'hidden'}}">New</span>
+    {{model.subject}} {{#if model.is_unread}}<span class="highlight">New</span>{{/if}}
   </span>
   {{pretty-timestamp model.timestamp}}
 

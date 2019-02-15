@@ -1,34 +1,38 @@
-<div class="main-page-header header-with-controls">
-  <div class="controls">
-    <button {{action 'show_new_post'}} class="btn {{if new_post_button_visible '' 'hidden'}}">New Post</button>
-  </div>
+<div class="main-page-header {{if new_post_button_visible 'header-with-controls'}}">
+  {{#if new_post_button_visible}}
+    <div class="controls">
+      <button {{action 'show_new_post'}} class="btn">New Post</button>
+    </div>
+  {{/if}}
 
   <div class="title">Tweets
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
   </div>
 </div>
 
-<div class="display_card {{if new_post_visible '' 'hidden'}}">
-  <div class="card-section">
-    <div class="form">
-      {{textarea value=model.new_post rows='6' class='input' maxlength='2000' key-down='handleKeyDown'}}
-      {{partial 'upload'}}
+{{#if new_post_visible}}
+  <div class="display_card">
+    <div class="card-section">
+      <div class="form">
+        {{textarea value=model.new_post rows='6' class='input' maxlength='2000' key-down='handleKeyDown'}}
+        {{partial 'upload'}}
 
-      <ul class="errors-list">
-        {{#each error in errors}}
-          <li>{{error}}</li>
-        {{/each}}
-      </ul>
-      <span class="controls">
-        {{#if role_moderator}}
-          {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
-        {{/if}}
-        <button class="btn" {{action 'cancel'}}>Cancel</button>
-        <button class="btn" {{action 'new'}}>Post</button>
-      </span>
+        <ul class="errors-list">
+          {{#each error in errors}}
+            <li>{{error}}</li>
+          {{/each}}
+        </ul>
+        <span class="controls">
+          {{#if role_moderator}}
+            {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
+          {{/if}}
+          <button class="btn" {{action 'cancel'}}>Cancel</button>
+          <button class="btn" {{action 'new'}}>Post</button>
+        </span>
+      </div>
     </div>
   </div>
-</div>
+{{/if}}
 
 <div class="display_card">
   {{#each post in model.posts}}

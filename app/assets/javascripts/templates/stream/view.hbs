@@ -16,7 +16,7 @@
   </div>
 {{/if}}
 
-<div class="{{if logged_in_visible '' 'hidden'}} {{if model.locked 'hidden'}} ">
+{{#if replyable}}
   <div class="display_card">
     <div class="card-section">
       <div class="title big-title">Reply</div>
@@ -38,5 +38,5 @@
       </div>
     </div>
   </div>
-</div>
+{{/if}}
 

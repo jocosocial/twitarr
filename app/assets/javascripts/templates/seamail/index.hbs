@@ -10,7 +10,7 @@
     <button class="btn" {{action 'compose_seamail'}}>New Seamail</button>
   </span>
 
-  <div class="title">Seamail
+  <div class="title">{{#if role_moderator}}{{#if as_mod}}Moderator {{/if}}{{/if}}Seamail
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span>
     </button>
   </div>

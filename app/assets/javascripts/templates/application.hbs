@@ -43,7 +43,7 @@
       <li>{{#link-to "search"}}<span class="glyphicon glyphicon-search"></span>Search{{/link-to}}</li>
       <hr />
       <div class="{{if logged_in '' 'hidden'}}">
-        <li>{{#link-to "seamail"}}<span class="glyphicon glyphicon-envelope"></span>My Seamail{{/link-to}}</li>
+        <li>{{#link-to "seamail" (query-params as_mod="false")}}<span class="glyphicon glyphicon-envelope"></span>My Seamail{{/link-to}}</li>
         <li>{{#link-to "events"}}<span class="glyphicon glyphicon-calendar"></span>My Events{{/link-to}}</li>
         <li>
           {{#link-to "alerts"}}
@@ -62,7 +62,8 @@
       </div>
       <div class="{{if role_moderator '' 'hidden'}}">
         <hr />
-        <li class="{{if role_moderator '' 'hidden'}}">{{#link-to "admin.search"}}User administration{{/link-to}}</li>
+        <li>{{#link-to "seamail" (query-params as_mod="true")}}<span class="glyphicon glyphicon-envelope"></span>Moderator Seamail{{/link-to}}</li>
+        <li>{{#link-to "admin.search"}}User administration{{/link-to}}</li>
         <li class="{{if role_tho '' 'hidden'}}">{{#link-to "admin.announcements"}}New announcement{{/link-to}}</li>
         <li class="{{if role_admin '' 'hidden'}}">{{#link-to "admin.upload_schedule"}}Upload Schedule{{/link-to}}</li>
       </div>

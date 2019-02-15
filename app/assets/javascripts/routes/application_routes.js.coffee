@@ -22,8 +22,6 @@ Twitarr.ApplicationRoute = Ember.Route.extend
       @disconnectOutlet
         outlet: 'modal',
         parentView: 'application'
-    display_seamail: (id) ->
-      @transitionTo('seamail.detail', id)
     display_forum: (id, page) ->
       @transitionTo('forums.detail', id, page)
     display_tweet: (id) ->

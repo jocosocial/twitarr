@@ -9,8 +9,14 @@ Twitarr.SeamailNewRoute = Ember.Route.extend
     controller.set('text', '')
 
 Twitarr.SeamailIndexRoute = Ember.Route.extend
-  model: ->
-    Twitarr.SeamailMeta.list().fail((response)=>
+  queryParams: {
+    as_mod: {
+      refreshModel: true
+    }
+  }
+  
+  model: (params) ->
+    Twitarr.SeamailMeta.list(params.as_mod).fail((response)=>
       if response.status? && response.status == 401
         alert('You must be logged in to view seamail.')
         @transitionTo('index')
@@ -27,7 +33,7 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
 
 Twitarr.SeamailDetailRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.Seamail.get(params.id).fail((response)=>
+    Twitarr.Seamail.get(params.id, params.as_mod).fail((response)=>
       if response.responseJSON?.error?
         alert(response.responseJSON.error)
       else if response.status? && response.status == 401

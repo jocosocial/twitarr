@@ -1,11 +1,24 @@
 Twitarr.SeamailIndexController = Twitarr.Controller.extend
+  queryParams: ['as_mod']
+  as_mod: false
+
   actions:
     compose_seamail: ->
-      @transitionToRoute('seamail.new')
+      @transitionToRoute('seamail.new', {queryParams: {as_mod: @get('as_mod')}})
+    moderator_mode: ->
+      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'true'}})
+    user_mode: ->
+      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'false'}})
 
-Twitarr.SeamailMetaPartialController = Twitarr.Controller.extend()
+Twitarr.SeamailMetaPartialController = Twitarr.Controller.extend
+  actions:
+    display_seamail: (id) ->
+      as_mod = @parentController.getProperties(@parentController.queryParams).as_mod
+      @transitionToRoute('seamail.detail', id, {queryParams: {as_mod: as_mod}})
 
 Twitarr.SeamailDetailController = Twitarr.Controller.extend
+  queryParams: ['as_mod']
+  as_mod: false
   errors: Ember.A()
   text: null
 
@@ -16,7 +29,7 @@ Twitarr.SeamailDetailController = Twitarr.Controller.extend
     post: ->
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Seamail.new_message(@get('model.id'), @get('model.text')).fail((response) =>
+      Twitarr.Seamail.new_message(@get('model.id'), @get('model.text'), @get('as_mod')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -33,6 +46,8 @@ Twitarr.SeamailDetailController = Twitarr.Controller.extend
       )
 
 Twitarr.SeamailNewController = Twitarr.Controller.extend
+  queryParams: ['as_mod']
+  as_mod: false
   searchResults: Ember.A()
   toUsers: Ember.A()
   errors: Ember.A()
@@ -96,7 +111,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
       return if @get('posting')
       @set 'posting', true
       users = @get('toUsers').filter((user) -> !!user).map((user) -> user.username)
-      Twitarr.Seamail.new_seamail(users, @get('subject'), @get('text')).fail((response) =>
+      Twitarr.Seamail.new_seamail(users, @get('subject'), @get('text'), @get('as_mod')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -112,7 +127,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
           @set('toUsers', Ember.A())
           @set('subject', '')
           @set('text', '')
-          @transitionToRoute('seamail.detail', response.seamail.id)
+          @transitionToRoute('seamail.detail', response.seamail.id, {queryParams: {as_mod: @get('as_mod')}})
       )
 
     remove: (user) ->

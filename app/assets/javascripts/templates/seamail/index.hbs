@@ -1,5 +1,12 @@
 <div class="main-page-header">
   <span class="controls">
+    {{#if role_moderator}}
+      {{#if as_mod}}
+        <button class="btn" {{action 'user_mode'}}>View Your Seamail</button>
+      {{else}}
+        <button class="btn" {{action 'moderator_mode'}}>View Moderator Seamail</button>
+      {{/if}}
+    {{/if}}
     <button class="btn" {{action 'compose_seamail'}}>New Seamail</button>
   </span>
 

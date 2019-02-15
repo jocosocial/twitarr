@@ -56,24 +56,24 @@ class Seamail
     save
   end
 
-  def self.create_new_seamail(author, to_users, subject, first_message_text)
+  def self.create_new_seamail(author, to_users, subject, first_message_text, original_author)
     right_now = Time.now
     to_users ||= []
     to_users = to_users.map(&:downcase).uniq
     to_users << author unless to_users.include? author
     seamail = Seamail.new(usernames: to_users, subject: subject, last_update: right_now)
-    seamail.messages << SeamailMessage.new(author: author, text: first_message_text, timestamp: right_now, read_users: [author])
+    seamail.messages << SeamailMessage.new(author: author, text: first_message_text, timestamp: right_now, read_users: [author], original_author: original_author)
     if seamail.valid?
       seamail.save
     end
     seamail
   end
 
-  def add_message(author, text)
+  def add_message(author, text, original_author)
     right_now = Time.now
     self.last_update = right_now
     self.save
-    messages.create author: author, text: text, timestamp: right_now, read_users: [author]
+    messages.create author: author, text: text, timestamp: right_now, read_users: [author], original_author: original_author
   end
 
   def self.search(params = {})

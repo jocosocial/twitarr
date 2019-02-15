@@ -114,6 +114,8 @@ These output types are used throughout the API
 
 ## Seamail information
 
+All seamail endpoints accept `as_mod` as a URL parameter. If you set `as_mod=true` on any seamail endpoint, and the current user has a Moderator, THO, or Admin role, the seamail endpoint will behave as if the user is currently logged in as the generic `moderator` account. If the current user is a regular user, sending `as_mod=true` will have no effect.
+
 ### Seamail specific types
 
 #### SeamailMessage{}

@@ -190,14 +190,14 @@ if Forum.count == 0
 end
 
 def create_seamail(subject, text, author, recipients, timestamp)
-  seamail = Seamail.create_new_seamail author, recipients, subject, text
+  seamail = Seamail.create_new_seamail author, recipients, subject, text, author
   seamail.last_update = timestamp
   seamail.messages.first.timestamp = timestamp
   seamail.save!
   seamail
 end
 def reply_seamail(seamail, text, author, timestamp)
-  message = seamail.add_message author, text
+  message = seamail.add_message author, text, author
   message.timestamp = timestamp
   message.save!
   message

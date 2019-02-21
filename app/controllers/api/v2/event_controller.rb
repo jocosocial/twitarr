@@ -55,7 +55,7 @@ class API::V2::EventController < ApplicationController
   def follow
     @event.follow current_username
     if @event.save
-      render json: {status: 'ok', event: @event}
+      render json: {status: 'ok', event: @event.decorate.to_hash(current_username, request_options)}
     else
       render status: :bad_request, json: {status: 'error', error: 'Unable to follow event.'}
     end
@@ -64,7 +64,7 @@ class API::V2::EventController < ApplicationController
   def unfollow
     @event.unfollow current_username
     if @event.save
-      render json: {status: 'ok', event: @event}
+      render json: {status: 'ok', event: @event.decorate.to_hash(current_username, request_options)}
     else
       render :bad_request, json: {status: 'error', error: 'Unable to unfollow event.'}
     end

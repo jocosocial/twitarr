@@ -14,6 +14,8 @@ Twitarr.ScheduleDayController = Twitarr.Controller.extend
       @transitionToRoute('schedule.day', @get('model.next_day'))
     prev_day: ->
       @transitionToRoute('schedule.day', @get('model.prev_day'))
+    upload_schedule: ->
+      @transitionToRoute('schedule.upload')
 
 Twitarr.ScheduleTodayController = Twitarr.ScheduleDayController.extend()
 

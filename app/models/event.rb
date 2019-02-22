@@ -4,7 +4,7 @@ class Event
   include Mongoid::Paranoia
   include Searchable
 
-  FIRST_CRUISE_DATE = Date.new 2019, 3, 9
+  FIRST_CRUISE_DATE = Date.new 2020, 3, 9 # Don't do time zone mucking for 2019
 
   field :tl, as: :title, type: String
   field :sm, as: :description, type: String

@@ -4,7 +4,7 @@ class Event
   include Mongoid::Paranoia
   include Searchable
 
-  FIRST_CRUISE_DATE = Date.new 2020, 3, 9 # Don't do time zone mucking for 2019
+  DST_START = Time.new(2019, 3, 10, 2, 0, 0, "-05:00")
 
   field :tl, as: :title, type: String
   field :sm, as: :description, type: String
@@ -47,12 +47,12 @@ class Event
     end
     event.title = ics_event.summary.force_encoding('utf-8')
     event.description = ics_event.description.force_encoding('utf-8')
-    if ics_event.dtstart.andand.to_date == FIRST_CRUISE_DATE
-      event.start_time = ics_event.dtstart + 1.hour
-      event.end_time = ics_event.dtend + 1.hour unless ics_event.dtend.nil?
-    else
+    if ics_event.dtstart <= DST_START
       event.start_time = ics_event.dtstart
       event.end_time = ics_event.dtend
+    else
+      event.start_time = ics_event.dtstart - 1.hour
+      event.end_time = ics_event.dtend - 1.hour unless ics_event.dtend.nil?
     end
     event.official = !ics_event.categories.include?('SHADOW CRUISE')
     # locations tend to have trailing commas for some reason

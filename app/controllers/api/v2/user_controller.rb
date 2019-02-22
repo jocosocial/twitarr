@@ -1,7 +1,7 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions]
+  before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions, :upload_schedule]
   before_action :not_muted, :only => [:update_photo]
   before_action :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
 
@@ -211,6 +211,17 @@ class API::V2::UserController < ApplicationController
 
   def mentions
     render json: { status: 'ok', mentions: current_user.unnoticed_mentions }
+  end
+
+  def upload_schedule
+    begin
+			upload = params[:schedule].tempfile.read
+			temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
+			Icalendar::Calendar.parse(temp).first.events.map { |x| Event.favorite_from_ics(x, current_username) }
+		rescue StandardError => e
+			render status: :bad_request, json: {status: 'error', error: "Unable to parse schedule: #{e.message}"} and return
+		end
+		render json: {status: 'ok'}
   end
 
   def logout

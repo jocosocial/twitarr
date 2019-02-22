@@ -68,5 +68,41 @@ Twitarr.ScheduleEditController = Twitarr.Controller.extend
           @set 'posting', false
           @transitionToRoute 'schedule.detail', @get('model.id')
       )
+  
+Twitarr.ScheduleUploadController = Twitarr.Controller.extend
+  schedule_upload_url: (->
+    "#{Twitarr.api_path}/user/schedule"
+  ).property()
+
+  setupUpload: (->
+    Ember.run.scheduleOnce('afterRender', @, =>
+      $('#scheduleupload').fileupload
+        dataType: 'json'
+        dropZone: $('#schedule-upload-div')
+        add: (e, data) =>
+          @send('start_upload')
+          data.submit()
+        always: =>
+          @send('end_upload')
+        done: (e, data) =>
+          @send('file_uploaded', data.result)
+        fail: (e, data) ->
+          if data.jqXHR?.responseJSON?.error?
+            alert data.jqXHR.responseJSON.error
+          else
+            alert 'An upload has failed!'
+    )
+  )
+
+  actions:
+    file_uploaded: (data) ->
+      if data.status is 'ok'
+        alert 'Upload successful!'
+        @transitionToRoute('events')
+    start_upload: ->
+      @get('application').send('start_upload')
+    end_upload: ->
+      @get('application').send('end_upload')
+
 
 getUsableTimeValue = -> d = new Date(); d.toISOString().replace('Z', '').replace(/:\d{2}\.\d{3}/, '')

@@ -1960,6 +1960,33 @@ Reset the user's profile photo to their default identicon image.
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
 
+### POST /api/v2/user/schedule
+
+Upload an .ics schedule. Schedule should be uploaded as form-data. Any event in the .ics file that matches an event in the database will be marked as Followed for the user.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### Query parameters
+* schedule=file - The from-data schedule file.
+
+#### Returns
+
+```
+{ "status": "ok" }
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* status_code_with_message - HTTP 400 if the uploaded schedule could not be parsed
+  ```
+    { 
+        "status": "error", 
+        "error": "Unable to parse schedule: errorMessage" # Error message will be replaced with a hopefully helpful message describing what went wrong
+    }
+  ```
+
 
 ## Forum information
 

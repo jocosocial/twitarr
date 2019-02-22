@@ -60,6 +60,17 @@ class Event
     event.save
   end
 
+  def self.favorite_from_ics(ics_event, username)
+    uid = ics_event.uid.split('@')[0]
+    begin
+      event = Event.find(uid)
+    rescue Mongoid::Errors::DocumentNotFound
+      return
+    end
+    event.favorites << username unless event.favorites.include? username
+    event.save
+  end
+
   def follow(username)
     self.favorites << username unless self.favorites.include? username
   end

@@ -34,14 +34,18 @@ Twitarr.AdminUploadScheduleController = Twitarr.Controller.extend
           @send('end_upload')
         done: (e, data) =>
           @send('file_uploaded', data.result)
-        fail: ->
-          alert 'An upload has failed!'
+        fail: (e, data) ->
+          if data.jqXHR?.responseJSON?.error?
+            alert data.jqXHR.responseJSON.error
+          else
+            alert 'An upload has failed!'
     )
   )
 
   actions:
     file_uploaded: (data) ->
-      alert data.status unless data.status is 'ok'
+      if data.status is 'ok'
+        alert('Upload successful!')
     start_upload: ->
       @get('application').send('start_upload')
     end_upload: ->

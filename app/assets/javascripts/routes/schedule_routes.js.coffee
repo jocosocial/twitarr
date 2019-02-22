@@ -48,3 +48,8 @@ Twitarr.ScheduleEditRoute = Ember.Route.extend
       window.history.back()
       return
     )
+
+Twitarr.ScheduleUploadRoute = Ember.Route.extend
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    controller.setupUpload()

@@ -37,6 +37,7 @@ Twitarr.Router.map ()->
     @route 'new', { path: 'new'}
     @route 'detail', { path: 'event/:id' }
     @route 'edit', { path: 'event/:id/edit'}
+    @route 'upload', {path: 'upload'}
 
   @resource 'events', ->
     @route 'today', { path: 'today' }

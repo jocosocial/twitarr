@@ -1,0 +1,25 @@
+<div class="main-page-header">
+  <div class="title">Upload My Schedule</div>
+  <div class="text">
+    This tool lets you upload your personal schedule. If you currently have internet access, click the "My Schedule"
+    link under "Export Calendar" <a target="_blank" href="https://jococruise2019.sched.com/mobile-site">on this page</a>
+    to download an ICS file containing your events.
+    If you don't currently have internet access, hopefully you already have the ICS file saved on your device!
+    Upload your ICS file using the button below, and all included events that exist in Twit-arr's copy of the schedule
+    will be marked as Followed and added to your {{#link-to 'events'}}My Schedule{{/link-to}} page. Note that this tool 
+    will not remove any events from your schedule - if you have un-followed events on Sched.org since your last import, 
+    you may need to manually un-follow some events in {{#link-to 'events'}}My Schedule{{/link-to}} here on Twit-arr.
+  </div>
+</div>
+<div class="display_card">
+  <div class="card-section">
+    <div id="schedule-upload-div" class="upload-div">
+      <input id="scheduleupload" class="fileupload" type="file" name="schedule" data-url="{{schedule_upload_url}}" accept="text/calendar"/>
+      {{#if application.uploads_pending}}
+        <div class="uploading">Uploading...</div>
+      {{else}}
+        Click here to upload your schedule
+      {{/if}}
+    </div>
+  </div>
+</div>

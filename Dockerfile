@@ -7,6 +7,10 @@ WORKDIR /tmp
 RUN gem install bundler:1.17.2 && bundle _1.17.2_ install
 # todo - this warn against running as root, should we make an app user?
 
+# set the container's time zone
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ENV app /srv/app
 RUN mkdir $app
 WORKDIR $app

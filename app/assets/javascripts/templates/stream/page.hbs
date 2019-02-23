@@ -10,29 +10,27 @@
   </div>
 </div>
 
-{{#if new_post_visible}}
-  <div class="display_card">
-    <div class="card-section">
-      <div class="form">
-        {{textarea value=model.new_post rows='6' class='input' maxlength='2000' key-down='handleKeyDown'}}
-        {{partial 'upload'}}
+<div class="display_card {{if new_post_visible '' 'hidden'}}">
+  <div class="card-section">
+    <div class="form">
+      {{textarea value=model.new_post rows='6' class='input' maxlength='2000' key-down='handleKeyDown'}}
+      {{partial 'upload'}}
 
-        <ul class="errors-list">
-          {{#each error in errors}}
-            <li>{{error}}</li>
-          {{/each}}
-        </ul>
-        <span class="controls">
-          {{#if role_moderator}}
-            {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
-          {{/if}}
-          <button class="btn" {{action 'cancel'}}>Cancel</button>
-          <button class="btn" {{action 'new'}}>Post</button>
-        </span>
-      </div>
+      <ul class="errors-list">
+        {{#each error in errors}}
+          <li>{{error}}</li>
+        {{/each}}
+      </ul>
+      <span class="controls">
+        {{#if role_moderator}}
+          {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
+        {{/if}}
+        <button class="btn" {{action 'cancel'}}>Cancel</button>
+        <button class="btn" {{action 'new'}}>Post</button>
+      </span>
     </div>
   </div>
-{{/if}}
+</div>
 
 <div class="display_card">
   {{#each post in model.posts}}

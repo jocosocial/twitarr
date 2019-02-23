@@ -6,6 +6,7 @@ class API::V2::PhotoController < ApplicationController
   PAGE_LENGTH = 20
   before_action :login_required, :only => [:create, :destroy, :update]
   before_action :not_muted, :only => [:create, :update]
+  before_action :admin_required, :only => [:index]
   before_action :fetch_photo, :except => [:index, :create]
 
   def fetch_photo

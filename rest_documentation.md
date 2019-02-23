@@ -919,9 +919,14 @@ All reactions that have been applied to the post.
 }
 ```
 
-### GET /api/v2/photo - DISABLED
+### GET /api/v2/photo
 
-Gets a list of images that have been uploaded to the server. This endpoint is currently disabled, since adequate image management tools do not currently exist.
+Gets a list of images that have been uploaded to the server. This endpoint is currently admin-only, since adequate management tools do not currently exist.
+
+#### Requires
+
+* logged in as admin.
+    * Accepts: key query parameter
 
 #### Query parameters
 
@@ -944,7 +949,7 @@ A listing of photo metadata.
 ```
 
 #### Error Responses
-
+* status_code_only - HTTP 401 if user is not logged in as an admin
 * status_code_with_error_list - HTTP 400 with a list of any problems
   ```
   {

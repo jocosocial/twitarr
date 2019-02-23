@@ -37,8 +37,8 @@ gem 'draper', '~> 1.3'
 gem 'andand'
 gem 'browser'
 
-gem 'rmagick4j'
-gem 'exifr'
+gem 'rmagick4j', '= 0.3.8', :require => 'RMagick'
+gem 'image_voodoo', :require => 'image_voodoo'
 gem 'puma'
 
 gem 'siphash'

@@ -42,3 +42,11 @@ class Time
     end
   end
 end
+
+# Fixes a stupid error in the ImageVoodoo library. Don't have time to wait for a new version
+# https://github.com/jruby/image_voodoo/issues/21
+class ImageVoodoo
+  def calculate_thumbnail_dimentions
+    calculate_thumbnail_dimensions
+  end
+end

@@ -43,10 +43,25 @@ class Time
   end
 end
 
-# Fixes a stupid error in the ImageVoodoo library. Don't have time to wait for a new version
+# Fixes errors in the ImageVoodoo library. Don't have time to wait for a new version.
 # https://github.com/jruby/image_voodoo/issues/21
+# https://github.com/jruby/image_voodoo/issues/23
 class ImageVoodoo
   def calculate_thumbnail_dimentions
     calculate_thumbnail_dimensions
+  end
+
+  private
+  def correct_orientation_impl
+    case metadata.orientation
+    when 2 then flip_horizontally
+    when 3 then rotate(180)
+    when 4 then flip_vertically
+    when 5 then flip_horizontally && rotate(90)
+    when 6 then rotate(90)
+    when 7 then flip_horizontally && rotate(270)
+    when 8 then rotate(270)
+    else self
+    end
   end
 end

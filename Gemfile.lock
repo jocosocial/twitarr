@@ -90,7 +90,6 @@ GEM
     ember-source (1.13.13)
     erubis (2.7.0)
     execjs (2.7.0)
-    exifr (1.2.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     handlebars-source (4.1.0)
@@ -100,6 +99,7 @@ GEM
     icalendar (2.5.2)
       ice_cube (~> 0.16)
     ice_cube (0.16.3)
+    image_voodoo (0.8.9)
     jbuilder (2.2.7)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
@@ -226,9 +226,9 @@ DEPENDENCIES
   ember-data-source (~> 1.13.0)
   ember-rails (~> 0.19.0)
   ember-source (~> 1.13.0)
-  exifr
   handlebars-source
   icalendar (>= 2.3.0)
+  image_voodoo
   jbuilder
   jquery-rails (~> 4.0.0)
   minitest (~> 5.4.3)
@@ -240,7 +240,7 @@ DEPENDENCIES
   puma
   rack-cors
   rails (= 4.2.11)
-  rmagick4j
+  rmagick4j (= 0.3.8)
   sass-rails (~> 5.0)
   sdoc
   siphash

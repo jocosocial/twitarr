@@ -1,5 +1,4 @@
 require 'digest'
-require 'RMagick'
 require 'singleton'
 
 class PhotoStore
@@ -13,68 +12,64 @@ class PhotoStore
     return { status: 'error', error: 'File must be uploaded as form-data.'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash, uploader: uploader).first
-    return { status: 'ok', photo: existing_photo.id.to_s } unless existing_photo.nil?
-    begin
-      img = read_image(temp_file)
-    rescue Java::JavaLang::NullPointerException
-      # yeah, ImageMagick throws a NPE if the photo isn't a photo
-      return { status: 'error', error: 'Photo could not be opened - is it an image?' }
-    end
     return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
 
-    sizes = {}
-    sizes[:full] = "#{img.columns}x#{img.rows}"
+    existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash, uploader: uploader).first
+    return { status: 'ok', photo: existing_photo.id.to_s } unless existing_photo.nil?
+
+    begin
+      img = read_image(temp_file.tempfile.path)
+    rescue => e
+      return { status: 'error', error: "Photo could not be read: #{e}" }
+    end
 
     photo = store(temp_file, uploader)
-    
-    tmp = img
-    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if(tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE)
-    sizes[:medium_thumb] = "#{tmp.columns}x#{tmp.rows}"
-    tmp.write "#{Rails.root}/tmp/#{photo.store_filename}"
-    FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", md_thumb_path(photo.store_filename)
+    tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
 
-    tmp = img.resize_to_fill(SMALL_IMAGE_SIZE)
-    sizes[:small_thumb] = "#{tmp.columns}x#{tmp.rows}"
-    tmp.write "#{Rails.root}/tmp/#{photo.store_filename}"
-    FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", sm_thumb_path(photo.store_filename)
+    sizes = {}
+    sizes[:full] = "#{img.width}x#{img.height}"
+
+    tmp = img
+    tmp = tmp.thumbnail(MEDIUM_IMAGE_SIZE) if(tmp.width > MEDIUM_IMAGE_SIZE || tmp.height > MEDIUM_IMAGE_SIZE)
+    sizes[:medium_thumb] = "#{tmp.width}x#{tmp.height}"
+    tmp.save tmp_path
+    FileUtils.move tmp_path, md_thumb_path(photo.store_filename)
+
+    tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE)
+    sizes[:small_thumb] = "#{tmp.width}x#{tmp.height}"
+    tmp.save tmp_path
+    FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
 
     photo.sizes = sizes
     photo.save
     { status: 'ok', photo: photo.id.to_s }
-  rescue EXIFR::MalformedJPEG
-    { status: 'error', error: 'Photo extension is jpg but could not be opened as jpeg.' }
   end
 
   def read_image(temp_file)
-    img = Magick::Image::read(temp_file.tempfile.path).first
-    if temp_file.extension == 'jpg' || temp_file.extension == 'jpeg'
-      exif = EXIFR::JPEG.new(temp_file.tempfile)
-      orientation = exif.orientation
-      img = orientation.transform_rmagick(img) if orientation
-    end
-    img
+    img = ImageVoodoo.with_image(temp_file)
+    img.correct_orientation
   end
 
   def upload_profile_photo(temp_file, username)
     return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    begin
-      img = read_image(temp_file)
-    rescue Java::JavaLang::NullPointerException
-      # yeah, ImageMagick throws a NPE if the photo isn't a photo
-      return { status: 'error', error: 'Photo could not be opened - is it an image?' }
-    end
     return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
+    
+    begin
+      img = read_image(temp_file.tempfile.path)
+    rescue => e
+      return { status: 'error', error: "Photo could not be read: #{e}" }
+    end
+
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
-    img.write tmp_store_path
+    img.save tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
-    img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
+
+    img.cropped_thumbnail(SMALL_PROFILE_PHOTO_SIZE).save tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.small_profile_path(username)
+
     { status: 'ok', md5_hash: temp_file.md5_hash }
-  rescue EXIFR::MalformedJPEG
-    { status: 'error', error: 'Photo extension is jpg but could not be opened as jpeg.' }
   end
 
   def reset_profile_photo(username)
@@ -104,19 +99,13 @@ class PhotoStore
   def reindex_photos
     PhotoMetadata.each do |photo|
       puts photo.store_filename
-      img = Magick::Image::read(photo_path photo.store_filename).first
-      extension = Pathname.new(photo.original_filename).extname[1..-1].downcase
-      begin
-        if extension == 'jpg' || extension == 'jpeg'
-          exif = EXIFR::JPEG.new(photo_path photo.store_filename)
-          orientation = exif.orientation
-          img = orientation.transform_rmagick(img) if orientation
-        end
-      rescue => e
-        puts e
-      end
-      img.resize_to_fill(SMALL_IMAGE_SIZE).write "#{Rails.root}/tmp/#{photo.store_filename}"
-      FileUtils.move "#{Rails.root}/tmp/#{photo.store_filename}", sm_thumb_path(photo.store_filename)
+      
+      img = read_image(photo_path(photo.store_filename))
+
+      tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
+      tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE).save tmp_path
+
+      FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
     end
   end
 
@@ -124,9 +113,11 @@ class PhotoStore
     User.each do |user|
       puts user.username
       begin
-        img = Magick::Image::read(full_profile_path user.username).first
+        img = read_image(full_profile_path(user.username))
+
         tmp_store_path = "#{Rails.root}/tmp/#{user.username}.jpg"
-        img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
+        img.cropped_thumbnail(SMALL_PROFILE_PHOTO_SIZE).save tmp_store_path
+        
         FileUtils.move tmp_store_path, small_profile_path(user.username)
       rescue => e
         puts e

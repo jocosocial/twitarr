@@ -117,6 +117,9 @@ class User
     if password.nil? || password.length < 6
       errors.add :password, 'Your password must be at least six characters long.'
     end
+    if password.length > 100
+      errors.add :password, 'Your password cannot be more than 100 characters long.'
+    end
   end
 
   def valid_registration_code?

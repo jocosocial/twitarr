@@ -169,7 +169,7 @@ class API::V2::UserController < ApplicationController
     current_user.password = params[:new_password]
 
     unless current_user.valid?
-      errors[:new_password] = ["New password must be at least six characters long."]
+      errors[:new_password] = ["New password must be at least six characters long, and cannot be more than 100 characters long."]
     end
 
     render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.length == 0

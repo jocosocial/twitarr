@@ -1466,9 +1466,9 @@ Create a new user account. This will throw an error if it is called while logged
 
 ```
 {
-    "new_username": "username_string", # Username of the new user. If it is in use, an error will be returned.
-    "new_password": "password_string", # Password of the new user. Must be at least 6 characters. If it is less, an error will be returned.
-    "display_name": "displayname_string", # Optional. The user's display name.
+    "new_username": "username_string", # Username of the new user. If it is in use, an error will be returned. Max length: 40 characters, UTF-8.
+    "new_password": "password_string", # Password of the new user. Min length: 6 characters, Max length: 100 characters, UTF-8.
+    "display_name": "displayname_string", # Optional. The user's display name. Min length: 3 characters, Max length: 40 characters, UTF-8. Null is allowed.
     "registration_code": "string" # A code provided to the user which will allow them to register. Alphanumeric, case insensitive.
 }
 ```
@@ -1500,7 +1500,8 @@ If the user is successfully created, a JSON object will be returned with the aut
             "An account with this username already exists."
         ],
         "new_password": [
-            "Your password must be at least six characters long."
+            "Your password must be at least six characters long.",
+            "Your password cannot be more than 100 characters long."
         ],
         "registration_code": [
             "Invalid registration code."
@@ -1598,7 +1599,7 @@ Updates the user's profile. All fields are optional - anything left out of the r
 
 ```
 {
-	"display_name": "display_name_string", # Min length: 3 characters, Max length: 48 characters, UTF-8. 
+	"display_name": "display_name_string", # Min length: 3 characters, Max length: 40 characters, UTF-8. Null is allowed.
 	"email": "email_string",
 	"home_location": "string", # Max length: 100 chatarcters, UTF-8.
 	"real_name": "string", # Max length: 100 chatarcters, UTF-8.
@@ -1714,7 +1715,7 @@ Allows a user to use their registration code to reset their password.
             "Username and registration code combination not found."
         ],
         "new_password": [
-            "New password must be at least six characters long."
+            "New password must be at least six characters long, and cannot be more than 100 characters long."
         ]
     }
   }

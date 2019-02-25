@@ -191,7 +191,7 @@ class User
   end
 
   def registration_code=(val)
-    super val.gsub(/\s+/, "")
+    super val.upcase.gsub(/[^A-Z0-9]/, "")
   end
 
   def upcoming_events(alerts=false)

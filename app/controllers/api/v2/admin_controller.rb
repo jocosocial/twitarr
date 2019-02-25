@@ -2,9 +2,9 @@ class API::V2::AdminController < ApplicationController
 	skip_before_action :verify_authenticity_token
 	
 	before_action :moderator_required, :only => [:users, :user, :profile, :update_user, :reset_photo]
-	before_action :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement]
-	before_action :admin_required, :only => [:upload_schedule]
-	before_action :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo]
+	before_action :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement, :regcode]
+	before_action :admin_required, :only => [:upload_schedule, :activate]
+	before_action :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo, :regcode]
 	before_action :fetch_announcement, :only => [:announcement, :update_announcement, :delete_announcement]
 	
 	def users
@@ -30,7 +30,6 @@ class API::V2::AdminController < ApplicationController
 			roleErrors.push('You cannot change your own role.') if @user.username == current_username && @user.role != newRole
 			
 			if @current_user.role == User::Role::MODERATOR
-
 				# Moderators cannot ban/unban users
 				if newRole == User::Role::BANNED || (@user.role == User::Role::BANNED && newRole != User::Role::BANNED)
 					roleErrors.push('Only Admin and THO can ban or unban users.')
@@ -39,6 +38,10 @@ class API::V2::AdminController < ApplicationController
 				# Moderators cannot alter priviliged roles
 				if @user.role != newRole && (@user.role >= User::Role::MODERATOR || newRole >= User::Role::MODERATOR)
 					roleErrors.push('Only Admin and THO can change priviliged roles.')
+				end
+			elsif @current_user.role < User::Role::Admin
+				if @user.role != newRole && (@user.role >= User::Role::Admin || newRole >= User::Role::Admin)
+					roleErrors.push("Only Admin can grant or revoke the admin role.")
 				end
 			end
 			
@@ -68,6 +71,10 @@ class API::V2::AdminController < ApplicationController
 
 		@user.save
 		render json: {status: 'ok', user: @user.decorate.admin_hash}
+	end
+
+	def regcode
+		render json: {status: 'ok', registration_code: @user.registration_code}
 	end
 
 	def activate

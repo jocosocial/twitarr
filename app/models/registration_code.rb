@@ -5,7 +5,7 @@ class RegistrationCode
 
   def self.add_code(code)
     begin
-      doc = RegistrationCode.new(code:code.gsub(/\s+/, ""))
+      doc = RegistrationCode.new(code:code.upcase.gsub(/[^A-Z0-9]/, ""))
       doc.upsert
       doc
     rescue Exception => e

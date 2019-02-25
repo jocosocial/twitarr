@@ -2911,7 +2911,7 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
 Returns a list of all users. No paging. Most clients shouldn't implement this.
 
 #### Requires
-* logged in as admin.
+* logged in as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -2924,14 +2924,14 @@ Returns a list of all users. No paging. Most clients shouldn't implement this.
 ```
 
 #### Error Responses
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as moderator, tho, or admin
 
 ### GET /api/v2/admin/users/:query
 
 Returns a list of users matching `:query`. Searches username and display name.
 
 #### Requires
-* logged in as admin.
+* logged in as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -2945,12 +2945,12 @@ Returns a list of users matching `:query`. Searches username and display name.
 ```
 
 #### Error Responses
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as moderator, tho, or admin
 
 ### GET /api/v2/admin/user/:username/profile
 
 #### Requires
-* logged in as admin.
+* logged in as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -2963,7 +2963,7 @@ Returns a list of users matching `:query`. Searches username and display name.
 ```
 
 #### Error Responses
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as moderator, tho, or admin
 * status_code_with_message - HTTP 404 if the user is not found
   ```
     { "status": "error", "error": "User not found." }
@@ -2971,10 +2971,10 @@ Returns a list of users matching `:query`. Searches username and display name.
 
 ### POST /api/v2/admin/user/:username
 
-Allows an admin to edit a user's public profile fields. All fields in the JSON request body are optional - only present fields will be updated.
+Allows a priviliged user to edit a user's public profile fields. All fields in the JSON request body are optional - only present fields will be updated.
 
 #### Requires
-* logged in as admin.
+* logged in as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### JSON Request Body
@@ -3004,7 +3004,7 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as moderator, tho, or admin
 * status_code_with_message - HTTP 404 if the user is not found
   ```
     { "status": "error", "error": "User not found." }
@@ -3028,7 +3028,8 @@ Allows an admin to edit a user's public profile fields. All fields in the JSON r
             "You cannot change your own role.",
             "Invalid role. Must be one of: [role_strings].", # [role_strings] will be replaced with a list of valid roles
             "Only Admin and THO can ban or unban users.",
-            "Only Admin and THO can change priviliged roles."
+            "Only Admin and THO can change priviliged roles.",
+            "Only Admin can grant or revoke the admin role."
         ],
         "mute_reason": [
             "When user is muted, mute reason is required."
@@ -3069,7 +3070,7 @@ Sets a user's status to ACTIVE. Currently disabled.
 Resets a user's password to the default password.
 
 #### Requires
-* logged in as admin.
+* logged in as tho or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -3081,7 +3082,7 @@ Resets a user's password to the default password.
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 * status_code_with_message - HTTP 404 if the user is not found
   ```
     { "status": "error", "error": "User not found." }
@@ -3092,7 +3093,7 @@ Resets a user's password to the default password.
 Reset the user's profile photo to their default identicon image.
 
 #### Requires
-* logged in as admin.
+* logged in as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -3105,7 +3106,31 @@ Reset the user's profile photo to their default identicon image.
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as moderator, tho, or admin
+* status_code_with_message - HTTP 404 if the user is not found
+  ```
+    { "status": "error", "error": "User not found." }
+  ```
+
+### GET /api/v2/admin/user/:username/regcode
+
+Returns the user's registration code.
+
+#### Requires
+* logged in as tho or admin.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "registration_code": "string"
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 * status_code_with_message - HTTP 404 if the user is not found
   ```
     { "status": "error", "error": "User not found." }
@@ -3116,7 +3141,7 @@ Reset the user's profile photo to their default identicon image.
 Returns a list of all announcements, including expired announcements.
 
 #### Requires
-* logged in as admin.
+* logged in as tho or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -3129,14 +3154,14 @@ Returns a list of all announcements, including expired announcements.
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 
 ### POST /api/v2/admin/announcements
 
 Creates a new announcement. Announcement will be displayed to users until the timestamp `valid_until`.
 
 #### Requires
-* logged in as admin.
+* logged in as tho or admin.
     * Accepts: key query parameter
 
 #### JSON Request Body
@@ -3158,7 +3183,7 @@ Creates a new announcement. Announcement will be displayed to users until the ti
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 * status_code_with_error_list - HTTP 400 with a list of any problems
   ```
     {
@@ -3176,7 +3201,7 @@ Creates a new announcement. Announcement will be displayed to users until the ti
 Get a single announcement by its id.
 
 #### Requires
-* logged in as admin.
+* logged in as tho or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -3189,7 +3214,7 @@ Get a single announcement by its id.
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 * status_code_with_message - HTTP 404 if the announcement is not found
   ```
     { "status": "error", "error": "Announcement not found." }
@@ -3200,7 +3225,7 @@ Get a single announcement by its id.
 Update an announcement. All fields are required. If no changes for a field, just send the existing data.
 
 #### Requires
-* logged in as admin.
+* logged in as tho or admin.
     * Accepts: key query parameter
 
 #### JSON Request Body
@@ -3222,7 +3247,7 @@ Update an announcement. All fields are required. If no changes for a field, just
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 * status_code_with_message - HTTP 404 if the announcement is not found
   ```
     { "status": "error", "error": "Announcement not found." }
@@ -3244,7 +3269,7 @@ Update an announcement. All fields are required. If no changes for a field, just
 Delete an announcement.
 
 #### Requires
-* logged in as admin.
+* logged in as tho or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -3256,7 +3281,7 @@ Delete an announcement.
 ```
 
 #### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in as an admin
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
 * status_code_with_message - HTTP 404 if the announcement is not found
   ```
     { "status": "error", "error": "Announcement not found." }

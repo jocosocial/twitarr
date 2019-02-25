@@ -101,6 +101,21 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
           alert('Password reset.')
           @refresh()
         )
+    
+    get_regcode: (username) ->
+      $.get("#{Twitarr.api_path}/admin/user/#{username}/regcode").fail((response) =>
+        if response.status? && response.status == 401
+          alert('Access Denied.')
+          @transitionTo('index')
+          return
+        else if response.responseJSON?.error?
+          alert(response.responseJSON.error)
+        else
+          alert 'Something went wrong. Try again later.'
+        return
+      ).then((data) =>
+        alert("Registration code: #{data.registration_code}")
+      )
 
     reset_photo: (username) ->
       if confirm('Are you sure you want to reset this user\'s photo?')

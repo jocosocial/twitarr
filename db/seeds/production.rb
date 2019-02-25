@@ -10,8 +10,17 @@ def create_registration_code(code)
 end
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
+  # stub codes for built-in accounts
   for i in 1..3 do
     create_registration_code "code#{i}"
+  end
+
+  # if the twkeys.txt file exists, also import those codes
+  keys_filename = "db/seeds/twkeys.txt"
+  if File.exists?(keys_filename)
+    File.foreach(keys_filename) do |line|
+      create_registration_code line
+   end
   end
 end
 
@@ -55,16 +64,18 @@ end
 
 puts 'Creating events...'
 cal_filename = "db/seeds/all.ics"
-# fix bad encoding from sched.org
-cal_text = File.read(cal_filename)
-cal_text = cal_text.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
-if File.exists? cal_filename + ".tmp"
-  File.delete(cal_filename + ".tmp")
-end
-File.open(cal_filename + ".tmp", "w") { |file| file << cal_text }
+if File.exists?(cal_filename)
+  # fix bad encoding from sched.org
+  cal_text = File.read(cal_filename)
+  cal_text = cal_text.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
+  if File.exists?(cal_filename + ".tmp")
+    File.delete(cal_filename + ".tmp")
+  end
+  File.open(cal_filename + ".tmp", "w") { |file| file << cal_text }
 
-cal_file = File.open(cal_filename + ".tmp")
-Icalendar::Calendar.parse(cal_file).first.events.map { |x| Event.create_from_ics x }
+  cal_file = File.open(cal_filename + ".tmp")
+  Icalendar::Calendar.parse(cal_file).first.events.map { |x| Event.create_from_ics x }
+end
 
 def create_reaction(tag)
   reaction = Reaction.add_reaction tag

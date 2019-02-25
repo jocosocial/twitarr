@@ -41,3 +41,4 @@ start.sh
 /photo_storage/full/*
 /photo_storage/thumb/*
 /photo_storage/profiles/*
+db/seeds/twkeys.txt

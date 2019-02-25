@@ -14,6 +14,7 @@
 
     <div class="form">
       {{#if role_tho}}
+        <button class="btn" {{action 'get_regcode' model.username}}>Get Registration Code</button>
         <button class="btn" {{action 'reset_password' model.username}}>Reset Password</button>
       {{/if}}
       {{#if model.empty_password}}

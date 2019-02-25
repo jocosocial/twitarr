@@ -8,6 +8,8 @@ def create_registration_code(code)
   regcode.save!
   regcode
 end
+
+puts "Creating registration codes..."
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
   for i in 1..20 do

@@ -112,7 +112,7 @@
         
           <div class="form-group">
             <label for="current_password">Current Password</label>
-            {{ input type="password" value=model.current_password class='input' name="current_password" }}
+            {{ input type="password" value=model.current_password class='input' maxlength='100' name="current_password" }}
             {{#if errors.current_password}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.current_password}}
@@ -123,7 +123,7 @@
           </div>
           <div class="form-group">
             <label for="new_password">New Password</label>
-            {{ input type="password" value=model.new_password class='input' name="new_password" }}
+            {{ input type="password" value=model.new_password class='input' maxlength='100' name="new_password" }}
             {{#if errors.new_password}}
               <ul class="alert alert-warning" style="padding-left: 2em;">
                 {{#each error in errors.new_password}}
@@ -134,7 +134,7 @@
           </div>
           <div class="form-group">
             <label for="confirm_password">Confirm New Password</label>
-            {{ input type="password" value=model.confirm_password class='input' name="confirm_password" }}
+            {{ input type="password" value=model.confirm_password class='input' maxlength='100' name="confirm_password" }}
           </div>
 
           <div class="row" style="margin: 0.5em 1em;">

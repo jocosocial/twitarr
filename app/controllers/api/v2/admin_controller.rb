@@ -39,8 +39,8 @@ class API::V2::AdminController < ApplicationController
 				if @user.role != newRole && (@user.role >= User::Role::MODERATOR || newRole >= User::Role::MODERATOR)
 					roleErrors.push('Only Admin and THO can change priviliged roles.')
 				end
-			elsif @current_user.role < User::Role::Admin
-				if @user.role != newRole && (@user.role >= User::Role::Admin || newRole >= User::Role::Admin)
+			elsif @current_user.role < User::Role::ADMIN
+				if @user.role != newRole && (@user.role >= User::Role::ADMIN || newRole >= User::Role::ADMIN)
 					roleErrors.push("Only Admin can grant or revoke the admin role.")
 				end
 			end

@@ -35,8 +35,8 @@ class Time
   end
 
   def self.from_param(input)
-    if input =~ /^\d+$/
-      Time.at(input.to_i / 1000.0)
+    if input.is_a?(Integer) || input =~ /^\d+$/
+      Time.at(input.to_i / 1000)
     elsif input
       Time.parse(input)
     end

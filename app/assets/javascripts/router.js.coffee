@@ -26,6 +26,7 @@ Twitarr.Router.map ()->
 
   @resource 'admin', ->
     @route 'announcements'
+    @route 'announcements_edit', { path: 'announcements/:id' }
     @route 'upload_schedule'
     @route 'search', { path: 'users' }
     @route 'users', { path: 'users/:text' }

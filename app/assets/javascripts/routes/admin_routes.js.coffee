@@ -173,9 +173,9 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
       self = this
       $.post("#{Twitarr.api_path}/admin/announcements", { text: text, valid_until: valid_until }).fail((response) =>
         if response.responseJSON?.error?
-          self.controller.set('errors', [response.responseJSON.error])
+          self.controller.set('model.errors', [response.responseJSON.error])
         else if response.responseJSON?.errors?
-          self.controller.set('errors', response.responseJSON.errors)
+          self.controller.set('model.errors', response.responseJSON.errors)
         else
           alert 'Announcement could not be created. Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
@@ -184,6 +184,64 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
         else
           @refresh()
       )
+    delete: (id) ->
+      if confirm('Are you sure you want to delete this announcement?')
+        $.ajax("#{Twitarr.api_path}/admin/announcements/#{id}", method: 'DELETE').fail((response) =>
+          alert 'Announcement could not be deleted. It may have already been deleted by someone else. If not, please try again later.'
+          @refresh()
+        ).then((response) =>
+          if (response.status isnt 'ok')
+            alert response.status
+          else
+            @refresh()
+        )
+    edit: (id) ->
+      @transitionTo('admin.announcements_edit', id)
+
+Twitarr.AdminAnnouncementsEditRoute = Ember.Route.extend
+  model: (params) ->
+    $.getJSON("#{Twitarr.api_path}/admin/announcements/#{params.id}?app=plain").fail((response)=>
+      if response.status?
+        if response.status == 401
+          alert('Access Denied.')
+          @transitionTo('index')
+          return
+        else if response.status == 404
+          alert('Announcement not found.')
+          @transitionTo('admin.announcements')
+          return
+      alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
+
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    if model.status isnt 'ok'
+      alert model.status
+    else
+      controller.set('model', model.announcement)
+      controller.set('model.valid_until', moment(model.announcement.valid_until).format('YYYY-MM-DDTHH:mm'))
+    controller.set('model.errors', Ember.A())
+
+  actions:
+    save: (id, text, valid_until) ->
+      self = this
+      $.post("#{Twitarr.api_path}/admin/announcements/#{id}", { text: text, valid_until: valid_until }).fail((response) =>
+        if response.responseJSON?.error?
+          self.controller.set('model.errors', [response.responseJSON.error])
+        else if response.responseJSON?.errors?
+          self.controller.set('model.errors', response.responseJSON.errors)
+        else
+          alert 'Announcement could not be edited. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        if (response.status isnt 'ok')
+          alert response.status
+        else
+          @transitionTo('admin.announcements')
+      )
+    cancel: ->
+      @transitionTo('admin.announcements')
 
 Twitarr.AdminUploadScheduleRoute = Ember.Route.extend
   setupController: (controller, model) ->

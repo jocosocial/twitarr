@@ -23,16 +23,17 @@
   {{#each announcement in model}}
     <div class="card-section">
       <span class="title">
-        {{announcement.author}}
+        By: {{announcement.author}}, Displayed until: {{pretty-time announcement.valid_until}}
       </span>
       {{pretty-timestamp announcement.timestamp}}
       <div class="body">
         <div class="body-section">
           {{{announcement.text}}}
         </div>
-        <div class="controls">
-          Displayed until: {{pretty-time announcement.valid_until}}
-        </div>
+      </div>
+      <div class="controls">
+        <button {{action 'edit' announcement.id bubbles=false}} class="btn-link">Edit</button>
+        <button {{action 'delete' announcement.id bubbles=false}} class="btn-link">Delete</button>
       </div>
     </div>
   {{/each}}

@@ -1,0 +1,20 @@
+<div class="main-page-header">
+  <div class="title">{{#link-to 'admin.announcements'}}Announcements{{/link-to}} > Edit</div>
+</div>
+<div class="display_card">
+  <div class="card-section">
+    Message
+    {{textarea value=model.text rows='6' class='input' placeholder='text'}}
+    Valid until
+    {{input value=model.valid_until type='datetime-local' class='input'}}
+    <ul class="errors-list">
+      {{#each error in model.errors}}
+        <li>{{error}}</li>
+      {{/each}}
+    </ul>
+    <div class="controls">
+			<button class="btn" {{action 'cancel'}}>Cancel</button>
+      <button class="btn" {{action 'save' model.id model.text model.valid_until}}>Save</button>
+    </div>
+  </div>
+</div>

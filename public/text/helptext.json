@@ -48,10 +48,10 @@
                 ]
             },
             {
-                "header": "Cruise Monkey?",
+                "header": "Cruise Monkey? Rainbow Monkey?",
                 "paragraphs": [
                     {
-                        "text": "Cruise Monkey is an iPhone and Android app built by RangerRick. It uses the same login information as Twit-arr but is not technically the same thing. Which is why you may get redirected if you ask the wrong person about the wrong app. :)"
+                        "text": "Cruise Monkey is an iPhone and Android app built by RangerRick, and Rainbow Monkey is an iPhone and Android app built by Hixie (new for JCC9). They use the same login information as Twit-arr but, but are not technically the same thing. Which is why you may get redirected if you ask the wrong person about the wrong app. :)"
                     }
                 ]
             },
@@ -69,6 +69,9 @@
                         ]
                     }
                 ]
+            },
+            {
+                "header": "I can't post anything. "
             },
             {
                 "header": "What's this alert that says \"You need to change your password before you continue\"?",
@@ -91,7 +94,7 @@
                             "RangerRick builds CruiseMonkey and integrates with the Twit-arr APIs.",
                             "grundoon attempts to step up when needed, and did a bunch of work to prepare for JCC8.",
                             "Dustin Hendrickson (hendusoone) fixed bugs, added features, and updated APIs for JCC9.",
-                            "Hixie, ralykam, and ChrisR wrote Rainbow Monkey.",
+                            "Hixie wrote Rainbow Monkey, Rachel Kammerer (ralykam) worked on the user experience, and ChrisR sent in many helpful patches.",
                             "Drew and others at THO give tons of support and advice that allows us to continue to provide this service.",
                             "None of this would be here without the invaluable aid of the beta testers, who try out our software on the many, MANY mobile devices that are out there."
                         ]

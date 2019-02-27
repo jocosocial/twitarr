@@ -91,8 +91,13 @@
                             "RangerRick builds CruiseMonkey and integrates with the Twit-arr APIs.",
                             "grundoon attempts to step up when needed, and did a bunch of work to prepare for JCC8.",
                             "Dustin Hendrickson (hendusoone) fixed bugs, added features, and updated APIs for JCC9.",
+                            "Hixie, ralykam, and ChrisR wrote Rainbow Monkey.",
+                            "Drew and others at THO give tons of support and advice that allows us to continue to provide this service.",
                             "None of this would be here without the invaluable aid of the beta testers, who try out our software on the many, MANY mobile devices that are out there."
                         ]
+                    },
+                    {
+                        "text": "A big thank you goes out to the Moderation Team for all the work they do, and to the ship's IT staff who generously host the server and allow us to run this on their network!"
                     }
                 ]
             }

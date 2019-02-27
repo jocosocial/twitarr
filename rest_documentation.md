@@ -448,6 +448,7 @@ Get the tweets in the stream. This is an incredibly flexible endpoint that will 
 * mentions=username - Optional (Default: No Filter) - Filter by mentions of username specified
 * include_author=true - Optional (Default: false) - When filtering by mentions, include posts mentioning *or* written by the username specified
 * starred=true - Optional (Default: false) - Return only posts by starred users (You must be logged in for this to work.)
+* reacted=true - Optional (Default: false) - Return only posts where the current user has reacted to the post (You must be logged in for this to work.)
 
 #### Returns
 
@@ -475,6 +476,13 @@ Some notes on `newer_posts` in the input and `next_page` in the output: `next_pa
     {
         "status": "error",
         "error": "Limit must be greater than 0"
+    }
+    ```
+  * HTTP 400 if a boolean parameter is given a bad value
+    ```
+    {
+        "status": "error",
+        "error": "Invalid value for Boolean: str" # str will be replaced with the invalid value
     }
     ```
 

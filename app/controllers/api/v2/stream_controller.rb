@@ -15,18 +15,22 @@ class API::V2::StreamController < ApplicationController
       render status: :bad_request, json: {status:'error', error: "Limit must be greater than 0"} and return
     end
 
+    query = {filter_author: params[:author], filter_hashtag: params[:hashtag], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
+
     begin
       param_newer_posts = params.has_key?(:newer_posts) && params[:newer_posts].to_bool
+
+      if params.has_key?(:starred) and params[:starred].to_bool
+        query[:filter_authors] = current_user.starred_users.reject { |x| x == current_username }
+      end
+
+      if params.has_key?(:reacted) and params[:reacted].to_bool
+        query[:filter_reactions] = current_username
+      end
     rescue ArgumentError => e
       render status: :bad_request, json: {status: 'error', error: e.message} and return
     end
 
-    filter_authors = nil
-    if params[:starred]
-      filter_authors = current_user.starred_users.reject { |x| x == current_username }
-    end
-    query = {filter_author: params[:author], filter_authors: filter_authors, filter_hashtag: params[:hashtag], filter_mentions: params[:mentions], mentions_only: !params[:include_author]}
-    
     posts = nil
     newest = false
     sort = :desc

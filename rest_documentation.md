@@ -2752,13 +2752,15 @@ Allows the user to remove their favorite from an event.
 
 Returns text for display to the user. Valid filenames can be found in /public/text - do not include the .json extension. For example: `/api/v2/text/codeofconduct`
 
-Each section can have an optional header, and an optional array of paragraphs. Each paragraph can include text and/or a list. If both are present, when presenting to a user, the intent is to display text first, then the list.
+This enpoint will return the full contents of the file as json. Currently, there is no validation on the format of the file, but this may change.
+
+For files to be displayed in the ember web front-end, there is a recommended format: Each section can have an optional header, and an optional array of paragraphs. Each paragraph can include text and/or a list. If both are present, when presenting to a user, the intent is to display text first, then the list. A quick sample of this format is included in the Returns section below.
 
 #### Returns
 
 ```
 {
-    "filename_string": { # Will be replaced with the submitted :filename
+    "filename_string": { # for example, "codeofconduct"
         "sections": [
             {
                 "header": "string",

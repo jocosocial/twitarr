@@ -55,3 +55,5 @@ Twitarr.Router.map ()->
   @route 'starred'
   @route 'time'
   @route 'help'
+  @route 'conduct'
+  

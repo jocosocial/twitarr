@@ -73,3 +73,8 @@ Twitarr.HelpRoute = Ember.Route.extend
   model: ->
     $.getJSON("#{Twitarr.api_path}/text/helptext").then (data) =>
       data
+
+Twitarr.ConductRoute = Ember.Route.extend
+  model: ->
+    $.getJSON("#{Twitarr.api_path}/text/codeofconduct").then (data) =>
+      data

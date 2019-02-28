@@ -149,16 +149,18 @@ class API::V2::StreamController < ApplicationController
 
   def create
     parent_chain = []
+    parent_locked = false
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
       render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"} and return unless parent
       render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !is_moderator?
       
       parent_chain = parent.parent_chain + [params[:parent]]
+      parent_locked = parent.locked
     end
 
     post = StreamPost.create(text: params[:text], author: post_as_user(params), timestamp: Time.now, photo: params[:photo],
-                             location: params[:location], parent_chain: parent_chain, original_author: current_username)
+                             location: params[:location], parent_chain: parent_chain, original_author: current_username, locked: parent_locked)
     if post.valid?
       if params[:location]
         # if the location field was used, update the user's last known location

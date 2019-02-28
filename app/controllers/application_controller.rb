@@ -128,6 +128,12 @@ class ApplicationController < ActionController::Base
     key = URI.unescape(key)
     username, expiration, digest = parse_key(key)
     return false if username.nil? or expiration.nil? or digest.nil?
+    
+    begin
+      return false if Time.from_param(expiration) < Time.now # Key expiration is in the past, abort
+    rescue
+      return false # Couldn't parse the expiration, abort
+    end
 
     user = User.get(username)
     return false if user.nil? or (user.role == User::Role::BANNED) # User not found or user is banned, abort

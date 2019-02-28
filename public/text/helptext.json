@@ -43,7 +43,7 @@
                 "header": "What's a seamail?",
                 "paragraphs": [
                     {
-                        "text": "Seamail is our name for email. They don't go onto the internet and can only be sent to other Twit-arr users on the ship. Just start typing a username or handle and twitarr will give you a list of people who match."
+                        "text": "Seamail is our name for email. They don't go onto the internet and can only be sent to other Twit-arr users on the ship. Just start typing a username or handle and Twit-arr will give you a list of people who match."
                     }
                 ]
             },
@@ -71,9 +71,6 @@
                 ]
             },
             {
-                "header": "I can't post anything. "
-            },
-            {
                 "header": "What's this alert that says \"You need to change your password before you continue\"?",
                 "paragraphs": [
                     {
@@ -82,7 +79,23 @@
                 ]
             },
             {
-                "header": "Who did this?",
+                "header": "When I try to make a post, it says \"You have been muted.\" What's up with that?",
+                "paragraphs": [
+                    {
+                        "text": "This means a moderator believes something you posted violates the Code of Conduct or the moderation rules, and is giving you a time-out from posting. You should have a seamail explaining why you were muted. It may also tell you when you should expect to be un-muted - note that unmuting is a manual process, so the timing may not be exact. It's possible you'll only be muted for a short time, for example if a moderator is doing some clean-up work. It's also possible that you may be muted for a longer period of time. If you would like to discuss this with someone, please go to the info desk. They will be able to put you in touch with someone from the moderation team."
+                    }
+                ]
+            },
+            {
+                "header": "I can't log in. It says I've been banned. Did I do something wrong?",
+                "paragraphs": [
+                    {
+                        "text": "In short, yes. Bans are reserved for those who posted something that was considered to be a serious breach of the Code of Conduct or moderation rules, or have made multiple posts that were considered lesser violations of the Code of Conduct or moderation rules and ignored warnings from the moderators. We don't want to ban anyone, but sometimes it must be done to allow others to continue to enjoy Twit-arr. Bans cannot be issued by moderators, and they are not arbitrary. They are only issued after discussion and consideration, and they are rarely issued on a first offense. If you have been banned, it is most likely permanent. The message you get when you attempt to log in will tell you why you have been banned. If you would like to discuss this with someone, please go to the info desk and they can put you in touch with someone who is able to talk it over with you."
+                    }
+                ]
+            },
+            {
+                "header": "Who made this?",
                 "paragraphs": [
                     {
                         "text": "Twit-arr is a labor of love, and a large group of contributers are responsible:",

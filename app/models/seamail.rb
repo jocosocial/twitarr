@@ -18,7 +18,7 @@ class Seamail
   index({:subject => 'text', :'sm.tx' => 'text'})
 
   def validate_users
-    errors[:base] << 'Must send seamail to another user of Twitarr' unless usernames.count > 1
+    errors[:base] << 'Must send seamail to another user of Twit-arr' unless usernames.count > 1
     usernames.each do |username|
       unless User.exist? username
         errors[:base] << "#{username} is not a valid username"

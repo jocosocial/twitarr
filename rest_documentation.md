@@ -277,7 +277,7 @@ Creates a new Seamail, with a initial message
     {
         "status": "error",
         "errors": [
-            "Must send seamail to another user of Twitarr", # No users in the user list
+            "Must send seamail to another user of Twit-arr", # No users in the user list
             "x is not a valid username", # No user exists with the username 'x'
             "Subject can't be blank",
             "Subject is too long (maximum is 200 characters)",
@@ -369,7 +369,7 @@ Modifies the recipients of a seamail. Disabled until we figure out if/how we wan
     {
         "status": "error",
         "errors": [
-            "Must send seamail to another user of Twitarr", # No users in the user list
+            "Must send seamail to another user of Twit-arr", # No users in the user list
         ]
     }
    ```

@@ -26,7 +26,7 @@ class API::V2::UserController < ApplicationController
     user.set_password params[:new_password]
     user.update_last_login.save
     login_user user
-    render json: { :status => 'ok', :key => build_key(user.username), user: UserDecorator.decorate(user).self_hash }
+    render json: { :status => 'ok', :key => build_key(user.username, user.password), user: UserDecorator.decorate(user).self_hash }
   end
 
   def auth
@@ -36,7 +36,7 @@ class API::V2::UserController < ApplicationController
     else
       @user = login_result[:user]
       login_user @user
-      render json: { :status => 'ok', :username => @user.username, :key => build_key(@user.username) }
+      render json: { :status => 'ok', :username => @user.username, :key => build_key(@user.username, @user.password) }
     end
   end
 
@@ -176,7 +176,7 @@ class API::V2::UserController < ApplicationController
 
     current_user.set_password params[:new_password]
     current_user.save
-    render json: { status: 'ok' } and return
+    render json: { status: 'ok', :key => build_key(current_user.username, current_user.password) } and return
   end
 
   def get_photo

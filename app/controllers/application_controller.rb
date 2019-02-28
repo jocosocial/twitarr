@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   def current_username
     return @current_user.username if @current_user
     return session[:username] if session[:username]
-    return get_username(params[:key]) if valid_key?(params[:key])
+    return parse_key(params[:key]).first if valid_key?(params[:key])
     return nil
   end
 
@@ -88,13 +88,15 @@ class ApplicationController < ActionController::Base
     render json: { status: 'Twit-arr is in storage (read-only) mode.' }
   end
 
-  def build_key(name, days_back = 0)
+  def build_key(name, hashed_password, expiration = 0)
+    expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
+
     digest = OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest::SHA1.new,
         Twitarr::Application.config.secret_key_base,
-        "#{name}#{Time.now.year}#{Time.now.yday - days_back}"
+        "#{name}#{hashed_password}#{expiration}"
     )
-    "#{name}:#{digest}"
+    "#{name}:#{expiration}:#{digest}"
   end
 
   def request_options
@@ -112,31 +114,31 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def get_username(key)
+  def parse_key(key)
     return nil if key.nil?
     key = URI.unescape(key)
-    key.split(':').first
-  end
-
-  def login_with_key(key)
-    @current_user = User.get get_username(key)
+    key = key.split(':')
+    return nil if key.length != 3
+    key
   end
 
   def valid_key?(key)
-    return false if key.nil?
+    return false if key.nil? # No key was passed, abort
+
     key = URI.unescape(key)
-    return false unless key.include? ':'
-    username = get_username key
-    CHECK_DAYS_BACK.times do |x|
-      if build_key(username, x) == key
-        login_with_key key
-        return false if (@current_user.nil? || @current_user.role == User::Role::BANNED)
-        return true
-      end
+    username, expiration, digest = parse_key(key)
+    return false if username.nil? or expiration.nil? or digest.nil?
+
+    user = User.get(username)
+    return false if user.nil? or (user.role == User::Role::BANNED) # User not found or user is banned, abort
+
+    if build_key(user.username, user.password, expiration) == key
+      @current_user = user # Key is valid for this user, log them in
+      return true
     end
-    false
+    false # Key is too old or did not match the username/hashed password check
   end
 
-  CHECK_DAYS_BACK = 10
+  KEY_EXPIRATION_DAYS = 10
   
 end

@@ -1667,7 +1667,8 @@ Allows the user to change their password.
 
 ```
 {
-    "status": "ok"
+    "status": "ok",
+    "key": "string" # A new key based on the updated hashed password
 }
 ```
 

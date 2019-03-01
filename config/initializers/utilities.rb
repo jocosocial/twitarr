@@ -35,9 +35,11 @@ class Time
   end
 
   def self.from_param(input)
-    if input.is_a?(Integer) || input =~ /^\d+$/
-      Time.at(input.to_i / 1000)
-    elsif input
+    if input.respond_to?(:strftime)
+      input
+    elsif input.is_a?(Integer) || input =~ /^\d+$/
+      Time.at(input.to_i / 1000.0)
+    else
       Time.parse(input)
     end
   end

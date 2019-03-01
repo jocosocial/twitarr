@@ -14,9 +14,6 @@ class PhotoStore
     return { status: 'error', error: 'File must be uploaded as form-data.'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-
-    puts "size: #{temp_file.tempfile.size}"
-
     return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
 
     existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash, uploader: uploader).first
@@ -103,13 +100,16 @@ class PhotoStore
   def reindex_photos
     PhotoMetadata.each do |photo|
       puts photo.store_filename
-      
-      img = read_image(photo_path(photo.store_filename))
+      begin
+        img = read_image(photo_path(photo.store_filename))
 
-      tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
-      tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE).save tmp_path
+        tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
+        tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE).save tmp_path
 
-      FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
+        FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
+      rescue => e
+        puts e
+      end
     end
   end
 

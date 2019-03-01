@@ -2335,7 +2335,7 @@ Edits a post in the thread.
 Deletes a post from a thread. If the post was the only post in the thread, the thread will also be deleted.
 
 ### Requires
-* logged in as either the post author or admin
+* logged in as either the post author, or as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### Returns

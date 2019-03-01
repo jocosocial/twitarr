@@ -87,7 +87,7 @@ Twitarr::Application.routes.draw do
       get 'reactions', to: 'text#reactions'
       get 'announcements', to: 'text#announcements'
 
-      resources :photo, only: [:index, :create, :destroy, :update, :show], :defaults => { :format => 'json' }
+      resources :photo, only: [:index, :create, :destroy, :show], :defaults => { :format => 'json' }
       get 'photo/small_thumb/:id', to: 'photo#small_thumb'
       get 'photo/medium_thumb/:id', to: 'photo#medium_thumb'
       get 'photo/full/:id', to: 'photo#full'

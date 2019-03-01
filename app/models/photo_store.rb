@@ -8,11 +8,13 @@ class PhotoStore
   SMALL_IMAGE_SIZE = 200
   MEDIUM_IMAGE_SIZE = 800
 
+  IMAGE_MAX_FILESIZE = 10000000 # 10MB
+
   def upload(temp_file, uploader)
     return { status: 'error', error: 'File must be uploaded as form-data.'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
+    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
 
     existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash, uploader: uploader).first
     return { status: 'ok', photo: existing_photo.id.to_s } unless existing_photo.nil?
@@ -54,7 +56,7 @@ class PhotoStore
     return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size >= 10000000 # 10MB
+    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
     
     begin
       img = read_image(temp_file.tempfile.path)
@@ -84,11 +86,10 @@ class PhotoStore
   end
 
   def store(file, uploader)
-    new_filename = SecureRandom.uuid.to_s + Pathname.new(file.filename).extname.downcase
     animated_image = ImageHelpers::AnimatedImage.is_animated file.tempfile.path
     photo = PhotoMetadata.new uploader: uploader,
-                              original_filename: file.filename,
-                              store_filename: new_filename,
+                              content_type: file.content_type,
+                              store_filename: file.filename,
                               upload_time: Time.now,
                               md5_hash: file.md5_hash,
                               animated: animated_image
@@ -99,13 +100,16 @@ class PhotoStore
   def reindex_photos
     PhotoMetadata.each do |photo|
       puts photo.store_filename
-      
-      img = read_image(photo_path(photo.store_filename))
+      begin
+        img = read_image(photo_path(photo.store_filename))
 
-      tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
-      tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE).save tmp_path
+        tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
+        tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE).save tmp_path
 
-      FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
+        FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
+      rescue => e
+        puts e
+      end
     end
   end
 
@@ -173,30 +177,24 @@ class PhotoStore
   end
 
   class UploadFile
-    PHOTO_EXTENSIONS = %w(jpg jpeg gif png).freeze
+    PHOTO_CONTENT_TYPES = %w(image/png image/jpeg image/gif).freeze
 
     def initialize(file)
       Rails.logger.debug('content type = ' + file.content_type)
-      if file.original_filename.nil? || file.original_filename !~ /\./
-        Rails.logger.debug('no valid filename')
-        if file.content_type == 'image/png'
-          file.original_filename = 'image.png'
-        elsif file.content_type == 'image/jpeg'
-          file.original_filename = 'image.jpg'
-        elsif file.content_type == 'image/gif'
-          file.original_filename = 'image.gif'
-        end
+      if file.content_type == 'image/png'
+        ext = '.png'
+      elsif file.content_type == 'image/jpeg'
+        ext = '.jpg'
+      elsif file.content_type == 'image/gif'
+        ext = '.gif'
       end
+      file.original_filename = SecureRandom.uuid.to_s + ext
       Rails.logger.debug('filename = ' + file.original_filename)
       @file = file
     end
 
-    def extension
-      @ext ||= Pathname.new(@file.original_filename).extname[1..-1].downcase
-    end
-
     def photo_type?
-      return true if PHOTO_EXTENSIONS.include?(extension)
+      return true if PHOTO_CONTENT_TYPES.include?(content_type)
       false
     end
 
@@ -211,6 +209,9 @@ class PhotoStore
     def filename
       @file.original_filename
     end
-  end
 
+    def content_type
+      @file.content_type
+    end
+  end
 end

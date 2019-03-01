@@ -920,7 +920,7 @@ All reactions that have been applied to the post.
     "animated": boolean,
     "store_filename": "filename_string",
     "md5_hash": "md5_string",
-    "original_filename": "filename_string",
+    "content_type": "content_type_string",
     "uploader": "username_string",
     "upload_time": epoch,
     "sizes": [PhotoSize{}, ...]
@@ -1025,51 +1025,6 @@ A single photo's metadata
 * status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
   ```
     { "status": "error", "error": "Photo not found" }
-  ```
-
-### PUT /api/v2/photo/:photo_id
-
-Allows users or admins to change the original filename of a photo.
-
-#### Requires
-* logged in as the original photo uploader, or as admin.
-    * Accepts: key query parameter
-
-#### JSON Request Body
-
-```
-{
-	"original_filename": "new_filename_string"
-}
-```
-
-#### Returns
-
-The photo's updated metadata
-
-```
-{
-    "status": "ok",
-    "photo": PhotoMeta{}
-}
-```
-
-#### Error Resposnes
-* status_code_only - HTTP 401 if user is not logged in
-* status_code_with_message - HTTP 404 if the photo with the requested :photo_id is not found
-  ```
-    { "status": "error", "error": "Photo not found" }
-  ```
-* status_code_with_error_list - HTTP 400 with a list of any problems
-  ```
-  {
-      "status": "error",
-      "errors": [
-          "Unable to modify fields other than original_filename",
-          "You can not update other users' photos",
-          "Filename was not an allowed image type - only jpg, gif, and png accepted."
-      ]
-  }
   ```
 
 ### DELETE /api/v2/photo/:photo_id

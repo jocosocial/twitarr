@@ -31,7 +31,7 @@ class API::V2::PhotoController < ApplicationController
     end
 
     sort_by = (params[:sort_by] || 'upload_time').to_sym
-    unless [:id, :animated, :store_filename, :md5_hash, :original_filename, :uploader, :upload_time].include? sort_by
+    unless [:id, :animated, :store_filename, :md5_hash, :content_type, :uploader, :upload_time].include? sort_by
       errors.push "Invalid field name for sort_by"
     end
 
@@ -63,31 +63,6 @@ class API::V2::PhotoController < ApplicationController
     else
       photo = PhotoMetadata.find(results.fetch(:photo))
       render json: {status: "ok", photo: photo.decorate.to_hash}
-    end
-  end
-
-  def update
-    errors = []
-    unless params[:photo].keys.length == 1 && params[:photo].keys.include?("original_filename")
-      errors.push 'Unable to modify fields other than original_filename'
-    end
-
-    unless @photo.uploader == current_username or is_tho?
-      errors.push "You can not update other users' photos"
-    end
-
-    ext = (Pathname.new(params[:photo].fetch(:original_filename)).extname[1..-1] || '').downcase
-    puts ext
-    unless PhotoStore::UploadFile::PHOTO_EXTENSIONS.include? ext.downcase
-      errors.push "Filename was not an allowed image type - only jpg, gif, and png accepted."
-    end
-
-    render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.empty?
-
-    if @photo.update_attributes!(params[:photo].inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
-      render json: { status: "ok", photo: @photo.decorate.to_hash }
-    else
-      render status: :bad_request, json: { status: "error", errors: @photo.errors }
     end
   end
 
@@ -148,6 +123,6 @@ class API::V2::PhotoController < ApplicationController
   def full
     expires_in 30.days, public: true
     response.headers['Etag'] = params[:id]
-    send_file PhotoStore.instance.photo_path(@photo.store_filename), filename: @photo.original_filename, disposition: :inline
+    send_file PhotoStore.instance.photo_path(@photo.store_filename), filename: @photo.store_filename, disposition: :inline
   end
 end

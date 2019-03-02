@@ -55,6 +55,10 @@ unless User.exist? 'steve'
   user.save
 end
 
+unless User.exist? 'moderator'
+  raise Exception.new("No user named 'moderator'!  Create one first!")
+end
+
 # noinspection RubyResolve
 def add_photo(url, localfilename, uploader, upload_date)
 
@@ -236,6 +240,4 @@ puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
-  create_reaction 'love'
-  create_reaction 'laugh'
 end

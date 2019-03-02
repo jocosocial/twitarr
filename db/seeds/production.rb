@@ -54,6 +54,10 @@ unless User.exist? 'official'
   raise Exception.new("No user named 'official'!  Create one first!")
 end
 
+unless User.exist? 'moderator'
+  raise Exception.new("No user named 'moderator'!  Create one first!")
+end
+
 def create_event(id, title, author, start_time, end_time, description, official)
   event = Event.create(_id: id, title: title, description: description, start_time: start_time, end_time: end_time, official: official)
   unless event.valid?
@@ -89,6 +93,4 @@ puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
-  create_reaction 'love'
-  create_reaction 'laugh'
 end

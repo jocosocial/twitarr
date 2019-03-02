@@ -2813,7 +2813,8 @@ Returns the data for the user's current alerts, along with all active announceme
     "forum_mentions": [ForumThreadMeta{}, ...], # Will be an empty array if user is unauthenticated.
     "unread_seamail": [SeamailThread{ WITHOUT messages }, ...], # Will be an empty array if user is unauthenticated.
     "upcoming_events": [Event{}, ...], # Will be an empty array if user is unauthenticated.
-    "last_checked_time": epoch
+    "last_checked_time": epoch, # Timestamp of when the user last checked their alerts. Will match query_time unless no_reset is set.
+    "query_time": epoch # Timestamp of when the query was made
 }
 ```
 

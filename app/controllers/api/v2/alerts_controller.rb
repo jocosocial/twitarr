@@ -4,6 +4,8 @@ class API::V2::AlertsController < ApplicationController
   before_action :login_required, :only => [:set_last_viewed]
 
   def index
+    current_time = Time.now
+
     announcements = Announcement.valid_announcements.map { |x| x.decorate.to_hash(request_options) }
     if logged_in?
       tweet_mentions = StreamPost.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
@@ -17,7 +19,7 @@ class API::V2::AlertsController < ApplicationController
       upcoming_events = current_user.upcoming_events(true).map{|e| e.decorate.to_hash(current_username, request_options) }
 
       unless params[:no_reset]
-        current_user.reset_last_viewed_alerts
+        current_user.reset_last_viewed_alerts(current_time)
         current_user.save!
       end
       last_checked_time = current_user[:last_viewed_alerts]
@@ -28,12 +30,12 @@ class API::V2::AlertsController < ApplicationController
       unread_seamail = []
       upcoming_events = []
       unless params[:no_reset]
-        session[:last_viewed_alerts] = Time.now
+        session[:last_viewed_alerts] = current_time
         last_checked_time = session[:last_viewed_alerts]
       end
     end
     render json: { status: "ok", announcements: announcements, tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
-                unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms }
+                unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms, query_time: current_time.to_ms }
   end
 
   def check

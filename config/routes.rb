@@ -43,7 +43,6 @@ Twitarr::Application.routes.draw do
 
       post 'user/new', to: 'user#new'
       get 'user/new_seamail', to: 'user#new_seamail'
-      delete 'user/mentions', to:'user#reset_mentions'
       get 'user/mentions', to:'user#mentions'
       get 'user/auth', to: 'user#auth'
       post 'user/auth', to: 'user#auth'
@@ -76,6 +75,7 @@ Twitarr::Application.routes.draw do
 
       get 'alerts', to: 'alerts#index'
       get 'alerts/check', to: 'alerts#check'
+      post 'alerts/last_viewed', to: 'alerts#last_viewed'
 
       resources :seamail, except: [:destroy, :edit, :new], :defaults => { :format => 'json' }
       get 'seamail_threads', to: 'seamail#threads'

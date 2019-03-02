@@ -43,7 +43,6 @@ class User
   field :em, as: :email, type: String
   field :dn, as: :display_name, type: String
   field :ll, as: :last_login, type: Time, default: Time.at(0)
-  field :um, as: :unnoticed_mentions, type: Integer, default: 0
   field :al, as: :last_viewed_alerts, type: Time, default: Time.at(0)
   field :ph, as: :photo_hash, type: String
   field :pu, as: :last_photo_updated, type: Time, default: Time.now
@@ -326,16 +325,9 @@ class User
     path
   end
 
-  def inc_mentions
-    inc(unnoticed_mentions: 1)
-  end
-
-  def self.inc_mentions(username)
-    User.find_by(username: username).inc(unnoticed_mentions: 1)
-  end
-
-  def reset_mentions
-    set(unnoticed_mentions: 0)
+  def unnoticed_mentions
+    StreamPost.view_mentions(query: self.username, after: self.last_viewed_alerts, mentions_only: true).count +
+      Forum.view_mentions(query: self.username, after: self.last_viewed_alerts, mentions_only: true).count
   end
 
   def update_forum_view(forum_id)
@@ -343,9 +335,8 @@ class User
     save
   end
 
-  def reset_last_viewed_alerts
-    reset_mentions
-    self.last_viewed_alerts = Time.now
+  def reset_last_viewed_alerts(time = Time.now)
+    self.last_viewed_alerts = time
   end
 
   def unnoticed_announcements

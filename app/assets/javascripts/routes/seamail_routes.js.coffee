@@ -17,14 +17,21 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
   
   model: (params) ->
     Twitarr.SeamailMeta.list(params.as_mod).fail((response)=>
-      if response.status? && response.status == 401
+      if response.status? && response.status == 403
+        if(response.responseJSON?.error?)
+          alert(response.responseJSON.error)
+        else
+          alert('Something went wrong. Please try again later.')
+        @transitionTo('help')
+        return
+      else if response.status? && response.status == 401
         alert('You must be logged in to view seamail.')
         @transitionTo('index')
         return
-      else
+      else 
         alert('Something went wrong. Please try again later.')
-      window.history.back()
-      return
+        @transitionTo('index')
+        return
     )
 
   actions:
@@ -34,15 +41,22 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
 Twitarr.SeamailDetailRoute = Ember.Route.extend
   model: (params) ->
     Twitarr.Seamail.get(params.id, params.as_mod).fail((response)=>
-      if response.responseJSON?.error?
-        alert(response.responseJSON.error)
+      if response.status? && response.status == 403
+        if response.responseJSON?.error?
+          alert(response.responseJSON.error)
+        else
+          alert('Something went wrong. Please try again later.')
+        @transitionTo('help')
+        return
       else if response.status? && response.status == 401
         alert('You must be logged in to view seamail.')
         @transitionTo('index')
         return
+      else if response.responseJSON?.error?
+        alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
+      @transitionTo('seamail')
       return
     )
 

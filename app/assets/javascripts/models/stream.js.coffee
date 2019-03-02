@@ -94,19 +94,39 @@ Twitarr.StreamPost = Ember.Object.extend
 
 Twitarr.StreamPost.reopenClass
   page: (page) ->
-    $.getJSON("#{Twitarr.api_path}/stream/#{page}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}").fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+    ).then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
 
   star_page: (page) ->
-    $.getJSON("#{Twitarr.api_path}/stream/#{page}?starred=true").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}?starred=true").fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+    ).then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
 
   mentions_page: (username, page) ->
-    $.getJSON("#{Twitarr.api_path}/stream/#{page}?mentions=#{username}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}?mentions=#{username}").fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+    ).then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
   
   author_page: (username, page) ->
-    $.getJSON("#{Twitarr.api_path}/stream/#{page}?author=#{username}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}?author=#{username}").fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+    ).then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
 
   view: (post_id) ->

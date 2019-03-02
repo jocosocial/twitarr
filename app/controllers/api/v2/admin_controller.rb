@@ -2,7 +2,7 @@ class API::V2::AdminController < ApplicationController
 	skip_before_action :verify_authenticity_token
 	
 	before_action :moderator_required, :only => [:users, :user, :profile, :update_user, :reset_photo]
-	before_action :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement, :regcode]
+	before_action :tho_required, :only => [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement, :regcode, :section_toggle]
 	before_action :admin_required, :only => [:upload_schedule, :activate]
 	before_action :fetch_user, :only => [:profile, :update_user, :activate, :reset_password, :reset_photo, :regcode]
 	before_action :fetch_announcement, :only => [:announcement, :update_announcement, :delete_announcement]
@@ -164,6 +164,19 @@ class API::V2::AdminController < ApplicationController
 			render status: :bad_request, json: {status: 'error', error: "Unable to parse schedule: #{e.message}"} and return
 		end
 		render json: {status: 'ok'}
+	end
+
+	def sections
+		render json: {status: 'ok', sections: Section.all.map{ |x| x.decorate.to_hash}}
+	end
+
+	def section_toggle
+		begin
+			result = Section.toggle(params[:name], params[:enabled])
+			render json: {status: 'ok', section: result.decorate.to_hash}
+		rescue => e
+			render status: :not_found, json: {status: 'error', error: "Section not found."}
+		end
 	end
 
 	private

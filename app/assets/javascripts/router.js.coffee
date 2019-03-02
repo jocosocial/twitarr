@@ -35,6 +35,7 @@ Twitarr.Router.map ()->
     @route 'search', { path: 'users' }
     @route 'users', { path: 'users/:text' }
     @route 'profile', { path: 'users/:username/profile' }
+    @route 'sections', { path: 'sections' }
 
   @resource 'schedule', ->
     @route 'today', { path: 'today' }

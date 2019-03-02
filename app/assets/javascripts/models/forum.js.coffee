@@ -10,8 +10,14 @@ Twitarr.ForumMeta.reopenClass
       Ember.A(@create(meta)) for meta in data.forum_threads
 
   page: (page) ->
-    $.getJSON("#{Twitarr.api_path}/forums?page=#{page}").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/forums?page=#{page}").fail((response)=>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      else
+        alert('Something went wrong. Please try again later.')
+    ).then((data) =>
       { forums: Ember.A(@create(meta)) for meta in data.forum_threads, next_page: data.next_page, prev_page: data.prev_page }
+    )
 
 Twitarr.Forum = Ember.Object.extend
   id: null

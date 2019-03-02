@@ -247,3 +247,39 @@ Twitarr.AdminUploadScheduleRoute = Ember.Route.extend
   setupController: (controller, model) ->
     this._super(controller, model)
     controller.setupUpload()
+
+Twitarr.AdminSectionsRoute = Ember.Route.extend
+  model: ->
+    $.getJSON("#{Twitarr.api_path}/admin/sections").fail((response)=>
+      if response.status? && response.status == 401
+        alert('Access Denied.')
+        @transitionTo('index')
+        return
+      alert('Something went wrong. Please try again later.')
+      window.history.back()
+      return
+    )
+
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    if model.status isnt 'ok'
+      alert model.status
+    else
+    controller.set('model.errors', Ember.A())
+
+  actions:
+    toggle: (name, enabled) ->
+      self = this
+      $.post("#{Twitarr.api_path}/admin/sections/#{name}", { enabled: enabled}).fail((response) =>
+        if response.responseJSON?.error?
+          self.controller.set('model.errors', [response.responseJSON.error])
+        else if response.responseJSON?.errors?
+          self.controller.set('model.errors', response.responseJSON.errors)
+        else
+          alert 'Section could not be toggled. Please try again later. Or try again someplace without so many seamonkeys.'
+      ).then((response) =>
+        if (response.status isnt 'ok')
+          alert response.status
+        else
+          @refresh()
+      )

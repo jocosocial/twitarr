@@ -6,7 +6,9 @@ Twitarr.ForumsIndexRoute = Ember.Route.extend
 
 Twitarr.ForumsPageRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.ForumMeta.page(params.page)
+    Twitarr.ForumMeta.page(params.page).fail((response) =>
+      @transitionTo('help')
+    )
 
   actions:
     reload: ->
@@ -38,7 +40,7 @@ Twitarr.ForumsEditRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      @transitionTo('stream')
+      @transitionTo('forums')
     )
   
   setupController: (controller, model) ->

@@ -6,7 +6,9 @@ Twitarr.StreamIndexRoute = Ember.Route.extend
 
 Twitarr.StreamPageRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.StreamPost.page(params.page)
+    Twitarr.StreamPost.page(params.page).fail((response) =>
+      @transitionTo('help')
+    )
 
   actions:
     reload: ->
@@ -19,7 +21,9 @@ Twitarr.StreamPageRoute = Ember.Route.extend
 
 Twitarr.StreamStarPageRoute = Ember.Route.extend
   model: (params) ->
-    Twitarr.StreamPost.star_page(params.page)
+    Twitarr.StreamPost.star_page(params.page).fail((response) =>
+      @transitionTo('help')
+    )
 
   actions:
     reload: ->
@@ -32,7 +36,9 @@ Twitarr.StreamMentionsRoute = Ember.Route.extend
 Twitarr.StreamMentionsPageRoute = Ember.Route.extend
   model: (params) ->
     @set('username', params.username)
-    Twitarr.StreamPost.mentions_page(params.username, params.page)
+    Twitarr.StreamPost.mentions_page(params.username, params.page).fail((response) =>
+      @transitionTo('help')
+    )
   
   setupController: (controller, model) ->
     this._super(controller, model)
@@ -49,7 +55,9 @@ Twitarr.StreamAuthorRoute = Ember.Route.extend
 Twitarr.StreamAuthorPageRoute = Ember.Route.extend
   model: (params) ->
     @set('username', params.username)
-    Twitarr.StreamPost.author_page(params.username, params.page)
+    Twitarr.StreamPost.author_page(params.username, params.page).fail((response) =>
+      @transitionTo('help')
+    )
   
   setupController: (controller, model) ->
     this._super(controller, model)

@@ -1,6 +1,7 @@
 class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  before_action :forums_enabled
   before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
   before_action :tho_required, :only => [:toggle_sticky]
   before_action :moderator_required, :only => [:delete, :locked]
@@ -198,6 +199,12 @@ class API::V2::ForumsController < ApplicationController
   def check_locked
     if !is_moderator?
       render status: :forbidden, json: {status: 'error', error: 'Forum thread is locked.'} if @forum.locked
+    end
+  end
+
+  def forums_enabled
+    if !is_moderator?
+      render status: :forbidden, json: {status: 'error', error: 'Forums are currently disabled.'} unless Section.enabled?(:forums)
     end
   end
 end

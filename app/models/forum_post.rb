@@ -27,7 +27,7 @@ class ForumPost
   validate :validate_photos
 
   before_validation :parse_hash_tags
-  after_create :post_create_operations
+  before_save :post_create_operations
 
   def photos
     self.photos = [] if super.nil?

@@ -1,13 +1,15 @@
 class API::V2::AlertsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  before_action :login_required, :only => [:set_last_viewed]
+
   def index
     announcements = Announcement.valid_announcements.map { |x| x.decorate.to_hash(request_options) }
     if logged_in?
-      tweet_mentions = StreamPost.view_mentions(query: current_username,
+      tweet_mentions = StreamPost.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
                                                 mentions_only: true).map {|p| p.decorate.to_hash(current_username, request_options) }
 
-      forum_mentions = Forum.view_mentions(query: current_username,
+      forum_mentions = Forum.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
                                                 mentions_only: true).map {|p| p.decorate.to_meta_hash }
 
       unread_seamail = current_user.seamails(unread: true).map{|m| m.decorate.to_meta_hash(current_username, true) }
@@ -41,6 +43,20 @@ class API::V2::AlertsController < ApplicationController
       last_checked_time = session[:last_viewed_alerts] || Time.from_param(params[:last_checked_time]) || Time.at(0)
       render json: { status: 'ok', user_alerts: { unnoticed_announcements: Announcement.new_announcements(last_checked_time).count } }
     end
+  end
 
+  def last_viewed
+    begin
+			last_viewed_alerts = Time.from_param(params[:last_viewed_alerts])
+		rescue
+			render status: :bad_request, json: {status: 'error', error: 'Unable to parse last viewed alerts.'} and return
+    else
+      render status: :bad_request, json: {status: 'error', error: 'Last viewed alerts must be in the past.'} and return unless last_viewed_alerts <= Time.now
+    end
+    
+    current_user.reset_last_viewed_alerts(last_viewed_alerts)
+    current_user.save!
+
+    render json: {status: 'ok', last_viewed_alerts: current_user.last_viewed_alerts.to_ms}
   end
 end

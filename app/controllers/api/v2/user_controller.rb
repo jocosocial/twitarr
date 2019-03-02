@@ -1,7 +1,7 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :reset_mentions, :mentions, :upload_schedule]
+  before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :mentions, :upload_schedule]
   before_action :not_muted, :only => [:update_photo]
   before_action :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
 
@@ -202,11 +202,6 @@ class API::V2::UserController < ApplicationController
     else
       render json: results
     end
-  end
-
-  def reset_mentions
-    current_user.reset_mentions
-    render json: { status: 'ok', mentions: current_user.unnoticed_mentions }
   end
 
   def mentions

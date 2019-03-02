@@ -733,7 +733,7 @@ Both text and photo are optional, however, at least one must be specified.  If o
 
 ### DELETE /api/v2/tweet/:id
 
-Allows the user to delete a post. A user may only edit their posts, unless they are an admin.
+Allows the user to delete a post. A user may only delete their own posts, unless they are a moderator, tho, or admin user.
 
 #### Requires
 
@@ -742,7 +742,7 @@ Allows the user to delete a post. A user may only edit their posts, unless they 
 
 #### Returns
 
-No body.  200-OK
+HTTP 204 No Content if deletion was successful
 
 #### Error Responses
 * status_code_with_message
@@ -1116,7 +1116,7 @@ Get auto completion list for hashtags.  Query string length must be at least 3, 
     }
     ```
 
-### GET api/v2/hashtag/repopulate
+### GET /api/v2/hashtag/repopulate
 
 Completely rebuilds the table of hashtags. This is extremely expensive. Only admins can use this endpoint.
 
@@ -1705,9 +1705,9 @@ Gets the count of the user's unnoticed mentions. This count is increased by 1 fo
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
 
-### DELETE /api/v2/user/mentions
+### DELETE /api/v2/user/mentions # DISABLED
 
-Resets the user's unnoticed mention count to 0.
+This is no longer supported. Instead, use the alerts endpoint `POST /api/v2/alerts/last_viewed`
 
 #### Requires
 * logged in
@@ -2335,7 +2335,7 @@ Edits a post in the thread.
 Deletes a post from a thread. If the post was the only post in the thread, the thread will also be deleted.
 
 ### Requires
-* logged in as either the post author or admin
+* logged in as either the post author, or as moderator, tho, or admin.
     * Accepts: key query parameter
 
 #### Returns
@@ -2834,6 +2834,48 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
     }
 }
 ```
+
+### POST /api/v2/alerts/last_checked
+
+Allows a user to set their last_checked_alerts time to a specific value.
+
+#### Requires
+* logged in
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+	"last_checked_alerts": epoch
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "last_checked_alerts": epoch
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in
+* HTTP 400 if last_viewed_alerts could not be parsed
+    ```
+    { 
+        "status": "error", 
+        "error": "Unable to parse last viewed alerts." 
+    }
+    ```
+* HTTP 400 if last_viewed_alerts is in the future
+    ```
+    { 
+        "status": "error", 
+        "error": "Last viewed alerts must be in the past." 
+    }
+    ```
 
 
 ## Admin Information

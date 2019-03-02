@@ -67,6 +67,10 @@
   <div class="card_title">Tweet Mentions</div>
   {{#each tweet in model.tweet_mentions}}
     {{render "stream.post_partial" tweet}}
+  {{else}}
+    <div class="card-section">
+      No new tweet mentions.
+    </div>
   {{/each}}
 </div>
 
@@ -74,5 +78,9 @@
   <div class="card_title">Forum Mentions</div>
   {{#each forum in model.forum_mentions}}
     {{render "forums.meta_partial" forum}}
+  {{else}}
+    <div class="card-section">
+      No new forum mentions.
+    </div>
   {{/each}}
 </div>

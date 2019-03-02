@@ -87,7 +87,7 @@ class StreamPost
   end
 
   def reparent_children
-    StreamPost.where(parent_chain: id).pull(parent_chain: id)
+    StreamPost.where(parent_chain: id.to_s).pull(parent_chain: id.to_s)
   end
 
   def self.search(params = {})

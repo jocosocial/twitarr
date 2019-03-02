@@ -508,6 +508,11 @@ This will include the children posts (replies) to this tweet sorted in timestamp
 
 #### Error Responses
 * status_code_with_message
+  * HTTP 404 if thread with given ID is not found
+   ```
+    { "status": "error", "error": "Forum thread not found." }
+   ```
+* status_code_with_message
   * HTTP 400 if `limit < 1` or `page < 0`
     ```
     {

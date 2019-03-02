@@ -71,6 +71,14 @@
                 ]
             },
             {
+                "header": "Twit-arr is telling me something is disabled. What does that mean?",
+                "paragraphs": [
+                    {
+                        "text": "For some reason, the administrators have shut down a section of the site. Maybe something is horribly broken, and they are fixing it. Maybe things got a bit messy, and the moderators are working to clean it up. Once things are back to normal, the section will be re-enabled. Until then, you are welcome to use any sections of Twit-arr that are not disabled!"
+                    }
+                ]
+            },
+            {
                 "header": "What's this alert that says \"You need to change your password before you continue\"?",
                 "paragraphs": [
                     {

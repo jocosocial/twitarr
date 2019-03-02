@@ -2921,6 +2921,15 @@ Allows a user to set their last_checked_time time to a specific value.
 }
 ```
 
+#### Section{}
+
+```
+{
+    "name": "string",
+    "enabled": boolean
+}
+```
+
 ### GET /api/v2/admin/users
 
 Returns a list of all users. No paging. Most clients shouldn't implement this.
@@ -3327,4 +3336,49 @@ Upload an .ics schedule. Schedule should be uploaded as form-data. Creates new e
         "status": "error", 
         "error": "Unable to parse schedule: errorMessage" # Error message will be replaced with a hopefully helpful message describing what went wrong
     }
+  ```
+
+### GET /api/v2/admin/sections
+
+Gets the list of site sections and their current status. Note that this admin endpoint has no access restrictions.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "sections": [ Section{}, ... ]
+}
+```
+
+### POST /api/v2/admin/sections/:name
+
+Change the status of a section.
+
+#### Requires
+* logged in as tho or admin.
+    * Accepts: key query parameter
+
+#### JSON Request Body
+
+```
+{
+    "enabled": boolean
+}
+```
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "section": Section{}
+}
+```
+
+#### Error Resposnes
+* status_code_only - HTTP 401 if user is not logged in as tho or admin
+* status_code_with_message - HTTP 404 if the section is not found.
+  ```
+    { "status": "error", "error": "Section not found." }
   ```

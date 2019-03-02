@@ -9,7 +9,7 @@ Twitarr.SearchRoute = Ember.Route.extend
 
   setupController: (controller, model) ->
     this._super(controller, model)
-    controller.set('text', '')
+    controller.set('model.text', '')
 
 Twitarr.SearchResultsRoute = Ember.Route.extend
   model: (params) ->

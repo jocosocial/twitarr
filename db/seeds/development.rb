@@ -241,3 +241,17 @@ Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
 end
+
+def create_section(name)
+  section = Section.add(name)
+  section.save!
+  section
+end
+
+puts 'Creating sections...'
+Section.delete_all
+if Section.count == 0
+  create_section :forums
+  create_section :stream
+  create_section :seamail
+end

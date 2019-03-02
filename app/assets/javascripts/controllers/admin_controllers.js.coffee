@@ -50,3 +50,6 @@ Twitarr.AdminUploadScheduleController = Twitarr.Controller.extend
       @get('application').send('start_upload')
     end_upload: ->
       @get('application').send('end_upload')
+
+AdminSectionsController = Twitarr.Controller.extend
+  errors: Ember.A()

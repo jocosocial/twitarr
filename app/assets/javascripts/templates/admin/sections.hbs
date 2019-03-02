@@ -1,0 +1,21 @@
+<div class="main-page-header">
+  <div class="title">Sections</div>
+</div>
+
+<div class="display_card">
+  {{#each section in model.sections}}
+    <div class="card-section">
+      <div class="body">
+        <div class="body-section">
+          {{#if section.enabled}}
+            {{section.name}} enabled
+            <button class="btn" {{action 'toggle' section.name false}}>Disable {{section.name}}</button>
+          {{else}}
+            {{section.name}} disabled
+            <button class="btn" {{action 'toggle' section.name true}}>Enable {{section.name}}</button>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>

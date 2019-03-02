@@ -2,6 +2,7 @@ class API::V2::SeamailController < ApplicationController
   # noinspection RailsParamDefResolve
   skip_before_action :verify_authenticity_token
 
+  before_action :seamail_enabled
   before_action :login_required
   before_action :not_muted, :only => [:create, :new_message, :recipients]
   before_action :fetch_seamail, :only => [:show, :new_message, :recipients]
@@ -111,4 +112,9 @@ class API::V2::SeamailController < ApplicationController
     render json: {status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(@as_user.username)}
   end
 
+  def seamail_enabled
+    if !is_moderator?
+      render status: :forbidden, json: {status: 'error', error: 'Seamail is currently disabled.'} unless Section.enabled?(:seamail)
+    end
+  end
 end

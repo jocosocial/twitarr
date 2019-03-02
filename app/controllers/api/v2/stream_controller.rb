@@ -3,6 +3,7 @@ class API::V2::StreamController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   PAGE_LENGTH = 20
+  before_action :stream_enabled
   before_action :login_required,  :only => [:create, :destroy, :update, :react, :unreact]
   before_action :not_muted,  :only => [:create, :update, :react]
   before_action :fetch_post, :except => [:index, :create, :view_mention, :view_hash_tag]
@@ -260,6 +261,12 @@ class API::V2::StreamController < ApplicationController
   def check_locked
     if !is_moderator?
       render status: :forbidden, json: {status: 'error', error: 'Post is locked.'} if @post.locked
+    end
+  end
+
+  def stream_enabled
+    if !is_moderator?
+      render status: :forbidden, json: {status: 'error', error: 'Stream is currently disabled.'} unless Section.enabled?(:stream)
     end
   end
 end

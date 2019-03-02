@@ -108,6 +108,9 @@ Twitarr::Application.routes.draw do
       delete 'admin/announcements/:id', to: 'admin#delete_announcement'
       
       post 'admin/schedule', to: 'admin#upload_schedule'
+
+      get 'admin/sections', to: 'admin#sections'
+      post 'admin/sections/:name', to: 'admin#section_toggle'
     end
   end
 

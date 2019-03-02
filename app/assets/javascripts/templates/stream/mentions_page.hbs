@@ -1,0 +1,19 @@
+<div class="main-page-header header-with-controls">
+  <div class="title">Mentions for {{model.username}}
+    <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
+  </div>
+</div>
+
+<div class="display_card">
+  {{#each post in model.posts}}
+    {{render "stream.post_partial" post}}
+  {{/each}}
+</div>
+
+<div class="footer-controls">
+  {{#if model.has_next_page}}
+    <div class="card-section">
+      <button class="controls btn" {{action 'next_page'}}>Older</button>
+    </div>
+  {{/if}}
+</div>

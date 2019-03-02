@@ -88,6 +88,11 @@ Twitarr.StreamStarPageController = Twitarr.Controller.extend Twitarr.SinglePhoto
     next_page: ->
       @transitionToRoute('stream.star_page', @get('model.next_page'))
 
+Twitarr.StreamMentionsPageController = Twitarr.Controller.extend Twitarr.SinglePhotoUploadMixin,
+  actions:
+    next_page: ->
+      @transitionToRoute('stream.mentions_page', @get('username'), @get('model.next_page'))
+
 Twitarr.StreamPostPartialController = Twitarr.Controller.extend
   actions:
     like: ->

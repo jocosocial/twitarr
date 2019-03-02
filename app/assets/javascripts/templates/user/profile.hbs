@@ -31,11 +31,11 @@
   <div class="card-section">
     <div class="form row">
       <div class="col-xs-6">
-        <div class="label">Tweets</div>
+        <div class="label">{{#link-to 'stream.author' model.username}}Tweets{{/link-to}}</div>
         <div class="data">{{model.number_of_tweets}}</div>
       </div>
       <div class="col-xs-6">
-        <div class="label">Mentions</div>
+        <div class="label">{{#link-to 'stream.mentions' model.username}}Mentions{{/link-to}}</div>
         <div class="data">{{model.number_of_mentions}}</div>
       </div>
     </div>
@@ -84,4 +84,9 @@
       No results.
     </div>
   {{/each}}
+  <div class="card-section">
+    {{#link-to 'stream.author' login_user}}
+      View all tweets by {{login_user}}
+    {{/link-to}}
+  </div>
 </div>

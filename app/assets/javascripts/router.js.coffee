@@ -16,6 +16,10 @@ Twitarr.Router.map ()->
     @route 'new'
     @route 'edit', { path: 'edit/:id'}
     @route 'view', { path: 'tweet/:id' }
+    @route 'mentions', { path: 'mentions/:username'}
+    @route 'mentions_page', { path: 'mentions/:username/:page'}
+    @route 'author', { path: 'author/:username'}
+    @route 'author_page', { path: 'author/:username/:page'}
 
   @resource 'search', ->
     @route 'results', { path: ':text' }

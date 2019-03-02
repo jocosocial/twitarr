@@ -25,6 +25,40 @@ Twitarr.StreamStarPageRoute = Ember.Route.extend
     reload: ->
       @transitionTo('stream.star_page', mostRecentTime())
 
+Twitarr.StreamMentionsRoute = Ember.Route.extend
+  model: (params) ->
+    @transitionTo('stream.mentions_page', params.username, mostRecentTime())
+
+Twitarr.StreamMentionsPageRoute = Ember.Route.extend
+  model: (params) ->
+    @set('username', params.username)
+    Twitarr.StreamPost.mentions_page(params.username, params.page)
+  
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    @set('controller.model.username', @get('username'))
+
+  actions:
+    reload: ->
+      @transitionTo('stream.mentions_page', mostRecentTime())
+
+Twitarr.StreamAuthorRoute = Ember.Route.extend
+  model: (params) ->
+    @transitionTo('stream.author_page', params.username, mostRecentTime())
+
+Twitarr.StreamAuthorPageRoute = Ember.Route.extend
+  model: (params) ->
+    @set('username', params.username)
+    Twitarr.StreamPost.author_page(params.username, params.page)
+  
+  setupController: (controller, model) ->
+    this._super(controller, model)
+    @set('controller.model.username', @get('username'))
+
+  actions:
+    reload: ->
+      @transitionTo('stream.author_page', mostRecentTime())
+
 Twitarr.StreamViewRoute = Ember.Route.extend
   model: (params) ->
     Twitarr.StreamPost.view(params.id).fail((response)=>
@@ -32,7 +66,7 @@ Twitarr.StreamViewRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
+      @transitionTo('stream.page', mostRecentTime())
       return
     )
 
@@ -54,7 +88,7 @@ Twitarr.StreamEditRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
+      @transitionTo('stream.page', mostRecentTime())
       return
     )
 

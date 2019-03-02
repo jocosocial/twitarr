@@ -16,6 +16,10 @@ unless User.exist? 'moderator'
   user.save
 end
 
+unless User.exist? 'moderator'
+  raise Exception.new("No user named 'moderator'!  Create one first!")
+end
+
 puts 'Creating events...'
 cal_filename = "db/seeds/all.ics"
 # fix bad encoding from sched.org
@@ -39,6 +43,4 @@ puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
-  create_reaction 'love'
-  create_reaction 'laugh'
 end

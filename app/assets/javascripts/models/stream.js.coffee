@@ -101,6 +101,14 @@ Twitarr.StreamPost.reopenClass
     $.getJSON("#{Twitarr.api_path}/stream/#{page}?starred=true").then (data) =>
       { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
 
+  mentions_page: (username, page) ->
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}?mentions=#{username}").then (data) =>
+      { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
+  
+  author_page: (username, page) ->
+    $.getJSON("#{Twitarr.api_path}/stream/#{page}?author=#{username}").then (data) =>
+      { posts: Ember.A(@create(post) for post in data.stream_posts), has_next_page: data.has_next_page, next_page: data.next_page }
+
   view: (post_id) ->
     $.getJSON("#{Twitarr.api_path}/thread/#{post_id}").then (data) =>
       if(data.post?)

@@ -72,6 +72,11 @@
       No new tweet mentions.
     </div>
   {{/each}}
+  <div class="card-section">
+    {{#link-to 'stream.mentions' login_user}}
+      View all tweet mentions
+    {{/link-to}}
+  </div>
 </div>
 
 <div class="display_card">

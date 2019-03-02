@@ -2837,7 +2837,7 @@ Returns a count of new alerts since the user last accessed the alerts endpoint (
 
 ### POST /api/v2/alerts/last_checked
 
-Allows a user to set their last_checked_alerts time to a specific value.
+Allows a user to set their last_checked_time time to a specific value.
 
 #### Requires
 * logged in
@@ -2847,7 +2847,7 @@ Allows a user to set their last_checked_alerts time to a specific value.
 
 ```
 {
-	"last_checked_alerts": epoch
+	"last_checked_time": epoch
 }
 ```
 
@@ -2856,20 +2856,20 @@ Allows a user to set their last_checked_alerts time to a specific value.
 ```
 {
     "status": "ok",
-    "last_checked_alerts": epoch
+    "last_checked_time": epoch
 }
 ```
 
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
-* HTTP 400 if last_checked_alerts could not be parsed
+* HTTP 400 if last_checked_time could not be parsed
     ```
     { 
         "status": "error", 
         "error": "Unable to parse timestamp." 
     }
     ```
-* HTTP 400 if last_checked_alerts is in the future
+* HTTP 400 if last_checked_time is in the future
     ```
     { 
         "status": "error", 

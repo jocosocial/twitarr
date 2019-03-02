@@ -2862,18 +2862,18 @@ Allows a user to set their last_checked_alerts time to a specific value.
 
 #### Error Resposnes
 * status_code_only - HTTP 401 if user is not logged in
-* HTTP 400 if last_viewed_alerts could not be parsed
+* HTTP 400 if last_checked_alerts could not be parsed
     ```
     { 
         "status": "error", 
-        "error": "Unable to parse last viewed alerts." 
+        "error": "Unable to parse timestamp." 
     }
     ```
-* HTTP 400 if last_viewed_alerts is in the future
+* HTTP 400 if last_checked_alerts is in the future
     ```
     { 
         "status": "error", 
-        "error": "Last viewed alerts must be in the past." 
+        "error": "Timestamp must be in the past." 
     }
     ```
 

@@ -75,7 +75,7 @@ Twitarr::Application.routes.draw do
 
       get 'alerts', to: 'alerts#index'
       get 'alerts/check', to: 'alerts#check'
-      post 'alerts/last_viewed', to: 'alerts#last_viewed'
+      post 'alerts/last_checked', to: 'alerts#last_checked'
 
       resources :seamail, except: [:destroy, :edit, :new], :defaults => { :format => 'json' }
       get 'seamail_threads', to: 'seamail#threads'

@@ -45,18 +45,18 @@ class API::V2::AlertsController < ApplicationController
     end
   end
 
-  def last_viewed
+  def last_checked
     begin
-			last_viewed_alerts = Time.from_param(params[:last_viewed_alerts])
+			last_checked_time = Time.from_param(params[:last_checked_time])
 		rescue
-			render status: :bad_request, json: {status: 'error', error: 'Unable to parse last viewed alerts.'} and return
+			render status: :bad_request, json: {status: 'error', error: 'Unable to parse timestamp.'} and return
     else
-      render status: :bad_request, json: {status: 'error', error: 'Last viewed alerts must be in the past.'} and return unless last_viewed_alerts <= Time.now
+      render status: :bad_request, json: {status: 'error', error: 'Timestamp must be in the past.'} and return unless last_checked_time <= Time.now
     end
     
-    current_user.reset_last_viewed_alerts(last_viewed_alerts)
+    current_user.reset_last_viewed_alerts(last_checked_time)
     current_user.save!
 
-    render json: {status: 'ok', last_viewed_alerts: current_user.last_viewed_alerts.to_ms}
+    render json: {status: 'ok', last_checked_time: current_user.last_viewed_alerts.to_ms}
   end
 end

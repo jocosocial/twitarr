@@ -15,10 +15,10 @@
       {{/if}}
       <button class="btn" {{action 'delete_thread'}}>Delete Thread</button>
     {{/if}}
-    {{#if model.has_prev_page}}
+    {{#if has_prev_page}}
       <button class="btn" {{action 'prev_page'}}>Older</button>
     {{/if}}
-    {{#if model.has_next_page}}
+    {{#if has_next_page}}
       <button class="btn" {{action 'next_page'}}>Newer</button>
     {{/if}}
   </span>

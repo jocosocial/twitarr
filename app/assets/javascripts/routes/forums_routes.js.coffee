@@ -13,6 +13,19 @@ Twitarr.ForumsPageRoute = Ember.Route.extend
   actions:
     reload: ->
       @refresh()
+    mark_all_read: ->
+      if(confirm("Are you sure you want to mark all forums as read?"))
+        $.post("#{Twitarr.api_path}/forum/mark_all_read").fail((response) =>
+          if response.responseJSON?.error?
+            alert(response.responseJSON.error)
+          else
+            alert 'Something went wrong. Please try again later. Or try again someplace without so many seamonkeys.'
+        ).then((response) =>
+          if (response.status isnt 'ok')
+            alert response.status
+          else
+            @refresh()
+        )
 
 Twitarr.ForumsDetailRoute = Ember.Route.extend
   model: (params) ->

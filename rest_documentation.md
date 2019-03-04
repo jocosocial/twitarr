@@ -2485,6 +2485,26 @@ All reactions that have been applied to the forum post.
     { "status": "error", "error": "Post not found." }
    ```
 
+### POST /api/v2/forum/mark_all_read
+
+Marks all forums as read for the current user.
+
+#### Requires
+
+* logged in.
+    * Accepts: key query parameter
+
+#### Returns
+
+```
+{
+    "status": "ok"
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+
 
 ## Event Information
 

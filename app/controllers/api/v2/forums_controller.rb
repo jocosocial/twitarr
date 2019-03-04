@@ -2,11 +2,11 @@ class API::V2::ForumsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   before_action :forums_enabled
-  before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact]
+  before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact, :mark_all_read]
   before_action :tho_required, :only => [:toggle_sticky]
   before_action :moderator_required, :only => [:delete, :locked]
   before_action :not_muted, :only => [:create, :new_post, :update_post, :react]
-  before_action :fetch_forum, :except => [:index, :create]
+  before_action :fetch_forum, :except => [:index, :create, :mark_all_read]
   before_action :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
   before_action :check_locked, :only => [:new_post, :update_post, :delete_post, :react, :unreact]
   
@@ -177,6 +177,11 @@ class API::V2::ForumsController < ApplicationController
     else
       render status: :bad_request, json: {status: 'error', errors: @forum.errors.full_messages}
     end
+  end
+
+  def mark_all_read
+    current_user.mark_all_forums_read
+    render json: {status: 'ok'}
   end
     
   private

@@ -335,6 +335,14 @@ class User
     save
   end
 
+  def mark_all_forums_read()
+    now = Time.now
+    hash = Hash.new
+    Forum.all.pluck(:id).each{|x| hash[x.to_s] = now}
+    self.forum_view_timestamps = hash
+    save
+  end
+
   def reset_last_viewed_alerts(time = Time.now)
     self.last_viewed_alerts = time
   end

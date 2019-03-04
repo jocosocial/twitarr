@@ -17,7 +17,7 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
   
   model: (params) ->
     Twitarr.SeamailMeta.list(params.as_mod).fail((response)=>
-      if response.status? && response.status == 403
+      if response.status? && response.status == 503
         if(response.responseJSON?.error?)
           alert(response.responseJSON.error)
         else
@@ -41,7 +41,7 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
 Twitarr.SeamailDetailRoute = Ember.Route.extend
   model: (params) ->
     Twitarr.Seamail.get(params.id, params.as_mod).fail((response)=>
-      if response.status? && response.status == 403
+      if response.status? && response.status == 503
         if response.responseJSON?.error?
           alert(response.responseJSON.error)
         else

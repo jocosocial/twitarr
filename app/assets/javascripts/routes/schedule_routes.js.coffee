@@ -6,7 +6,11 @@ Twitarr.ScheduleIndexRoute = Ember.Route.extend
 
 Twitarr.ScheduleTodayRoute = Ember.Route.extend
   model: ->
-    Twitarr.EventMeta.all()
+    Twitarr.EventMeta.all().fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      @transitionTo('help')
+    )
 
   actions:
     reload: ->
@@ -19,8 +23,7 @@ Twitarr.ScheduleDayRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
-      return
+      @transitionTo('schedule')
     )
 
   actions:
@@ -34,8 +37,7 @@ Twitarr.ScheduleDetailRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
-      return
+      @transitionTo('schedule')
     )
 
 Twitarr.ScheduleEditRoute = Ember.Route.extend
@@ -45,8 +47,7 @@ Twitarr.ScheduleEditRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
-      return
+      @transitionTo('schedule')
     )
 
 Twitarr.ScheduleUploadRoute = Ember.Route.extend

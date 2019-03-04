@@ -263,10 +263,4 @@ class API::V2::StreamController < ApplicationController
       render status: :forbidden, json: {status: 'error', error: 'Post is locked.'} if @post.locked
     end
   end
-
-  def stream_enabled
-    if !is_moderator?
-      render status: :forbidden, json: {status: 'error', error: 'Stream is currently disabled.'} unless Section.enabled?(:stream)
-    end
-  end
 end

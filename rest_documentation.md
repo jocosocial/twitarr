@@ -2996,6 +2996,12 @@ Returns a list of users matching `:query`. Searches username and display name.
 ### POST /api/v2/admin/user/:username
 
 Allows a priviliged user to edit a user's public profile fields. All fields in the JSON request body are optional - only present fields will be updated.
+Rules:
+* All profile fields are editable by moderator, tho, and admin.
+* Users cannot change their own role.
+* Only tho and admin can change a user's role to/from banned. 
+* Only tho and admin can change a user's role to/from tho.
+* Only admin can change a user's role to/from admin.
 
 #### Requires
 * logged in as moderator, tho, or admin.
@@ -3006,7 +3012,6 @@ Allows a priviliged user to edit a user's public profile fields. All fields in t
 ```
 {
     "role": "role_string", # Allows priviliged users to change the role of other users. Users cannot change their own roles.
-    "status": "status_string",
 	"display_name": "display_name_string", # Min length: 3 characters, Max length: 48 characters, UTF-8. 
 	"email": "email_string",
 	"home_location": "string", # Max length: 100 chatarcters, UTF-8.
@@ -3067,7 +3072,7 @@ Allows a priviliged user to edit a user's public profile fields. All fields in t
 
 ### POST /api/v2/admin/user/:username/activate DISABLED
 
-Sets a user's status to ACTIVE. Currently disabled.
+Sets a user's status to ACTIVE. Endpoint is currently disabled.
 
 #### Requires
 * logged in as admin.
@@ -3342,6 +3347,18 @@ Upload an .ics schedule. Schedule should be uploaded as form-data. Creates new e
 
 Gets the list of site sections and their current status. Note that this admin endpoint has no access restrictions.
 
+Valid section names:
+* forums
+* stream
+* seamail
+* calendar
+* deck_plans
+* games
+* karaoke
+* search
+* registration
+* user_profile
+
 #### Returns
 
 ```
@@ -3354,6 +3371,18 @@ Gets the list of site sections and their current status. Note that this admin en
 ### POST /api/v2/admin/sections/:name
 
 Change the status of a section.
+
+Valid section names:
+* forums
+* stream
+* seamail
+* calendar
+* deck_plans
+* games
+* karaoke
+* search
+* registration
+* user_profile
 
 #### Requires
 * logged in as tho or admin.

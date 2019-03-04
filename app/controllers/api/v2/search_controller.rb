@@ -4,6 +4,8 @@ class API::V2::SearchController < ApplicationController
   # noinspection RailsParamDefResolve
   skip_before_action :verify_authenticity_token
 
+  before_action :search_enabled
+
   DETAILED_SEARCH_MAX = 20
 
   def all
@@ -97,5 +99,4 @@ class API::V2::SearchController < ApplicationController
     end
     return true
   end
-  
 end

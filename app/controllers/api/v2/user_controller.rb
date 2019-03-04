@@ -1,14 +1,13 @@
 class API::V2::UserController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  before_action :registration_enabled, :only => [:new]
+  before_action :profile_enabled, :only => [:show, :update_profile, :reset_photo, :update_photo]
+  before_action :seamail_enabled, :only => [:new_seamail]
+  before_action :events_enabled, :only => [:upload_schedule]
   before_action :login_required, :only => [:new_seamail, :whoami, :star, :starred, :personal_comment, :update_profile, :change_password, :reset_photo, :update_photo, :mentions, :upload_schedule]
   before_action :not_muted, :only => [:update_photo]
   before_action :fetch_user, :only => [:show, :star, :personal_comment, :get_photo]
-
-  def fetch_user
-    @user = User.get params[:username]
-    render status: :not_found, json: {status: 'error', error: 'User not found.'} and return unless @user
-  end
 
   def new
     if logged_in?
@@ -224,4 +223,9 @@ class API::V2::UserController < ApplicationController
     render json: {status: 'ok'}
   end
 
+  private
+  def fetch_user
+    @user = User.get params[:username]
+    render status: :not_found, json: {status: 'error', error: 'User not found.'} and return unless @user
+  end
 end

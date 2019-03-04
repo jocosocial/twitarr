@@ -111,10 +111,4 @@ class API::V2::SeamailController < ApplicationController
     end
     render json: {status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(@as_user.username)}
   end
-
-  def seamail_enabled
-    if !is_moderator?
-      render status: :forbidden, json: {status: 'error', error: 'Seamail is currently disabled.'} unless Section.enabled?(:seamail)
-    end
-  end
 end

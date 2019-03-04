@@ -112,6 +112,48 @@ class ApplicationController < ActionController::Base
     return current_username
   end
 
+  def forums_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'Forums are currently disabled.'} unless Section.enabled?(:forums)
+    end
+  end
+
+  def stream_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'Stream is currently disabled.'} unless Section.enabled?(:stream)
+    end
+  end
+
+  def seamail_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'Seamail is currently disabled.'} unless Section.enabled?(:seamail)
+    end
+  end
+
+  def events_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'Calendar is currently disabled.'} unless Section.enabled?(:calendar)
+    end
+  end
+
+  def search_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'Search is currently disabled.'} unless Section.enabled?(:search)
+    end
+  end
+
+  def registration_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'Registration is currently disabled.'} unless Section.enabled?(:registration)
+    end
+  end
+
+  def profile_enabled
+    if !is_moderator?
+      render status: :service_unavailable, json: {status: 'error', error: 'User profiles are currently disabled.'} unless Section.enabled?(:user_profile)
+    end
+  end
+  
   private
 
   def parse_key(key)

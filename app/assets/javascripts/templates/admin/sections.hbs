@@ -11,7 +11,7 @@
             {{section.name}} enabled
             <button class="btn" {{action 'toggle' section.name false}}>Disable {{section.name}}</button>
           {{else}}
-            {{section.name}} disabled
+            <span class="highlight">{{section.name}} disabled</span>
             <button class="btn" {{action 'toggle' section.name true}}>Enable {{section.name}}</button>
           {{/if}}
         </div>

@@ -239,7 +239,7 @@ Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
   ).property('model.posts', 'model.new_posts') 
 
 Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
-  maxPagesToDisplay: 13 # Should be odd
+  maxPagesToDisplay: 9 # Should be odd
 
   currentPage: (->
     @get('model.current_page')

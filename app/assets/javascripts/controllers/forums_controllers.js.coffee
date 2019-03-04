@@ -218,11 +218,13 @@ Twitarr.ForumsPageController = Twitarr.Controller.extend
     create_forum: ->
       @transitionToRoute 'forums.new'
     participated_mode: ->
-      @set('participated', true)
-      @transitionToRoute('forums.page', 0, {queryParams: {participated: 'true'}})
+      if(@get('logged_in') && !@get('participated'))
+        @set('participated', true)
+        @transitionToRoute('forums.page', 0, {queryParams: {participated: 'true'}})
     all_mode: ->
-      @set('participated', false)
-      @transitionToRoute('forums.page', 0, {queryParams: {participated: 'false'}})
+      if(@get('logged_in') && @get('participated'))
+        @set('participated', false)
+        @transitionToRoute('forums.page', 0, {queryParams: {participated: 'false'}})
     participated_help: ->
       alert('All Forums is a list of every forum that exists in Twit-arr. My Forums are forums where you have made a post.')
 

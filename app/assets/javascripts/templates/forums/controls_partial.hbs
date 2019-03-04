@@ -1,15 +1,25 @@
-{{#if model.logged_in}}
-    {{#if model.participated}}
-        <button class="btn" {{action 'all_mode'}}>All Forums</button>
-    {{else}}
-        <button class="btn" {{action 'participated_mode'}}>My Forums</button>
+<div class="main-page-header header-with-controls">
+  <span class="controls">
+    {{#if model.logged_in}}
+      <button class="btn" {{action 'mark_all_read'}}>Mark as Read</button>
     {{/if}}
-    <button class="btn" {{action 'mark_all_read'}}>Mark as Read</button>
-    <button class="btn" {{action 'create_forum'}}>Create Forum</button>
-{{/if}}
-{{#if model.has_prev_page}}
-    <button class="btn" {{action 'prev_page'}}>More Recent</button>
-{{/if}}
-{{#if model.has_next_page}}
-    <button class="btn" {{action 'next_page'}}>Older</button>
-{{/if}}
+    <button class="btn" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
+    {{#if model.logged_in}}
+      <button class="btn" {{action 'create_forum'}}><span class="glyphicon glyphicon-plus" title="Create Forum"></span></button>
+    {{/if}}
+  </span>
+  
+  {{#if model.logged_in}}
+    <div class="navigation">
+      <span class="{{unless model.participated 'active'}}" {{action 'all_mode'}}>
+        All Forums
+      </span>
+      <span class="{{if model.participated 'active'}}" {{action 'participated_mode'}}>
+        My Forums
+      </span>
+      <button class="btn btn-link" {{action 'participated_help'}}><span class="glyphicon glyphicon-question-sign"></span></button>
+    </div>
+  {{/if}}
+
+  {{render 'forums.paging_partial' model }}
+</div>

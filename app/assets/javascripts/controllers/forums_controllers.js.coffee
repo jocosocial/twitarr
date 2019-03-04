@@ -198,6 +198,14 @@ Twitarr.ForumsPageController = Twitarr.Controller.extend
     @get('model.prev_page') isnt null or undefined
   ).property('model.prev_page')
 
+  current_page: (->
+    @get('model.page')
+  ).property('model.page')
+
+  page_count: (->
+    @get('model.page_count')
+  ).property('model.page_count')
+
   actions:
     next_page: ->
       return if @get('model.next_page') is null or undefined
@@ -205,6 +213,8 @@ Twitarr.ForumsPageController = Twitarr.Controller.extend
     prev_page: ->
       return if @get('model.prev_page') is null or undefined
       @transitionToRoute 'forums.page', @get('model.prev_page'), {queryParams: {participated: @get('participated')}}
+    load_page: (page) ->
+      @transitionToRoute 'forums.page', page-1, {queryParams: {participated: @get('participated')}}
     create_forum: ->
       @transitionToRoute 'forums.new'
     participated_mode: ->
@@ -213,6 +223,8 @@ Twitarr.ForumsPageController = Twitarr.Controller.extend
     all_mode: ->
       @set('participated', false)
       @transitionToRoute('forums.page', 0, {queryParams: {participated: 'false'}})
+    participated_help: ->
+      alert('All Forums is a list of every forum that exists in Twit-arr. My Forums are forums where you have made a post.')
 
 Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
   posts_sentence: (->
@@ -223,6 +235,23 @@ Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
     else
       "#{@get('model.posts')} #{post_word}"
   ).property('model.posts', 'model.new_posts') 
+
+Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
+  currentPage: (->
+    @get('model.current_page')
+  ).property('model.current_page')
+
+  pageCount: (->
+    @get('model.page_count')
+  ).property('model.page_count')
+
+  pageItems: (->
+    currentPage = @get('currentPage')
+    pageCount = @get('pageCount')
+    for pageNumber in [1..pageCount]
+      page: pageNumber
+      current: currentPage == pageNumber-1
+  ).property('currentPage', 'pageCount')
 
 Twitarr.ForumsEditController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   errors: Ember.A()

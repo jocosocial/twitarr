@@ -5,10 +5,6 @@ Twitarr.ForumMeta = Ember.Object.extend
   timestamp: null
 
 Twitarr.ForumMeta.reopenClass
-  list: ->
-    $.getJSON("#{Twitarr.api_path}/forums").then (data) =>
-      Ember.A(@create(meta)) for meta in data.forum_threads
-
   page: (page, participated = false) ->
     $.getJSON("#{Twitarr.api_path}/forums?page=#{page}&participated=#{participated}").fail((response)=>
       if response.responseJSON?.error?
@@ -16,7 +12,7 @@ Twitarr.ForumMeta.reopenClass
       else
         alert('Something went wrong. Please try again later.')
     ).then((data) =>
-      { forums: Ember.A(@create(meta)) for meta in data.forum_threads, next_page: data.next_page, prev_page: data.prev_page }
+      { forums: Ember.A(@create(meta)) for meta in data.forum_threads, next_page: data.next_page, prev_page: data.prev_page, page: data.page, page_count: data.page_count }
     )
 
 Twitarr.Forum = Ember.Object.extend

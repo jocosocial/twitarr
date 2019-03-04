@@ -1,22 +1,19 @@
-<div class="main-page-header header-with-controls">
-  <span class="controls">
-    {{render "forums.controls_partial" this}}
-  </span>
-
-  <div class="title">{{#if participated}}My {{/if}}Forums
-    <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span>
-    </button>
-  </div>
-</div>
+{{render "forums.controls_partial" this}}
 
 <div class="display_card">
   {{#each forum in model.forums}}
     {{render "forums.meta_partial" forum}}
+  {{else}}
+    <div class="card-section">
+      {{#if participated}}
+        You have not participated in any forums.
+      {{else}}
+        There are no forums.
+      {{/if}}
+    </div>
   {{/each}}
 </div>
 
 <div class="footer-controls">
-  <div class="card-section">
-    {{render "forums.controls_partial" this}}
-  </div>
+  {{render 'forums.paging_partial' this }}
 </div>

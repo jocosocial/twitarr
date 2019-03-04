@@ -2177,7 +2177,7 @@ Creates a new post in the thread.
 }
 ```
 
-### DELETE /api/v2/forum/:id
+### DELETE /api/v2/forums/:id
 
 Deletes an entire forum thread. Moderator or higher required.
 

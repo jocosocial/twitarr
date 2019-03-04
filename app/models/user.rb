@@ -335,10 +335,16 @@ class User
     save
   end
 
-  def mark_all_forums_read()
+  def mark_all_forums_read(participated_only)
+    if participated_only
+      query = Forum.where(:'fp.au' => self.username).all
+    else
+      query = Forum.all
+    end
+
     now = Time.now
     hash = Hash.new
-    Forum.all.pluck(:id).each{|x| hash[x.to_s] = now}
+    query.pluck(:id).each{|x| hash[x.to_s] = now}
     self.forum_view_timestamps = hash
     save
   end

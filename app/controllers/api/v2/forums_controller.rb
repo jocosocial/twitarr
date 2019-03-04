@@ -190,7 +190,13 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def mark_all_read
-    current_user.mark_all_forums_read
+    participated_only = false
+    begin
+      participated_only = params[:participated].to_bool
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
+    end
+    current_user.mark_all_forums_read(participated_only)
     render json: {status: 'ok'}
   end
     

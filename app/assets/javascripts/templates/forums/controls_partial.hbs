@@ -1,6 +1,11 @@
 {{#if model.logged_in}}
+    {{#if model.participated}}
+        <button class="btn" {{action 'all_mode'}}>All Forums</button>
+    {{else}}
+        <button class="btn" {{action 'participated_mode'}}>My Forums</button>
+    {{/if}}
+    <button class="btn" {{action 'mark_all_read'}}>Mark as Read</button>
     <button class="btn" {{action 'create_forum'}}>Create Forum</button>
-    <button class="btn" {{action 'mark_all_read'}}>Mark All as Read</button>
 {{/if}}
 {{#if model.has_prev_page}}
     <button class="btn" {{action 'prev_page'}}>More Recent</button>

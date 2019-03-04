@@ -9,8 +9,8 @@ Twitarr.ForumMeta.reopenClass
     $.getJSON("#{Twitarr.api_path}/forums").then (data) =>
       Ember.A(@create(meta)) for meta in data.forum_threads
 
-  page: (page) ->
-    $.getJSON("#{Twitarr.api_path}/forums?page=#{page}").fail((response)=>
+  page: (page, participated = false) ->
+    $.getJSON("#{Twitarr.api_path}/forums?page=#{page}&participated=#{participated}").fail((response)=>
       if response.responseJSON?.error?
         alert(response.responseJSON.error)
       else

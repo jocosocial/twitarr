@@ -5,8 +5,14 @@ Twitarr.ForumsIndexRoute = Ember.Route.extend
     @transitionTo('forums.page', 0)
 
 Twitarr.ForumsPageRoute = Ember.Route.extend
+  queryParams: {
+    participated: {
+      refreshModel: true
+    }
+  }
+
   model: (params) ->
-    Twitarr.ForumMeta.page(params.page).fail((response) =>
+    Twitarr.ForumMeta.page(params.page, params.participated).fail((response) =>
       @transitionTo('help')
     )
 
@@ -14,8 +20,12 @@ Twitarr.ForumsPageRoute = Ember.Route.extend
     reload: ->
       @refresh()
     mark_all_read: ->
-      if(confirm("Are you sure you want to mark all forums as read?"))
-        $.post("#{Twitarr.api_path}/forum/mark_all_read").fail((response) =>
+      participated = @get('controller.participated')
+      prompt = "Are you sure you want to mark all forums as read?"
+      if participated
+        prompt = "Are you sure you want to mark all forums you have participated in as read?"
+      if(confirm(prompt))
+        $.post("#{Twitarr.api_path}/forum/mark_all_read?participated=#{@get('controller.participated')}").fail((response) =>
           if response.responseJSON?.error?
             alert(response.responseJSON.error)
           else

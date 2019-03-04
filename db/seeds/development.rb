@@ -194,9 +194,10 @@ if Forum.count == 0
   add_forum_post f, '@james I <3 food', 'steve', at_time(8, 20), forum_photos[4]
   add_forum_post f, '@steve @james I think this needs some #warmbread', 'kvort', at_time(8, 22), forum_photos[5]
 
-  for i in 0..59 do
-    create_forum i.to_s, i.to_s, 'kvort', at_time(8, i), []
-  end
+  #puts 'Spamming forums...'
+  #for i in 0..1000 do
+  #  create_forum i.to_s, i.to_s, 'kvort', at_time(8, i%60), []
+  #end
 end
 
 def create_seamail(subject, text, author, recipients, timestamp)

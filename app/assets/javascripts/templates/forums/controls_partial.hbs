@@ -9,17 +9,17 @@
     {{/if}}
   </span>
   
-  {{#if model.logged_in}}
-    <div class="navigation">
-      <span class="{{unless model.participated 'active'}}" {{action 'all_mode'}}>
-        All Forums
-      </span>
+  <div class="navigation">
+    <span class="{{unless model.participated 'active'}}" {{action 'all_mode'}}>
+      All Forums
+    </span>
+    {{#if model.logged_in}}
       <span class="{{if model.participated 'active'}}" {{action 'participated_mode'}}>
         My Forums
       </span>
       <button class="btn btn-link" {{action 'participated_help'}}><span class="glyphicon glyphicon-question-sign"></span></button>
-    </div>
-  {{/if}}
+    {{/if}}
+  </div>
 
   {{render 'forums.paging_partial' model }}
 </div>

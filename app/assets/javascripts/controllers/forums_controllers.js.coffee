@@ -237,6 +237,8 @@ Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
   ).property('model.posts', 'model.new_posts') 
 
 Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
+  maxPagesToDisplay: 11 # Should be odd
+
   currentPage: (->
     @get('model.current_page')
   ).property('model.current_page')
@@ -248,10 +250,41 @@ Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
   pageItems: (->
     currentPage = @get('currentPage')
     pageCount = @get('pageCount')
-    for pageNumber in [1..pageCount]
+    maxPages = @get('maxPagesToDisplay')
+
+    pages = for pageNumber in [1..pageCount]
+      excluded: false
       page: pageNumber
       current: currentPage == pageNumber-1
-  ).property('currentPage', 'pageCount')
+    
+    if pages.length > maxPages
+      currentPage = currentPage + 1
+      currentPosition = ((maxPages - 1) / 2) + 1
+      if currentPosition > currentPage
+        currentPosition = currentPage
+      if (pageCount - currentPage) < (maxPages - currentPosition)
+        currentPosition = maxPages - (pageCount - currentPage)
+      
+      if (pageCount - currentPage) > (maxPages - currentPosition)
+        maxDistance = maxPages - currentPosition
+        overspill = pageCount - currentPage - maxDistance
+        toRemove = overspill + 1
+        idx = pageCount - 1 - toRemove
+        pages.replace idx, toRemove, [
+          excluded: true
+        ]
+      
+      if currentPage > currentPosition
+        maxDistance = currentPosition
+        overspill = currentPage - currentPosition
+        toRemove = overspill + 1
+        idx = 1
+        pages.replace idx, toRemove, [
+          excluded: true
+        ]
+
+    pages
+  ).property('currentPage', 'pageCount', 'maxPagesToDisplay')
 
 Twitarr.ForumsEditController = Twitarr.Controller.extend Twitarr.MultiplePhotoUploadMixin,
   errors: Ember.A()

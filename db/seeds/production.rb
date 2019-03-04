@@ -107,4 +107,11 @@ if Section.count == 0
   create_section :forums
   create_section :stream
   create_section :seamail
+  create_section :calendar
+  create_section :deck_plans
+  create_section :games
+  create_section :karaoke
+  create_section :search
+  create_section :registration
+  create_section :user_profile
 end

@@ -15,8 +15,7 @@ Twitarr.EventsTodayRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
-      return
+      @transitionTo('help')
     )
 
   actions:
@@ -34,8 +33,7 @@ Twitarr.EventsDayRoute = Ember.Route.extend
         alert(response.responseJSON.error)
       else
         alert('Something went wrong. Please try again later.')
-      window.history.back()
-      return
+      @transitionTo('help')
     )
 
   actions:

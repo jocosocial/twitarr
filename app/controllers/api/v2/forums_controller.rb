@@ -201,10 +201,4 @@ class API::V2::ForumsController < ApplicationController
       render status: :forbidden, json: {status: 'error', error: 'Forum thread is locked.'} if @forum.locked
     end
   end
-
-  def forums_enabled
-    if !is_moderator?
-      render status: :forbidden, json: {status: 'error', error: 'Forums are currently disabled.'} unless Section.enabled?(:forums)
-    end
-  end
 end

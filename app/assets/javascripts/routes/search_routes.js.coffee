@@ -13,7 +13,11 @@ Twitarr.SearchRoute = Ember.Route.extend
 
 Twitarr.SearchResultsRoute = Ember.Route.extend
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/all/#{encodeURIComponent(params.text)}").then((data) ->
+    $.getJSON("#{Twitarr.api_path}/search/all/#{encodeURIComponent(params.text)}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      @transitionTo('help')
+    ).then((data) ->
       {
         status: data.status, 
         query: data.query,
@@ -40,7 +44,11 @@ Twitarr.SearchUserResultsRoute = Ember.Route.extend
         @transitionTo('search.user_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/users/#{encodeURIComponent(params.text)}")
+    $.getJSON("#{Twitarr.api_path}/search/users/#{encodeURIComponent(params.text)}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      @transitionTo('help')
+    )
 
   setupController: (controller, model) ->
     this._super(controller, model)
@@ -58,7 +66,11 @@ Twitarr.SearchTweetResultsRoute = Ember.Route.extend
         @transitionTo('search.tweet_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/tweets/#{encodeURIComponent(params.text)}").then((data) ->
+    $.getJSON("#{Twitarr.api_path}/search/tweets/#{encodeURIComponent(params.text)}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      @transitionTo('help')
+    ).then((data) ->
       {status: data.status, query: data.query, tweets: {matches: Ember.A(Twitarr.StreamPost.create(post)) for post in data.tweets.matches, count: data.count, more: data.more }}
     )
 
@@ -78,7 +90,11 @@ Twitarr.SearchForumResultsRoute = Ember.Route.extend
         @transitionTo('search.forum_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/forums/#{encodeURIComponent(params.text)}")
+    $.getJSON("#{Twitarr.api_path}/search/forums/#{encodeURIComponent(params.text)}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      @transitionTo('help')
+    )
 
   setupController: (controller, model) ->
     this._super(controller, model)
@@ -96,7 +112,11 @@ Twitarr.SearchEventResultsRoute = Ember.Route.extend
         @transitionTo('search.event_results', text)
 
   model: (params) ->
-    $.getJSON("#{Twitarr.api_path}/search/events/#{encodeURIComponent(params.text)}").then((data)=>
+    $.getJSON("#{Twitarr.api_path}/search/events/#{encodeURIComponent(params.text)}").fail((response) =>
+      if response.responseJSON?.error?
+        alert(response.responseJSON.error)
+      @transitionTo('help')
+    ).then((data)=>
       {status: data.status, query: data.query, events: {matches: Ember.A(Twitarr.EventMeta.create(event)) for event in data.events.matches, count: data.count, more: data.more }}
     )
 

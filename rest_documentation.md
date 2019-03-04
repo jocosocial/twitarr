@@ -2028,6 +2028,7 @@ Returns a page of forum threads.
 
 * page=integer - Optional, default 0 - Pages are 0-indexed
 * limit=integer - Optional, default 20 - Number of threads per page
+* participated=boolean - Optional, default false - If set to true, will only return threads where the current user has participated. Has no effect when user is not logged in.
 
 #### Returns
 

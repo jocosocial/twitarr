@@ -551,9 +551,6 @@ img.layered {
 
   .controls {
     float: right;
-
-    a {
-    }
   }
 
   &.header-with-controls {
@@ -563,8 +560,10 @@ img.layered {
 
 .display_card {
   background-color: #FFF;
-  border: 1px solid #000;
   margin-bottom: 0.6em;
+  @media only screen and (min-width: 768px) {
+    border: 1px solid #000;
+  }
 
   .card_title {
     @extend .clearfix;
@@ -575,8 +574,7 @@ img.layered {
   .card-section {
     @extend .clearfix;
     border-top: 1px solid lightgrey;
-    padding: 0.2em;
-    margin: 0.2em 0.4em;
+    padding: .6em;
 
     &.clickable {
       cursor: pointer;
@@ -759,4 +757,51 @@ img.layered {
 
 .right {
   float: right !important;
+}
+
+.controls.button_actions {
+  float: right;
+}
+@media only screen and (max-width: 767px) {
+  .controls.button_actions {
+    margin-bottom: 20px;
+  }
+  .navigation.tabs {
+    clear: both;
+    margin-left: 5px;
+  }
+}
+.navigation.tabs {
+  font-size: 130%;
+  line-height: 130%;
+  > span {
+    padding: 5px 8px 5px 12px;
+    text-align: center;
+  }
+  .active {
+    background: #042333;
+    border-radius: 5px 5px 0 0;
+    color: white;
+    font-weight: bold;
+    letter-spacing: .5px;
+  }
+}
+.paging {
+  background: #ddd;
+  border: 1px solid black;
+  font-size: 16px;
+  text-align: center;
+  width: 100%;
+  > span {
+    padding: 5px 3px;
+    display: inline-block;
+    &.currentPage {
+      font-weight: bold;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    margin: 0 -5%;
+    width: 110%;
+
+  }
 }

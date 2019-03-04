@@ -187,6 +187,9 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
       )
 
 Twitarr.ForumsPageController = Twitarr.Controller.extend
+  queryParams: ['participated']
+  participated: false
+
   has_next_page: (->
     @get('model.next_page') isnt null or undefined
   ).property('model.next_page')
@@ -198,12 +201,18 @@ Twitarr.ForumsPageController = Twitarr.Controller.extend
   actions:
     next_page: ->
       return if @get('model.next_page') is null or undefined
-      @transitionToRoute 'forums.page', @get('model.next_page')
+      @transitionToRoute 'forums.page', @get('model.next_page'), {queryParams: {participated: @get('participated')}}
     prev_page: ->
       return if @get('model.prev_page') is null or undefined
-      @transitionToRoute 'forums.page', @get('model.prev_page')
+      @transitionToRoute 'forums.page', @get('model.prev_page'), {queryParams: {participated: @get('participated')}}
     create_forum: ->
       @transitionToRoute 'forums.new'
+    participated_mode: ->
+      @set('participated', true)
+      @transitionToRoute('forums.page', 0, {queryParams: {participated: 'true'}})
+    all_mode: ->
+      @set('participated', false)
+      @transitionToRoute('forums.page', 0, {queryParams: {participated: 'false'}})
 
 Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
   posts_sentence: (->

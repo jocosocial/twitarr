@@ -2028,6 +2028,7 @@ Returns a page of forum threads.
 
 * page=integer - Optional, default 0 - Pages are 0-indexed
 * limit=integer - Optional, default 20 - Number of threads per page
+* participated=boolean - Optional, default false - If set to true, will only return threads where the current user has participated. Has no effect when user is not logged in.
 
 #### Returns
 
@@ -2489,6 +2490,9 @@ All reactions that have been applied to the forum post.
 
 Marks all forums as read for the current user.
 
+#### Query Parameters
+* participated=boolean - Optional, default false - If set to true, will only mark threads in which the user has participated as read.
+
 #### Requires
 
 * logged in.
@@ -2504,6 +2508,13 @@ Marks all forums as read for the current user.
 
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
+* HTTP 400 if a boolean parameter is given a bad value
+```
+{
+    "status": "error",
+    "error": "Invalid value for Boolean: str" # str will be replaced with the invalid value
+}
+```
 
 
 ## Event Information

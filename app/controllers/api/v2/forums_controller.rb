@@ -23,15 +23,25 @@ class API::V2::ForumsController < ApplicationController
       errors.push "Page must be greater than or equal to zero."
     end
 
-    if errors.count > 0
-      render status: :bad_request, json: {status: "error", errors: errors} and return
+    begin
+      if logged_in? and params.has_key?(:participated) and params[:participated].to_bool
+        query = Forum.where(:'fp.au' => current_username).all
+      else
+        query = Forum.all
+      end
+    rescue ArgumentError => e
+      errors.push e.message
     end
 
-    query = Forum.all.order_by(:sticky => :desc, :last_post_time => :desc).offset(page * page_size).limit(page_size)
-    thread_count = Forum.all.count
+    if errors.count > 0
+      render status: :bad_request, json: {status: "error", errors: errors} and return
+    end    
+
+    thread_count = query.count
+    query = query.order_by(:sticky => :desc, :last_post_time => :desc).offset(page * page_size).limit(page_size)
     page_count = (thread_count.to_f / page_size).ceil
 
-    next_page = if Forum.count > (page + 1) * page_size
+    next_page = if thread_count > (page + 1) * page_size
                   page + 1
                 else
                   nil
@@ -180,7 +190,13 @@ class API::V2::ForumsController < ApplicationController
   end
 
   def mark_all_read
-    current_user.mark_all_forums_read
+    participated_only = false
+    begin
+      participated_only = params[:participated].to_bool
+    rescue ArgumentError => e
+      render status: :bad_request, json: {status: 'error', error: e.message} and return
+    end
+    current_user.mark_all_forums_read(participated_only)
     render json: {status: 'ok'}
   end
     

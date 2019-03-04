@@ -3,7 +3,7 @@
     {{render "forums.controls_partial" this}}
   </span>
 
-  <div class="title">Forums
+  <div class="title">{{#if participated}}My {{/if}}Forums
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span>
     </button>
   </div>

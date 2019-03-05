@@ -16,9 +16,8 @@
     {{#if model.logged_in}}
       <span class="{{if model.participated 'active'}}" {{action 'participated_mode'}}>
         My Forums
-              <button class="btn btn-link" {{action 'participated_help'}}><span class="glyphicon glyphicon-question-sign"></span></button>
-
       </span>
+      <button class="btn btn-link" {{action 'participated_help'}}><span class="glyphicon glyphicon-question-sign"></span></button>
     {{/if}}
   </div>
 

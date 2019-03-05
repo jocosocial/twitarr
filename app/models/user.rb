@@ -30,7 +30,7 @@ class User
 
   USERNAME_CACHE_TIME = 30.minutes
 
-  USERNAME_REGEX = /^[\w&-]{3,40}$/
+  USERNAME_REGEX = /^[\w]{3,40}$/
   DISPLAY_NAME_REGEX = /^[\w\. &-]{3,40}$/
 
   ACTIVE_STATUS = 'active'
@@ -105,7 +105,7 @@ class User
 
   def valid_username?
     unless User.valid_username?(username)
-      errors.add(:username, 'Username must be three to forty characters long, and only include letters, numbers, underscore, dash, and ampersand.')
+      errors.add(:username, 'Username must be three to forty characters long, and can only include letters, numbers, and underscore.')
     end
     if new_record? && User.where(username: username).exists?
       errors.add :username, 'An account with this username already exists.'

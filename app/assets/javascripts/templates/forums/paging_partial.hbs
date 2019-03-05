@@ -1,0 +1,17 @@
+<div class="paging">
+  {{#if model.has_prev_page}}
+    <button class="btn btn-link" {{action 'prev_page'}} title="Previous Page">&lt;</button>
+  {{/if}}
+  {{#each pageItem in pageItems}}
+    {{#if pageItem.excluded}}
+      <span class="excluded">&hellip;</span>
+    {{else if pageItem.current}}
+      <span class="currentPage">{{pageItem.page}}</span>
+    {{else}}
+      <span class="page"><button class="btn btn-link" {{action 'load_page' pageItem.page}}>{{pageItem.page}}</button></span>
+    {{/if}}
+  {{/each}}
+  {{#if model.has_next_page}}
+    <button class="btn btn-link" {{action 'next_page'}} title="Next Page">&gt;</button>
+  {{/if}}
+</div>

@@ -2039,7 +2039,8 @@ Returns a page of forum threads.
     "next_page": Integer, # Will be null if there is no next page
     "prev_page": Integer, # Will be null if there is no previous page
     "thread_count": Integer,
-    "page_count": Integer
+    "page": Integer, # The current page
+    "page_count": Integer # The total number of pages
 }
 ```
 

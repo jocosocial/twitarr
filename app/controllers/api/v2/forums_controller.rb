@@ -51,7 +51,7 @@ class API::V2::ForumsController < ApplicationController
                 else
                   nil
                 end
-    render json: {status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page, prev_page: prev_page, thread_count: thread_count, page_count: page_count}
+    render json: {status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page, prev_page: prev_page, thread_count: thread_count, page: page, page_count: page_count}
   end
 
   def show

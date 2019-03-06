@@ -1464,7 +1464,7 @@ If the user is successfully created, a JSON object will be returned with the aut
             "Already logged in - log out before creating a new account."
         ],
         "new_username": [
-            "Username must be three to forty characters long, and only include letters, numbers, underscore, dash, and ampersand.",
+            "Username must be three to forty characters long, and can only include letters, numbers, and underscore.",
             "An account with this username already exists."
         ],
         "new_password": [

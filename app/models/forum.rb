@@ -72,14 +72,15 @@ class Forum
     query_string = params[:query]
     start_loc = params[:page] || 0
     limit = params[:limit] || 20
-    query = where(:'fp.mn' => query_string)
+    queryParams = Hash.new
+    queryParams[:mn] = query_string
     if params[:after]
       val = Time.from_param(params[:after])
       if val
-        query = query.gt(:'fp.ts' => val)
+        queryParams[:ts] = {'$gt' => val}
       end
     end
-    query.order_by(id: :desc).skip(start_loc*limit).limit(limit)
+    query = where(:posts => {"$elemMatch" => queryParams}).order_by(id: :desc).skip(start_loc*limit).limit(limit)
   end
 
   def self.search(params = {})

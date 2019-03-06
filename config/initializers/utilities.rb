@@ -35,6 +35,7 @@ class Time
   end
 
   def self.from_param(input)
+    return if input.nil?
     if input.respond_to?(:strftime)
       input
     elsif input.is_a?(Integer) || input =~ /^\d+$/

@@ -198,7 +198,7 @@ class User
 
   def upcoming_events(alerts=false)
     events = Event.where(:start_time.gte => (Time.now - 1.hours)).where(:start_time.lte => (Time.now + 3.hours)).limit(20).order_by(:start_time.asc)
-    events = events.map {|x| x if !x.end_time or x.end_time > Time.now }.compact
+    events = events.map {|x| x if !x.end_time or x.end_time <= Time.now }.compact
     events = events.map { |x| x if x.favorites.include? self.username }.compact
     if alerts
       events = events.map { |e| e unless self.acknowledged_event_alerts.include? e.id }.compact

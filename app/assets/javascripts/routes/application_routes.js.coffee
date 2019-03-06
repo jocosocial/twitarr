@@ -37,14 +37,24 @@ Twitarr.IndexRoute = Ember.Route.extend
 
 Twitarr.AlertsRoute = Ember.Route.extend
   model: ->
-    $.getJSON("#{Twitarr.api_path}/alerts").then (data) =>
+    $.getJSON("#{Twitarr.api_path}/alerts?no_reset=true").then (data) =>
       data.unread_seamail = Ember.A(Twitarr.SeamailMeta.create(seamail) for seamail in data.unread_seamail)
       data.tweet_mentions = Ember.A(Twitarr.StreamPost.create(post) for post in data.tweet_mentions)
       data.upcoming_events = Ember.A(Twitarr.EventMeta.create(event) for event in data.upcoming_events)
+      data.forum_mentions = Ember.A(Twitarr.ForumMeta.create(forum) for forum in data.forum_mentions)
+      @set('model.load_time', moment().valueOf())
       data
   actions:
     reload: ->
       @refresh()
+    clear_alerts: ->
+      $.post("#{Twitarr.api_path}/alerts/last_checked", {last_checked_time: @get('model.load_time')}).fail (response) =>
+        if response.responseJSON?.error?
+          alert response.responseJSON.error
+        else
+          alert('Something went wrong. Please try again later.')
+      .then (response) =>
+        @refresh()
 
 Twitarr.TagRoute = Ember.Route.extend
   model: (params) ->

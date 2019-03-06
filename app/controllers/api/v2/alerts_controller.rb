@@ -12,7 +12,7 @@ class API::V2::AlertsController < ApplicationController
                                                 mentions_only: true).map {|p| p.decorate.to_hash(current_username, request_options) }
 
       forum_mentions = Forum.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
-                                                mentions_only: true).map {|p| p.decorate.to_meta_hash }
+                                                mentions_only: true).map {|p| p.decorate.to_meta_hash(current_user) }
 
       unread_seamail = current_user.seamails(unread: true).map{|m| m.decorate.to_meta_hash(current_username, true) }
 

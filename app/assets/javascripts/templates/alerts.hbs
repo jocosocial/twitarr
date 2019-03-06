@@ -1,7 +1,11 @@
-<div class="main-page-header">
+<div class="main-page-header {{if logged_in 'header-with-controls'}}">
+  {{#if logged_in}}
+    <div class="controls">
+      <button {{action 'clear_alerts'}} class="btn">Clear Events and Mentions</button>
+    </div>
+  {{/if}}
   <div class="title">Your Alerts
-    <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span>
-    </button>
+    <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
   </div>
 </div>
 
@@ -49,8 +53,8 @@
 
 <div class="display_card">
   <div class="card_title">Upcoming Events</div>
-  {{#each event in model.e.events}}
-    {{render "events.meta_partial" event}}
+  {{#each event in model.upcoming_events}}
+    {{render "schedule.meta_partial" event}}
   {{else}}
     <div class="card-section">
       No upcoming events.

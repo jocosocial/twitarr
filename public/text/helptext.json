@@ -18,6 +18,14 @@
                 ]
             },
             {
+                "header": "I created an account. Do I need to create another account if I want to switch the app that I'm using?f",
+                "paragraphs": [
+                    {
+                        "text": "Nope! Your account exists on the server. All apps and the web interface access the same server. You can use the same login information in each app!"
+                    }
+                ]
+            },
+            {
                 "header": "What's with all the funny @ and # signs?",
                 "paragraphs": [
                     {
@@ -28,6 +36,31 @@
                     }
                 ]
             },
+            {
+              "header": "Can I use emoji?",
+              "paragraphs": [
+                  {
+                      "text": "Yes, you can! Twit-arr supports the standard emoji that are available through your phone's keyboard. If you're using a computer, you may be able to send emoji, but the way to type them depends on your operating system."
+                  },
+                  {
+                      "text": "Additionally, Twit-arr has a few custom emoji that can be entered manually. But be warned - they might not render properly in all clients! The available custom emoji are:",
+                      "list": [
+                        ":buffet:",
+                        ":die-ship:",
+                        ":die:",
+                        ":fez:",
+                        ":hottub:",
+                        ":joco:",
+                        ":pirate:",
+                        ":ship-front:",
+                        ":ship:",
+                        ":towel-monkey:",
+                        ":tropical-drink:",
+                        ":zombie:"
+                      ]
+                  }
+              ]
+          },
             {
                 "header": "Can I follow users?",
                 "paragraphs": [
@@ -51,7 +84,7 @@
                 "header": "Cruise Monkey? Rainbow Monkey?",
                 "paragraphs": [
                     {
-                        "text": "Cruise Monkey is an iPhone and Android app built by RangerRick, and Rainbow Monkey is an iPhone and Android app built by Hixie (new for JCC9). They use the same login information as Twit-arr but, but are not technically the same thing. Which is why you may get redirected if you ask the wrong person about the wrong app. :)"
+                        "text": "Cruise Monkey is an iPhone and Android app built by RangerRick, and Rainbow Monkey is an iPhone and Android app built by Hixie (new for JCC9). The apps are available in the Google and Apple app stores - you can downoload one (or both! your choice!) when you next have internet access. They use the same login information and access the same server as Twit-arr but, but are not technically the same thing. This is why you may get redirected if you ask the wrong person about the wrong app. :)"
                     }
                 ]
             },

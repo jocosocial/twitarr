@@ -41,6 +41,7 @@ Twitarr.AlertsRoute = Ember.Route.extend
       data.unread_seamail = Ember.A(Twitarr.SeamailMeta.create(seamail) for seamail in data.unread_seamail)
       data.tweet_mentions = Ember.A(Twitarr.StreamPost.create(post) for post in data.tweet_mentions)
       data.upcoming_events = Ember.A(Twitarr.EventMeta.create(event) for event in data.upcoming_events)
+      data.forum_mentions = Ember.A(Twitarr.ForumMeta.create(forum) for forum in data.forum_mentions)
       @set('model.load_time', moment().valueOf())
       data
   actions:

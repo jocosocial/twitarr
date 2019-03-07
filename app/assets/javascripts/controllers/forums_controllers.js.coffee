@@ -36,6 +36,14 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
     @get('model.prev_page') isnt null or undefined
   ).property('model.prev_page')
 
+  current_page: (->
+    @get('model.page')
+  ).property('model.page')
+
+  page_count: (->
+    @get('model.page_count')
+  ).property('model.page_count')
+
   can_reply: (->
     @get('logged_in') and (@get('model.next_page') is null or undefined) and (not @get('model.forum.locked') or @get('role_moderator'))
   ).property('logged_in', 'model.forum.locked', 'application.login_role')
@@ -72,6 +80,8 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
     prev_page: ->
       return if @get('model.prev_page') is null or undefined
       @transitionToRoute('forums.detail', @get('model.prev_page'))
+    load_page: (page) ->
+      @transitionToRoute('forums.detail', page-1)
     delete_thread: ->
       if confirm('Are you sure you want to delete this thread?')
         $.ajax("#{Twitarr.api_path}/forums/#{@get('model.forum.id')}", method: 'DELETE').fail((response) =>
@@ -119,8 +129,6 @@ Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
       )
     edit: ->
       @transitionToRoute('forums.edit', @get('model.forum_id'), @get('model.id'))
-    page: ->
-      alert @get('model.page')
     delete: ->
       self = this
       if confirm('Are you sure you want to delete this post?')

@@ -3,3 +3,4 @@ Twitarr.Announcement = Ember.Object.extend
   author: null
   timestamp: null
   text: null
+  as_mod: false

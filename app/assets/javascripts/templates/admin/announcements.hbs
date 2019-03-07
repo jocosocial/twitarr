@@ -13,7 +13,8 @@
       {{/each}}
     </ul>
     <div class="controls">
-      <button class="btn" {{action 'new' model.text model.valid_until}}>Announce</button>
+      {{input checked=model.as_admin type='checkbox' id='as_admin'}} <label for='as_admin'>Post as TwitarrTeam</label>
+      <button class="btn" {{action 'new' model.text model.valid_until model.as_admin}}>Announce</button>
     </div>
   </div>
 </div>

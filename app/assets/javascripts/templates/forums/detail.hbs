@@ -48,6 +48,9 @@
       </ul>
       {{partial 'upload'}}
       <span class="controls">
+        {{#if role_admin}}
+          {{input checked=model.as_admin type='checkbox' id='as_admin'}} <label for='as_admin'>Post as TwitarrTeam</label>
+        {{/if}}
         {{#if role_moderator}}
           {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
         {{/if}}

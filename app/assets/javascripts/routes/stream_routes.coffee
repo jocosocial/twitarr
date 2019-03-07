@@ -18,6 +18,7 @@ Twitarr.StreamPageRoute = Ember.Route.extend
     this._super(controller, model)
     controller.setupUpload()
     controller.set('model.as_mod', false)
+    controller.set('model.as_admin', false)
 
 Twitarr.StreamStarPageRoute = Ember.Route.extend
   model: (params) ->

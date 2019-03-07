@@ -86,3 +86,4 @@ Twitarr.ForumsNewRoute = Ember.Route.extend
     controller.set('text', null)
     controller.set('photo_ids', Ember.A())
     controller.set('as_mod', false)
+    controller.set('as_admin', false)

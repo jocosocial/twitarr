@@ -169,9 +169,9 @@ Twitarr.AdminAnnouncementsRoute = Ember.Route.extend
     controller.set('model.errors', Ember.A())
 
   actions:
-    new: (text, valid_until) ->
+    new: (text, valid_until, as_admin) ->
       self = this
-      $.post("#{Twitarr.api_path}/admin/announcements", { text: text, valid_until: valid_until }).fail((response) =>
+      $.post("#{Twitarr.api_path}/admin/announcements", { text: text, valid_until: valid_until, as_admin: as_admin}).fail((response) =>
         if response.responseJSON?.error?
           self.controller.set('model.errors', [response.responseJSON.error])
         else if response.responseJSON?.errors?

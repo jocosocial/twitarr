@@ -162,6 +162,9 @@ Twitarr.StreamEditController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
     handleKeyDown: (v,e) ->
       @send('save') if e.ctrlKey and e.keyCode == 13
 
+    cancel: ->
+      window.history.back()
+    
     save: ->
       if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')

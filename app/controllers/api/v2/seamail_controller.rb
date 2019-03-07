@@ -14,15 +14,16 @@ class API::V2::SeamailController < ApplicationController
     rescue Mongoid::Errors::DocumentNotFound
       render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
     end
-    unless @seamail.usernames.include?(current_username) || (is_moderator? && @seamail.usernames.include?('moderator'))
+    unless @seamail.usernames.include?(current_username) || (is_moderator? && @seamail.usernames.include?('moderator')) || (is_admin? && @seamail.usernames.include?('twitarrteam'))
       render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
     end
   end
 
   def fetch_as_user
-    if(post_as_user(params) != current_username)
-      puts post_as_user(params)
-      @as_user = User.get 'moderator'
+    post_as_username = post_as_user(params)
+    if(post_as_username != current_username)
+      puts post_as_username
+      @as_user = User.get post_as_username
     else
       @as_user = current_user
     end

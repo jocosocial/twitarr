@@ -111,9 +111,12 @@ class API::V2::AdminController < ApplicationController
 			errors.push('Valid until must be in the future.') unless valid_until > time
 		end		
 
-		render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.length == 0
+    as_username = post_as_user(params)
+    errors.push('Only admins may post as TwitarrTeam.') if (!is_admin? or as_username == "moderator")
+
+    render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.length == 0
 		
-		announcement = Announcement.create(author: current_username, text: params[:text], timestamp: time, valid_until: valid_until)
+		announcement = Announcement.create(author: as_username, text: params[:text], timestamp: time, valid_until: valid_until, original_author: current_username)
 		render json: {status: 'ok', announcement: announcement.decorate.to_admin_hash(request_options)}
 	end
 

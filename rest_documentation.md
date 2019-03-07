@@ -114,7 +114,7 @@ These output types are used throughout the API
 
 ## Seamail information
 
-All seamail endpoints accept `as_mod` as a URL parameter. If you set `as_mod=true` on any seamail endpoint, and the current user has a Moderator, THO, or Admin role, the seamail endpoint will behave as if the user is currently logged in as the generic `moderator` account. If the current user is a regular user, sending `as_mod=true` will have no effect.
+All seamail endpoints accept `as_mod` and `as_admin` as a URL parameter. If you set `as_mod=true` on any seamail endpoint, and the current user has a Moderator, THO, or Admin role, the seamail endpoint will behave as if the user is currently logged in as the generic `moderator` account. If you set `as_admin=true` on any seamail endpoint, and the current user has an Admin role, the seamail endpoint will behave as if the user is currently logged in as the `TwitarrTeam` account. `as_mod` takes priority over `as_admin`. If the current user is a regular user, sending `as_mod=true` or `as_admin=true` will have no effect.
 
 ### Seamail specific types
 
@@ -605,7 +605,8 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
     "text": "string", # Max length: 2,000 characters, UTF-8.
     "parent": "stream_post_id_string", # Optional
     "photo": "photo_id_string", # Optional
-    "as_mod": boolean #Optional
+    "as_mod": boolean, # Optional
+    "as_admin" boolean # Optional
 }
 ```
 
@@ -613,6 +614,7 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
 * parent is optional.  If Specified, it will make this post a reply to another StreamPost by the stream_post_id_string passed in.
 * photo is optional.  If Specified, it will make this post link in the photo that has already been uploaded with the photo_id_string passed in.
 * as_mod is optional. If it is set to true, and the current user has a priviliged role, the post will appear to be made by the moderator account.
+* as_admin is optional. If it is set to true, and the current user is an admin, the post will appear to be made by the TwitarrTeam account. as_mod takes priroity over as_admin.
 
 #### Returns
 
@@ -2073,11 +2075,13 @@ Creates a forum thread and its first post.
     "subject": "string", # Max length: 200 characters, UTF-8.
     "text": "string", # Max length: 10,000 characters, UTF-8.
     "photos": ["photo_id_string", ...], # Optional
-    "as_mod": boolean # Optional
+    "as_mod": boolean, # Optional
+    "as_admin": boolean #Optional
 }
 ```
 * photos is optional.  If specified, it will make this post link in the photos that have already been uploaded with the photo_id_strings passed in.
 * as_mod is optional. If it is set to true, and the current user has a priviliged role, the post will appear to be made by the moderator account.
+* as_admin is optional. If it is set to true, and the current user is an admin, the post will appear to be made by the TwitarrTeam account. as_mod takes priroity over as_admin.
 
 #### Returns
 
@@ -2142,12 +2146,14 @@ Creates a new post in the thread.
 {
     "text": "string", # Max length: 10,000 characters, UTF-8.
     "photos": ["photo_id_string", ...], # Optional
-    "as_mod": boolean
+    "as_mod": boolean,
+    "as_admin": boolean
 }
 ```
 
 * photos is optional. If specified, it will make this post link in the photos that have already been uploaded with the photo_id_strings passed in.
 * as_mod is optional. If it is set to true, and the current user has a priviliged role, the post will appear to be made by the moderator account.
+* as_admin is optional. If it is set to true, and the current user is an admin, the post will appear to be made by the TwitarrTeam account. as_mod takes priroity over as_admin.
 
 #### Returns
 
@@ -3220,7 +3226,7 @@ Returns a list of all announcements, including expired announcements.
 
 ### POST /api/v2/admin/announcements
 
-Creates a new announcement. Announcement will be displayed to users until the timestamp `valid_until`.
+Creates a new announcement. Announcement will be displayed to users until the timestamp `valid_until`. If `as_admin` is set to true, the announcement will be created using the `TwitarrTeam` account.
 
 #### Requires
 * logged in as tho or admin.
@@ -3231,7 +3237,8 @@ Creates a new announcement. Announcement will be displayed to users until the ti
 ```
 {
     "text": "string",
-    "valid_until": epoch
+    "valid_until": epoch,
+    "as_admin": boolean # Optional
 }
 ```
 
@@ -3253,7 +3260,8 @@ Creates a new announcement. Announcement will be displayed to users until the ti
         "errors": [
             "Text is required.",
             "Unable to parse valid until.",
-            "Valid until must be in the future."
+            "Valid until must be in the future.",
+            "Only admins may post as TwitarrTeam."
         ]
     }
   ```

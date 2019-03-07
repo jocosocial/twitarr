@@ -2,6 +2,7 @@ class Announcement
   include Mongoid::Document
 
   field :au, as: :author, type: String
+  field :oa, as: :original_author, type: String, default: ->{author}
   field :tx, as: :text, type: String
   field :ts, as: :timestamp, type: Time
   field :vu, as: :valid_until, type: Time

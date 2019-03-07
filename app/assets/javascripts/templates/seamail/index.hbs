@@ -3,14 +3,26 @@
     {{#if role_moderator}}
       {{#if as_mod}}
         <button class="btn" {{action 'user_mode'}}>View Your Seamail</button>
+        {{#if role_admin}}
+          <button class="btn" {{action 'admin_mode'}}>View Admin Seamail</button>
+        {{/if}}      
+      {{else if as_admin}}
+        <button class="btn" {{action 'user_mode'}}>View Your Seamail</button>
+        <button class="btn" {{action 'moderator_mode'}}>View Moderator Seamail</button>
       {{else}}
+        {{#if role_admin}}
+          <button class="btn" {{action 'admin_mode'}}>View Admin Seamail</button>
+        {{/if}}
         <button class="btn" {{action 'moderator_mode'}}>View Moderator Seamail</button>
       {{/if}}
     {{/if}}
     <button class="btn" {{action 'compose_seamail'}}>New Seamail</button>
   </span>
 
-  <div class="title">{{#if role_moderator}}{{#if as_mod}}Moderator {{/if}}{{/if}}Seamail
+  <div class="title">
+    {{#if role_admin}}{{#if as_admin}}TwitarrTeam {{/if}}{{/if}}
+    {{#if role_moderator}}{{#if as_mod}}Moderator {{/if}}{{/if}}
+    Seamail
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span>
     </button>
   </div>

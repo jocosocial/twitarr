@@ -1,24 +1,29 @@
 Twitarr.SeamailIndexController = Twitarr.Controller.extend
-  queryParams: ['as_mod']
+  queryParams: ['as_mod', 'as_admin']
   as_mod: false
+  as_admin: false
 
   actions:
     compose_seamail: ->
-      @transitionToRoute('seamail.new', {queryParams: {as_mod: @get('as_mod')}})
+      @transitionToRoute('seamail.new', {queryParams: {as_mod: @get('as_mod'), as_admin: @get('as_admin')}})
     moderator_mode: ->
-      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'true'}})
+      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'true', as_admin: 'false'}})
+    admin_mode: ->
+      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'false', as_admin: 'true'}})
     user_mode: ->
-      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'false'}})
+      @transitionToRoute('seamail.index', {queryParams: {as_mod: 'false', as_admin: 'false'}})
 
 Twitarr.SeamailMetaPartialController = Twitarr.Controller.extend
   actions:
     display_seamail: (id) ->
       as_mod = @parentController.getProperties(@parentController.queryParams).as_mod
-      @transitionToRoute('seamail.detail', id, {queryParams: {as_mod: as_mod}})
+      as_admin = @parentController.getProperties(@parentController.queryParams).as_admin
+      @transitionToRoute('seamail.detail', id, {queryParams: {as_mod: as_mod, as_admin: as_admin}})
 
 Twitarr.SeamailDetailController = Twitarr.Controller.extend
-  queryParams: ['as_mod']
+  queryParams: ['as_mod', 'as_admin']
   as_mod: false
+  as_admin: false
   errors: Ember.A()
   text: null
 
@@ -29,7 +34,7 @@ Twitarr.SeamailDetailController = Twitarr.Controller.extend
     post: ->
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Seamail.new_message(@get('model.id'), @get('model.text'), @get('as_mod')).fail((response) =>
+      Twitarr.Seamail.new_message(@get('model.id'), @get('model.text'), @get('as_mod'), @get('as_admin')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -46,8 +51,9 @@ Twitarr.SeamailDetailController = Twitarr.Controller.extend
       )
 
 Twitarr.SeamailNewController = Twitarr.Controller.extend
-  queryParams: ['as_mod']
+  queryParams: ['as_mod', 'as_admin']
   as_mod: false
+  as_admin: false
   searchResults: Ember.A()
   toUsers: Ember.A()
   errors: Ember.A()
@@ -111,7 +117,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
       return if @get('posting')
       @set 'posting', true
       users = @get('toUsers').filter((user) -> !!user).map((user) -> user.username)
-      Twitarr.Seamail.new_seamail(users, @get('subject'), @get('text'), @get('as_mod')).fail((response) =>
+      Twitarr.Seamail.new_seamail(users, @get('subject'), @get('text'), @get('as_mod'), @get('as_admin')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]
@@ -127,7 +133,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
           @set('toUsers', Ember.A())
           @set('subject', '')
           @set('text', '')
-          @transitionToRoute('seamail.detail', response.seamail.id, {queryParams: {as_mod: @get('as_mod')}})
+          @transitionToRoute('seamail.detail', response.seamail.id, {queryParams: {as_mod: @get('as_mod'), as_admin: @get('as_admin')}})
       )
 
     remove: (user) ->

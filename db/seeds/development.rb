@@ -17,9 +17,9 @@ if RegistrationCode.count == 0
   end
 end
 
-unless User.exist? 'admin'
-  puts 'Creating user admin'
-  user = User.new username: 'admin', display_name: 'admin', password: Rails.application.secrets.initial_admin_password,
+unless User.exist? 'TwitarrTeam'
+  puts 'Creating user TwitarrTeam'
+  user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
   user.set_password user.password
   user.save

@@ -17,6 +17,12 @@
     {{/if}}
   </span>
   <div class="title">{{#link-to 'forums'}}Forums{{/link-to}} > {{model.forum.subject}}
+    {{#if locked}}
+      <span class="	glyphicon glyphicon-lock" title="Locked"></span>
+    {{/if}}
+    {{#if sticky}}
+      <span class="	glyphicon glyphicon-pushpin" title="Sticky"></span>
+    {{/if}}
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
   </div>
 </div>
@@ -42,6 +48,9 @@
       </ul>
       {{partial 'upload'}}
       <span class="controls">
+        {{#if role_admin}}
+          {{input checked=model.as_admin type='checkbox' id='as_admin'}} <label for='as_admin'>Post as TwitarrTeam</label>
+        {{/if}}
         {{#if role_moderator}}
           {{input checked=model.as_mod type='checkbox' id='as_mod'}} <label for='as_mod'>Post as Moderator</label>
         {{/if}}

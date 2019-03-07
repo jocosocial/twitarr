@@ -45,7 +45,7 @@
       <li>{{#link-to "search"}}<span class="glyphicon glyphicon-search"></span>Search{{/link-to}}</li>
       <hr />
       {{#if logged_in}}
-        <li>{{#link-to "seamail" (query-params as_mod="false")}}<span class="glyphicon glyphicon-envelope"></span>My Seamail{{/link-to}}</li>
+        <li>{{#link-to "seamail" (query-params as_mod="false" as_admin="false")}}<span class="glyphicon glyphicon-envelope"></span>My Seamail{{/link-to}}</li>
         <li>{{#link-to "events"}}<span class="glyphicon glyphicon-calendar"></span>My Schedule{{/link-to}}</li>
         <li>
           {{#link-to "alerts"}}
@@ -67,7 +67,10 @@
       {{/unless}}
       {{#if role_moderator}}
         <hr />
-        <li>{{#link-to "seamail" (query-params as_mod="true")}}<span class="glyphicon glyphicon-envelope"></span>Moderator Seamail{{/link-to}}</li>
+        <li>{{#link-to "seamail" (query-params as_mod="true" as_admin="false")}}<span class="glyphicon glyphicon-envelope"></span>Moderator Seamail{{/link-to}}</li>
+        {{#if role_admin}}
+          <li>{{#link-to "seamail" (query-params as_mod="false" as_admin="true")}}<span class="glyphicon glyphicon-envelope"></span>TwitarrTeam Seamail{{/link-to}}</li>
+        {{/if}}
         <li>{{#link-to "admin.search"}}<span class="glyphicon glyphicon-user"></span>User administration{{/link-to}}</li>
         {{#if role_tho}}
           <li>{{#link-to "admin.announcements"}}<span class="glyphicon glyphicon-bullhorn"></span>Announcements{{/link-to}}</li>

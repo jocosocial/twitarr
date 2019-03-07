@@ -58,7 +58,7 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Forum.new_post(@get('model.forum.id'), @get('model.new_post'), @get('photo_ids'), @get('model.as_mod')).fail((response) =>
+      Twitarr.Forum.new_post(@get('model.forum.id'), @get('model.new_post'), @get('photo_ids'), @get('model.as_mod'), @get('model.as_admin')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'model.errors', [response.responseJSON.error]
@@ -165,7 +165,8 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
   subject: null
   text: null
   photo_ids: Ember.A()
-  as_mod: false
+  as_mod: false,
+  as_admin: false
 
   actions:
     handleKeyDown: (v,e) ->
@@ -177,7 +178,7 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
         return
       return if @get('posting')
       @set 'posting', true
-      Twitarr.Forum.new_forum(@get('subject'), @get('text'), @get('photo_ids'), @get('as_mod')).fail((response) =>
+      Twitarr.Forum.new_forum(@get('subject'), @get('text'), @get('photo_ids'), @get('as_mod'), @get('as_admin')).fail((response) =>
         @set 'posting', false
         if response.responseJSON?.error?
           @set 'errors', [response.responseJSON.error]

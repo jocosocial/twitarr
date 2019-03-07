@@ -26,9 +26,10 @@
           <li>{{error}}</li>
         {{/each}}
       </ul>
-      <span class="footer">
-      <button class="btn right" {{action 'post' model.text}}>Send</button>
-    </span>
+      <span class="controls">
+        <div>Please remember to abide by the {{#link-to 'conduct' target='_blank'}}Code of Conduct{{/link-to}}</div>
+        <div><button class="btn" {{action 'post' model.text}}>Send</button></div>
+      </span>
     </div>
   </div>
 </div>

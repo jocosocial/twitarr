@@ -61,6 +61,7 @@ class ForumDecorator < BaseDecorator
       locked: locked,
       next_page: next_page,
       prev_page: prev_page,
+      page: page,
       page_count: page_count,
       post_count: post_count,
       posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(locked, user, last_view, options) }

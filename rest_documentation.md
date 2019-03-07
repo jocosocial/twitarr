@@ -1999,6 +1999,7 @@ Get/post new threads and posts to those threads
     "next_page": null|Integer, # Only included if paging was requested through query parameters
     "prev_page": null|Integer, # Only included if paging was requested through query parameters
     "page_count": Integer, # Only included if paging was requested through query parameters
+    "page": Integer, # The current page, Only included if paging was requested through query parameters
     "post_count": Integer,
     "posts": [ ForumPost{}, ... ],
     "latest_read": epoch, # Timestamp of when the user last viewed the thread, only included if user is logged in

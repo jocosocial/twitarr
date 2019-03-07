@@ -29,7 +29,7 @@ Twitarr.Forum = Ember.Object.extend
 Twitarr.Forum.reopenClass
   get: (id, page = 0) ->
     $.getJSON("#{Twitarr.api_path}/forums/#{id}?page=#{page}").then (data) =>
-      { forum: @create(data.forum_thread), next_page: data.forum_thread.next_page, prev_page: data.forum_thread.prev_page }
+      { forum: @create(data.forum_thread), next_page: data.forum_thread.next_page, prev_page: data.forum_thread.prev_page, page: data.forum_thread.page, page_count: data.forum_thread.page_count }
 
   new_post: (forum_id, text, photos, as_mod) ->
     $.post("#{Twitarr.api_path}/forums/#{forum_id}", { text: text, photos: photos, as_mod: as_mod }).then (data) =>

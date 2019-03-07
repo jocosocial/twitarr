@@ -774,10 +774,10 @@ img.layered {
 .navigation.tabs {
   font-size: 130%;
   line-height: 130%;
-  cursor: pointer;
   > span {
     padding: 5px 8px 5px 12px;
     text-align: center;
+    cursor: pointer;
   }
   .active {
     background: #042333;

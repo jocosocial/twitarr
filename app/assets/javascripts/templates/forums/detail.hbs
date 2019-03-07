@@ -17,6 +17,12 @@
     {{/if}}
   </span>
   <div class="title">{{#link-to 'forums'}}Forums{{/link-to}} > {{model.forum.subject}}
+    {{#if locked}}
+      <span class="	glyphicon glyphicon-lock" title="Locked"></span>
+    {{/if}}
+    {{#if sticky}}
+      <span class="	glyphicon glyphicon-pushpin" title="Sticky"></span>
+    {{/if}}
     <button class="btn btn-link" {{action 'reload'}}><span class="glyphicon glyphicon-repeat" title="Refresh"></span></button>
   </div>
 </div>

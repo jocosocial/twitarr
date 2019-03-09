@@ -37,7 +37,7 @@ end
 unless User.exist? 'official'
   puts 'Creating user official'
   user = User.new username: 'official', display_name: 'official', password: SecureRandom.hex,
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
+    role: User::Role::THO, status: User::ACTIVE_STATUS, registration_code: 'code2'
   user.set_password user.password
   user.save
 end
@@ -45,7 +45,7 @@ end
 unless User.exist? 'moderator'
   puts 'Creating user moderator'
   user = User.new username: 'moderator', display_name: 'moderator', password: Rails.application.secrets.initial_admin_password,
-  role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code3'
+  role: User::Role::MODERATOR, status: User::ACTIVE_STATUS, registration_code: 'code3'
   user.set_password user.password
   user.save
 end

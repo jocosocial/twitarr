@@ -58,6 +58,7 @@ class User
   field :pr, as: :pronouns, type: String
   field :mr, as: :mute_reason, type: String
   field :br, as: :ban_reason, type: String
+  field :mt, as: :mute_thread, type: String
 
   index username: 1
   index display_name: 1

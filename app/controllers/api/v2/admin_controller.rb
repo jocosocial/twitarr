@@ -22,7 +22,10 @@ class API::V2::AdminController < ApplicationController
 	end
 	
 	def update_user
-		roleErrors = []
+    roleErrors = []
+    sendMutedMessage = false
+    sendUnmutedMessage = false
+
 		if params.has_key?(:role)
 			newRole = User::Role.from_string(params[:role])
 			
@@ -43,8 +46,10 @@ class API::V2::AdminController < ApplicationController
 				if @user.role != newRole && (@user.role >= User::Role::ADMIN || newRole >= User::Role::ADMIN)
 					roleErrors.push("Only Admin can grant or revoke the admin role.")
 				end
-			end
-			
+      end
+      
+      sendMutedMessage = (newRole == User::Role::MUTED && @user.role != User::Role::MUTED)
+      sendUnmutedMessage = (newRole == User::Role::USER && @user.role == User::Role::MUTED)
 			@user.role = newRole
 		end
 		
@@ -69,7 +74,51 @@ class API::V2::AdminController < ApplicationController
 			render status: :bad_request, json: {status: 'error', errors: @user.errors.messages} and return
 		end
 
-		@user.save
+    @user.save
+    
+    if sendMutedMessage
+      subject = 'You have been muted'
+      message = "Hello #{@user.username},\n\nThis is an automated message letting you know that you have been muted. \
+        While you are muted, you will be unable to make any posts, send any seamail, or update your profile. \
+        It is likely that this muting is temporary, especially if this is the first time you have been muted.\n\n \
+        You may be wondering why this has happened. Maybe a post you made was in violation of the Code of Conduct. \
+        Maybe a moderator thinks a thread was getting out of hand, and is doing some clean-up. Whatever the reason, it's not \
+        personal, it's just a moderator doing what they think best for the overall health of Twit-arr.\n\n \
+        When muting happens, the moderator is required to enter a reason. Here is the reason that was provided for your mute: \
+        \n\n#{@user.mute_reason}\n\n \
+        A moderator may also send you additional seamail (either in this thread or a new thread) if they would like to \
+        provide you with more information. If you would like to discuss this with someone, please proceed to the info desk. \
+        They will be able to put you in touch with someone from the moderation team.\n\n \
+        Bleep bloop,\n \
+        The Twit-arr Robot"
+      
+      begin
+        seamail = Seamail.find(@user.mute_thread)
+        seamail.add_message 'moderator', message, current_username
+      rescue
+        seamail = Seamail.create_new_seamail 'moderator', [@user.username], subject, message, current_username
+        @user.mute_thread = seamail.id.to_s
+        @user.save
+      end
+    end
+
+    if sendUnmutedMessage
+      message = "Hello #{@user.username},\n\n \
+      Good news! You have been unmuted. Please continue to enjoy your Twit-arr experience! \n\n \
+      Bleep bloop, \n\
+      The Twit-arr Robot"
+
+      begin
+        seamail = Seamail.find(@user.mute_thread)
+      rescue
+        subject = 'You have been unmuted'
+        seamail = Seamail.create_new_seamail 'moderator', [@user.username], subject, message, current_username
+        @user.mute_thread = seamail.id.to_s
+        @user.save
+      end
+      seamail.add_message 'moderator', message, current_username
+    end
+
 		render json: {status: 'ok', user: @user.decorate.admin_hash}
 	end
 

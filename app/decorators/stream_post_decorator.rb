@@ -4,12 +4,13 @@ class StreamPostDecorator < BaseDecorator
   include ActionView::Helpers::DateHelper
 
   def to_hash(username = nil, options = {})
+    user = User.get(author)
     result = {
         id: as_str(id),
         author: {
-          username: author,
-          display_name: User.display_name_from_username(author),
-          last_photo_updated: User.last_photo_updated_from_username(author).to_ms
+          username: user.username,
+          display_name: user.display_name,
+          last_photo_updated: user.last_photo_updated.to_ms
         },
         locked: locked,
         timestamp: timestamp.to_ms,

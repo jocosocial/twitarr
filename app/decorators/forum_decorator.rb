@@ -3,15 +3,16 @@ class ForumDecorator < BaseDecorator
   include ActionView::Helpers::TextHelper
 
   def to_meta_hash(user = nil, page_size = Forum::PAGE_SIZE)
+    last_poster = User.get(posts.last.author)
     ret = {
         id: id.to_s,
         subject: subject,
         sticky: sticky,
         locked: locked,
         last_post_author: {
-          username: posts.last.author,
-          display_name: User.display_name_from_username(posts.last.author),
-          last_photo_updated: User.last_photo_updated_from_username(posts.last.author).to_ms
+          username: last_poster.username,
+          display_name: last_poster.display_name,
+          last_photo_updated: last_poster.last_photo_updated.to_ms
         },
         posts: post_count,
         timestamp: last_post_time.to_ms,

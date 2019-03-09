@@ -4,7 +4,7 @@ class API::V2::EventController < ApplicationController
 
   before_action :events_enabled
   before_action :login_required, :only => [:follow, :unfollow, :mine]
-  before_action :admin_required, :only => [:destroy, :update]
+  before_action :tho_required, :only => [:destroy, :update]
   before_action :fetch_event, :only => [:update, :destroy, :ical, :follow, :unfollow, :show]
 
   def update

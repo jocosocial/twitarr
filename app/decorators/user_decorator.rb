@@ -13,7 +13,7 @@ class UserDecorator < Draper::Decorator
       real_name: real_name,
       pronouns: pronouns,
       home_location: home_location,
-      last_photo_updated: last_photo_updated
+      last_photo_updated: last_photo_updated.to_ms
     }
     unless current_user.nil?
       ret[:starred] = current_user.starred_users.include?(username)

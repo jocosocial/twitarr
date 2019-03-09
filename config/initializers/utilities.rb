@@ -27,6 +27,7 @@ end
 
 class NilClass
   def to_bool; false; end
+  def to_ms; 0; end
 end
 
 class Time

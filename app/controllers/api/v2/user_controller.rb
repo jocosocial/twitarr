@@ -43,7 +43,7 @@ class API::V2::UserController < ApplicationController
     params[:username] ||= ''
     params[:registration_code] ||= ''
     user = User.where(username: User.format_username(params[:username])).first
-    if user.nil? or user.registration_code != params[:registration_code].downcase
+    if user.nil? or user.registration_code != params[:registration_code].upcase.gsub(/[^A-Z0-9]/, "")
       sleep 10.seconds.to_i
       render status: :bad_request, json: { :status => 'error', errors: {username: ['Username and registration code combination not found.']}} and return
     end

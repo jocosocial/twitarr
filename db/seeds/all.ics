@@ -1396,7 +1396,7 @@ BEGIN:VEVENT
 DTSTART:20190311T170000Z
 DTEND:20190311T183000Z
 SUMMARY:Funderdome: Quidditch
-DESCRIPTION:Which house will win the first ever JoCo Cruise Caribbean Rules Quidditch tournament? Drop in\, get sorted\, and play a five minute round of Caribbean Rules Quidditch on the sports deck. The games team will provide the Sorting Hat\, Caribbean brooms\,  and coaching. Sorry Gryffindors\, Caribbean Rules Quidditch is not played at Hogwarts and not recognized in the slightest bit by the US Quidditch Association. 
+DESCRIPTION:Which house will win the first ever JoCo Cruise Caribbean Rules Quidditch tournament? Drop in\, get sorted\, and play a five minute round of Caribbean Rules Quidditch on the sports deck. The games team will provide the Sorting Hat\, Caribbean brooms\,  and coaching. Sorry Gryffindors\, Caribbean Rules Quidditch is not played at Hogwarts and not recognized in the slightest bit by the US Quidditch Association. Here's the rules of play so those Slytherins can figure out their strategy.  
 CATEGORIES:GAMING
 LOCATION:Sports Deck\, Deck 11\, Forward
 SEQUENCE:0
@@ -1957,7 +1957,7 @@ BEGIN:VEVENT
 DTSTART:20190312T040000Z
 DTEND:20190312T050000Z
 SUMMARY:Midnight Comedy Monkeys
-DESCRIPTION:End the day with stand up comedy performances from fellow Sea Monkeys. Our cadre of experienced comics will bookend open mic Monkeys\, so if you always wanted to give stand up a shot\, sign up for a slot!
+DESCRIPTION:End the day with stand up comedy performances from fellow Sea Monkeys (plus exciting\, nerdy door prizes)! Our cadre of experienced comics will bookend open mic Monkeys\, so if you always wanted to give stand up a shot\, here’s a great opportunity! If you’d like to perform a 3-5 minute spot\, please use the signup sheet at the information desk or at one of the shows (first come\, first served).
 CATEGORIES:SHADOW CRUISE
 LOCATION:Ocean Bar\, Deck 3\, Midship
 SEQUENCE:0
@@ -2791,6 +2791,17 @@ URL:http://jococruise2019.sched.com/event/36fcd75025482226bccc060a90ba7204
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190314T140000Z
+DTEND:20190314T153000Z
+SUMMARY:Mike Phirman’s Free Thought Workshop
+DESCRIPTION:Everyone takes turns bringing up ideas that they want to explore\, whether it be punching up stand-up\, developing the plot of a story\, or wondering what chord could come next in a song—anything at all\, tell the group and we’ll help you come up new ideas for it.  Any idea that you’re given is 100% YOURS\, and any idea that you give to someone else is 100% THEIRS.  Each turn is FIVE MINUTES and recording your turn(s) is allowed.  Spectators welcome\, but supportive vibes only.  No winners\, no losers\, no judgement\, and NO COPS. (JK\, cops especially welcome because NO CRIMES.)
+CATEGORIES:OFFICE HOURS
+LOCATION:Explorer's Lounge Stage\, Deck 2\, Aft
+SEQUENCE:0
+UID:f02269b59a484a07bfb8d4f43b22b5d3
+URL:http://jococruise2019.sched.com/event/f02269b59a484a07bfb8d4f43b22b5d3
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20190314T140000Z
 DTEND:20190314T160000Z
 SUMMARY:Contra dancing
 DESCRIPTION:Folk dancing for all folks! Contra dancing is easy for beginners and fun for everyone. All dances will be taught and called (with gender-free roles!). Come alone or with your friends\, we'll rotate partners and dance with neighbors and have a great time with some JoCo-and-TMBG-themed contra dance choreographies.
@@ -3187,7 +3198,7 @@ URL:http://jococruise2019.sched.com/event/b38ee31a13ac36db157168d0c72b092e
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190314T180000Z
-DTEND:20190314T190000Z
+DTEND:20190315T010000Z
 SUMMARY:Super Battle Arcade
 DESCRIPTION:Super Battle Arcade is a tribute to 80s gaming. Two players go head to head for 5 minutes in six arcade challenges (Tetris\, Asteroids\, Invaders\, 100m Dash\, Tron and Pong) in random order. With the simplicity and familiarity of games\, it takes little to no gaming experience to enjoy this challenge – and the console requires no instruction. Visuals are put at a super low rez 96x64 pixels to give the game a fun and retro feel\, the bigger the screen the better!
 CATEGORIES:SHADOW CRUISE
@@ -3563,7 +3574,7 @@ BEGIN:VEVENT
 DTSTART:20190315T040000Z
 DTEND:20190315T050000Z
 SUMMARY:Midnight Comedy Monkeys
-DESCRIPTION:End the day with stand up comedy performances from fellow Sea Monkeys. Our cadre of experienced comics will bookend open mic Monkeys\, so if you always wanted to give stand up a shot\, sign up for a slot!
+DESCRIPTION:End the day with stand up comedy performances from fellow Sea Monkeys (plus exciting\, nerdy door prizes)! Our cadre of experienced comics will bookend open mic Monkeys\, so if you always wanted to give stand up a shot\, here’s a great opportunity! If you’d like to perform a 3-5 minute spot\, please use the signup sheet at the information desk or at one of the shows (first come\, first served).
 CATEGORIES:SHADOW CRUISE
 LOCATION:Ocean Bar\, Deck 3\, Midship
 SEQUENCE:0

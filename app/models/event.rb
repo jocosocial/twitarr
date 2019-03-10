@@ -4,7 +4,7 @@ class Event
   include Mongoid::Paranoia
   include Searchable
 
-  DST_START = Time.new(2019, 3, 10, 2, 0, 0, "-05:00")
+  DST_START = Time.new(2019, 3, 11, 2, 0, 0, "-05:00")
 
   field :tl, as: :title, type: String
   field :sm, as: :description, type: String

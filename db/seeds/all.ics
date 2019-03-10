@@ -7,6 +7,17 @@ CALSCALE:GREGORIAN
 PRODID:-//Sched.com JoCo Cruise 2019//EN
 X-WR-TIMEZONE:UTC
 BEGIN:VEVENT
+DTSTART:20190309T120000Z
+DTEND:20190310T050000Z
+SUMMARY:Theme: Welcome\, New Monkeys!
+DESCRIPTION:We'll be holding events specifically designed to make our first-time Sea Monkeys feel welcome and to help them ease into the swing of things. Make a particular effort on this day to seek out new Monkeys and help show them what a great decision they've made by joining us!
+CATEGORIES:
+LOCATION:Whole Ship\, 
+SEQUENCE:0
+UID:aee4abeeae49e68a25b7d746f7aa7a89
+URL:http://jococruise2019.sched.com/event/aee4abeeae49e68a25b7d746f7aa7a89
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190309T160000Z
 DTEND:20190309T160000Z
 SUMMARY:Boarding Begins (Approximately)
@@ -27,17 +38,6 @@ LOCATION:Atrium\, Deck 1\, Midship
 SEQUENCE:0
 UID:071cbc919c7aef436346c30e01d20e66
 URL:http://jococruise2019.sched.com/event/071cbc919c7aef436346c30e01d20e66
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190309T160000Z
-DTEND:20190310T050000Z
-SUMMARY:Theme: Welcome\, New Monkeys!
-DESCRIPTION:We'll be holding events specifically designed to make our first-time Sea Monkeys feel welcome and to help them ease into the swing of things. Make a particular effort on this day to seek out new Monkeys and help show them what a great decision they've made by joining us!
-CATEGORIES:
-LOCATION:Whole Ship\, 
-SEQUENCE:0
-UID:aee4abeeae49e68a25b7d746f7aa7a89
-URL:http://jococruise2019.sched.com/event/aee4abeeae49e68a25b7d746f7aa7a89
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190309T160000Z
@@ -337,6 +337,28 @@ UID:5b26011fc563e6d86fc3dd7f5218bd42
 URL:http://jococruise2019.sched.com/event/5b26011fc563e6d86fc3dd7f5218bd42
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20190310T110000Z
+DTEND:20190311T040000Z
+SUMMARY:Theme: Science!
+DESCRIPTION:It’s a fact: science should be celebrated! Cosplay as your favorite alien/space pirate/researcher/theorem/astronaut/astronomer/etc.; take some time to stargaze tonight; and generally Get Excited About Science! 
+CATEGORIES:
+LOCATION:Whole Ship\, 
+SEQUENCE:0
+UID:8c353b616b450cb844add0846d117440
+URL:http://jococruise2019.sched.com/event/8c353b616b450cb844add0846d117440
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20190310T113000Z
+DTEND:20190311T030000Z
+SUMMARY:Puzzle Haunt on the Ghoosterdam
+DESCRIPTION:What room do ghosts avoid?20-8-5 12-9-22-9-14-7 18-15-15-13There’s always room for one more puzzle player in Ghost Patrol!
+CATEGORIES:SHADOW CRUISE
+LOCATION:Explorer's Lounge\, Deck 2\, Aft
+SEQUENCE:0
+UID:10443bc7fa316042e2ddefeda7f999b3
+URL:http://jococruise2019.sched.com/event/10443bc7fa316042e2ddefeda7f999b3
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190310T120000Z
 DTEND:20190310T190000Z
 SUMMARY:Daytime Quiet Zone
@@ -368,28 +390,6 @@ LOCATION:Half Moon Cay\, Bahamas\,
 SEQUENCE:0
 UID:69bed753e1dbfa6655f09526f28df150
 URL:http://jococruise2019.sched.com/event/69bed753e1dbfa6655f09526f28df150
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190310T120000Z
-DTEND:20190311T040000Z
-SUMMARY:Theme: Science!
-DESCRIPTION:It’s a fact: science should be celebrated! Cosplay as your favorite alien/space pirate/researcher/theorem/astronaut/astronomer/etc.; take some time to stargaze tonight; and generally Get Excited About Science! 
-CATEGORIES:
-LOCATION:Whole Ship\, 
-SEQUENCE:0
-UID:8c353b616b450cb844add0846d117440
-URL:http://jococruise2019.sched.com/event/8c353b616b450cb844add0846d117440
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190310T120000Z
-DTEND:20190311T030000Z
-SUMMARY:Puzzle Haunt on the Ghoosterdam
-DESCRIPTION:What room do ghosts avoid?20-8-5 12-9-22-9-14-7 18-15-15-13There’s always room for one more puzzle player in Ghost Patrol!
-CATEGORIES:SHADOW CRUISE
-LOCATION:Explorer's Lounge\, Deck 2\, Aft
-SEQUENCE:0
-UID:10443bc7fa316042e2ddefeda7f999b3
-URL:http://jococruise2019.sched.com/event/10443bc7fa316042e2ddefeda7f999b3
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190310T133000Z
@@ -843,6 +843,28 @@ UID:c79640f46f5b3f2318fb53ce6b8e3553
 URL:http://jococruise2019.sched.com/event/c79640f46f5b3f2318fb53ce6b8e3553
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20190311T110000Z
+DTEND:20190312T040000Z
+SUMMARY:Theme: Cosplay Day
+DESCRIPTION:We have a bunch of terrifically talented cosplayers every year\, and today is your day to really pull out all the stops. Sky's the limit; show off your best!
+CATEGORIES:
+LOCATION:Whole Ship\, 
+SEQUENCE:0
+UID:b937d2c2d4e80f6e0d7eb432763d61e8
+URL:http://jococruise2019.sched.com/event/b937d2c2d4e80f6e0d7eb432763d61e8
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20190311T113000Z
+DTEND:20190312T030000Z
+SUMMARY:Puzzle Haunt on the Ghoosterdam
+DESCRIPTION:How often do ghosts manifest?ObNoCoEmIoNoAnExperience an alternate world with daily Ghost Patrol puzzle encounters!
+CATEGORIES:SHADOW CRUISE
+LOCATION:Explorer's Lounge\, Deck 2\, Aft
+SEQUENCE:0
+UID:43304b9f322435edf55538bbf21fd637
+URL:http://jococruise2019.sched.com/event/43304b9f322435edf55538bbf21fd637
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190311T120000Z
 DTEND:20190311T190000Z
 SUMMARY:Daytime Quiet Zone
@@ -866,17 +888,6 @@ URL:http://jococruise2019.sched.com/event/4aeb9feb2bf30a2cc0c0af74ca54cd76
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190311T120000Z
-DTEND:20190312T040000Z
-SUMMARY:Theme: Cosplay Day
-DESCRIPTION:We have a bunch of terrifically talented cosplayers every year\, and today is your day to really pull out all the stops. Sky's the limit; show off your best!
-CATEGORIES:
-LOCATION:Whole Ship\, 
-SEQUENCE:0
-UID:b937d2c2d4e80f6e0d7eb432763d61e8
-URL:http://jococruise2019.sched.com/event/b937d2c2d4e80f6e0d7eb432763d61e8
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190311T120000Z
 DTEND:20190311T123000Z
 SUMMARY:Morning Mindfulness
 DESCRIPTION:Start your day with quiet mindfulness. We'll gather for guided meditation\, a thoughtful reading\, and brief sharing. Pajamas and bedhead are welcome!
@@ -885,17 +896,6 @@ LOCATION:Stuyvesant Room\, Deck 3\, Forward
 SEQUENCE:0
 UID:9d667587c977c7c1da6b7d82d8420bbe
 URL:http://jococruise2019.sched.com/event/9d667587c977c7c1da6b7d82d8420bbe
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190311T120000Z
-DTEND:20190312T030000Z
-SUMMARY:Puzzle Haunt on the Ghoosterdam
-DESCRIPTION:How often do ghosts manifest?ObNoCoEmIoNoAnExperience an alternate world with daily Ghost Patrol puzzle encounters!
-CATEGORIES:SHADOW CRUISE
-LOCATION:Explorer's Lounge\, Deck 2\, Aft
-SEQUENCE:0
-UID:43304b9f322435edf55538bbf21fd637
-URL:http://jococruise2019.sched.com/event/43304b9f322435edf55538bbf21fd637
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190311T120000Z
@@ -1976,6 +1976,17 @@ UID:79a14ad9431a1494535c6c3d96238aec
 URL:http://jococruise2019.sched.com/event/79a14ad9431a1494535c6c3d96238aec
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20190312T113000Z
+DTEND:20190313T030000Z
+SUMMARY:Puzzle Haunt on the Ghoosterdam
+DESCRIPTION:How does a ghost stay in shape?IHWT A RACSE ERATMSScramble over to Ghost Patrol to get your brain exercised!
+CATEGORIES:SHADOW CRUISE
+LOCATION:Explorer's Lounge\, Deck 2\, Aft
+SEQUENCE:0
+UID:da7b51e218e183224ef6faa58a554cd3
+URL:http://jococruise2019.sched.com/event/da7b51e218e183224ef6faa58a554cd3
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190312T120000Z
 DTEND:20190312T190000Z
 SUMMARY:Daytime Quiet Zone
@@ -1996,17 +2007,6 @@ LOCATION:Observation Deck\, Deck 11\, Forward
 SEQUENCE:0
 UID:447ca53af96c8412c3bf9e38513cb1f4
 URL:http://jococruise2019.sched.com/event/447ca53af96c8412c3bf9e38513cb1f4
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190312T120000Z
-DTEND:20190313T030000Z
-SUMMARY:Puzzle Haunt on the Ghoosterdam
-DESCRIPTION:How does a ghost stay in shape?IHWT A RACSE ERATMSScramble over to Ghost Patrol to get your brain exercised!
-CATEGORIES:SHADOW CRUISE
-LOCATION:Explorer's Lounge\, Deck 2\, Aft
-SEQUENCE:0
-UID:da7b51e218e183224ef6faa58a554cd3
-URL:http://jococruise2019.sched.com/event/da7b51e218e183224ef6faa58a554cd3
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190312T133000Z
@@ -2394,6 +2394,17 @@ UID:bbcf0f4341946094c8c52098620383e2
 URL:http://jococruise2019.sched.com/event/bbcf0f4341946094c8c52098620383e2
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20190313T113000Z
+DTEND:20190314T030000Z
+SUMMARY:Puzzle Haunt on the Ghoosterdam
+DESCRIPTION:What kind of bash do ghosts throw to scare each other?UIRTSG XOFYMeet like-minded puzzle players from A to Z by joining Ghost Patrol!
+CATEGORIES:SHADOW CRUISE
+LOCATION:Explorer's Lounge\, Deck 2\, Aft
+SEQUENCE:0
+UID:c637f90ef856764c8f55279d822a7300
+URL:http://jococruise2019.sched.com/event/c637f90ef856764c8f55279d822a7300
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190313T120000Z
 DTEND:20190313T190000Z
 SUMMARY:Daytime Quiet Zone
@@ -2414,17 +2425,6 @@ LOCATION:Observation Deck\, Deck 11\, Forward
 SEQUENCE:0
 UID:89fcd85b6b14ceae0d066f16afb8ee37
 URL:http://jococruise2019.sched.com/event/89fcd85b6b14ceae0d066f16afb8ee37
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190313T120000Z
-DTEND:20190314T030000Z
-SUMMARY:Puzzle Haunt on the Ghoosterdam
-DESCRIPTION:What kind of bash do ghosts throw to scare each other?UIRTSG XOFYMeet like-minded puzzle players from A to Z by joining Ghost Patrol!
-CATEGORIES:SHADOW CRUISE
-LOCATION:Explorer's Lounge\, Deck 2\, Aft
-SEQUENCE:0
-UID:c637f90ef856764c8f55279d822a7300
-URL:http://jococruise2019.sched.com/event/c637f90ef856764c8f55279d822a7300
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190313T133000Z
@@ -2603,6 +2603,28 @@ UID:43fdd17118902795011cc523dbc96332
 URL:http://jococruise2019.sched.com/event/43fdd17118902795011cc523dbc96332
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20190314T110000Z
+DTEND:20190315T040000Z
+SUMMARY:Theme: Formal Night
+DESCRIPTION:Formal wear is encouraged\, but not required\, at dinner. "Formal wear" is defined VERY flexibly. Tuxedo and cocktail dress? Fine. Sport coat and slacks? Sure. Starfleet uniform? Awesome. Full Scottish regalia? Bonnie. You get the idea. Fezzes and tiaras are encouraged—but not required. (The wearing of fezzes and tiaras on Formal Night has become a sort of JCC tradition for many.)
+CATEGORIES:
+LOCATION:Whole Ship\, 
+SEQUENCE:0
+UID:1914ca39377ab706f46e89c015678d43
+URL:http://jococruise2019.sched.com/event/1914ca39377ab706f46e89c015678d43
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20190314T113000Z
+DTEND:20190315T030000Z
+SUMMARY:Puzzle Haunt on the Ghoosterdam
+DESCRIPTION:How can you see a cross-eyed ghost?YB-EW-RA-NI-SG-OP-KO-AT-LC-SELook for more puzzles by signing up with Ghost Patrol!
+CATEGORIES:SHADOW CRUISE
+LOCATION:Explorer's Lounge\, Deck 2\, Aft
+SEQUENCE:0
+UID:707a16daf3e08b9e52560e1ee7ddf981
+URL:http://jococruise2019.sched.com/event/707a16daf3e08b9e52560e1ee7ddf981
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190314T120000Z
 DTEND:20190314T190000Z
 SUMMARY:Daytime Quiet Zone
@@ -2626,17 +2648,6 @@ URL:http://jococruise2019.sched.com/event/51bb0fbf042bc1d4946be9fa3a32eb11
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190314T120000Z
-DTEND:20190315T040000Z
-SUMMARY:Theme: Formal Night
-DESCRIPTION:Formal wear is encouraged\, but not required\, at dinner. "Formal wear" is defined VERY flexibly. Tuxedo and cocktail dress? Fine. Sport coat and slacks? Sure. Starfleet uniform? Awesome. Full Scottish regalia? Bonnie. You get the idea. Fezzes and tiaras are encouraged—but not required. (The wearing of fezzes and tiaras on Formal Night has become a sort of JCC tradition for many.)
-CATEGORIES:
-LOCATION:Whole Ship\, 
-SEQUENCE:0
-UID:1914ca39377ab706f46e89c015678d43
-URL:http://jococruise2019.sched.com/event/1914ca39377ab706f46e89c015678d43
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190314T120000Z
 DTEND:20190314T123000Z
 SUMMARY:Morning Mindfulness
 DESCRIPTION:Start your day with quiet mindfulness. We'll gather for guided meditation\, a thoughtful reading\, and brief sharing. Pajamas and bedhead are welcome!
@@ -2645,17 +2656,6 @@ LOCATION:Stuyvesant Room\, Deck 3\, Forward
 SEQUENCE:0
 UID:56ac9d82ae0b629569913d540acbd516
 URL:http://jococruise2019.sched.com/event/56ac9d82ae0b629569913d540acbd516
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190314T120000Z
-DTEND:20190315T030000Z
-SUMMARY:Puzzle Haunt on the Ghoosterdam
-DESCRIPTION:How can you see a cross-eyed ghost?YB-EW-RA-NI-SG-OP-KO-AT-LC-SELook for more puzzles by signing up with Ghost Patrol!
-CATEGORIES:SHADOW CRUISE
-LOCATION:Explorer's Lounge\, Deck 2\, Aft
-SEQUENCE:0
-UID:707a16daf3e08b9e52560e1ee7ddf981
-URL:http://jococruise2019.sched.com/event/707a16daf3e08b9e52560e1ee7ddf981
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190314T120000Z
@@ -3604,6 +3604,28 @@ UID:83f96c562aa0ee47dcefc6a5ef0e23c3
 URL:http://jococruise2019.sched.com/event/83f96c562aa0ee47dcefc6a5ef0e23c3
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20190315T110000Z
+DTEND:20190316T035900Z
+SUMMARY:Theme: Jammies Day
+DESCRIPTION:Everyone's running out of clean clothes anyway\, so today is one big day-long celebration of the fact that nobody can make us put on "real" clothes if we don't want to!
+CATEGORIES:
+LOCATION:Whole Ship\, 
+SEQUENCE:0
+UID:f356bd51cf73b4dea3c9db6aa7e510f9
+URL:http://jococruise2019.sched.com/event/f356bd51cf73b4dea3c9db6aa7e510f9
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20190315T113000Z
+DTEND:20190316T030000Z
+SUMMARY:Puzzle Haunt on the Ghoosterdam
+DESCRIPTION:Who wrote the best ghost stories\, like Julius Caesar 2?UGJJGYK QFYICQNGPGRCome to Ghost Patrol and live your own story in puzzle form!
+CATEGORIES:SHADOW CRUISE
+LOCATION:Explorer's Lounge\, Deck 2\, Aft
+SEQUENCE:0
+UID:7691e56efcec9e4b28d968ca47feccc6
+URL:http://jococruise2019.sched.com/event/7691e56efcec9e4b28d968ca47feccc6
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20190315T120000Z
 DTEND:20190315T190000Z
 SUMMARY:Daytime Quiet Zone
@@ -3627,17 +3649,6 @@ URL:http://jococruise2019.sched.com/event/f45fff0dc4665121f35338106e6d1e1a
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190315T120000Z
-DTEND:20190316T035900Z
-SUMMARY:Theme: Jammies Day
-DESCRIPTION:Everyone's running out of clean clothes anyway\, so today is one big day-long celebration of the fact that nobody can make us put on "real" clothes if we don't want to!
-CATEGORIES:
-LOCATION:Whole Ship\, 
-SEQUENCE:0
-UID:f356bd51cf73b4dea3c9db6aa7e510f9
-URL:http://jococruise2019.sched.com/event/f356bd51cf73b4dea3c9db6aa7e510f9
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190315T120000Z
 DTEND:20190315T123000Z
 SUMMARY:Morning Mindfulness
 DESCRIPTION:Start your day with quiet mindfulness. We'll gather for guided meditation\, a thoughtful reading\, and brief sharing. Pajamas and bedhead are welcome!
@@ -3646,17 +3657,6 @@ LOCATION:Stuyvesant Room\, Deck 3\, Forward
 SEQUENCE:0
 UID:3186fe046a08035336ae4803a0b3d42e
 URL:http://jococruise2019.sched.com/event/3186fe046a08035336ae4803a0b3d42e
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20190315T120000Z
-DTEND:20190316T030000Z
-SUMMARY:Puzzle Haunt on the Ghoosterdam
-DESCRIPTION:Who wrote the best ghost stories\, like Julius Caesar 2?UGJJGYK QFYICQNGPGRCome to Ghost Patrol and live your own story in puzzle form!
-CATEGORIES:SHADOW CRUISE
-LOCATION:Explorer's Lounge\, Deck 2\, Aft
-SEQUENCE:0
-UID:7691e56efcec9e4b28d968ca47feccc6
-URL:http://jococruise2019.sched.com/event/7691e56efcec9e4b28d968ca47feccc6
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20190315T120000Z

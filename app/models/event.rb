@@ -4,7 +4,7 @@ class Event
   include Mongoid::Paranoia
   include Searchable
 
-  DST_START = Time.new(2019, 3, 10, 2, 0, 0, "-05:00")
+  DST_START = Time.new(2019, 3, 11, 2, 0, 0, "-05:00")
 
   field :tl, as: :title, type: String
   field :sm, as: :description, type: String
@@ -48,8 +48,8 @@ class Event
     event.title = ics_event.summary.force_encoding('utf-8')
     event.description = ics_event.description.force_encoding('utf-8')
     if ics_event.dtstart <= DST_START
-      event.start_time = ics_event.dtstart
-      event.end_time = ics_event.dtend
+      event.start_time = ics_event.dtstart + 1.hour
+      event.end_time = ics_event.dtend + 1.hour
     else
       event.start_time = ics_event.dtstart - 1.hour
       event.end_time = ics_event.dtend - 1.hour unless ics_event.dtend.nil?

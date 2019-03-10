@@ -2,14 +2,13 @@ class ForumPostDecorator < BaseDecorator
   delegate_all
 
   def to_hash(locked, user = nil, last_view = nil, options = {})
-    post_user = User.get(author)
     ret = {
         id: id.to_s,
         forum_id: forum.id.to_s,
         author: {
-          username: post_user.username,
-          display_name: post_user.display_name,
-          last_photo_updated: post_user.last_photo_updated.to_ms
+          username: author,
+          display_name: User.display_name_from_username(author),
+          last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
         thread_locked: locked,
         text: format_text(text, options),

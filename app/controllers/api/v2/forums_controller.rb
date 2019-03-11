@@ -14,7 +14,7 @@ class API::V2::ForumsController < ApplicationController
     #hacky work-around to fix forums for Rainbow Monkey
     default_page_size = Forum::PAGE_SIZE
     if(params[:app] && params[:app] == 'plain')
-      default_page_size = 1000
+      default_page_size = 100
     end
 
     page_size = (params[:limit] || default_page_size).to_i

@@ -51,8 +51,8 @@ class Event
       event.start_time = ics_event.dtstart + 1.hour
       event.end_time = ics_event.dtend + 1.hour
     else
-      event.start_time = ics_event.dtstart - 1.hour
-      event.end_time = ics_event.dtend - 1.hour unless ics_event.dtend.nil?
+      event.start_time = ics_event.dtstart
+      event.end_time = ics_event.dtend unless ics_event.dtend.nil?
     end
     event.official = !ics_event.categories.include?('SHADOW CRUISE')
     # locations tend to have trailing commas for some reason

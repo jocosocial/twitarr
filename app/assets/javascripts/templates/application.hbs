@@ -42,6 +42,7 @@
         <li><a href='#' {{ action 'go_to_star_feed' }}><span class="glyphicon glyphicon-star"></span>Starred Stream</a></li>
       {{/if}}
       <li>{{#link-to "schedule"}}<span class="glyphicon glyphicon-calendar"></span>Schedule{{/link-to}}</li>
+      <li><a {{action 'karaoke_list'}}><span class="glyphicon glyphicon-music"></span>Karaoke List</a></li>
       <li>{{#link-to "search"}}<span class="glyphicon glyphicon-search"></span>Search{{/link-to}}</li>
       <hr />
       {{#if logged_in}}
@@ -81,7 +82,6 @@
         {{/if}}
       {{/if}}
       <hr/>
-      <li><a {{action 'karaoke_list'}}><span class="glyphicon glyphicon-music"></span>Karaoke List</a></li>
       <hr />
       <li>{{#link-to 'help'}}<span class="glyphicon glyphicon-question-sign"></span>Help{{/link-to}}</li>
       <li>{{#link-to 'time'}}<span class="glyphicon glyphicon-time"></span>Time zone check{{/link-to}}</li>

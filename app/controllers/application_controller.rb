@@ -90,10 +90,10 @@ class ApplicationController < ActionController::Base
 
   def build_key(name, hashed_password, expiration = 0)
     expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
-
+    
     digest = OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest::SHA1.new,
-        Twitarr::Application.config.secret_key_base,
+        Twitarr::Application.secrets.secret_key_base,
         "#{name}#{hashed_password}#{expiration}"
     )
     "#{name}:#{expiration}:#{digest}"

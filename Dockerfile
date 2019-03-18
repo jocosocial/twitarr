@@ -1,4 +1,4 @@
-FROM jruby:9
+FROM ruby
 
 COPY Gemfile* /tmp/
 WORKDIR /tmp

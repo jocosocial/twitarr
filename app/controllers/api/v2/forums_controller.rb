@@ -11,13 +11,7 @@ class API::V2::ForumsController < ApplicationController
   before_action :check_locked, :only => [:new_post, :update_post, :delete_post, :react, :unreact]
   
   def index
-    #hacky work-around to fix forums for Rainbow Monkey
-    default_page_size = Forum::PAGE_SIZE
-    if(params[:app] && params[:app] == 'plain')
-      default_page_size = 100
-    end
-
-    page_size = (params[:limit] || default_page_size).to_i
+    page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
 
     page = (params[:page] || 0).to_i
 

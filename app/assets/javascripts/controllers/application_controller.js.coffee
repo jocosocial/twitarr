@@ -38,6 +38,9 @@ Twitarr.ApplicationController = Twitarr.Controller.extend
 
     go_to_star_feed: ->
       @transitionToRoute 'stream.star_page', Math.ceil(new Date().valueOf() + 1000)
+    
+    karaoke_list: ->
+      window.open("https://twitarr.com/cm/#/tab/info/karaoke")
 
   menu_toggle: ->
     $('#side-menu').animate { width: 'toggle' }, 100

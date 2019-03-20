@@ -85,8 +85,8 @@
     </div>
   {{/each}}
   <div class="card-section">
-    {{#link-to 'stream.author' login_user}}
-      View all tweets by {{login_user}}
+    {{#link-to 'stream.author' model.username}}
+      View all tweets by {{model.username}}
     {{/link-to}}
   </div>
 </div>

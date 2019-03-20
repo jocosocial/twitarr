@@ -109,7 +109,7 @@ class ApplicationController < ActionController::Base
     if params.has_key?(:as_mod) && params[:as_mod].to_bool && is_moderator?
       return 'moderator'
     elsif params.has_key?(:as_admin) && params[:as_admin].to_bool && is_admin?
-      return 'TwitarrTeam'
+      return 'twitarrteam'
     end
     return current_username
   end

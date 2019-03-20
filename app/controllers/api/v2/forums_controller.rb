@@ -12,6 +12,7 @@ class API::V2::ForumsController < ApplicationController
   
   def index
     page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
+
     page = (params[:page] || 0).to_i
 
     errors = []

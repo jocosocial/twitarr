@@ -3,18 +3,16 @@ class AnnouncementDecorator < BaseDecorator
   include Twitter::Autolink
 
   def to_hash(options = {})
-    user = User.get(author)
-    ret = {
+    {
         id: as_str(id),
         author: {
-          username: user.username,
-          display_name: user.display_name,
-          last_photo_updated: user.last_photo_updated.to_ms
+          username: author,
+          display_name: User.display_name_from_username(author),
+          last_photo_updated: User.last_photo_updated_from_username(author).to_ms
         },
         text: format_text(text, options),
         timestamp: timestamp.to_ms
     }
-    ret
   end
 
   def to_admin_hash(options = {})

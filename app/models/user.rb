@@ -363,20 +363,25 @@ class User
   end
 
   def self.display_name_from_username(username)
+    username = format_username(username)
     Rails.cache.fetch("display_name:#{username}", expires_in: USERNAME_CACHE_TIME) do
       User.where(username: username).only(:display_name).map(:display_name).first
     end
   end
 
   def self.last_photo_updated_from_username(username)
-    Rails.cache.fetch("last_photo_updated:#{username}", expires_in: 5.minutes) do
+    username = format_username(username)
+    Rails.cache.fetch("last_photo_updated:#{username}", expires_in: USERNAME_CACHE_TIME) do
       User.where(username: username).only(:last_photo_updated).map(:last_photo_updated).first
     end
   end
 
   def update_display_name_cache
-    Rails.cache.fetch("display_name:#{username}", force: true, expires_in: USERNAME_CACHE_TIME ) do
+    Rails.cache.fetch("display_name:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
       display_name
+    end
+    Rails.cache.fetch("last_photo_updated:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
+      last_photo_updated
     end
   end
 

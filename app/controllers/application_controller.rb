@@ -1,8 +1,9 @@
 class ApplicationController < ActionController::Base
-  #protect_from_forgery with: :exception
+  protect_from_forgery unless: -> { request.format.json? }
+
   def index
   end
-  
+
   def logged_in?
     !current_username.nil? && !current_user.nil? && current_user.role != User::Role::BANNED
   end
@@ -71,15 +72,15 @@ class ApplicationController < ActionController::Base
   def admin_required
 		head :unauthorized unless logged_in? && is_admin?
   end
-  
+
   def tho_required
 		head :unauthorized unless logged_in? && is_tho?
   end
-  
+
   def moderator_required
 		head :unauthorized unless logged_in? && is_moderator?
   end
-  
+
   def not_muted
     render status: :forbidden, json: { status: 'error', error: 'You have been muted. Check your seamail or see the help page for more information.' } unless logged_in? && !is_muted?
   end
@@ -90,7 +91,7 @@ class ApplicationController < ActionController::Base
 
   def build_key(name, hashed_password, expiration = 0)
     expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
-    
+
     digest = OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest::SHA1.new,
         Twitarr::Application.secrets.secret_key_base,
@@ -155,7 +156,7 @@ class ApplicationController < ActionController::Base
       render status: :service_unavailable, json: {status: 'error', error: 'User profiles are currently disabled.'} unless Section.enabled?(:user_profile)
     end
   end
-  
+
   private
 
   def parse_key(key)
@@ -172,7 +173,7 @@ class ApplicationController < ActionController::Base
     key = URI.unescape(key)
     username, expiration, digest = parse_key(key)
     return false if username.nil? or expiration.nil? or digest.nil?
-    
+
     begin
       return false if Time.from_param(expiration) < Time.now # Key expiration is in the past, abort
     rescue
@@ -190,5 +191,5 @@ class ApplicationController < ActionController::Base
   end
 
   KEY_EXPIRATION_DAYS = 10
-  
+
 end

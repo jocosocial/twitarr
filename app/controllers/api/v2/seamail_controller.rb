@@ -1,7 +1,4 @@
 class API::V2::SeamailController < ApplicationController
-  # noinspection RailsParamDefResolve
-  skip_before_action :verify_authenticity_token
-
   before_action :seamail_enabled
   before_action :login_required
   before_action :not_muted, :only => [:create, :new_message, :recipients]
@@ -46,7 +43,7 @@ class API::V2::SeamailController < ApplicationController
         extra_query[:after] = val
       end
     end
-    
+
     puts "Current user: #{@as_user.username}"
     mails = @as_user.seamails extra_query
 

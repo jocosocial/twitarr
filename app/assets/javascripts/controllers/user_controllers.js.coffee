@@ -16,6 +16,9 @@ Twitarr.UserIndexController = Twitarr.Controller.extend
         dataType: 'json'
         dropZone: $('#profile-photo-upload-div')
         add: (e, data) =>
+          if (data.files[0].size > 10000000)
+            alert 'File exceeds maximum file size of 10MB'
+            return false
           @send('start_upload')
           data.submit()
         always: =>
@@ -54,7 +57,7 @@ Twitarr.UserIndexController = Twitarr.Controller.extend
       if @get('model.new_password') != @get('model.confirm_password')
         alert "New Password and Confirm New Password do not match!"
         return
-      
+
       result = @get('model').change_password(
         @get('model.current_password'), @get('model.new_password')
       ).fail (response) =>
@@ -100,10 +103,10 @@ Twitarr.UserProfileController = Twitarr.Controller.extend
   actions:
     star: ->
       @get('model').star()
-    
+
     save_comment: ->
       $.post("#{Twitarr.api_path}/user/profile/#{@get('model.username')}/personal_comment", { comment: @get('model.comment') })
-    
+
     admin_profile: (username) ->
       @transitionToRoute('admin.profile', username)
 
@@ -129,7 +132,7 @@ Twitarr.UserNewController = Twitarr.Controller.extend
           self.set('errors', response.responseJSON?.errors)
         else
           alert 'Something went wrong. Try again later.'
-      ).then (response) -> 
+      ).then (response) ->
         self.get('application').login(response.user)
         self.transitionToRoute('index')
 

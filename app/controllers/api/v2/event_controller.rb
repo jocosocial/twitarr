@@ -1,7 +1,5 @@
 require 'csv'
 class API::V2::EventController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   before_action :events_enabled
   before_action :login_required, :only => [:follow, :unfollow, :mine]
   before_action :tho_required, :only => [:destroy, :update]

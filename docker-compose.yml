@@ -11,5 +11,5 @@ twitarr:
 #  - ./:/srv/app
 
 mongo:
-  image: mongo:3.0
+  image: mongo:4
   restart: always

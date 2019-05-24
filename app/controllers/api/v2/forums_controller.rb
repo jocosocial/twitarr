@@ -1,6 +1,4 @@
 class API::V2::ForumsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   before_action :forums_enabled
   before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact, :mark_all_read]
   before_action :tho_required, :only => [:toggle_sticky]
@@ -9,7 +7,7 @@ class API::V2::ForumsController < ApplicationController
   before_action :fetch_forum, :except => [:index, :create, :mark_all_read]
   before_action :fetch_post, :only => [:get_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
   before_action :check_locked, :only => [:new_post, :update_post, :delete_post, :react, :unreact]
-  
+
   def index
     page_size = (params[:limit] || Forum::PAGE_SIZE).to_i
 
@@ -36,7 +34,7 @@ class API::V2::ForumsController < ApplicationController
 
     if errors.count > 0
       render status: :bad_request, json: {status: "error", errors: errors} and return
-    end    
+    end
 
     thread_count = query.count
     query = query.order_by(:sticky => :desc, :last_post_time => :desc).offset(page * page_size).limit(page_size)
@@ -58,7 +56,7 @@ class API::V2::ForumsController < ApplicationController
   def show
     limit = (params[:limit] || Forum::PAGE_SIZE).to_i
     page = (params[:page] || 0).to_i
-    
+
     errors = []
     if limit <= 0
       errors.push "Limit must be greater than zero."
@@ -73,7 +71,7 @@ class API::V2::ForumsController < ApplicationController
     end
 
     query = @forum.decorate
-      
+
     if params.has_key?(:page)
       result = query.to_paginated_hash(page, limit, current_user, request_options)
     else
@@ -126,7 +124,7 @@ class API::V2::ForumsController < ApplicationController
       @post.save
       render json: {status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options)}
     else
-      render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages} 
+      render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages}
     end
   end
 
@@ -200,7 +198,7 @@ class API::V2::ForumsController < ApplicationController
     current_user.mark_all_forums_read(participated_only)
     render json: {status: 'ok'}
   end
-    
+
   private
   def fetch_forum
     begin

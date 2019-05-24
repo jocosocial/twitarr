@@ -2,21 +2,21 @@ source 'https://rubygems.org'
 ruby='2.6.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.11'
-gem 'sprockets', '2.12.5'
-gem 'sprockets-rails', '2.2.4'
+gem 'sassc-rails'
+gem 'rails', '5.2.3'
+gem 'sprockets'
+gem 'sprockets-rails'
 
-gem 'sass-rails', '~> 5.0'
-gem 'coffee-rails', '~> 4.1.0'
+gem 'coffee-rails'
 
 gem 'therubyracer'
 gem 'bcrypt'
 
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+gem 'uglifier'
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails', '~> 4.0.0'
+gem 'jquery-rails'
 gem 'underscore-rails'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -25,7 +25,9 @@ gem 'jbuilder'
 # handle CORS
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'mongoid'
+gem 'mongoid', '~> 6.4.4'
+# mongoid-paranoia for soft deletes
+gem 'mongoid_paranoia'
 
 gem 'ember-rails', '~> 0.19.0'
 gem 'ember-source', '~> 1.13.0'
@@ -34,7 +36,7 @@ gem 'handlebars-source'
 
 gem 'tzinfo-data'
 
-gem 'draper', '~> 1.3'
+gem 'draper'
 gem 'andand'
 gem 'browser'
 
@@ -49,9 +51,6 @@ gem 'momentjs-rails'
 
 gem 'icalendar', '>= 2.3.0'
 
-# mongoid-paranoia for soft deletes, because we're still on mongoid 4
-gem 'mongoid_paranoia'
-
 group :development do
   gem 'better_errors'
 end
@@ -63,8 +62,8 @@ end
 
 group :test do
   # these versions are based on: http://stackoverflow.com/a/21639154
-  gem 'minitest', '~> 5.4.3'
+  gem 'minitest'
   gem 'minitest-spec-rails'
-  gem 'turn', '< 0.8.3'
+  gem 'turn'
   gem 'mocha', :require => false
 end

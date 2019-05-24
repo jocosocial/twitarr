@@ -5,6 +5,6 @@ require File.expand_path('../config/application', __FILE__)
 
 Twitarr::Application.load_tasks
 
-all_task = Rake::Task["test:all"]
+system_task = Rake::Task["test:system"]
 test_task = Rake::Task[:test]
-test_task.enhance { all_task.invoke }
+test_task.enhance { system_task.invoke }

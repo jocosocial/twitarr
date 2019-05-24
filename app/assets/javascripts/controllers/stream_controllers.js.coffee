@@ -106,8 +106,9 @@ Twitarr.StreamPostPartialController = Twitarr.Controller.extend
       @get('model').unreact('like')
     delete: ->
       if confirm('Are you sure you want to delete this post?')
-        @get('model').delete()
-        @get('target.target.router').refresh()
+        @get('model').delete().then((response) =>
+          @get('target.target.router').refresh()
+        )
     view: ->
       @transitionToRoute('stream.view', @get('model.id'))
     edit: ->
@@ -164,7 +165,7 @@ Twitarr.StreamEditController = Twitarr.Controller.extend Twitarr.SinglePhotoUplo
 
     cancel: ->
       window.history.back()
-    
+
     save: ->
       if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')

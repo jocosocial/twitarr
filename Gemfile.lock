@@ -48,13 +48,13 @@ GEM
     barber (0.12.0)
       ember-source (>= 1.0, < 3.1)
       execjs (>= 1.2, < 3)
-    bcrypt (3.1.10-java)
+    bcrypt (3.1.10)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
       rack (>= 0.9.0)
     browser (0.8.0)
-    bson (4.3.0-java)
+    bson (4.3.0)
     builder (3.2.3)
     case_transform (0.2)
       activesupport
@@ -99,7 +99,6 @@ GEM
     icalendar (2.5.2)
       ice_cube (~> 0.16)
     ice_cube (0.16.3)
-    image_voodoo (0.8.9)
     jbuilder (2.2.7)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
@@ -107,8 +106,9 @@ GEM
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
-    json (1.8.6-java)
+    json (1.8.6)
     jsonapi-renderer (0.2.0)
+    libv8 (3.16.14.19)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -116,6 +116,7 @@ GEM
       mini_mime (>= 0.1.1)
     metaclass (0.0.4)
     mini_mime (1.0.1)
+    mini_portile2 (2.4.0)
     minitest (5.4.3)
     minitest-spec-rails (5.2.0)
       minitest (~> 5.0)
@@ -138,9 +139,10 @@ GEM
       mongoid (>= 4)
       mongoid-compatibility
     multi_json (1.13.1)
-    nokogiri (1.10.1-java)
+    nokogiri (1.10.1)
+      mini_portile2 (~> 2.4.0)
     origin (2.3.1)
-    puma (3.12.0-java)
+    puma (3.12.0)
     rack (1.6.11)
     rack-cors (1.0.2)
     rack-test (0.6.3)
@@ -172,8 +174,9 @@ GEM
     rake (12.3.2)
     rdoc (4.2.0)
       json (~> 1.4)
+    ref (2.0.0)
     request_store (1.1.0)
-    rmagick4j (0.3.8)
+    rmagick (3.0.0)
     sass (3.4.12)
     sass-rails (5.0.1)
       railties (>= 4.0.0, < 5.0)
@@ -194,11 +197,11 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
-    therubyrhino (2.0.4)
-      therubyrhino_jar (>= 1.7.3)
-    therubyrhino_jar (1.7.6)
+    therubyracer (0.12.3)
+      libv8 (~> 3.16.14.15)
+      ref
     thor (0.20.3)
-    thread_safe (0.3.6-java)
+    thread_safe (0.3.6)
     tilt (1.4.1)
     turn (0.8.2)
       ansi (>= 1.2.2)
@@ -211,10 +214,12 @@ GEM
     uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     underscore-rails (1.7.0)
-    unf (0.1.4-java)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.5)
 
 PLATFORMS
-  java
+  ruby
 
 DEPENDENCIES
   andand
@@ -228,7 +233,6 @@ DEPENDENCIES
   ember-source (~> 1.13.0)
   handlebars-source
   icalendar (>= 2.3.0)
-  image_voodoo
   jbuilder
   jquery-rails (~> 4.0.0)
   minitest (~> 5.4.3)
@@ -240,13 +244,13 @@ DEPENDENCIES
   puma
   rack-cors
   rails (= 4.2.11)
-  rmagick4j (= 0.3.8)
+  rmagick
   sass-rails (~> 5.0)
   sdoc
   siphash
   sprockets (= 2.12.5)
   sprockets-rails (= 2.2.4)
-  therubyrhino
+  therubyracer
   turn (< 0.8.3)
   twitter-text (~> 1.10.0)
   tzinfo-data

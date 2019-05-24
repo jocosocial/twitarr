@@ -29,17 +29,17 @@ class PhotoStore
     tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
 
     sizes = {}
-    sizes[:full] = "#{img.width}x#{img.height}"
+    sizes[:full] = "#{img.columns}x#{img.rows}"
 
     tmp = img
-    tmp = tmp.thumbnail(MEDIUM_IMAGE_SIZE) if(tmp.width > MEDIUM_IMAGE_SIZE || tmp.height > MEDIUM_IMAGE_SIZE)
-    sizes[:medium_thumb] = "#{tmp.width}x#{tmp.height}"
-    tmp.save tmp_path
+    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if(tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE)
+    sizes[:medium_thumb] = "#{tmp.columns}x#{tmp.rows}"
+    tmp.write tmp_path
     FileUtils.move tmp_path, md_thumb_path(photo.store_filename)
 
-    tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE)
-    sizes[:small_thumb] = "#{tmp.width}x#{tmp.height}"
-    tmp.save tmp_path
+    tmp = img.resize_to_fill(SMALL_IMAGE_SIZE)
+    sizes[:small_thumb] = "#{tmp.columns}x#{tmp.rows}"
+    tmp.write tmp_path
     FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
 
     photo.sizes = sizes
@@ -48,8 +48,8 @@ class PhotoStore
   end
 
   def read_image(temp_file)
-    img = ImageVoodoo.with_image(temp_file)
-    img.correct_orientation
+    img = Magick::Image::read(temp_file).first
+    img.auto_orient
   end
 
   def upload_profile_photo(temp_file, username)
@@ -65,10 +65,10 @@ class PhotoStore
     end
 
     tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
-    img.save tmp_store_path
+    img.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
 
-    img.cropped_thumbnail(SMALL_PROFILE_PHOTO_SIZE).save tmp_store_path
+    img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.small_profile_path(username)
 
     { status: 'ok', md5_hash: temp_file.md5_hash }
@@ -86,7 +86,7 @@ class PhotoStore
   end
 
   def store(file, uploader)
-    animated_image = ImageHelpers::AnimatedImage.is_animated file.tempfile.path
+    animated_image = Magick::ImageList.new(file.tempfile.path).length > 1
     photo = PhotoMetadata.new uploader: uploader,
                               content_type: file.content_type,
                               store_filename: file.filename,
@@ -104,7 +104,7 @@ class PhotoStore
         img = read_image(photo_path(photo.store_filename))
 
         tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
-        tmp = img.cropped_thumbnail(SMALL_IMAGE_SIZE).save tmp_path
+        tmp = img.resize_to_fill(SMALL_IMAGE_SIZE).write tmp_path
 
         FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
       rescue => e
@@ -120,7 +120,7 @@ class PhotoStore
         img = read_image(full_profile_path(user.username))
 
         tmp_store_path = "#{Rails.root}/tmp/#{user.username}.jpg"
-        img.cropped_thumbnail(SMALL_PROFILE_PHOTO_SIZE).save tmp_store_path
+        img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
         
         FileUtils.move tmp_store_path, small_profile_path(user.username)
       rescue => e

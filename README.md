@@ -30,7 +30,7 @@ Run:
    $ docker-compose up
 ```
 
-This will create a docker image based on JRuby 9, as well as download a MongoDB image.
+This will create a docker image based on ruby, as well as download a MongoDB image.
 
 This can take 10 minute to set up, as it generates indexes and seed data in mongo.
 Once it completes you should be able to reach twitarr via http://localhost:3000.
@@ -51,15 +51,13 @@ There's already an example with some good defaults in config/*_example.yml, you 
 can generate a rails secret token using the command "rake secret".
 
 This was originally compatible in both MRI and JRuby - in theory it still is although it might require a little effort to
-get the image gems working in both. Anyone who wants to put in the effort is welcome to.
+get the images and crypto working in both. It is currently compatible with MRI.
 
 ## Quick Developer Setup
 
 ### Prereqs
 
-You require `java version 1.6+` in order to use this.
-
-Then you will need `jruby` installed.  The easiest way to do this is to install it via [RVM](http://rvm.io/).
+You will need `ruby` installed.  The easiest way to do this is to install it via [RVM](http://rvm.io/).
 
 To install [RVM](http://rvm.io/) run:
 
@@ -67,16 +65,16 @@ To install [RVM](http://rvm.io/) run:
   $ \curl -sSL https://get.rvm.io | bash -s stable
 ```
 
-Then install `jruby` via [RVM](http://rvm.io/):
+Then install `ruby` via [RVM](http://rvm.io/):
 
 ```
-  $ rvm install jruby
+  $ rvm install ruby
 ```
 
-Then in the future terminal sessions, you can use `rvm use` to set the terminal session enviorment to jruby:
+Then in the future terminal sessions, you can use `rvm use` to set the terminal session enviorment to ruby:
 
 ```
-  $ rvm use jruby
+  $ rvm use ruby
 ```
 
 You will also need to download and run [Mongodb](http://www.mongodb.org/)

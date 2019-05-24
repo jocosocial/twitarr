@@ -1,4 +1,4 @@
-require 'RMagick'
+require 'rmagick'
 require 'siphash'
 
 # creates an Identicon using Image Magick

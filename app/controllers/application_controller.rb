@@ -4,6 +4,15 @@ class ApplicationController < ActionController::Base
   def index
   end
 
+  def route_not_found
+    render status: :not_found, json: {status: :error, error: 'Route not found.'}
+  end
+
+  def append_info_to_payload(payload)
+    super
+    payload[:username] = current_username
+  end
+
   def logged_in?
     !current_username.nil? && !current_user.nil? && current_user.role != User::Role::BANNED
   end

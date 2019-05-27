@@ -53,6 +53,8 @@ gem 'momentjs-rails'
 
 gem 'icalendar', '>= 2.3.0'
 
+gem 'lograge'
+
 group :development do
   gem 'spring'
   gem 'listen'

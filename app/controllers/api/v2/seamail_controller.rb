@@ -1,4 +1,4 @@
-class API::V2::SeamailController < ApplicationController
+class Api::V2::SeamailController < ApplicationController
   before_action :seamail_enabled
   before_action :login_required
   before_action :not_muted, :only => [:create, :new_message, :recipients]

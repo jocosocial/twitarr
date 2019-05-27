@@ -1,4 +1,4 @@
-class API::V2::HashtagController < ApplicationController
+class Api::V2::HashtagController < ApplicationController
   before_action :admin_required, :only => [:populate_hashtags]
 
   def populate_hashtags

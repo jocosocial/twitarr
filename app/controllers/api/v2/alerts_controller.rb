@@ -1,4 +1,4 @@
-class API::V2::AlertsController < ApplicationController
+class Api::V2::AlertsController < ApplicationController
   before_action :login_required, :only => [:set_last_viewed]
 
   def index

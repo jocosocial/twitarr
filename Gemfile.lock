@@ -64,6 +64,8 @@ GEM
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
+    bootsnap (1.4.4)
+      msgpack (~> 1.0)
     browser (2.5.3)
     bson (4.5.0)
     builder (3.2.3)
@@ -118,6 +120,10 @@ GEM
       thor (>= 0.14, < 2.0)
     jsonapi-renderer (0.2.0)
     libv8 (3.16.14.19)
+    listen (3.1.5)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
+      ruby_dep (~> 1.2)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -145,6 +151,7 @@ GEM
       mongo (>= 2.5.1, < 3.0.0)
     mongoid_paranoia (0.3.0)
       mongoid (>= 6.0.0)
+    msgpack (1.2.10)
     nio4r (2.3.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
@@ -178,11 +185,15 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
     rake (12.3.2)
+    rb-fsevent (0.10.3)
+    rb-inotify (0.10.0)
+      ffi (~> 1.0)
     rdoc (6.1.1)
     ref (2.0.0)
     request_store (1.4.1)
       rack (>= 1.4)
     rmagick (3.1.0)
+    ruby_dep (1.5.0)
     sassc (2.0.1)
       ffi (~> 1.9)
       rake
@@ -195,6 +206,8 @@ GEM
     sdoc (1.0.0)
       rdoc (>= 5.0)
     siphash (0.0.1)
+    spring (2.0.2)
+      activesupport (>= 4.2)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -233,6 +246,7 @@ DEPENDENCIES
   andand
   bcrypt
   better_errors
+  bootsnap
   browser
   coffee-rails
   draper
@@ -243,6 +257,7 @@ DEPENDENCIES
   icalendar (>= 2.3.0)
   jbuilder
   jquery-rails
+  listen
   minitest
   minitest-spec-rails
   mocha
@@ -256,6 +271,7 @@ DEPENDENCIES
   sassc-rails
   sdoc
   siphash
+  spring
   sprockets
   sprockets-rails
   therubyracer

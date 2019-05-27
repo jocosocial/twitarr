@@ -11,7 +11,7 @@
       Click to change profile photo
     {{/if}}
   </div>
-  <input id="profile-photo-upload" type="file" name="file" data-url={{profile_pic_upload_url}} accept="image/*" style="display: none;">
+  <input id="profile-photo-upload" type="file" name="file" data-url={{profile_pic_upload_url}} accept="image/*" style="display: none;"/>
   <div class="row" style="margin: 0.5em 1em;">
     <button class="btn" {{action 'remove_photo'}}>Remove profile photo</button>
   </div>
@@ -65,7 +65,7 @@
               {{/each}}
             </ul>
           {{/if}}
-        </div>        
+        </div>
       </div>
       <div class="col-md-4">
         <div class="form-group">
@@ -109,7 +109,7 @@
       <button class="btn" id="show-change-password" onclick="$('#change-password').show(); $('#show-change-password').hide()">Change password</button>
         <div id="change-password" class="col-md-4" style="display: none">
           <h5 style="display: none">Change Password</h5>
-        
+
           <div class="form-group">
             <label for="current_password">Current Password</label>
             {{ input type="password" value=model.current_password class='input' maxlength='100' name="current_password" }}
@@ -143,5 +143,5 @@
         </div>
     </div>
   </div>
-  
+
 </div>

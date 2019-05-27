@@ -1,8 +1,6 @@
 require 'tempfile'
 # noinspection RailsParamDefResolve,RubyResolve
 class API::V2::PhotoController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   PAGE_LENGTH = 20
   before_action :login_required, :only => [:create, :destroy, :update]
   before_action :not_muted, :only => [:create, :update]
@@ -39,7 +37,7 @@ class API::V2::PhotoController < ApplicationController
     unless [:asc, :desc].include? order
       errors.push "Order must be either asc or desc"
     end
-    
+
     render status: :bad_request, json: {status:'error', errors: errors} and return unless errors.empty?
 
     query = PhotoMetadata.all.order_by([sort_by, order]).skip(limit * page).limit(limit)
@@ -84,7 +82,7 @@ class API::V2::PhotoController < ApplicationController
     rescue => e
       puts "Error deleting file: #{e.to_s}"
     end
-    
+
     begin
       puts 'deleting ' + PhotoStore.instance.md_thumb_path(@photo.store_filename)
       File.delete PhotoStore.instance.md_thumb_path(@photo.store_filename)

@@ -1,10 +1,9 @@
-FROM ruby
+FROM ruby:2.6.3
 
 COPY Gemfile* /tmp/
 WORKDIR /tmp
 
-# we're not compatible with bundler 2, so force 1.17.2
-RUN gem install bundler:1.17.2 && bundle _1.17.2_ install
+RUN gem install bundler:2.0.1 && bundle install
 # todo - this warn against running as root, should we make an app user?
 
 # set the container's time zone

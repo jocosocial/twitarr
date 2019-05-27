@@ -1,6 +1,4 @@
 class API::V2::UserController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   before_action :registration_enabled, :only => [:new]
   before_action :profile_enabled, :only => [:show, :update_profile, :reset_photo, :update_photo]
   before_action :seamail_enabled, :only => [:new_seamail]
@@ -15,13 +13,13 @@ class API::V2::UserController < ApplicationController
       return
     end
     new_username = params[:new_username].downcase unless params[:new_username].blank?
-    display_name = params[:display_name] 
+    display_name = params[:display_name]
     display_name = params[:new_username] if params[:display_name].blank?
     user = User.new username: new_username, display_name: display_name, password: params[:new_password],
                      role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
-    
+
     render status: :bad_request, json: {status: "error", errors: user.errors.messages} and return unless user.valid?
-    
+
     user.set_password params[:new_password]
     user.update_last_login.save
     login_user user
@@ -75,7 +73,7 @@ class API::V2::UserController < ApplicationController
 
   def whoami
     render json: {
-      :status => 'ok', 
+      :status => 'ok',
       user: UserDecorator.decorate(current_user).self_hash,
       need_password_change: current_user.correct_password(User::RESET_PASSWORD)
     }
@@ -121,7 +119,7 @@ class API::V2::UserController < ApplicationController
   def update_profile
     # current_user.current_location = params[:current_location] if params.has_key? :current_location
 
-    # Muted users are allowed to set fields to blank or make no change, but they are not allowed to change fields to new text 
+    # Muted users are allowed to set fields to blank or make no change, but they are not allowed to change fields to new text
     if params.has_key?(:display_name)
       current_user.display_name = params[:display_name] unless mutedChange ||= (is_muted? && !params[:display_name].blank? && current_user.display_name != params[:display_name])
       if current_user.display_name.blank?
@@ -136,7 +134,7 @@ class API::V2::UserController < ApplicationController
     if params.has_key?(:home_location)
       current_user.home_location = params[:home_location] unless mutedChange ||= (is_muted? && !params[:home_location].blank? && current_user.home_location != params[:home_location])
     end
-    
+
     if params.has_key?(:real_name)
       current_user.real_name = params[:real_name] unless mutedChange ||= (is_muted? && !params[:real_name].blank? && current_user.real_name != params[:real_name])
     end
@@ -151,7 +149,7 @@ class API::V2::UserController < ApplicationController
 
     if !current_user.valid? || mutedChange
       current_user.errors.add(:general, 'You have been muted. You may set fields to blank, but you may not otherwise change them.') if mutedChange
-      render status: :bad_request, json: { status: 'error', errors: current_user.errors } and return 
+      render status: :bad_request, json: { status: 'error', errors: current_user.errors } and return
     end
 
     current_user.save
@@ -181,7 +179,7 @@ class API::V2::UserController < ApplicationController
   def get_photo
     response.headers['Etag'] = @user.photo_hash
     expires_in 1.second
-    
+
     if params[:full]
       send_file @user.full_profile_picture_path, disposition: 'inline'
     else

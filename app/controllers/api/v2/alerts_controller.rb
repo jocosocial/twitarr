@@ -1,6 +1,4 @@
 class API::V2::AlertsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   before_action :login_required, :only => [:set_last_viewed]
 
   def index
@@ -55,7 +53,7 @@ class API::V2::AlertsController < ApplicationController
     else
       render status: :bad_request, json: {status: 'error', error: 'Timestamp must be in the past.'} and return unless last_checked_time <= Time.now
     end
-    
+
     current_user.reset_last_viewed_alerts(last_checked_time)
     current_user.save!
 

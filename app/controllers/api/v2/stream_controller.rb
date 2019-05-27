@@ -1,7 +1,4 @@
 class API::V2::StreamController < ApplicationController
-  # noinspection RailsParamDefResolve
-  skip_before_action :verify_authenticity_token
-
   PAGE_LENGTH = 20
   before_action :stream_enabled
   before_action :login_required,  :only => [:create, :destroy, :update, :react, :unreact]
@@ -55,7 +52,7 @@ class API::V2::StreamController < ApplicationController
 
     if sort == :asc
       posts = posts.reverse # Restore sort direction of output to be by time descending - the opposite of what mongo gave us
-      next_page = next_page + 1 # Since we're moving in the opposite direction, undo previous next_page calculation, and add an additional ms 
+      next_page = next_page + 1 # Since we're moving in the opposite direction, undo previous next_page calculation, and add an additional ms
     end
 
     results = {status: 'ok', stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
@@ -66,7 +63,7 @@ class API::V2::StreamController < ApplicationController
     if newest && params.has_key?(:newer_posts) && param_newer_posts
       results.merge!({has_next_page: false, next_page: params[:start]+1})
     end
-    
+
     render json: results
   end
 
@@ -155,7 +152,7 @@ class API::V2::StreamController < ApplicationController
       parent = StreamPost.where(id: params[:parent]).first
       render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"} and return unless parent
       render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !is_moderator?
-      
+
       parent_chain = parent.parent_chain + [params[:parent]]
       parent_locked = parent.locked
     end
@@ -183,10 +180,10 @@ class API::V2::StreamController < ApplicationController
     unless params.has_key?(:text) or params.has_key?(:photo)
       render status: :bad_request, json: {status:'error', error: 'Update must modify either text or photo, or both.'} and return
     end
-    
+
     @post.text = params[:text] if params.has_key? :text
     @post.photo = params[:photo] if params.has_key? :photo
-    
+
     if @post.valid?
       @post.save
       render json: {status: 'ok', stream_post: @post.decorate.to_hash(current_username, request_options)}

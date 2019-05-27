@@ -1,16 +1,18 @@
-<div id="photo-upload-div" class="upload-div">
-  <input id="fileupload" class="fileupload" type="file" name="file" data-url="{{application.photo_upload_path}}" accept="image/*">
-  {{#if application.uploads_pending}}
-    <div class="uploading">Uploading...</div>
-  {{else}}
-    Click to add a photo
-  {{/if}}
-</div>
-<div id="photo-display">
-  {{#each photo in photos}}
-    <div class="photo-container">
-      <img class="close" {{action 'remove_photo' photo.id}} src="/img/close-icon.png" />
-      {{render 'photo_mini' photo }}
+<div>
+    <div id="photo-upload-div" class="upload-div">
+      {{#if application.uploads_pending}}
+        <div class="uploading">Uploading...</div>
+      {{else}}
+        Click to add a photo
+      {{/if}}
     </div>
-  {{/each}}
+    <input id="fileupload" class="fileupload" type="file" name="file" data-url="{{application.photo_upload_path}}" accept="image/*"/>
+    <div id="photo-display">
+      {{#each photo in photos}}
+        <div class="photo-container">
+          <img class="close" {{action 'remove_photo' photo.id}} src="/img/close-icon.png" />
+          {{render 'photo_mini' photo }}
+        </div>
+      {{/each}}
+    </div>
 </div>

@@ -350,7 +350,7 @@ body {
       padding: 10px;
     }
 
-    hr { 
+    hr {
       display: block;
       height: 1px;
       border: 0;
@@ -445,19 +445,10 @@ img.layered {
 }
 
 .fileupload {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
-  opacity: 0;
-  -ms-filter: 'alpha(opacity=0)';
-  font-size: 200px;
-  direction: ltr;
-  cursor: pointer;
-  z-index: 100;
+  display:none;
 }
 
-@media screen \9
+@media screen
 {
   #fileupload {
     filter: alpha(opacity=0);

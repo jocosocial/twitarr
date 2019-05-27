@@ -1,9 +1,6 @@
 class API::V2::SearchController < ApplicationController
   include Twitter::Extractor
 
-  # noinspection RailsParamDefResolve
-  skip_before_action :verify_authenticity_token
-
   before_action :search_enabled
 
   DETAILED_SEARCH_MAX = 20
@@ -35,7 +32,7 @@ class API::V2::SearchController < ApplicationController
   def seamails
     return unless params_valid?(params)
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
-    render json: { 
+    render json: {
       status: 'ok',
       query: params[:query],
       seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
@@ -65,7 +62,7 @@ class API::V2::SearchController < ApplicationController
   def events
     return unless params_valid?(params)
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
-    render json: { 
+    render json: {
       status: 'ok',
       query: params[:query],
       events: do_search(params, Event) { |e| e.decorate.to_hash(current_username, request_options) }
@@ -85,7 +82,7 @@ class API::V2::SearchController < ApplicationController
       errors.push 'Required parameter \'query\' not set.'
     end
 
-    if !params[:limit].nil? && params[:limit].to_i < 1 
+    if !params[:limit].nil? && params[:limit].to_i < 1
       errors.push "Limit must be greater than 0."
     end
 

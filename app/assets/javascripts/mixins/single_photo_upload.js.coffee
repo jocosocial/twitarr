@@ -14,7 +14,7 @@ Twitarr.SinglePhotoUploadMixin = Ember.Mixin.create
 
   setupUpload: (->
     Ember.run.scheduleOnce('afterRender', @, =>
-      $('#fileupload').fileupload
+      $('#fileupload').fileupload(
         dataType: 'json'
         dropZone: $('#photo-upload-div')
         add: (e, data) =>
@@ -32,6 +32,9 @@ Twitarr.SinglePhotoUploadMixin = Ember.Mixin.create
             alert "Upload failed: #{data.jqXHR.responseJSON.error}"
           else
             alert 'An upload has failed!'
+      )
+      $('#photo-upload-div').click ->
+        $('#fileupload').click()
     )
   )
 

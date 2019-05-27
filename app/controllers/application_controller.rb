@@ -4,6 +4,15 @@ class ApplicationController < ActionController::Base
   def index
   end
 
+  def route_not_found
+    render status: :not_found, json: {status: :error, error: 'Route not found.'}
+  end
+
+  def append_info_to_payload(payload)
+    super
+    payload[:username] = current_username
+  end
+
   def logged_in?
     !current_username.nil? && !current_user.nil? && current_user.role != User::Role::BANNED
   end
@@ -22,7 +31,7 @@ class ApplicationController < ActionController::Base
   def login_user(user)
     session[:username] = user.username
     session[:role] = user.role
-    puts "Successful login for user: #{current_username}"
+    Rails.logger.info "Successful login for user: #{current_username}"
   end
 
   def logout_user
@@ -94,7 +103,7 @@ class ApplicationController < ActionController::Base
 
     digest = OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest::SHA1.new,
-        Twitarr::Application.secrets.secret_key_base,
+        Rails.application.secrets.secret_key_base,
         "#{name}#{hashed_password}#{expiration}"
     )
     "#{name}:#{expiration}:#{digest}"

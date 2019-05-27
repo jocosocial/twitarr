@@ -99,7 +99,7 @@ class PhotoStore
 
   def reindex_photos
     PhotoMetadata.each do |photo|
-      puts photo.store_filename
+      Rails.logger.info photo.store_filename
       begin
         img = read_image(photo_path(photo.store_filename))
 
@@ -108,14 +108,14 @@ class PhotoStore
 
         FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
       rescue => e
-        puts e
+        Rails.logger.error e
       end
     end
   end
 
   def reindex_profiles
     User.each do |user|
-      puts user.username
+      Rails.logger.info user.username
       begin
         img = read_image(full_profile_path(user.username))
 
@@ -124,7 +124,7 @@ class PhotoStore
         
         FileUtils.move tmp_store_path, small_profile_path(user.username)
       rescue => e
-        puts e
+        Rails.logger.error e
       end
     end
   end

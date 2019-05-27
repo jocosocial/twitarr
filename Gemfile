@@ -7,6 +7,8 @@ gem 'rails', '5.2.3'
 gem 'sprockets'
 gem 'sprockets-rails'
 
+gem 'bootsnap'
+
 gem 'coffee-rails'
 
 gem 'therubyracer'
@@ -51,7 +53,11 @@ gem 'momentjs-rails'
 
 gem 'icalendar', '>= 2.3.0'
 
+gem 'lograge'
+
 group :development do
+  gem 'spring'
+  gem 'listen'
   gem 'better_errors'
 end
 

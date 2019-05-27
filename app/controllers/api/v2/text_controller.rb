@@ -1,4 +1,4 @@
-class API::V2::TextController < ApplicationController
+class Api::V2::TextController < ApplicationController
 	def index
 		filename = params['filename'].strip.downcase.gsub(/[^\w-]/, '')
 		render status: :not_found, json: {status: 'error', error: 'File not found.'} and return unless File.exists?("public/text/#{filename}.json")

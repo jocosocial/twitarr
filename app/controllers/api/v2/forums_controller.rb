@@ -1,4 +1,4 @@
-class API::V2::ForumsController < ApplicationController
+class Api::V2::ForumsController < ApplicationController
   before_action :forums_enabled
   before_action :login_required, :only => [:create, :new_post, :update_post, :delete_post, :react, :unreact, :mark_all_read]
   before_action :tho_required, :only => [:toggle_sticky]

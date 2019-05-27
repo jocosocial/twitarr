@@ -1,4 +1,4 @@
-class API::V2::StreamController < ApplicationController
+class Api::V2::StreamController < ApplicationController
   PAGE_LENGTH = 20
   before_action :stream_enabled
   before_action :login_required,  :only => [:create, :destroy, :update, :react, :unreact]

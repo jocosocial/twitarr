@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   def login_user(user)
     session[:username] = user.username
     session[:role] = user.role
-    puts "Successful login for user: #{current_username}"
+    Rails.logger.info "Successful login for user: #{current_username}"
   end
 
   def logout_user

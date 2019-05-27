@@ -19,7 +19,6 @@ class Api::V2::SeamailController < ApplicationController
   def fetch_as_user
     post_as_username = post_as_user(params)
     if(post_as_username != current_username)
-      puts post_as_username
       @as_user = User.get post_as_username
     else
       @as_user = current_user
@@ -44,7 +43,6 @@ class Api::V2::SeamailController < ApplicationController
       end
     end
 
-    puts "Current user: #{@as_user.username}"
     mails = @as_user.seamails extra_query
 
     if @include_messages
@@ -77,7 +75,7 @@ class Api::V2::SeamailController < ApplicationController
   end
 
   def create
-    puts "Posting as user: #{@as_user.username}"
+    Rails.logger.info "Posting as user: #{@as_user.username}"
     seamail = Seamail.create_new_seamail @as_user.username, params[:users], params[:subject], params[:text], current_username
     if seamail.valid?
       render json: {status: 'ok', seamail: seamail.decorate.to_hash(request_options, @as_user.username)}

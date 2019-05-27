@@ -70,24 +70,24 @@ class Api::V2::PhotoController < ApplicationController
     end
 
     begin
-      puts 'deleting ' + PhotoStore.instance.photo_path(@photo.store_filename)
+      Rails.logger.info 'deleting ' + PhotoStore.instance.photo_path(@photo.store_filename)
       File.delete PhotoStore.instance.photo_path(@photo.store_filename)
     rescue => e
-      puts "Error deleting file: #{e.to_s}"
+      Rails.logger.error "Error deleting file: #{e.to_s}"
     end
 
     begin
-      puts 'deleting ' + PhotoStore.instance.sm_thumb_path(@photo.store_filename)
+      Rails.logger.info 'deleting ' + PhotoStore.instance.sm_thumb_path(@photo.store_filename)
       File.delete PhotoStore.instance.sm_thumb_path(@photo.store_filename)
     rescue => e
-      puts "Error deleting file: #{e.to_s}"
+      Rails.logger.error "Error deleting file: #{e.to_s}"
     end
 
     begin
-      puts 'deleting ' + PhotoStore.instance.md_thumb_path(@photo.store_filename)
+      Rails.logger.info 'deleting ' + PhotoStore.instance.md_thumb_path(@photo.store_filename)
       File.delete PhotoStore.instance.md_thumb_path(@photo.store_filename)
     rescue => e
-      puts "Error deleting file: #{e.to_s}"
+      Rails.logger.error "Error deleting file: #{e.to_s}"
     end
 
     StreamPost.any_in(photo: @photo.id).update_all(photo: nil)

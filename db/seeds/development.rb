@@ -1,7 +1,7 @@
 require 'securerandom'
 
 @BASE_DATE = Time.now - 1.day
-Rails.logger.info "Using a base date of #{@BASE_DATE}"
+puts "Using a base date of #{@BASE_DATE}"
 
 def create_registration_code(code)
   regcode = RegistrationCode.add_code code
@@ -9,7 +9,7 @@ def create_registration_code(code)
   regcode
 end
 
-Rails.logger.info "Creating registration codes..."
+puts "Creating registration codes..."
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
   for i in 1..20 do
@@ -18,7 +18,7 @@ if RegistrationCode.count == 0
 end
 
 unless User.exist? 'TwitarrTeam'
-  Rails.logger.info 'Creating user TwitarrTeam'
+  puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
   user.set_password user.password
@@ -26,7 +26,7 @@ unless User.exist? 'TwitarrTeam'
 end
 
 unless User.exist? 'moderator'
-  Rails.logger.info 'Creating user moderator'
+  puts 'Creating user moderator'
   user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
   role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
   user.set_password user.password
@@ -34,21 +34,21 @@ unless User.exist? 'moderator'
 end
 
 unless User.exist? 'kvort'
-  Rails.logger.info 'Creating user kvort'
+  puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code3'
   user.set_password 'kvort'
   user.save
 end
 unless User.exist? 'james'
-  Rails.logger.info 'Creating user james'
+  puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
     role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code4'
   user.set_password 'james'
   user.save
 end
 unless User.exist? 'steve'
-  Rails.logger.info 'Creating user steve'
+  puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
     role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code5'
   user.set_password 'steve'
@@ -65,7 +65,7 @@ def add_photo(url, localfilename, uploader, upload_date)
   photo_basename = File.basename localfilename
   photo_md = PhotoMetadata.find_by ofn:photo_basename
   return photo_md if photo_md
-  Rails.logger.info "Using photo #{url} => #{photo_basename}"
+  puts "Using photo #{url} => #{photo_basename}"
   open(url, 'rb') { |remote|
     open(localfilename, 'wb') { |local|
       local.write(remote.read)
@@ -103,7 +103,7 @@ end
 def create_post(text, author, timestamp, photo)
   post = StreamPost.create(text: text, author: author, timestamp: timestamp, photo: photo)
   unless post.valid?
-    Rails.logger.error "Errors for post #{text}: #{post.errors.full_messages}"
+    puts "Errors for post #{text}: #{post.errors.full_messages}"
     return post
   end
   post.save!
@@ -194,7 +194,7 @@ if Forum.count == 0
   add_forum_post f, '@james I <3 food', 'steve', at_time(8, 20), forum_photos[4]
   add_forum_post f, '@steve @james I think this needs some #warmbread', 'kvort', at_time(8, 22), forum_photos[5]
 
-  #Rails.logger.info 'Spamming forums...'
+  #puts 'Spamming forums...'
   #for i in 0..1000 do
   #  create_forum i.to_s, i.to_s, 'kvort', at_time(8, i%60), []
   #end
@@ -222,7 +222,7 @@ if Seamail.count == 0
   reply_seamail seamail, 'Awesome!', 'james', at_time(9, 30)
 end
 
-Rails.logger.info 'Creating events...'
+puts 'Creating events...'
 cal_filename = "db/seeds/all.ics"
 # fix bad encoding from sched.org
 cal_text = File.read(cal_filename)
@@ -241,7 +241,7 @@ def create_reaction(tag)
   reaction
 end
 
-Rails.logger.info 'Creating reactions...'
+puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
@@ -253,7 +253,7 @@ def create_section(name)
   section
 end
 
-Rails.logger.info 'Creating sections...'
+puts 'Creating sections...'
 Section.delete_all
 if Section.count == 0
   create_section :forums

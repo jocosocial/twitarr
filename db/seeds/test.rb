@@ -1,7 +1,7 @@
 require 'securerandom'
 
 unless User.exist? 'TwitarrTeam'
-  Rails.logger.info 'Creating user TwitarrTeam'
+  puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code1'
   user.set_password user.password
@@ -9,7 +9,7 @@ unless User.exist? 'TwitarrTeam'
 end
 
 unless User.exist? 'moderator'
-  Rails.logger.info 'Creating user moderator'
+  puts 'Creating user moderator'
   user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
   role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
   user.set_password user.password
@@ -20,7 +20,7 @@ unless User.exist? 'moderator'
   raise Exception.new("No user named 'moderator'!  Create one first!")
 end
 
-Rails.logger.info 'Creating events...'
+puts 'Creating events...'
 cal_filename = "db/seeds/all.ics"
 # fix bad encoding from sched.org
 cal_text = File.read(cal_filename)
@@ -39,7 +39,7 @@ def create_reaction(tag)
   reaction
 end
 
-Rails.logger.info 'Creating reactions...'
+puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
@@ -51,7 +51,7 @@ def create_section(name)
   section
 end
 
-Rails.logger.info 'Creating sections...'
+puts 'Creating sections...'
 Section.delete_all
 if Section.count == 0
   create_section :forums

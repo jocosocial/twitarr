@@ -9,7 +9,7 @@ def create_registration_code(code)
   regcode
 end
 
-Rails.logger.info "Creating registration codes..."
+puts "Creating registration codes..."
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
   # stub codes for built-in accounts
@@ -27,7 +27,7 @@ if RegistrationCode.count == 0
 end
 
 unless User.exist? 'TwitarrTeam'
-  Rails.logger.info 'Creating user TwitarrTeam'
+  puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
   user.set_password user.password
@@ -35,7 +35,7 @@ unless User.exist? 'TwitarrTeam'
 end
 
 unless User.exist? 'official'
-  Rails.logger.info 'Creating user official'
+  puts 'Creating user official'
   user = User.new username: 'official', display_name: 'official', password: SecureRandom.hex,
     role: User::Role::THO, status: User::ACTIVE_STATUS, registration_code: 'code2'
   user.set_password user.password
@@ -43,7 +43,7 @@ unless User.exist? 'official'
 end
 
 unless User.exist? 'moderator'
-  Rails.logger.info 'Creating user moderator'
+  puts 'Creating user moderator'
   user = User.new username: 'moderator', display_name: 'moderator', password: Rails.application.secrets.initial_admin_password,
   role: User::Role::MODERATOR, status: User::ACTIVE_STATUS, registration_code: 'code3'
   user.set_password user.password
@@ -61,14 +61,14 @@ end
 def create_event(id, title, author, start_time, end_time, description, official)
   event = Event.create(_id: id, title: title, description: description, start_time: start_time, end_time: end_time, official: official)
   unless event.valid?
-    Rails.logger.error "Errors for event #{title}: #{event.errors.full_messages}"
+    puts "Errors for event #{title}: #{event.errors.full_messages}"
     return event
   end
   event.save!
   event
 end
 
-Rails.logger.info 'Creating events...'
+puts 'Creating events...'
 cal_filename = "db/seeds/all.ics"
 if File.exists?(cal_filename)
   # fix bad encoding from sched.org
@@ -89,7 +89,7 @@ def create_reaction(tag)
   reaction
 end
 
-Rails.logger.info 'Creating reactions...'
+puts 'Creating reactions...'
 Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
@@ -101,7 +101,7 @@ def create_section(name)
   section
 end
 
-Rails.logger.info 'Creating sections...'
+puts 'Creating sections...'
 Section.delete_all
 if Section.count == 0
   create_section :forums

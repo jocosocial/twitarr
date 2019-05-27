@@ -1,4 +1,4 @@
-Twitarr::Application.routes.draw do
+Rails.application.routes.draw do
   root 'application#index'
 
   namespace :api do

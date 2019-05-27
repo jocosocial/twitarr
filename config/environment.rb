@@ -2,4 +2,4 @@
 require_relative 'application'
 
 # Initialize the Rails application.
-Twitarr::Application.initialize!
+Rails.application.initialize!

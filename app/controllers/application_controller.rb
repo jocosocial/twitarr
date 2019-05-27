@@ -103,7 +103,7 @@ class ApplicationController < ActionController::Base
 
     digest = OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest::SHA1.new,
-        Twitarr::Application.secrets.secret_key_base,
+        Rails.application.secrets.secret_key_base,
         "#{name}#{hashed_password}#{expiration}"
     )
     "#{name}:#{expiration}:#{digest}"

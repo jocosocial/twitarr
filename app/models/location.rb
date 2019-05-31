@@ -17,21 +17,18 @@ class Location < ApplicationRecord
   LIMIT = 10
 
   def self.add_location(location)
-    begin
-      Location.find_or_create_by(name: location)
-    rescue Exception => e
-      logger.error e
-    end
+    Location.find_or_create_by(name: location)
+  rescue StandardError => e
+    logger.error e
   end
 
   def self.valid_location?(location)
-    (location.nil? || location.empty?) || Location.where(name: location).exists?
+    location.blank? || Location.where(name: location).exists?
   end
 
   def self.auto_complete(prefix)
-    unless prefix and prefix.size >= MIN_AUTO_COMPLETE_LEN
-      return nil
-    end
+    return nil unless prefix && prefix.size >= MIN_AUTO_COMPLETE_LEN
+
     prefix = prefix.downcase
     Location.where(name: /^#{prefix}/i).asc(:name).limit(LIMIT)
   end

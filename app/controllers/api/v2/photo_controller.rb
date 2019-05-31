@@ -65,7 +65,7 @@ class Api::V2::PhotoController < ApplicationController
   end
 
   def destroy
-    unless @photo.uploader == current_username or is_moderator?
+    unless @photo.uploader == current_username or moderator?
       render status: :bad_request, json: {status: "error", error: "You can not delete other users' photos"} and return
     end
 

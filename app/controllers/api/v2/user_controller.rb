@@ -16,7 +16,7 @@ class Api::V2::UserController < ApplicationController
     display_name = params[:display_name]
     display_name = params[:new_username] if params[:display_name].blank?
     user = User.new username: new_username, display_name: display_name, password: params[:new_password],
-                     role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
+                    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
 
     render status: :bad_request, json: {status: "error", errors: user.errors.messages} and return unless user.valid?
 
@@ -121,30 +121,30 @@ class Api::V2::UserController < ApplicationController
 
     # Muted users are allowed to set fields to blank or make no change, but they are not allowed to change fields to new text
     if params.has_key?(:display_name)
-      current_user.display_name = params[:display_name] unless mutedChange ||= (is_muted? && !params[:display_name].blank? && current_user.display_name != params[:display_name])
+      current_user.display_name = params[:display_name] unless mutedChange ||= (muted? && !params[:display_name].blank? && current_user.display_name != params[:display_name])
       if current_user.display_name.blank?
         current_user.display_name = current_user.username
       end
     end
 
     if params.has_key?(:email)
-      current_user.email = params[:email] unless mutedChange ||= (is_muted? && !params[:email].blank? && current_user.email != params[:email])
+      current_user.email = params[:email] unless mutedChange ||= (muted? && !params[:email].blank? && current_user.email != params[:email])
     end
 
     if params.has_key?(:home_location)
-      current_user.home_location = params[:home_location] unless mutedChange ||= (is_muted? && !params[:home_location].blank? && current_user.home_location != params[:home_location])
+      current_user.home_location = params[:home_location] unless mutedChange ||= (muted? && !params[:home_location].blank? && current_user.home_location != params[:home_location])
     end
 
     if params.has_key?(:real_name)
-      current_user.real_name = params[:real_name] unless mutedChange ||= (is_muted? && !params[:real_name].blank? && current_user.real_name != params[:real_name])
+      current_user.real_name = params[:real_name] unless mutedChange ||= (muted? && !params[:real_name].blank? && current_user.real_name != params[:real_name])
     end
 
     if params.has_key?(:pronouns)
-      current_user.pronouns = params[:pronouns] unless mutedChange ||= (is_muted? && !params[:pronouns].blank? && current_user.pronouns != params[:pronouns])
+      current_user.pronouns = params[:pronouns] unless mutedChange ||= (muted? && !params[:pronouns].blank? && current_user.pronouns != params[:pronouns])
     end
 
     if params.has_key?(:room_number)
-      current_user.room_number = params[:room_number] unless mutedChange ||= (is_muted? && !params[:room_number].blank? && current_user.room_number != params[:room_number])
+      current_user.room_number = params[:room_number] unless mutedChange ||= (muted? && !params[:room_number].blank? && current_user.room_number != params[:room_number])
     end
 
     if !current_user.valid? || mutedChange
@@ -207,13 +207,13 @@ class Api::V2::UserController < ApplicationController
 
   def upload_schedule
     begin
-			upload = params[:schedule].tempfile.read
-			temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
-			Icalendar::Calendar.parse(temp).first.events.map { |x| Event.favorite_from_ics(x, current_username) }
-		rescue StandardError => e
-			render status: :bad_request, json: {status: 'error', error: "Unable to parse schedule: #{e.message}"} and return
-		end
-		render json: {status: 'ok'}
+      upload = params[:schedule].tempfile.read
+      temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
+      Icalendar::Calendar.parse(temp).first.events.map { |x| Event.favorite_from_ics(x, current_username) }
+    rescue StandardError => e
+      render status: :bad_request, json: {status: 'error', error: "Unable to parse schedule: #{e.message}"} and return
+    end
+    render json: {status: 'ok'}
   end
 
   def logout

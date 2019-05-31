@@ -135,7 +135,7 @@ class Api::V2::StreamController < ApplicationController
   end
 
   def delete
-    unless @post.author == current_username or is_moderator?
+    unless @post.author == current_username or moderator?
       render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts"} and return
     end
     if @post.destroy
@@ -151,7 +151,7 @@ class Api::V2::StreamController < ApplicationController
     if params[:parent]
       parent = StreamPost.where(id: params[:parent]).first
       render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"} and return unless parent
-      render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !is_moderator?
+      render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !moderator?
 
       parent_chain = parent.parent_chain + [params[:parent]]
       parent_locked = parent.locked
@@ -173,7 +173,7 @@ class Api::V2::StreamController < ApplicationController
 
   # noinspection RubyResolve
   def update
-    unless @post.author == current_username or is_tho?
+    unless @post.author == current_username or tho?
       render status: :forbidden, json: {status:'error', error: "You can not modify other users' posts"} and return
     end
 
@@ -256,7 +256,7 @@ class Api::V2::StreamController < ApplicationController
   end
 
   def check_locked
-    if !is_moderator?
+    if !moderator?
       render status: :forbidden, json: {status: 'error', error: 'Post is locked.'} if @post.locked
     end
   end

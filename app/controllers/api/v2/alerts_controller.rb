@@ -10,7 +10,7 @@ class Api::V2::AlertsController < ApplicationController
                                                 mentions_only: true).map {|p| p.decorate.to_hash(current_username, request_options) }
 
       forum_mentions = Forum.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
-                                                mentions_only: true).map {|p| p.decorate.to_meta_hash(current_user) }
+                                           mentions_only: true).map {|p| p.decorate.to_meta_hash(current_user) }
 
       unread_seamail = current_user.seamails(unread: true).map{|m| m.decorate.to_meta_hash(current_username, true) }
 
@@ -33,7 +33,7 @@ class Api::V2::AlertsController < ApplicationController
       end
     end
     render json: { status: "ok", announcements: announcements, tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
-                unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms, query_time: current_time.to_ms }
+                   unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms, query_time: current_time.to_ms }
   end
 
   def check
@@ -47,9 +47,9 @@ class Api::V2::AlertsController < ApplicationController
 
   def last_checked
     begin
-			last_checked_time = Time.from_param(params[:last_checked_time])
-		rescue
-			render status: :bad_request, json: {status: 'error', error: 'Unable to parse timestamp.'} and return
+      last_checked_time = Time.from_param(params[:last_checked_time])
+    rescue
+      render status: :bad_request, json: {status: 'error', error: 'Unable to parse timestamp.'} and return
     else
       render status: :bad_request, json: {status: 'error', error: 'Timestamp must be in the past.'} and return unless last_checked_time <= Time.now
     end

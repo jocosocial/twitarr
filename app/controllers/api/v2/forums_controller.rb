@@ -50,7 +50,8 @@ class Api::V2::ForumsController < ApplicationController
                 else
                   nil
                 end
-    render json: {status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page, prev_page: prev_page, thread_count: thread_count, page: page, page_count: page_count}
+    render json: {status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page,
+                  prev_page: prev_page, thread_count: thread_count, page: page, page_count: page_count}
   end
 
   def show
@@ -115,7 +116,7 @@ class Api::V2::ForumsController < ApplicationController
   end
 
   def update_post
-    unless @post.author == current_username or is_tho?
+    unless @post.author == current_username or tho?
       render status: :forbidden, json: {status:'error', error: "You can not edit other users' posts."} and return
     end
     @post[:text] = params[:text]
@@ -129,7 +130,7 @@ class Api::V2::ForumsController < ApplicationController
   end
 
   def delete_post
-    unless @post.author == current_username or is_moderator?
+    unless @post.author == current_username or moderator?
       render status: :forbidden, json: {status:'error', error: "You can not delete other users' posts."} and return
     end
     thread_deleted = false
@@ -217,7 +218,7 @@ class Api::V2::ForumsController < ApplicationController
   end
 
   def check_locked
-    if !is_moderator?
+    if !moderator?
       render status: :forbidden, json: {status: 'error', error: 'Forum thread is locked.'} if @forum.locked
     end
   end

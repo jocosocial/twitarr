@@ -15,21 +15,17 @@
 
 class Section < ApplicationRecord
   def self.add(section)
-    begin
-      Section.find_or_create_by(name: section) do |section|
-        section.enabled = true
-      end
-    rescue Exception => e
+    Section.find_or_create_by(name: section) do |section|
+      section.enabled = true
+    rescue StandardError => e
       logger.error e
     end
   end
 
   def self.enabled?(section)
-    begin
-      (section.nil? || section.empty?) || Section.find(section).enabled
-    rescue
-      true
-    end
+    section.blank? || Section.find_by_name(section).enabled
+  rescue StandardError
+    true
   end
 
   def self.toggle(section, enabled)

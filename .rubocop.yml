@@ -1,0 +1,198 @@
+AllCops:
+  # IntelliJ's Rubocop plugin can't pick up Ruby's version correctly, so we set it explicitly
+  # IntelliJ bug: https://youtrack.jetbrains.com/issue/RUBY-19379
+  # Rubocop bug: https://github.com/bbatsov/rubocop/issues/3318
+  TargetRubyVersion: 2.6
+  DisplayCopNames: true
+  Exclude:
+    - 'bin/**/*'
+    - 'coverage/**/*'
+    - 'db/**/*'
+    - 'log/**/*'
+    - 'public/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+
+Rails/DynamicFindBy:
+  Enabled: false
+
+# This cop has poor handling for the common case of a lambda arg in a DSL
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+Lint/AmbiguousOperator:
+  Enabled: false
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Layout/AlignHash:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+# auto-correct is broken for this cop:
+# https://github.com/bbatsov/rubocop/issues/3271
+Style/EachForSimpleLoop:
+  AutoCorrect: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Layout/EmptyLines:
+  Enabled: false
+
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLiteral:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
+
+# The Exclude list is not additive. Projects that exclude file names will
+# need to re-add Appraisals.
+Naming/FileName:
+  Exclude:
+    - 'Appraisals'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+# does not make sense to enable this without AlignHash
+Layout/IndentFirstHashElement:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
+Layout/MultilineOperationIndentation:
+  Enabled: false
+
+Layout/MultilineBlockLayout:
+  Enabled: false
+
+# This cop complains about values like 05.
+Style/NumericLiteralPrefix:
+  Enabled: false
+
+# This cop is problematic when nil may be compared with 0.
+Style/NumericPredicate:
+  Enabled: false
+
+# This cop is unstable.
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Style/Proc:
+  Enabled: false
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+# This cop doesn't work properly if you a have a block with
+# arguments split across multiple lines
+Layout/SpaceAroundBlockParameters:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  Exclude:
+    - 'spec/**/*'
+
+# We don't require %i() for an array of symbols.
+Style/SymbolArray:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+# Disabling line length enforcement since annotate generates
+# some pretty long lines
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Rails:
+  Enabled: true
+
+Rails/HttpPositionalArguments:
+  Enabled: true
+
+Rails/UniqBeforePluck:
+  EnforcedStyle: aggressive
+
+# This cop is too greedy I dont
+# want to underscore my timestamps.
+Style/NumericLiterals:
+  Enabled: false
+
+Style/StructInheritance:
+  Enabled: false
+
+Rails/TimeZone:
+  Enabled: false

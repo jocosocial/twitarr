@@ -19,9 +19,12 @@ class ApplicationController < ActionController::Base
 
   def current_username
     return @current_user.username if @current_user
+
     return session[:username] if session[:username]
+
     return parse_key(params[:key]).first if valid_key?(params[:key])
-    return nil
+
+    nil
   end
 
   def current_user
@@ -39,19 +42,19 @@ class ApplicationController < ActionController::Base
     session.delete :role
   end
 
-  def is_admin?
+  def admin?
     (current_user&.role == User::Role::ADMIN) || (session[:role] == User::Role::ADMIN)
   end
 
-  def is_tho?
+  def tho?
     (!current_user.nil? && current_user.role >= User::Role::THO) || (!session[:role].nil? && session[:role] >= User::Role::THO)
   end
 
-  def is_moderator?
+  def moderator?
     (!current_user.nil? && current_user.role >= User::Role::MODERATOR) || (!session[:role].nil? && session[:role] >= User::Role::MODERATOR)
   end
 
-  def is_muted?
+  def muted?
     (current_user&.role == User::Role::MUTED) || (session[:role] == User::Role::MUTED)
   end
 
@@ -79,19 +82,19 @@ class ApplicationController < ActionController::Base
   end
 
   def admin_required
-		head :unauthorized unless logged_in? && is_admin?
+    head :unauthorized unless logged_in? && admin?
   end
 
   def tho_required
-		head :unauthorized unless logged_in? && is_tho?
+    head :unauthorized unless logged_in? && tho?
   end
 
   def moderator_required
-		head :unauthorized unless logged_in? && is_moderator?
+    head :unauthorized unless logged_in? && moderator?
   end
 
   def not_muted
-    render status: :forbidden, json: { status: 'error', error: 'You have been muted. Check your seamail or see the help page for more information.' } unless logged_in? && !is_muted?
+    render status: :forbidden, json: { status: 'error', error: 'You have been muted. Check your seamail or see the help page for more information.' } unless logged_in? && !muted?
   end
 
   def read_only_mode
@@ -116,53 +119,54 @@ class ApplicationController < ActionController::Base
   end
 
   def post_as_user(params)
-    if params.has_key?(:as_mod) && params[:as_mod].to_bool && is_moderator?
+    if params.has_key?(:as_mod) && params[:as_mod].to_bool && moderator?
       return 'moderator'
-    elsif params.has_key?(:as_admin) && params[:as_admin].to_bool && is_admin?
+    elsif params.has_key?(:as_admin) && params[:as_admin].to_bool && admin?
       return 'twitarrteam'
     end
-    return current_username
+
+    current_username
   end
 
   def forums_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'Forums are currently disabled.'} unless Section.enabled?(:forums)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'Forums are currently disabled.' } unless Section.enabled?(:forums)
     end
   end
 
   def stream_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'Stream is currently disabled.'} unless Section.enabled?(:stream)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'Stream is currently disabled.' } unless Section.enabled?(:stream)
     end
   end
 
   def seamail_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'Seamail is currently disabled.'} unless Section.enabled?(:seamail)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'Seamail is currently disabled.' } unless Section.enabled?(:seamail)
     end
   end
 
   def events_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'Calendar is currently disabled.'} unless Section.enabled?(:calendar)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'Calendar is currently disabled.' } unless Section.enabled?(:calendar)
     end
   end
 
   def search_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'Search is currently disabled.'} unless Section.enabled?(:search)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'Search is currently disabled.' } unless Section.enabled?(:search)
     end
   end
 
   def registration_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'Registration is currently disabled.'} unless Section.enabled?(:registration)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'Registration is currently disabled.' } unless Section.enabled?(:registration)
     end
   end
 
   def profile_enabled
-    if !is_moderator?
-      render status: :service_unavailable, json: {status: 'error', error: 'User profiles are currently disabled.'} unless Section.enabled?(:user_profile)
+    unless moderator?
+      render status: :service_unavailable, json: { status: 'error', error: 'User profiles are currently disabled.' } unless Section.enabled?(:user_profile)
     end
   end
 
@@ -170,9 +174,11 @@ class ApplicationController < ActionController::Base
 
   def parse_key(key)
     return nil if key.nil?
+
     key = URI.unescape(key)
     key = key.split(':')
     return nil if key.length != 3
+
     key
   end
 
@@ -181,7 +187,7 @@ class ApplicationController < ActionController::Base
 
     key = URI.unescape(key)
     username, expiration, digest = parse_key(key)
-    return false if username.nil? or expiration.nil? or digest.nil?
+    return false if username.nil? || expiration.nil? or digest.nil?
 
     begin
       return false if Time.from_param(expiration) < Time.now # Key expiration is in the past, abort
@@ -190,7 +196,7 @@ class ApplicationController < ActionController::Base
     end
 
     user = User.get(username)
-    return false if user.nil? or (user.role == User::Role::BANNED) # User not found or user is banned, abort
+    return false if user.nil? || (user.role == User::Role::BANNED) # User not found or user is banned, abort
 
     if build_key(user.username, user.password, expiration) == key
       @current_user = user # Key is valid for this user, log them in

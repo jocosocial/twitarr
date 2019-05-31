@@ -58,9 +58,10 @@ gem 'lograge'
 
 group :development do
   gem 'annotate'
-  gem 'spring'
-  gem 'listen'
   gem 'better_errors'
+  gem 'listen'
+  gem 'rubocop-rails'
+  gem 'spring'
 end
 
 group :test do

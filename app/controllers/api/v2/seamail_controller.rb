@@ -11,7 +11,7 @@ class Api::V2::SeamailController < ApplicationController
     rescue Mongoid::Errors::DocumentNotFound
       render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
     end
-    unless @seamail.usernames.include?(current_username) || (is_moderator? && @seamail.usernames.include?('moderator')) || (is_admin? && @seamail.usernames.include?('twitarrteam'))
+    unless @seamail.usernames.include?(current_username) || (moderator? && @seamail.usernames.include?('moderator')) || (admin? && @seamail.usernames.include?('twitarrteam'))
       render status: :not_found, json: {status:'error', error: "Seamail not found"} and return
     end
   end

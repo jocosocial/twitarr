@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require File.expand_path('boot', __dir__)
 
 # Pick the frameworks you want:
 require 'active_model/railtie'
@@ -39,15 +39,17 @@ module Twitarr
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '/api/*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
-        resource '/photo/*', :headers => :any, :methods => [:get, :options]
+        resource '/api/*', headers: :any, methods: [:get, :post, :put, :delete, :options]
+        resource '/photo/*', headers: :any, methods: [:get, :options]
       end
     end
 
     # Don't generate system test files.
     config.generators.system_tests = nil
 
-    Draper::Railtie.initializers.delete_if {|initializer| initializer.name == 'draper.setup_active_model_serializers' }
+    Draper::Railtie.initializers.delete_if do |initializer|
+      initializer.name == 'draper.setup_active_model_serializers'
+    end
 
     config.assets.precompile += ['respond.js']
 

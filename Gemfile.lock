@@ -83,6 +83,8 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.5)
     crass (1.0.4)
+    discard (1.1.0)
+      activerecord (>= 4.2, < 7)
     draper (3.1.0)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
@@ -248,6 +250,7 @@ DEPENDENCIES
   bootsnap
   browser
   coffee-rails
+  discard
   draper
   ember-data-source (~> 1.13.0)
   ember-rails (~> 0.19.0)

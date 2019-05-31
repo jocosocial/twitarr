@@ -29,6 +29,9 @@ gem 'rack-cors', :require => 'rack/cors'
 
 gem 'pg'
 
+# soft deletes
+gem 'discard'
+
 gem 'ember-rails', '~> 0.19.0'
 gem 'ember-source', '~> 1.13.0'
 gem 'ember-data-source', '~> 1.13.0'

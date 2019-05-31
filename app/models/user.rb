@@ -1,6 +1,40 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                 :bigint           not null, primary key
+#  username           :string
+#  password           :string
+#  role               :integer
+#  status             :string
+#  email              :string
+#  display_name       :string
+#  last_login         :datetime
+#  last_viewed_alerts :datetime
+#  photo_hash         :string
+#  last_photo_updated :datetime         not null
+#  room_number        :string
+#  real_name          :string
+#  home_location      :string
+#  current_location   :string
+#  registration_code  :string
+#  pronouns           :string
+#  mute_reason        :string
+#  ban_reason         :string
+#  mute_thread        :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_display_name       (display_name)
+#  index_users_on_registration_code  (registration_code) UNIQUE
+#  index_users_on_username           (username) UNIQUE
+#
+
 require 'bcrypt'
 
-class User
+class User < ApplicationRecord
 
   class Role
     ADMIN = 5
@@ -21,8 +55,6 @@ class User
     end
   end
 
-  include Mongoid::Document
-  include Mongoid::Timestamps
   include Searchable
 
   MIN_AUTO_COMPLETE_LEN = 1
@@ -36,34 +68,11 @@ class User
   ACTIVE_STATUS = 'active'
   RESET_PASSWORD = 'seamonkey'
 
-  field :un, as: :username, type: String
-  field :pw, as: :password, type: String
-  field :ro, as: :role, type: Integer
-  field :st, as: :status, type: String
-  field :em, as: :email, type: String
-  field :dn, as: :display_name, type: String
-  field :ll, as: :last_login, type: Time, default: Time.at(0)
-  field :al, as: :last_viewed_alerts, type: Time, default: Time.at(0)
-  field :ph, as: :photo_hash, type: String
-  field :pu, as: :last_photo_updated, type: Time, default: Time.now
-  field :rn, as: :room_number, type: String
-  field :an, as: :real_name, type: String
-  field :hl, as: :home_location, type: String
-  field :lf, as: :forum_view_timestamps, type: Hash, default: {}
-  field :lc, as: :current_location, type: String
-  field :us, as: :starred_users, type: Array, default: []
-  field :pc, as: :personal_comments, type: Hash, default: {}
-  field :ea, as: :acknowledged_event_alerts, type: Array, default: []
-  field :rc, as: :registration_code, type: String
-  field :pr, as: :pronouns, type: String
-  field :mr, as: :mute_reason, type: String
-  field :br, as: :ban_reason, type: String
-  field :mt, as: :mute_thread, type: String
-
-  index username: 1
-  index display_name: 1
-  index registration_code: 1
-  index :display_name => 'text'
+  # TODO: Create these as separate tables
+  # field :lf, as: :forum_view_timestamps, type: Hash, default: {}
+  # field :us, as: :starred_users, type: Array, default: []
+  # field :pc, as: :personal_comments, type: Hash, default: {}
+  # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
   # noinspection RubyResolve
   after_save :update_display_name_cache

@@ -4,9 +4,7 @@ require 'securerandom'
 puts "Using a base date of #{@BASE_DATE}"
 
 def create_registration_code(code)
-  regcode = RegistrationCode.add_code code
-  regcode.save!
-  regcode
+  RegistrationCode.add_code code
 end
 
 puts "Creating registration codes..."
@@ -17,6 +15,7 @@ if RegistrationCode.count == 0
   end
 end
 
+=begin
 unless User.exist? 'TwitarrTeam'
   puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
@@ -246,11 +245,10 @@ Reaction.delete_all
 if Reaction.count == 0
   create_reaction 'like'
 end
+=end
 
 def create_section(name)
-  section = Section.add(name)
-  section.save!
-  section
+  Section.add(name)
 end
 
 puts 'Creating sections...'
@@ -267,3 +265,4 @@ if Section.count == 0
   create_section :registration
   create_section :user_profile
 end
+

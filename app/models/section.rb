@@ -1,14 +1,24 @@
-class Section
-  include Mongoid::Document
+# == Schema Information
+#
+# Table name: sections
+#
+#  id         :bigint           not null, primary key
+#  name       :string
+#  enabled    :boolean          default(TRUE), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_sections_on_name  (name) UNIQUE
+#
 
-  field :_id, as: :name, type: String
-  field :en, as: :enabled, type: Boolean, default: true
-
+class Section < ApplicationRecord
   def self.add(section)
     begin
-      doc = Section.new(name:section, enabled:true)
-      doc.upsert
-      doc
+      Section.find_or_create_by(name: section) do |section|
+        section.enabled = true
+      end
     rescue Exception => e
       logger.error e
     end
@@ -23,9 +33,10 @@ class Section
   end
 
   def self.toggle(section, enabled)
-    doc = Section.find(section)
-    doc.enabled = enabled
-    doc.save!
-    doc
+    doc = Section.find_by_name(section)
+    if doc
+      doc.enabled = enabled
+      doc.save!
+    end
   end
 end

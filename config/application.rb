@@ -5,6 +5,7 @@ require 'active_model/railtie'
 require 'active_record/railtie'
 require 'action_controller/railtie'
 # require 'action_mailer/railtie'
+require 'active_job/railtie'
 require 'sprockets/railtie'
 require 'rails/test_unit/railtie'
 
@@ -41,10 +42,6 @@ module Twitarr
         resource '/api/*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
         resource '/photo/*', :headers => :any, :methods => [:get, :options]
       end
-    end
-
-    config.generators do |generators|
-      generators.orm :active_record, primary_key_type: :bigserial
     end
 
     # Don't generate system test files.

@@ -1,0 +1,43 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  username: MyString
+  password: MyString
+  role: 1
+  status: MyString
+  email: MyString
+  display_name: MyString
+  last_login: 2019-05-31 14:24:27
+  last_viewed_alerts: 2019-05-31 14:24:27
+  photo_hash: MyString
+  last_photo_updated: 2019-05-31 14:24:27
+  room_number: MyString
+  real_name: MyString
+  home_location: MyString
+  current_location: MyString
+  registration_code: MyString
+  pronouns: MyString
+  mute_reason: MyString
+  ban_reason: MyString
+  mute_thread: MyString
+
+two:
+  username: MyString
+  password: MyString
+  role: 1
+  status: MyString
+  email: MyString
+  display_name: MyString
+  last_login: 2019-05-31 14:24:27
+  last_viewed_alerts: 2019-05-31 14:24:27
+  photo_hash: MyString
+  last_photo_updated: 2019-05-31 14:24:27
+  room_number: MyString
+  real_name: MyString
+  home_location: MyString
+  current_location: MyString
+  registration_code: MyString
+  pronouns: MyString
+  mute_reason: MyString
+  ban_reason: MyString
+  mute_thread: MyString

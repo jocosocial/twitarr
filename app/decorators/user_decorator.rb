@@ -29,7 +29,7 @@ class UserDecorator < Draper::Decorator
       last_photo_updated: last_photo_updated.to_ms
     }
   end
-  
+
   def admin_hash
     if last_login != Time.at(0)
       ts = last_login.to_ms
@@ -59,7 +59,8 @@ class UserDecorator < Draper::Decorator
     hsh = admin_hash
     hsh.delete(:mute_reason)
     hsh.delete(:ban_reason)
-    hsh[:unnoticed_alerts] = unnoticed_alerts
+    # TODO: Fix unnoticed alerts - migrate to postgres
+    hsh[:unnoticed_alerts] = { } # unnoticed_alerts
     hsh
   end
 
@@ -68,7 +69,7 @@ class UserDecorator < Draper::Decorator
       unnoticed_announcements: unnoticed_announcements,
       unnoticed_alerts: unnoticed_alerts,
       seamail_unread_count: seamail_unread_count,
-      unnoticed_mentions: unnoticed_mentions,      
+      unnoticed_mentions: unnoticed_mentions,
       unnoticed_upcoming_events: unnoticed_upcoming_events
     }
   end

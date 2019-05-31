@@ -15,7 +15,6 @@ if RegistrationCode.count == 0
   end
 end
 
-=begin
 unless User.exist? 'TwitarrTeam'
   puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
@@ -57,6 +56,8 @@ end
 unless User.exist? 'moderator'
   raise Exception.new("No user named 'moderator'!  Create one first!")
 end
+
+=begin
 
 # noinspection RubyResolve
 def add_photo(url, localfilename, uploader, upload_date)

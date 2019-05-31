@@ -1,4 +1,4 @@
-Twitarr::Application.routes.draw do
+Rails.application.routes.draw do
   root 'application#index'
 
   namespace :api do
@@ -114,5 +114,5 @@ Twitarr::Application.routes.draw do
       post 'admin/sections/:name', to: 'admin#section_toggle'
     end
   end
-
+  get '*unmatched_route', to: 'application#route_not_found'
 end

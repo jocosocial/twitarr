@@ -1,5 +1,5 @@
 require 'csv'
-class API::V2::EventController < ApplicationController
+class Api::V2::EventController < ApplicationController
   before_action :events_enabled
   before_action :login_required, :only => [:follow, :unfollow, :mine]
   before_action :tho_required, :only => [:destroy, :update]

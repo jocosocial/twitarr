@@ -1,4 +1,4 @@
 environment 'development'
 
-threads 0, 16
+threads 5, 5
 quiet

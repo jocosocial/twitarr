@@ -16,25 +16,25 @@ class ResponseServer
 
   def listen
     socket.bind(BIND, PORT)
-    puts "Listening for reply."
+    Rails.logger.info "Listening for reply."
     @listening = true
     loop do
       begin
         data, clientAddr = socket.recvfrom(150)
-        puts "Message recieved..."
+        Rails.logger.info "Message recieved..."
         Thread.start(data,clientAddr) do |data,clientAddr|
           # We only really want to work on replies. 
           # You could make it strict as to only recognise a response with the correct UUID but for the purposes of this test...
           if data[0..3] == "ack,"
             csv = CSV.new(data).read.flatten # CSV Lib, you're fucking WEIRD.
-            puts "Twitarr is hosted on #{csv[2]}"
+            Rails.logger.info "Twitarr is hosted on #{csv[2]}"
             exit
           else
-            puts "Invalid message: #{data}"
+            Rails.logger.error "Invalid message: #{data}"
           end
         end
       rescue Errno::EMSGSIZE,Errno::ENOBUFS => e
-        puts "Error with recieved packet: #{e.message}"
+        Rails.logger.error "Error with recieved packet: #{e.message}"
       end
       break unless listening
     end
@@ -65,7 +65,7 @@ sendSocket = UDPSocket.open
 sendSocket.setsockopt(:IPPROTO_IP, :IP_MULTICAST_TTL, 1)
 # Generate unique UUID. Not TOO important, but it MUST be 32 characters long.
 uuid = SecureRandom.hex(16)
-puts "Sending message..."
+Rails.logger.info "Sending message..."
 # Multicast our request off
 sendSocket.send(uuid, 0, CAST_ADDR, port)
 # Start listening for a reply.

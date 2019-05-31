@@ -1,4 +1,4 @@
-class API::V2::UserController < ApplicationController
+class Api::V2::UserController < ApplicationController
   before_action :registration_enabled, :only => [:new]
   before_action :profile_enabled, :only => [:show, :update_profile, :reset_photo, :update_photo]
   before_action :seamail_enabled, :only => [:new_seamail]

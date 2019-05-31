@@ -36,22 +36,22 @@ class Server
 
   def listen
     socket.bind(BIND, PORT)
-    puts "Startup! Replying with IP #{ip_addr}".green
+    Rails.logger.info "Startup! Replying with IP #{ip_addr}".green
     loop do
       begin
         data, clientAddr = socket.recvfrom(150)
         Thread.start(data,clientAddr) do |data,clientAddr|
           # We don't want to reply to ourselves
           if data[0..3] != "ack," and data.length == 32
-            puts "New message from #{clientAddr[3]}".cyan
+            Rails.logger.info "New message from #{clientAddr[3]}".cyan
             message = Response.new(data, ip_addr)
             sleep 0.1 # Give the client a few ms to start listening
-            puts "Responding".yellow
+            Rails.logger.info "Responding".yellow
             socket.send(message.to_csv, 0, CAST_ADDR, PORT)
           end
         end
       rescue Errno::EMSGSIZE,Errno::ENOBUFS => e
-        puts "Error with recieved packet: #{e.message}".red
+        Rails.logger.error "Error with recieved packet: #{e.message}".red
       end
     end
   end

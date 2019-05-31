@@ -3,7 +3,7 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Twitarr::Application.load_tasks
+Rails.application.load_tasks
 
 system_task = Rake::Task["test:system"]
 test_task = Rake::Task[:test]

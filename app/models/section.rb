@@ -15,8 +15,8 @@
 
 class Section < ApplicationRecord
   def self.add(section)
-    Section.find_or_create_by(name: section) do |section|
-      section.enabled = true
+    Section.find_or_create_by(name: section) do |doc|
+      doc.enabled = true
     rescue StandardError => e
       logger.error e
     end
@@ -32,7 +32,7 @@ class Section < ApplicationRecord
     doc = Section.find_by_name(section)
     if doc
       doc.enabled = enabled
-      doc.save!
+      doc.save
     end
   end
 end

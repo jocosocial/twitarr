@@ -44,14 +44,14 @@ class User < ApplicationRecord
     MUTED = 1
     BANNED = 0
 
-    STRINGS = %w(banned muted user moderator tho admin)
+    STRINGS = %w(banned muted user moderator tho admin).freeze
 
     def self.as_string(role)
-      return STRINGS[role]
+      STRINGS[role]
     end
 
     def self.from_string(role_string)
-      return STRINGS.index(role_string)
+      STRINGS.index(role_string)
     end
   end
 
@@ -62,11 +62,11 @@ class User < ApplicationRecord
 
   USERNAME_CACHE_TIME = 30.minutes
 
-  USERNAME_REGEX = /^[\w]{3,40}$/
-  DISPLAY_NAME_REGEX = /^[\w\. &-]{3,40}$/
+  USERNAME_REGEX = /^[\w]{3,40}$/.freeze
+  DISPLAY_NAME_REGEX = /^[\w\. &-]{3,40}$/.freeze
 
-  ACTIVE_STATUS = 'active'
-  RESET_PASSWORD = 'seamonkey'
+  ACTIVE_STATUS = 'active'.freeze
+  RESET_PASSWORD = 'seamonkey'.freeze
 
   # TODO: Create these as separate tables
   # field :lf, as: :forum_view_timestamps, type: Hash, default: {}
@@ -88,92 +88,71 @@ class User < ApplicationRecord
   validate :valid_password?
   validate :valid_room_number?
   validates :home_location, :real_name, :pronouns, length: {maximum: 100}
-  validates :room_number, allow_blank: true, length: {minimum: 4, maximum: 5}
+  validates :room_number, allow_blank: true, length: { minimum: 4, maximum: 5 }
 
   def valid_role?
-    if role.nil? || User::Role.as_string(role).nil?
-      errors.add(:role, "Invalid role. Must be one of: #{User::Role::STRINGS*", "}.")
-    end
+    errors.add(:role, "Invalid role. Must be one of: #{User::Role::STRINGS * ', '}.") if role.nil? || User::Role.as_string(role).nil?
   end
 
   def valid_mute_reason?
-    if role == User::Role::MUTED && (mute_reason.nil? || mute_reason.empty?)
-      errors.add(:mute_reason, "When user is muted, mute reason is required.")
-    end
+    errors.add(:mute_reason, 'When user is muted, mute reason is required.') if role == User::Role::MUTED && mute_reason.blank?
   end
 
   def valid_ban_reason?
-    if role == User::Role::BANNED && (ban_reason.nil? || ban_reason.empty?)
-      errors.add(:ban_reason, "When user is banned, ban reason is required.")
-    end
+    errors.add(:ban_reason, 'When user is banned, ban reason is required.') if role == User::Role::BANNED && ban_reason.blank?
   end
 
   def self.valid_username?(username)
     return false unless username
+
     !username.match(USERNAME_REGEX).nil?
   end
 
   def valid_username?
-    unless User.valid_username?(username)
-      errors.add(:username, 'Username must be three to forty characters long, and can only include letters, numbers, and underscore.')
-    end
-    if new_record? && User.where(username: username).exists?
-      errors.add :username, 'An account with this username already exists.'
-    end
+    errors.add(:username, 'Username must be three to forty characters long, and can only include letters, numbers, and underscore.') unless User.valid_username?(username)
+    errors.add :username, 'An account with this username already exists.' if new_record? && User.where(username: username).exists?
   end
 
   def valid_password?
-    if password.nil? || password.length < 6
-      errors.add :password, 'Your password must be at least six characters long.'
-    end
-    if password.length > 100
-      errors.add :password, 'Your password cannot be more than 100 characters long.'
-    end
+    errors.add :password, 'Your password must be at least six characters long.' if password.nil? || password.length < 6
+    errors.add :password, 'Your password cannot be more than 100 characters long.' if !password.nil? && password.length > 100
   end
 
   def valid_registration_code?
     return true if Rails.env.downcase == 'test'
 
-    if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.where(registration_code: registration_code).exists?)
-      errors.add(:registration_code, 'Invalid registration code.')
-    end
+    errors.add(:registration_code, 'Invalid registration code.') if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.where(registration_code: registration_code).exists?)
   end
 
   def self.valid_display_name?(name)
     return true unless name
+
     !name.match(DISPLAY_NAME_REGEX).nil?
   end
 
   def valid_display_name?
-    unless User.valid_display_name? (display_name)
-      errors.add(:display_name, 'If display name is entered, it must be three to forty characters long, and cannot include any of ~!@#$%^*()+=<>{}[]\\|;:/?')
-    end
+    errors.add(:display_name, 'If display name is entered, it must be three to forty characters long, and cannot include any of ~!@#$%^*()+=<>{}[]\\|;:/?') unless User.valid_display_name?(display_name)
   end
 
   def valid_location?
-    user_location = self[:current_location]
-    Location.valid_location? user_location
+    Location.valid_location?(current_location)
   end
 
   def valid_room_number?
-    unless self[:room_number].nil? || self[:room_number].empty? || (Integer(self[:room_number]) rescue false)
-      errors.add(:room_number, 'Room number must be blank or an integer.')
-    end
+    errors.add(:room_number, 'Room number must be blank or an integer.') unless room_number.blank? || Integer(room_number)
+  rescue StandardError
+    false
   end
 
-  def set_role(role_string)
+  def change_role(role_string)
     self.role = User::Role.from_string(role_string)
   end
 
-  def empty_password?
-    password.nil? || password.empty?
-  end
-
-  def set_password(pass)
+  def change_password(pass)
     self.password = BCrypt::Password.create pass
   end
 
-  def correct_password(pass)
+  def correct_password?(pass)
     BCrypt::Password.new(password) == pass
   end
 
@@ -203,57 +182,55 @@ class User < ApplicationRecord
   end
 
   def registration_code=(val)
-    super val.upcase.gsub(/[^A-Z0-9]/, "")
+    super val.upcase.gsub(/[^A-Z0-9]/, '')
   end
 
-  def upcoming_events(alerts=false)
-    events = Event.where(:start_time.gte => (Time.now - 1.hours)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
-    events = events.map {|x| x if !x.end_time or x.end_time <= Time.now }.compact
-    events = events.map { |x| x if x.favorites.include? self.username }.compact
+  def upcoming_events(alerts = false)
+    events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
+    events = events.map { |x| x if !x.end_time or x.end_time <= Time.now }.compact
+    events = events.map { |x| x if x.favorites.include? username }.compact
     if alerts
       events = events.map { |e| e unless self.acknowledged_event_alerts.include? e.id }.compact
       events.each { |e| self.acknowledged_event_alerts << e.id unless self.acknowledged_event_alerts.include? e.id }
-      self.save
+      save!
     end
     events
   end
 
   def unnoticed_upcoming_events
-    events = self.upcoming_events()
-    events = events.map {|e| e unless self.acknowledged_event_alerts.include? e.id}.compact
+    events = upcoming_events
+    events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
     events.count
   end
 
   def seamails(params = {})
-    threadQuery = Hash.new
-    threadQuery["us"] = username
-    threadQuery["up"] = { "$gt" => params[:after]} if params.has_key?(:after)
+    thread_query = Hash.new
+    thread_query['us'] = username
+    thread_query['up'] = { '$gt': params[:after]} if params.key?(:after)
 
-    postQuery = Hash.new
-    postQuery["sm.rd"] = {"$ne" => username } if params.has_key?(:unread)
-    postQuery["sm.ts"] = {"$gt" => params[:after]} if params.has_key?(:after)
+    post_query = Hash.new
+    post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
+    post_query['sm.ts'] = { '$gt': params[:after] } if params.key?(:after)
 
     aggregation = Array.new
-    aggregation.push({"$match" => threadQuery})
-    aggregation.push({"$unwind" => "$sm"})
+    aggregation.push('$match' => thread_query)
+    aggregation.push('$unwind' => '$sm')
 
-    if postQuery.length > 0
-      aggregation.push({"$match" => postQuery})
-    end
+    aggregation.push('$match' => post_query) unless post_query.empty?
 
-    aggregation.push({"$sort" => { "sm.ts" => -1 }})
-    aggregation.push({
-      "$group" => {
-        "_id" => "$_id",
-        "deleted_at" => { "$first" => "$deleted_at" },
-        "us" => { "$first" => "$us" },
-        "sj" => { "$first" => "$sj" },
-        "up" => { "$first" => "$up" },
-        "updated_at" => { "$first" => "$updated_at" },
-        "created_at" => { "$first" => "$created_at" },
-        "sm" => { "$push" => "$sm" }
+    aggregation.push('$sort' => { 'sm.ts' => -1 })
+    aggregation.push(
+      '$group' => {
+        '_id': '$_id',
+        'deleted_at': { '$first': '$deleted_at' },
+        'us': { '$first': '$us' },
+        'sj': { '$first': '$sj' },
+        'up': { '$first': '$up' },
+        'updated_at': { '$first': '$updated_at' },
+        'created_at': { '$first': '$created_at' },
+        'sm': { '$push': '$sm' }
       }
-    })
+    )
 
     result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
 
@@ -284,11 +261,11 @@ class User < ApplicationRecord
   end
 
   def number_of_tweets
-    StreamPost.where(author: self.username).count
+    StreamPost.where(author: username).count
   end
 
   def number_of_mentions
-    StreamPost.where(mentions: self.username).count
+    StreamPost.where(mentions: username).count
   end
 
   def self.format_username(username)
@@ -336,8 +313,8 @@ class User < ApplicationRecord
   end
 
   def unnoticed_mentions
-    StreamPost.view_mentions(query: self.username, after: self.last_viewed_alerts, mentions_only: true).count +
-      Forum.view_mentions(query: self.username, after: self.last_viewed_alerts, mentions_only: true).count
+    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
+      Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
   def update_forum_view(forum_id)
@@ -346,11 +323,7 @@ class User < ApplicationRecord
   end
 
   def mark_all_forums_read(participated_only)
-    if participated_only
-      query = Forum.where(:'fp.au' => self.username).all
-    else
-      query = Forum.all
-    end
+    query = participated_only ? Forum.where('fp.au': username).all : Forum.all
 
     now = Time.now
     hash = Hash.new
@@ -400,14 +373,11 @@ class User < ApplicationRecord
 
   def self.search(params = {})
     query = params[:query].strip.downcase.gsub(/[^\w&\s-]/, '')
-    criteria = User.or({:username => /^#{query}.*/i}, { :display_name => /^#{query}.*/i }, { '$text' => { '$search' => "\"#{query}\"" } })
+    criteria = User.or({ username: /^#{query}.*/i }, { display_name: /^#{query}.*/i }, '$text': { '$search': "\"#{query}\"" })
     limit_criteria(criteria, params)
   end
 
   def self.auto_complete(query)
-    User.or(
-      { username: /^#{query}/ },
-      { display_name: /^#{query}/i },
-    ).limit(AUTO_COMPLETE_LIMIT)
+    User.or(username: /^#{query}/, display_name: /^#{query}/i).limit(AUTO_COMPLETE_LIMIT)
   end
 end

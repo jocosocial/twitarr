@@ -19,7 +19,7 @@ unless User.exist? 'TwitarrTeam'
   puts 'Creating user TwitarrTeam'
   user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
-  user.set_password user.password
+  user.change_password user.password
   user.save
 end
 
@@ -27,7 +27,7 @@ unless User.exist? 'moderator'
   puts 'Creating user moderator'
   user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
   role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
-  user.set_password user.password
+  user.change_password user.password
   user.save
 end
 
@@ -35,21 +35,21 @@ unless User.exist? 'kvort'
   puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
     role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code3'
-  user.set_password 'kvort'
+  user.change_password 'kvort'
   user.save
 end
 unless User.exist? 'james'
   puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
     role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code4'
-  user.set_password 'james'
+  user.change_password 'james'
   user.save
 end
 unless User.exist? 'steve'
   puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
     role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code5'
-  user.set_password 'steve'
+  user.change_password 'steve'
   user.save
 end
 

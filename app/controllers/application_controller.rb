@@ -63,16 +63,17 @@ class ApplicationController < ActionController::Base
     result = {user: user}
     if user.nil?
       result[:error] = 'Invalid username or password.'
-    elsif user.empty_password? # We need to check this condition before comparing passwords
+    elsif user.password.blank? # We need to check this condition before comparing passwords
       result[:error] = 'User account has been disabled.'
-    elsif !user.correct_password(password)
+    elsif !user.correct_password?(password)
       result[:error] = 'Invalid username or password.'
     elsif user.status != User::ACTIVE_STATUS # If a user's password is set, we only want to report they're locked if they have the right password
       result[:error] = 'User account has been disabled.'
     elsif user.role == User::Role::BANNED
       result[:error] = "User account has been banned. Reason: #{user.ban_reason}"
     else
-      user.update_last_login.save
+      user.update_last_login
+      user.save
     end
     result
   end

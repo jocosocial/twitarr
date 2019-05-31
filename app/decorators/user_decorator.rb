@@ -44,7 +44,7 @@ class UserDecorator < Draper::Decorator
       display_name: display_name,
       current_location: current_location,
       last_login: ts,
-      empty_password: empty_password?,
+      empty_password: user.password.blank?,
       last_photo_updated: last_photo_updated.to_ms,
       room_number: room_number,
       real_name: real_name,

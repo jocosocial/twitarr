@@ -4,7 +4,7 @@ unless User.exist? 'TwitarrTeam'
   puts 'Creating user TwitarrTeam'
   user = User.new(username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
                   role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code1')
-  user.set_password user.password
+  user.change_password user.password
   user.save
 end
 
@@ -12,7 +12,7 @@ unless User.exist? 'moderator'
   puts 'Creating user moderator'
   user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
                   role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
-  user.set_password user.password
+  user.change_password user.password
   user.save
 end
 

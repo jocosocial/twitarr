@@ -59,7 +59,7 @@ Rails.application.routes.draw do
       post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
       get 'user/ac/:query', to: 'user#auto_complete', query: /.*/
       get 'user/starred', to: 'user#starred'
-      get 'user/photo/:username', to: 'user#get_photo'
+      get 'user/photo/:username', to: 'user#photo'
       post 'user/photo', to: 'user#update_photo'
       delete 'user/photo', to: 'user#reset_photo'
       post 'user/schedule', to: 'user#upload_schedule'

@@ -10,8 +10,8 @@ class User
     MUTED = 1
     BANNED = 0
 
-    STRINGS = ["banned", "muted", "user", "moderator", "tho", "admin"]
-    
+    STRINGS = %w(banned muted user moderator tho admin)
+
     def self.as_string(role)
       return STRINGS[role]
     end
@@ -80,7 +80,7 @@ class User
   validate :valid_room_number?
   validates :home_location, :real_name, :pronouns, length: {maximum: 100}
   validates :room_number, allow_blank: true, length: {minimum: 4, maximum: 5}
-  
+
   def valid_role?
     if role.nil? || User::Role.as_string(role).nil?
       errors.add(:role, "Invalid role. Must be one of: #{User::Role::STRINGS*", "}.")
@@ -124,7 +124,7 @@ class User
 
   def valid_registration_code?
     return true if Rails.env.downcase == 'test'
-    
+
     if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.where(registration_code: registration_code).exists?)
       errors.add(:registration_code, 'Invalid registration code.')
     end

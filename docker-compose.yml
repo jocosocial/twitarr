@@ -1,15 +1,32 @@
-web:
-  build: .
-  ports:
-    - "3000:3000"
-  links:
-   - mongo
-  restart: always
+version: '3'
+
+services:
+  db:
+    image: postgres:11
+    restart: always
+    ports:
+      - '54320:5432'
+    environment:
+      - 'POSTGRES_PASSWORD=postgres'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    ports:
+      - '3000:3000'
+    links:
+      - db
+    restart: always
 # For development, use a path on your docker-host for /dev/twitarr
 # This loads your host files into the container, getting updates without a rebuild.
-# volumes:
-#  - ./:/srv/app
+#    volumes:
+#      - ./:/srv/app
+    environment:
+      - 'PGHOST=db'
+      - 'PGDATABASE=postgres'
+      - 'PGUSER=postgres'
+      - 'PGPASSWORD=postgres'
 
-mongo:
-  image: mongo:4
-  restart: always
+volumes:
+  db_data:

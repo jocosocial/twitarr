@@ -19,6 +19,7 @@
 *.gem
 *.rbc
 .config
+.env
 coverage
 pkg
 rdoc

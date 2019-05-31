@@ -27,9 +27,7 @@ gem 'jbuilder'
 # handle CORS
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'mongoid', '~> 6.4.4'
-# mongoid-paranoia for soft deletes
-gem 'mongoid_paranoia'
+gem 'pg'
 
 gem 'ember-rails', '~> 0.19.0'
 gem 'ember-source', '~> 1.13.0'
@@ -56,14 +54,10 @@ gem 'icalendar', '>= 2.3.0'
 gem 'lograge'
 
 group :development do
+  gem 'annotate'
   gem 'spring'
   gem 'listen'
   gem 'better_errors'
-end
-
-group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
-  gem 'sdoc', require: false
 end
 
 group :test do

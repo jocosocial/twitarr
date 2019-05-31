@@ -1,9 +1,10 @@
 require File.expand_path('../boot', __FILE__)
 
 # Pick the frameworks you want:
-# require "active_record/railtie"
+require 'active_model/railtie'
+require 'active_record/railtie'
 require 'action_controller/railtie'
-require 'action_mailer/railtie'
+# require 'action_mailer/railtie'
 require 'sprockets/railtie'
 require 'rails/test_unit/railtie'
 
@@ -18,6 +19,9 @@ Bundler.require(:default, Rails.env)
 
 module Twitarr
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.2
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -38,6 +42,13 @@ module Twitarr
         resource '/photo/*', :headers => :any, :methods => [:get, :options]
       end
     end
+
+    config.generators do |generators|
+      generators.orm :active_record, primary_key_type: :bigserial
+    end
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
 
     Draper::Railtie.initializers.delete_if {|initializer| initializer.name == 'draper.setup_active_model_serializers' }
 

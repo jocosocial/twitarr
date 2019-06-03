@@ -1,3 +1,5 @@
+require: rubocop-rails
+
 AllCops:
   # IntelliJ's Rubocop plugin can't pick up Ruby's version correctly, so we set it explicitly
   # IntelliJ bug: https://youtrack.jetbrains.com/issue/RUBY-19379

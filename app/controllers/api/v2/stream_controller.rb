@@ -44,11 +44,11 @@ class Api::V2::StreamController < ApplicationController
     end
 
     has_next_page = posts.count > params[:limit]
-    posts = posts.limit(0 - params[:limit]).order_by(id: sort) # Limit needs to be negative, otherwise mongo will return additional posts
+    posts = posts.limit(params[:limit]).order(id: sort)
 
     posts = posts.map { |x| x } # Execute the query, so that our results are the expected size
 
-    next_page = posts.last.nil? ? 0 : posts.last.timestamp.to_ms - 1
+    next_page = posts.last.nil? ? 0 : posts.last.created_at.to_ms - 1
 
     if sort == :asc
       posts = posts.reverse # Restore sort direction of output to be by time descending - the opposite of what mongo gave us
@@ -149,16 +149,15 @@ class Api::V2::StreamController < ApplicationController
     parent_chain = []
     parent_locked = false
     if params[:parent]
-      parent = StreamPost.where(id: params[:parent]).first
+      parent = StreamPost.find(id: params[:parent])
       render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"} and return unless parent
       render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !moderator?
 
-      parent_chain = parent.parent_chain + [params[:parent]]
       parent_locked = parent.locked
     end
 
-    post = StreamPost.create(text: params[:text], author: post_as_user(params), timestamp: Time.now, photo: params[:photo],
-                             location: params[:location], parent_chain: parent_chain, original_author: current_username, locked: parent_locked)
+    post = StreamPost.create(text: params[:text], author: post_as_user(params), #photo: params[:photo],
+                             location: params[:location], parent_id: parent&.id, original_author: current_user.id, locked: parent_locked)
     if post.valid?
       if params[:location]
         # if the location field was used, update the user's last known location

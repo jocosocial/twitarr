@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_31_192028) do
+ActiveRecord::Schema.define(version: 2019_08_27_212516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,21 @@ ActiveRecord::Schema.define(version: 2019_05_31_192028) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_sections_on_name", unique: true
+  end
+
+  create_table "stream_posts", force: :cascade do |t|
+    t.bigint "author", null: false
+    t.bigint "original_author", null: false
+    t.string "text", null: false
+    t.bigint "location_id"
+    t.boolean "locked", default: false, null: false
+    t.bigint "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "to_tsvector('english'::regconfig, (text)::text)", name: "index_stream_posts_text", using: :gin
+    t.index ["author"], name: "index_stream_posts_on_author"
+    t.index ["location_id"], name: "index_stream_posts_on_location_id"
+    t.index ["parent_id"], name: "index_stream_posts_on_parent_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -64,4 +79,8 @@ ActiveRecord::Schema.define(version: 2019_05_31_192028) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "stream_posts", "locations", on_delete: :nullify
+  add_foreign_key "stream_posts", "stream_posts", column: "parent_id", on_delete: :nullify
+  add_foreign_key "stream_posts", "users", column: "author", on_delete: :cascade
+  add_foreign_key "stream_posts", "users", column: "original_author", on_delete: :cascade
 end

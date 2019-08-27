@@ -5,25 +5,27 @@ class StreamPostDecorator < BaseDecorator
 
   def to_hash(username = nil, options = {})
     result = {
-        id: as_str(id),
+        id: id.to_s,
         author: {
-          username: author,
-          display_name: User.display_name_from_username(author),
-          last_photo_updated: User.last_photo_updated_from_username(author).to_ms
+          username: user.username,
+          display_name: user.display_name,
+          last_photo_updated: user.last_photo_updated.to_ms
         },
         locked: locked,
-        timestamp: timestamp.to_ms,
+        timestamp: created_at.to_ms,
         text: format_text(text, options),
-        reactions: BaseDecorator.reaction_summary(reactions, username),
-        parent_chain: parent_chain
+        # reactions: BaseDecorator.reaction_summary(reactions, username),
+        parent: parent_id
     }
+=begin 
     unless photo.blank?
       begin
         img = PhotoMetadata.find(photo)
         result[:photo] = { id: photo, animated: img.animated, sizes: img.sizes }
       rescue Mongoid::Errors::DocumentNotFound
       end
-    end
+    end 
+=end
     if options.has_key? :remove
       options[:remove].each { |k| result.delete k }
     end

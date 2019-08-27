@@ -20,16 +20,8 @@ module Postable
       end
     end
 
-    def author=(username)
-      super User.format_username username
-    end
-
-    def original_author=(username)
-      super User.format_username username
-    end
-
     def location=(loc)
-      super loc
+      location_id = loc
     end
 
     # noinspection RubyResolve
@@ -48,7 +40,7 @@ module Postable
     end
 
     def post_create_operations
-      record_hashtags
+      # record_hashtags
     end
 
     def record_hashtags

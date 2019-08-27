@@ -68,13 +68,13 @@ To install [RVM](http://rvm.io/) run:
 Then install `ruby` via [RVM](http://rvm.io/):
 
 ```
-  $ rvm install ruby
+  $ rvm install ruby-2.6.3
 ```
 
-Then in the future terminal sessions, you can use `rvm use` to set the terminal session enviorment to ruby:
+Once it's installed, rvm should automatically detect that ruby 2.6.3 should be used for this project. If it doesn't, you can use `rvm use` to set the terminal session environment to the correct version:
 
 ```
-  $ rvm use ruby
+  $ rvm use ruby-2.6.3
 ```
 
 You will also need to download and run [Mongodb](http://www.mongodb.org/)
@@ -85,13 +85,13 @@ Since I like to keep my database just for this project, when I execute the mongo
  $ mkdir -p temp/data/db && mongod --dbpath temp/data/db
 ```
 
-This will create the mongo database within this project's temp directory.  The temp directory is also explictly ignored in the `.gitignore` file, so you don't have to worry about checking it in.
+This will create the mongo database within this project's temp directory.  The temp directory is also explicitly ignored in the `.gitignore` file, so you don't have to worry about checking it in.
 
 ### Project setup
-We're not currently compatible with bundler 2. So, you will need to make sure you're using bundler 1.17.2:
+We are currently using bundler 2.0.1, so make sure you have that version installed:
 
 ```
-  $ gem install bundler:1.17.2
+  $ gem install bundler:2.0.1
 ```
 
 Then you will need to run:

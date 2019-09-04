@@ -165,7 +165,6 @@ class Api::V2::StreamController < ApplicationController
     post = StreamPost.create(
       text: params[:text],
       author: post_as_user(params),
-      parent_id: parent&.id,
       parent_chain: parent_chain,
       #photo: params[:photo],
       location: params[:location],
@@ -210,9 +209,12 @@ class Api::V2::StreamController < ApplicationController
       render status: :bad_request, json: {status: 'error', error: 'Reaction type must be included.'}
       return
     end
-    @post.add_reaction current_username, params[:type]
+    reaction = Reaction.find_by(name: params[:type])
+    render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"} unless reaction
+
+    @post.add_reaction(current_user.id, reaction.id)
     if @post.valid?
-      render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
+      render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.post_reactions, current_user.id) }
     else
       render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"}
     end
@@ -227,8 +229,12 @@ class Api::V2::StreamController < ApplicationController
       render status: :bad_request, json: {status: 'error', error: 'Reaction type must be included.'}
       return
     end
-    @post.remove_reaction current_username, params[:type]
-    render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
+
+    reaction = Reaction.find_by(name: params[:type])
+    render status: :bad_request, json: {status: 'error', error: "Invalid reaction: #{params[:type]}"} unless reaction
+
+    @post.remove_reaction current_user.id, reaction.id
+    render json: {status: 'ok', reactions: BaseDecorator.reaction_summary(@post.post_reactions, current_user.id) }
   end
 
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_04_025735) do
+ActiveRecord::Schema.define(version: 2019_09_04_041441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,19 @@ ActiveRecord::Schema.define(version: 2019_09_04_025735) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_locations_on_name", unique: true
+  end
+
+  create_table "post_reactions", force: :cascade do |t|
+    t.bigint "stream_post_id"
+    t.bigint "reaction_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["stream_post_id"], name: "index_post_reactions_on_stream_post_id"
+    t.index ["user_id"], name: "index_post_reactions_on_user_id"
+  end
+
+  create_table "reactions", force: :cascade do |t|
+    t.string "name", null: false
+    t.index ["name"], name: "index_reactions_on_name"
   end
 
   create_table "registration_codes", force: :cascade do |t|
@@ -43,7 +56,6 @@ ActiveRecord::Schema.define(version: 2019_09_04_025735) do
     t.string "text", null: false
     t.bigint "location_id"
     t.boolean "locked", default: false, null: false
-    t.bigint "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "parent_chain", default: [], array: true
@@ -51,7 +63,6 @@ ActiveRecord::Schema.define(version: 2019_09_04_025735) do
     t.index ["author"], name: "index_stream_posts_on_author"
     t.index ["location_id"], name: "index_stream_posts_on_location_id"
     t.index ["parent_chain"], name: "index_stream_posts_on_parent_chain", using: :gin
-    t.index ["parent_id"], name: "index_stream_posts_on_parent_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -81,8 +92,10 @@ ActiveRecord::Schema.define(version: 2019_09_04_025735) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "post_reactions", "reactions", on_delete: :cascade
+  add_foreign_key "post_reactions", "stream_posts", on_delete: :cascade
+  add_foreign_key "post_reactions", "users"
   add_foreign_key "stream_posts", "locations", on_delete: :nullify
-  add_foreign_key "stream_posts", "stream_posts", column: "parent_id", on_delete: :nullify
-  add_foreign_key "stream_posts", "users", column: "author", on_delete: :cascade
-  add_foreign_key "stream_posts", "users", column: "original_author", on_delete: :cascade
+  add_foreign_key "stream_posts", "users", column: "author"
+  add_foreign_key "stream_posts", "users", column: "original_author"
 end

@@ -8,7 +8,6 @@
 #  text            :string           not null
 #  location_id     :bigint
 #  locked          :boolean          default(FALSE), not null
-#  parent_id       :bigint
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  parent_chain    :bigint           default([]), is an Array
@@ -18,15 +17,13 @@
 #  index_stream_posts_on_author        (author)
 #  index_stream_posts_on_location_id   (location_id)
 #  index_stream_posts_on_parent_chain  (parent_chain) USING gin
-#  index_stream_posts_on_parent_id     (parent_id)
 #  index_stream_posts_text             (to_tsvector('english'::regconfig, (text)::text)) USING gin
 #
 # Foreign Keys
 #
-#  fk_rails_...  (author => users.id) ON DELETE => cascade
+#  fk_rails_...  (author => users.id)
 #  fk_rails_...  (location_id => locations.id) ON DELETE => nullify
-#  fk_rails_...  (original_author => users.id) ON DELETE => cascade
-#  fk_rails_...  (parent_id => stream_posts.id) ON DELETE => nullify
+#  fk_rails_...  (original_author => users.id)
 #
 
 # noinspection RubyStringKeysInHashInspection
@@ -44,13 +41,12 @@ class StreamPost < ApplicationRecord
 =end
 
   belongs_to :user, class_name: 'User', foreign_key: :author
-
+  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :stream_post_id
+  has_many :reactions, class_name: 'Reactions', through: :post_reactions
   # embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
 
-  validates :author, presence: true
+  validates :author, :original_author, presence: true
   validates :text, presence: true, length: {maximum: 2000}
-  # validate :validate_author
-  # validate :validate_original_author
   # validate :validate_location
   # validate :validate_photo
 

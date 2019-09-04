@@ -14,8 +14,8 @@ class StreamPostDecorator < BaseDecorator
         locked: locked,
         timestamp: created_at.to_ms,
         text: format_text(text, options),
-        # reactions: BaseDecorator.reaction_summary(reactions, username),
-        parent: parent_id
+        reactions: BaseDecorator.reaction_summary(post_reactions, user.id),
+        parent_chain: parent_chain
     }
 =begin 
     unless photo.blank?

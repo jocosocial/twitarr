@@ -6,19 +6,6 @@ module Postable
 
   module InstanceMethods
     include Twitter::Extractor
-    def validate_author
-      return if author.blank?
-      unless User.exist? author
-        errors[:base] << "#{author} is not a valid username"
-      end
-    end
-
-    def validate_original_author
-      return if original_author.blank?
-      unless User.exist? original_author
-        errors[:base] << "#{original_author} is not a valid username"
-      end
-    end
 
     def location=(loc)
       location_id = loc
@@ -58,22 +45,15 @@ module Postable
       result
     end
 
-    def add_reaction(username, reaction)
-      begin 
-        doc = reactions.find_by({:reaction => reaction, :username => username})
-        logger.info "Duplicate reaction on post: #{username}, #{reaction}"
-      rescue Mongoid::Errors::DocumentNotFound => e
-        reactions.create reaction: reaction, username: username
-      end
+    def add_reaction(user_id, reaction_id)
+      doc = post_reactions.find_or_create_by(user_id: user_id, reaction_id: reaction_id)
     end
   
-    def remove_reaction(username, reaction)
-      begin 
-        doc = reactions.find_by({:reaction => reaction, :username => username})
-        doc.remove
-      rescue Mongoid::Errors::DocumentNotFound => e
-        logger.info "Could not find reaction to remove: #{username}, #{reaction}"
-      end
+    def remove_reaction(user_id, reaction_id)
+      doc = post_reactions.find_by(user_id: user_id, reaction_id: reaction_id)
+      doc.destroy() and return if doc
+      
+      logger.info "Could not find reaction to remove. UserID: #{user_id}, ReactionID: #{reaction_id}"
     end
   end
 

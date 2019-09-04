@@ -29,13 +29,14 @@ class BaseDecorator < Draper::Decorator
     end
   end
 
-  def self.reaction_summary(reactions, username)
+  def self.reaction_summary(post_reactions, user_id)
     summary = Hash.new
-    reactions.each do |x|
-      if summary.has_key?(x.reaction) then
-        summary[x.reaction] = {count: summary[x.reaction].fetch(:count) + 1, me: ((summary[x.reaction].fetch(:me) == true) || x.username == username)}
+    post_reactions.each do |x|
+      reaction = x.reaction.name
+      if summary.has_key?(reaction) then
+        summary[reaction] = {count: summary[reaction].fetch(:count) + 1, me: ((summary[reaction].fetch(:me) == true) || x.user_id == user_id)}
       else
-        summary[x.reaction] = {count: 1, me: x.username == username}
+        summary[reaction] = {count: 1, me: x.user_id == user_id}
       end
     end
     summary

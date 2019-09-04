@@ -61,6 +61,7 @@ group :development do
   gem 'better_errors'
   gem 'listen'
   gem 'rubocop-rails'
+  gem 'solargraph'
   gem 'spring'
 end
 

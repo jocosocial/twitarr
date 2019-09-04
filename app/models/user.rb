@@ -74,7 +74,7 @@ class User < ApplicationRecord
   # field :pc, as: :personal_comments, type: Hash, default: {}
   # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
-  has_many :stream_posts, inverse_of: 'author'
+  has_many :stream_posts, inverse_of: 'author', dependent: :destroy
   
   # noinspection RubyResolve
   after_save :update_display_name_cache

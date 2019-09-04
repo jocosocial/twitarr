@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_27_212516) do
+ActiveRecord::Schema.define(version: 2019_09_04_025735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,9 +46,11 @@ ActiveRecord::Schema.define(version: 2019_08_27_212516) do
     t.bigint "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "parent_chain", default: [], array: true
     t.index "to_tsvector('english'::regconfig, (text)::text)", name: "index_stream_posts_text", using: :gin
     t.index ["author"], name: "index_stream_posts_on_author"
     t.index ["location_id"], name: "index_stream_posts_on_location_id"
+    t.index ["parent_chain"], name: "index_stream_posts_on_parent_chain", using: :gin
     t.index ["parent_id"], name: "index_stream_posts_on_parent_id"
   end
 

@@ -75,8 +75,13 @@ class Api::V2::StreamController < ApplicationController
     end
     show_options = request_options
     show_options[:remove] = [:parent_chain]
-    has_next_page = StreamPost.where(parent_chain: params[:id]).count > ((start_loc + 1) * limit)
-    children = StreamPost.where(parent_chain: params[:id]).limit(limit).skip(start_loc*limit).order_by(id: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
+
+    thread = StreamPost.thread(params[:id])
+    
+    # TODO: Figure out if there's a way to combine these queries
+    has_next_page = thread.count > ((start_loc + 1) * limit)
+    children = thread.limit(limit).offset(start_loc*limit).order(id: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
+
     post_result = @post.decorate.to_hash(current_username, request_options)
     if children and children.length > 0
       post_result[:children] = children
@@ -92,7 +97,7 @@ class Api::V2::StreamController < ApplicationController
     end
     @post.locked = lock
     if @post.valid? && @post.save
-      children = StreamPost.where(parent_chain: params[:id]).update_all(locked: lock)
+      children = StreamPost.thread(params[:id]).update_all(locked: lock)
       render json: {status: 'ok', locked: @post.locked}
     else
       render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages}
@@ -149,15 +154,24 @@ class Api::V2::StreamController < ApplicationController
     parent_chain = []
     parent_locked = false
     if params[:parent]
-      parent = StreamPost.find(id: params[:parent])
+      parent = StreamPost.find(params[:parent])
       render status: :bad_request, json: {status:'error', error: "#{params[:parent]} is not a valid parent id"} and return unless parent
       render status: :forbidden, json: {status:'error', error: 'Post is locked.'} and return if parent.locked && !moderator?
 
+      parent_chain = parent.parent_chain << parent.id
       parent_locked = parent.locked
     end
 
-    post = StreamPost.create(text: params[:text], author: post_as_user(params), #photo: params[:photo],
-                             location: params[:location], parent_id: parent&.id, original_author: current_user.id, locked: parent_locked)
+    post = StreamPost.create(
+      text: params[:text],
+      author: post_as_user(params),
+      parent_id: parent&.id,
+      parent_chain: parent_chain,
+      #photo: params[:photo],
+      location: params[:location],
+      original_author: current_user.id,
+      locked: parent_locked)
+
     if post.valid?
       if params[:location]
         # if the location field was used, update the user's last known location
@@ -249,7 +263,7 @@ class Api::V2::StreamController < ApplicationController
   def fetch_post
     begin
       @post = StreamPost.find(params[:id])
-    rescue Mongoid::Errors::DocumentNotFound
+    rescue ActiveRecord::RecordNotFound
       render status: :not_found, json: {status:'error', error: "Post not found."}
     end
   end

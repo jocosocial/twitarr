@@ -11,13 +11,15 @@
 #  parent_id       :bigint
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  parent_chain    :bigint           default([]), is an Array
 #
 # Indexes
 #
-#  index_stream_posts_on_author       (author)
-#  index_stream_posts_on_location_id  (location_id)
-#  index_stream_posts_on_parent_id    (parent_id)
-#  index_stream_posts_text            (to_tsvector('english'::regconfig, (text)::text)) USING gin
+#  index_stream_posts_on_author        (author)
+#  index_stream_posts_on_location_id   (location_id)
+#  index_stream_posts_on_parent_chain  (parent_chain) USING gin
+#  index_stream_posts_on_parent_id     (parent_id)
+#  index_stream_posts_text             (to_tsvector('english'::regconfig, (text)::text)) USING gin
 #
 # Foreign Keys
 #
@@ -41,7 +43,7 @@ class StreamPost < ApplicationRecord
   field :p, as: :photo, type: String
 =end
 
-  belongs_to :user, class_name: 'User', foreign_key: :author, dependent: :destroy
+  belongs_to :user, class_name: 'User', foreign_key: :author
 
   # embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
 
@@ -57,7 +59,6 @@ class StreamPost < ApplicationRecord
   # 1 = ASC, -1 DESC
   # index mentions: 1
   # index hash_tags: 1
-  # index parent_chain: 1
   # index text: 'text'
 
   # before_validation :parse_hash_tags
@@ -96,6 +97,10 @@ class StreamPost < ApplicationRecord
     query
   end
 
+  def self.thread(id)
+    where('parent_chain @> ARRAY[CAST(? AS BIGINT)]', id)
+  end
+
   def destroy_parent_chain
     self.parent_chain = []
     save
@@ -107,7 +112,7 @@ class StreamPost < ApplicationRecord
   end
 
   def reparent_children
-    StreamPost.where(parent_chain: id.to_s).pull(parent_chain: id.to_s)
+    StreamPost.thread(id).update_all(['parent_chain = array_remove(parent_chain, CAST(? AS BIGINT))', id])
   end
 
   def self.search(params = {})

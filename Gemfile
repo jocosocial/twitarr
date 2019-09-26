@@ -60,6 +60,7 @@ group :development do
   gem 'annotate'
   gem 'better_errors'
   gem 'listen'
+  gem 'pry'
   gem 'rubocop-rails'
   gem 'solargraph'
   gem 'spring'

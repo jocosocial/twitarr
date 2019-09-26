@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_04_041441) do
+ActiveRecord::Schema.define(version: 2019_09_26_183324) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,25 @@ ActiveRecord::Schema.define(version: 2019_09_04_041441) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_locations_on_name", unique: true
+  end
+
+  create_table "photo_metadata", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "content_type", null: false
+    t.string "store_filename", null: false
+    t.boolean "animated", default: false, null: false
+    t.string "md5_hash", null: false
+    t.jsonb "sizes", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["md5_hash"], name: "index_photo_metadata_on_md5_hash"
+    t.index ["user_id"], name: "index_photo_metadata_on_user_id"
+  end
+
+  create_table "post_photos", force: :cascade do |t|
+    t.bigint "stream_post_id"
+    t.bigint "photo_metadata_id", null: false
+    t.index ["stream_post_id"], name: "index_post_photos_on_stream_post_id"
   end
 
   create_table "post_reactions", force: :cascade do |t|
@@ -92,6 +111,9 @@ ActiveRecord::Schema.define(version: 2019_09_04_041441) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "photo_metadata", "users"
+  add_foreign_key "post_photos", "photo_metadata", column: "photo_metadata_id", on_delete: :cascade
+  add_foreign_key "post_photos", "stream_posts", on_delete: :cascade
   add_foreign_key "post_reactions", "reactions", on_delete: :cascade
   add_foreign_key "post_reactions", "stream_posts", on_delete: :cascade
   add_foreign_key "post_reactions", "users"

@@ -2,16 +2,16 @@ require 'tempfile'
 # noinspection RailsParamDefResolve,RubyResolve
 class Api::V2::PhotoController < ApplicationController
   PAGE_LENGTH = 20
-  before_action :login_required, :only => [:create, :destroy, :update]
-  before_action :not_muted, :only => [:create, :update]
-  before_action :admin_required, :only => [:index]
-  before_action :fetch_photo, :except => [:index, :create]
+  before_action :login_required, only: [:create, :destroy]
+  before_action :not_muted, only: [:create]
+  before_action :admin_required, only: [:index]
+  before_action :fetch_photo, except: [:index, :create]
 
   def fetch_photo
     begin
       @photo = PhotoMetadata.find(params[:id])
     rescue Mongoid::Errors::DocumentNotFound
-      render status: :not_found, json: {status: 'error', error: "Photo not found."}
+      render status: :not_found, json: { status: 'error', error: 'Photo not found.' }
     end
   end
 
@@ -54,13 +54,13 @@ class Api::V2::PhotoController < ApplicationController
       render status: :bad_request, json: {status: 'error', error: 'Must provide photo to upload.'} and return
     end
 
-    results = PhotoStore.instance.upload(params[:file], current_username)
+    results = PhotoStore.instance.upload(params[:file], current_user.id)
 
     if results.fetch(:status) == 'error'
       render status: :bad_request, json: results
     else
-      photo = PhotoMetadata.find(results.fetch(:photo))
-      render json: {status: "ok", photo: photo.decorate.to_hash}
+      photo = PhotoMetadata.includes(:user).find(results.fetch(:photo))
+      render json: { status: 'ok', photo: photo.decorate.to_hash }
     end
   end
 

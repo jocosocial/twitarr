@@ -32,18 +32,20 @@ class StreamPost < ApplicationRecord
   include Postable
 
   # Common fields between stream_post and forum_post
-=begin   
-  field :ht, as: :hash_tags, type: Array
-  field :mn, as: :mentions, type: Array
-  field :et, as: :entities, type: Array
+  # field :ht, as: :hash_tags, type: Array
+  # field :mn, as: :mentions, type: Array
+  # field :et, as: :entities, type: Array
+  #
+  # field :p, as: :photo, type: String
 
-  field :p, as: :photo, type: String
-=end
+  belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :stream_posts
 
-  belongs_to :user, class_name: 'User', foreign_key: :author
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :stream_post_id
-  has_many :reactions, class_name: 'Reactions', through: :post_reactions
+  has_many :post_reactions, dependent: :destroy
+  has_many :reactions, class_name: 'Reaction', through: :post_reactions
   # embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
+
+  has_one :post_photo, dependent: :destroy
+  has_one :photo_metadata, class_name: 'PhotoMetadata', through: :post_photo
 
   validates :author, :original_author, presence: true
   validates :text, presence: true, length: {maximum: 2000}
@@ -117,10 +119,10 @@ class StreamPost < ApplicationRecord
     limit_criteria(criteria, params).order_by(id: :desc)
   end
 
-  def validate_photo
-    return if photo.blank?
-    unless PhotoMetadata.exist? photo
-      errors[:base] << "#{photo} is not a valid photo id"
-    end
-  end
+  # def validate_photo
+  #   return if photo.blank?
+  #   unless PhotoMetadata.exists?(photo)
+  #     errors[:base] << "#{photo} is not a valid photo id"
+  #   end
+  # end
 end

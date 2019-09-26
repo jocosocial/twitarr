@@ -1006,7 +1006,7 @@ Upload a photo. Photo should be uploaded as form-data.
   * File must be uploaded as form-data.
   * File was not an allowed image type - only jpg, gif, and png accepted.
   * Photo could not be opened - is it an image?
-  * File exceeds maximum file size of 10MB.
+  * File exceeds maximum file size of 20MB.
   * Photo extension is jpg but could not be opened as jpeg.
   ```
   {
@@ -1908,7 +1908,7 @@ Replace the user's profile photo.
   * File must be uploaded as form-data.
   * File was not an allowed image type - only jpg, gif, and png accepted.
   * Photo could not be opened - is it an image?
-  * File exceeds maximum file size of 10MB.
+  * File exceeds maximum file size of 20MB.
   * Photo extension is jpg but could not be opened as jpeg.
   ```
   {

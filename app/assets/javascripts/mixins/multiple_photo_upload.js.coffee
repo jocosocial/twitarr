@@ -14,8 +14,8 @@ Twitarr.MultiplePhotoUploadMixin = Ember.Mixin.create
         dataType: 'json'
         dropZone: $('#photo-upload-div')
         add: (e, data) =>
-          if (data.files[0].size > 10000000)
-            alert 'File exceeds maximum file size of 10MB'
+          if (data.files[0].size > 20000000)
+            alert 'File exceeds maximum file size of 20MB'
             return false
           @send('start_upload')
           data.submit()

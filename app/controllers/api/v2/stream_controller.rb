@@ -166,10 +166,11 @@ class Api::V2::StreamController < ApplicationController
       text: params[:text],
       author: post_as_user(params),
       parent_chain: parent_chain,
-      #photo: params[:photo],
       location: params[:location],
       original_author: current_user.id,
       locked: parent_locked)
+
+    post.post_photo = PostPhoto.create(photo_metadata_id: params[:photo]) if params.key?(:photo)
 
     if post.valid?
       if params[:location]

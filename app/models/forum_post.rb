@@ -37,7 +37,7 @@ class ForumPost
   def validate_photos
     return if photos.count == 0
     photos.each do |photo|
-      unless PhotoMetadata.exist? photo
+      unless PhotoMetadata.exists?(photo)
         errors[:base] << "#{photo} is not a valid photo id"
       end
     end

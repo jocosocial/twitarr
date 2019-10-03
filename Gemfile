@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby='2.6.3'
+ruby='2.6.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'sassc-rails'

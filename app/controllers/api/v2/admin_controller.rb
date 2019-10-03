@@ -141,7 +141,7 @@ class Api::V2::AdminController < ApplicationController
   end
 
   def announcements
-    render json: {status: 'ok', announcements: Announcement.all.desc(:timestamp).map { |x| x.decorate.to_admin_hash(request_options) }}
+    render json: {status: 'ok', announcements: Announcement.all.order(created_at: :desc).map { |x| x.decorate.to_admin_hash(request_options) }}
   end
 
   def new_announcement
@@ -158,12 +158,12 @@ class Api::V2::AdminController < ApplicationController
       errors.push('Valid until must be in the future.') unless valid_until > time
     end
 
-    as_username = post_as_user(params)
-    errors.push('Only admins may post as TwitarrTeam.') if (!admin? or as_username == "moderator")
+    as_user = post_as_user(params)
+    errors.push('Only admins may post as TwitarrTeam.') if (!admin? or as_user == moderator_user.id)
 
     render status: :bad_request, json: {status: 'error', errors: errors} and return unless errors.length == 0
 
-    announcement = Announcement.create(author: as_username, text: params[:text], timestamp: time, valid_until: valid_until, original_author: current_username)
+    announcement = Announcement.create(author: as_user, text: params[:text], valid_until: valid_until, original_author: current_user.id)
     render json: {status: 'ok', announcement: announcement.decorate.to_admin_hash(request_options)}
   end
 

@@ -1,20 +1,31 @@
-class Announcement
-  include Mongoid::Document
+# == Schema Information
+#
+# Table name: announcements
+#
+#  id              :bigint           not null, primary key
+#  author          :bigint           not null
+#  original_author :bigint           not null
+#  text            :string           not null
+#  valid_until     :datetime         not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
+# Indexes
+#
+#  index_announcements_on_author  (author)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (author => users.id)
+#  fk_rails_...  (original_author => users.id)
+#
 
-  field :au, as: :author, type: String
-  field :oa, as: :original_author, type: String, default: ->{author}
-  field :tx, as: :text, type: String
-  field :ts, as: :timestamp, type: Time
-  field :vu, as: :valid_until, type: Time
+class Announcement < ApplicationRecord
+  belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :announcements
 
-  index valid_until: -1
-
-  def self.valid_announcements
-    where(:valid_until.gt => Time.now)
-  end
+  scope :valid_announcements, -> { where('valid_until > ?', Time.now) }
 
   def self.new_announcements(since_ts)
-    valid_announcements.where(:timestamp.gt => since_ts).limit(1)
+    valid_announcements.where('updated_at > ?', since_ts).limit(1)
   end
-
 end

@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_26_183324) do
+ActiveRecord::Schema.define(version: 2019_10_03_040901) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "announcements", force: :cascade do |t|
+    t.bigint "author", null: false
+    t.bigint "original_author", null: false
+    t.string "text", null: false
+    t.datetime "valid_until", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author"], name: "index_announcements_on_author"
+  end
 
   create_table "locations", force: :cascade do |t|
     t.string "name"
@@ -111,6 +121,8 @@ ActiveRecord::Schema.define(version: 2019_09_26_183324) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "announcements", "users", column: "author"
+  add_foreign_key "announcements", "users", column: "original_author"
   add_foreign_key "photo_metadata", "users"
   add_foreign_key "post_photos", "photo_metadata", column: "photo_metadata_id", on_delete: :cascade
   add_foreign_key "post_photos", "stream_posts", on_delete: :cascade

@@ -75,6 +75,7 @@ class User < ApplicationRecord
   # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
   has_many :stream_posts, inverse_of: :author
+  has_many :announcements, inverse_of: :author
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id
   
   # noinspection RubyResolve

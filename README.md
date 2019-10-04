@@ -65,22 +65,22 @@ To install [RVM](http://rvm.io/) run:
 Then install `ruby` via [RVM](http://rvm.io/):
 
 ```
-  $ rvm install ruby-2.6.3
+  $ rvm install ruby-2.6.5
 ```
 
-Once it's installed, rvm should automatically detect that ruby 2.6.3 should be used for this project. If it doesn't, you can use `rvm use` to set the terminal session environment to the correct version:
+Once it's installed, rvm should automatically detect that ruby 2.6.5 should be used for this project. If it doesn't, you can use `rvm use` to set the terminal session environment to the correct version:
 
 ```
-  $ rvm use ruby-2.6.3
+  $ rvm use ruby-2.6.5
 ```
 
 You will also need to download and run [PostgreSQL](https://www.postgresql.org/)
 
 ### Project setup
-We are currently using bundler 2.0.1, so make sure you have that version installed:
+This project requires bundler version 2 or higher. Currently, version 2.0.2 is used:
 
 ```
-  $ gem install bundler:2.0.1
+  $ gem install bundler:2.0.2
 ```
 
 Then you will need to run:

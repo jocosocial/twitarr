@@ -1,9 +1,9 @@
-FROM ruby:2.6.3
+FROM ruby:2.6.5
 
 COPY Gemfile* /tmp/
 WORKDIR /tmp
 
-RUN gem install bundler:2.0.1 && bundle install
+RUN gem install bundler:2.0.2 && bundle install
 # todo - this warn against running as root, should we make an app user?
 
 # set the container's time zone

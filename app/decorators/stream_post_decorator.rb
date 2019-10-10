@@ -3,7 +3,7 @@ class StreamPostDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::DateHelper
 
-  def to_hash(username = nil, options = {})
+  def to_hash(current_user = nil, options = {})
     result = {
         id: id.to_s,
         author: {
@@ -14,7 +14,7 @@ class StreamPostDecorator < BaseDecorator
         locked: locked,
         timestamp: created_at.to_ms,
         text: format_text(text, options),
-        reactions: BaseDecorator.reaction_summary(post_reactions, user.id),
+        reactions: BaseDecorator.reaction_summary(post_reactions, current_user&.id),
         parent_chain: parent_chain
     }
     result[:photo] = { id: photo_metadata.id, animated: photo_metadata.animated, sizes: photo_metadata.sizes } if photo_metadata

@@ -55,7 +55,7 @@ class Api::V2::StreamController < ApplicationController
       next_page = next_page + 1 # Since we're moving in the opposite direction, undo previous next_page calculation, and add an additional ms
     end
 
-    results = {status: 'ok', stream_posts: posts.map{|x| x.decorate.to_hash(current_username, request_options)}, has_next_page: has_next_page, next_page: next_page}
+    results = {status: 'ok', stream_posts: posts.map{|x| x.decorate.to_hash(current_user, request_options)}, has_next_page: has_next_page, next_page: next_page}
 
     # If pulled the newest posts, and newer_posts=true, it means we are getting the newest posts,
     # and expect the next_page to be posts that are even further in the future.
@@ -80,9 +80,9 @@ class Api::V2::StreamController < ApplicationController
     
     # TODO: Figure out if there's a way to combine these queries
     has_next_page = thread.count > ((start_loc + 1) * limit)
-    children = thread.limit(limit).offset(start_loc*limit).order(id: :asc).map { |x| x.decorate.to_hash(current_username, show_options) }
+    children = thread.limit(limit).offset(start_loc*limit).order(id: :asc).map { |x| x.decorate.to_hash(current_user, show_options) }
 
-    post_result = @post.decorate.to_hash(current_username, request_options)
+    post_result = @post.decorate.to_hash(current_user, request_options)
     if children and children.length > 0
       post_result[:children] = children
     end
@@ -105,7 +105,7 @@ class Api::V2::StreamController < ApplicationController
   end
 
   def get
-    result = @post.decorate.to_hash(current_username, request_options)
+    result = @post.decorate.to_hash(current_user, request_options)
     render json: {status: 'ok', post: result}
   end
 
@@ -121,7 +121,7 @@ class Api::V2::StreamController < ApplicationController
     query = StreamPost.view_mentions params
     count = query.count
     has_next_page = count > ((params[:page] + 1) * params[:limit])
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, total_mentions: count, has_next_page: has_next_page}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_user, request_options) }, total_mentions: count, has_next_page: has_next_page}
   end
 
   def view_hash_tag
@@ -136,7 +136,7 @@ class Api::V2::StreamController < ApplicationController
     query = StreamPost.view_hashtags params
     count = query.count
     has_next_page = count > ((params[:page] + 1) * params[:limit])
-    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_username, request_options) }, total_mentions: count, has_next_page: has_next_page}
+    render json: {status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_user, request_options) }, total_mentions: count, has_next_page: has_next_page}
   end
 
   def delete
@@ -170,7 +170,7 @@ class Api::V2::StreamController < ApplicationController
       original_author: current_user.id,
       locked: parent_locked)
 
-    post.post_photo = PostPhoto.create(photo_metadata_id: params[:photo]) if params.key?(:photo)
+    post.post_photo = PostPhoto.create(photo_metadata_id: params[:photo]) if params.key?(:photo) && params[:photo].present?
 
     if post.valid?
       if params[:location]
@@ -178,7 +178,7 @@ class Api::V2::StreamController < ApplicationController
         current_user.current_location = params[:location]
         current_user.save
       end
-      render json: {status: 'ok', stream_post: post.decorate.to_hash(current_username, request_options)}
+      render json: {status: 'ok', stream_post: post.decorate.to_hash(current_user, request_options)}
     else
       render status: :bad_request, json: {status:'error', errors: post.errors.full_messages}
     end
@@ -186,20 +186,26 @@ class Api::V2::StreamController < ApplicationController
 
   # noinspection RubyResolve
   def update
-    unless @post.author == current_username or tho?
+    unless @post.author == current_user.id or tho?
       render status: :forbidden, json: {status:'error', error: "You can not modify other users' posts"} and return
     end
 
-    unless params.has_key?(:text) or params.has_key?(:photo)
+    unless params.has_key?(:text) or params.key?(:photo)
       render status: :bad_request, json: {status:'error', error: 'Update must modify either text or photo, or both.'} and return
     end
 
-    @post.text = params[:text] if params.has_key? :text
-    @post.photo = params[:photo] if params.has_key? :photo
+    @post.text = params[:text] if params.key?(:text)
+    if params.key?(:photo)
+      if params[:photo].blank?
+        @post.post_photo.destroy
+      elsif @post.post_photo&.photo_metadata_id != params[:photo]
+        @post.post_photo = PostPhoto.create(photo_metadata_id: params[:photo])
+      end
+    end
 
     if @post.valid?
       @post.save
-      render json: {status: 'ok', stream_post: @post.decorate.to_hash(current_username, request_options)}
+      render json: {status: 'ok', stream_post: @post.decorate.to_hash(current_user, request_options)}
     else
       render status: :bad_request, json: {status: 'error', errors: @post.errors.full_messages}
     end

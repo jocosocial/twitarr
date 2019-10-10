@@ -7,14 +7,14 @@ class Api::V2::AlertsController < ApplicationController
     announcements = Announcement.valid_announcements.map { |x| x.decorate.to_hash(request_options) }
     if logged_in?
       tweet_mentions = StreamPost.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
-                                                mentions_only: true).map {|p| p.decorate.to_hash(current_username, request_options) }
+                                                mentions_only: true).map {|p| p.decorate.to_hash(current_user, request_options) }
 
       forum_mentions = Forum.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
                                            mentions_only: true).map {|p| p.decorate.to_meta_hash(current_user) }
 
       unread_seamail = current_user.seamails(unread: true).map{|m| m.decorate.to_meta_hash(current_username, true) }
 
-      upcoming_events = current_user.upcoming_events(true).map{|e| e.decorate.to_hash(current_username, request_options) }
+      upcoming_events = current_user.upcoming_events(true).map{|e| e.decorate.to_hash(current_user, request_options) }
 
       unless params[:no_reset]
         current_user.reset_last_viewed_alerts(current_time)

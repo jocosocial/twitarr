@@ -13,7 +13,7 @@ class Api::V2::SearchController < ApplicationController
       query: params[:query],
       users: do_search(params, User) { |e| e.decorate.gui_hash },
       seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
-      tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_username, request_options) },
+      tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_user, request_options) },
       forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash(current_user) },
       events: do_search(params, Event) { |e| e.decorate.to_hash(current_username, request_options) }
     }
@@ -45,7 +45,7 @@ class Api::V2::SearchController < ApplicationController
     render json: {
       status: 'ok',
       query: params[:query],
-      tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_username, request_options) }
+      tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_user, request_options) }
     }
   end
 

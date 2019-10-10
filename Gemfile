@@ -57,7 +57,7 @@ group :development do
   gem 'annotate'
   gem 'better_errors'
   gem 'listen'
-  gem 'pry'
+  gem 'pry-byebug'
   gem 'rubocop-rails'
   gem 'solargraph'
   gem 'spring'

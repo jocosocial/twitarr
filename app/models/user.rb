@@ -202,9 +202,10 @@ class User < ApplicationRecord
   end
 
   def unnoticed_upcoming_events
-    events = upcoming_events
-    events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
-    events.count
+    # events = upcoming_events
+    # events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
+    # events.count
+    0
   end
 
   def seamails(params = {})
@@ -242,22 +243,23 @@ class User < ApplicationRecord
   end
 
   def seamail_unread_count
-    Seamail.collection.aggregate([
-      {
-        "$match" => { "us" => username }
-      },
-      {
-        "$unwind" => "$sm"
-      },
-      {
-        "$match" => { "sm.rd" => {"$ne" => username } }
-      },
-      {
-        "$group" => {
-          "_id" => "$_id"
-        }
-      }
-    ]).count
+    # Seamail.collection.aggregate([
+    #   {
+    #     "$match" => { "us" => username }
+    #   },
+    #   {
+    #     "$unwind" => "$sm"
+    #   },
+    #   {
+    #     "$match" => { "sm.rd" => {"$ne" => username } }
+    #   },
+    #   {
+    #     "$group" => {
+    #       "_id" => "$_id"
+    #     }
+    #   }
+    # ]).count
+    0
   end
 
   def seamail_count
@@ -317,8 +319,8 @@ class User < ApplicationRecord
   end
 
   def unnoticed_mentions
-    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
-      Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count # +
+      # Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
   def update_forum_view(forum_id)

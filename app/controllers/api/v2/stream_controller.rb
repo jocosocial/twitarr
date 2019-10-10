@@ -21,7 +21,7 @@ module Api
         begin
           param_newer_posts = params.key?(:newer_posts) && params[:newer_posts].to_bool
           query[:filter_authors] = current_user.starred_users.reject { |x| x == current_username } if params.key?(:starred) && params[:starred].to_bool
-          query[:filter_reactions] = current_username params.key?(:reacted) && params[:reacted].to_bool
+          query[:filter_reactions] = current_username if params.key?(:reacted) && params[:reacted].to_bool
         rescue ArgumentError => e
           render status: :bad_request, json: { status: 'error', error: e.message }
           return

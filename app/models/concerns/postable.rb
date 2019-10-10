@@ -13,8 +13,8 @@ module Postable
 
     # noinspection RubyResolve
     def parse_hash_tags
-      self.entities = extract_entities_with_indices text
-      self.hash_tags = []
+      entities = extract_entities_with_indices text
+      # self.hash_tags = []
       self.mentions = []
       entities.each do |entity|
         entity = entity.inject({}) {|x, (k,v)| x[k.to_sym] = v; x }
@@ -63,9 +63,9 @@ module Postable
       start_loc = params[:page] || 0
       limit = params[:limit] || 20
       query = if params[:mentions_only]
-                where({mentions: query_string})
+                where('mentions @> ?', "{#{query_string}}")
               else
-                self.or({mentions: query_string}, {author: query_string})
+                self.where('mentions @> ?', "{#{query_string}}").or(self.where({author: query_string}))
               end
       if params[:after]
         val = Time.from_param(params[:after])
@@ -73,7 +73,7 @@ module Postable
           query = query.where(:timestamp.gt => val)
         end
       end
-      query.order_by(id: :desc).skip(start_loc*limit).limit(limit)
+      query.order(id: :desc).offset(start_loc*limit).limit(limit)
     end
 
     def view_hashtags(params = {})

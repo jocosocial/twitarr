@@ -5,7 +5,7 @@ module Postable
   end
 
   module InstanceMethods
-    include Twitter::Extractor
+    include Twitter::TwitterText::Extractor
 
     def location=(loc)
       location_id = loc

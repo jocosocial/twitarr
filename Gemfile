@@ -45,7 +45,7 @@ gem 'draper'
 
 gem 'rmagick'
 gem 'siphash'
-gem 'twitter-text', '~> 1.10.0'
+gem 'twitter-text'
 
 gem 'momentjs-rails'
 

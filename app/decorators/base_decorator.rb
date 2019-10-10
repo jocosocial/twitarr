@@ -1,6 +1,6 @@
 class BaseDecorator < Draper::Decorator
 
-  include Twitter::Autolink
+  include Twitter::TwitterText::Autolink
   include CruiseMonkeyHelper
 
   @@emojiRE = Regexp.new('\:(buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie)\:')

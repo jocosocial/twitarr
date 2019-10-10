@@ -1,5 +1,5 @@
 module CruiseMonkeyHelper
-  include Twitter::Autolink
+  include Twitter::TwitterText::Autolink
 
   def cm_auto_link(text)
     auto_link text, CRUISE_MONKEY_OPTIONS

@@ -1,5 +1,5 @@
 class Api::V2::SearchController < ApplicationController
-  include Twitter::Extractor
+  include Twitter::TwitterText::Extractor
 
   before_action :search_enabled
 

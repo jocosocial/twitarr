@@ -96,7 +96,9 @@ module Api
 
         @post.locked = lock
         if @post.valid? && @post.save
-          StreamPost.thread(params[:id]).update(locked: lock)
+          # rubocop:disable Rails/SkipsModelValidations
+          StreamPost.thread(params[:id]).update_all(locked: lock)
+          # rubocop:enable Rails/SkipsModelValidations
           render json: { status: 'ok', locked: @post.locked }
         else
           render status: :bad_request, json: { status: 'error', errors: @post.errors.full_messages }

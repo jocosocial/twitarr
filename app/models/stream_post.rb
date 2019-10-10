@@ -65,9 +65,9 @@ class StreamPost < ApplicationRecord
   before_save :post_create_operations
 
   def self.at_or_before(ms_since_epoch, options = {})
-    query = where("created_at <= ?", Time.at(ms_since_epoch.to_i / 1000.0))
+    query = where("stream_posts.created_at <= ?", Time.at(ms_since_epoch.to_i / 1000.0))
     query = query.where(:author.in => options[:filter_authors]) if options.has_key? :filter_authors and !options[:filter_authors].nil?
-    query = query.where(author: options[:filter_author]) if options.has_key? :filter_author and !options[:filter_author].nil?
+    query = query.joins(:user).where(users: {username: options[:filter_author]}) if options.has_key? :filter_author and !options[:filter_author].nil?
     # query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
     if options.has_key? :filter_mentions and !options[:filter_mentions].nil?
@@ -81,9 +81,9 @@ class StreamPost < ApplicationRecord
   end
 
   def self.at_or_after(ms_since_epoch, options = {})
-    query = where(:timestamp.gte => Time.at(ms_since_epoch.to_i / 1000.0))
+    query = where('stream_posts.created_at >= ?', Time.at(ms_since_epoch.to_i / 1000.0))
     query = query.where(:author.in => options[:filter_authors]) if options.has_key? :filter_authors and !options[:filter_authors].nil?
-    query = query.where(author: options[:filter_author]) if options.has_key? :filter_author and !options[:filter_author].nil?
+    query = query.joins(:user).where(users: {username: options[:filter_author]}) if options.has_key? :filter_author and !options[:filter_author].nil?
     # query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
     if options.has_key? :filter_mentions and !options[:filter_mentions].nil?

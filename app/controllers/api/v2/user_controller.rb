@@ -77,7 +77,7 @@ class Api::V2::UserController < ApplicationController
 
   def show
     hash = @user.decorate.public_hash(current_user).merge(
-      recent_tweets: StreamPost.where(author: @user.username).desc(:id).limit(10).map { |x| x.decorate.to_hash(current_user, request_options) }
+      recent_tweets: StreamPost.where(author: @user.id).order(id: :desc).limit(10).map { |x| x.decorate.to_hash(current_user, request_options) }
     )
     render json: { status: 'ok', user: hash }
   end

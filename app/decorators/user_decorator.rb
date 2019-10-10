@@ -16,8 +16,8 @@ class UserDecorator < Draper::Decorator
       last_photo_updated: last_photo_updated.to_ms
     }
     unless current_user.nil?
-      ret[:starred] = current_user.starred_users.include?(username)
-      ret[:comment] = current_user.personal_comments[username]
+      # ret[:starred] = current_user.starred_users.include?(username)
+      # ret[:comment] = current_user.personal_comments[username]
     end
     ret
   end

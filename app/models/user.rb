@@ -271,7 +271,7 @@ class User < ApplicationRecord
   end
 
   def number_of_mentions
-    StreamPost.where(mentions: username).count
+    StreamPost.where('mentions @> ?', "{#{username}}").count
   end
 
   def self.format_username(username)

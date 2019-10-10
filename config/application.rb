@@ -52,6 +52,7 @@ module Twitarr
     end
 
     config.assets.precompile += ['respond.js']
+    config.assets.precompile = ['manifest.js']
 
     config.autoload_paths += Dir[Rails.root.join('app', 'contexts', '{**}')]
 

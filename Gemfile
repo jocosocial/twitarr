@@ -33,7 +33,7 @@ gem 'pg'
 gem 'discard'
 
 gem 'ember-data-source', '~> 1.13.0'
-gem 'ember-rails', '~> 0.19.0'
+gem 'ember-rails', '~> 0.21.0'
 gem 'ember-source', '~> 1.13.0'
 gem 'handlebars-source'
 

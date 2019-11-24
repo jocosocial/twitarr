@@ -77,7 +77,7 @@ class User < ApplicationRecord
   has_many :stream_posts, inverse_of: :author
   has_many :announcements, inverse_of: :author
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id
-  
+
   # noinspection RubyResolve
   after_save :update_display_name_cache
 
@@ -174,15 +174,15 @@ class User < ApplicationRecord
   end
 
   def display_name=(val)
-    super val.andand.strip
+    super val&.strip
   end
 
   def real_name=(val)
-    super val.andand.strip
+    super val&.strip
   end
 
   def home_location=(val)
-    super val.andand.strip
+    super val&.strip
   end
 
   def registration_code=(val)
@@ -275,7 +275,7 @@ class User < ApplicationRecord
   end
 
   def self.format_username(username)
-    username.andand.downcase.andand.strip
+    username&.downcase&.strip
   end
 
   def self.exist?(username)

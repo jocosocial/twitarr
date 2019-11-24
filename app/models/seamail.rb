@@ -40,7 +40,7 @@ class Seamail
   end
 
   def subject=(subject)
-    super subject.andand.strip
+    super subject&.strip
   end
 
   def last_message

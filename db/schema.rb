@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_10_023114) do
+ActiveRecord::Schema.define(version: 2019_11_24_040002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,30 @@ ActiveRecord::Schema.define(version: 2019_10_10_023114) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["author"], name: "index_announcements_on_author"
+  end
+
+  create_table "forum_posts", force: :cascade do |t|
+    t.bigint "author", null: false
+    t.bigint "original_author", null: false
+    t.string "text", null: false
+    t.string "mentions", default: [], null: false, array: true
+    t.string "hash_tags", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "to_tsvector('english'::regconfig, (text)::text)", name: "index_forum_posts_text", using: :gin
+    t.index ["author"], name: "index_forum_posts_on_author"
+    t.index ["created_at"], name: "index_forum_posts_on_created_at", order: :desc
+    t.index ["hash_tags"], name: "index_forum_posts_on_hash_tags", using: :gin
+    t.index ["mentions"], name: "index_forum_posts_on_mentions", using: :gin
+  end
+
+  create_table "forums", force: :cascade do |t|
+    t.string "subject", null: false
+    t.datetime "last_post_time", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.boolean "sticky", default: false, null: false
+    t.boolean "locked", default: false, null: false
+    t.index "to_tsvector('english'::regconfig, (subject)::text)", name: "index_forums_subject", using: :gin
+    t.index ["sticky", "last_post_time"], name: "index_forums_on_sticky_and_last_post_time", order: :desc
   end
 
   create_table "locations", force: :cascade do |t|
@@ -48,6 +72,7 @@ ActiveRecord::Schema.define(version: 2019_10_10_023114) do
   create_table "post_photos", force: :cascade do |t|
     t.bigint "stream_post_id"
     t.bigint "photo_metadata_id", null: false
+    t.bigint "forum_post_id"
     t.index ["stream_post_id"], name: "index_post_photos_on_stream_post_id"
   end
 
@@ -55,6 +80,7 @@ ActiveRecord::Schema.define(version: 2019_10_10_023114) do
     t.bigint "stream_post_id"
     t.bigint "reaction_id", null: false
     t.bigint "user_id", null: false
+    t.bigint "forum_post_id"
     t.index ["stream_post_id"], name: "index_post_reactions_on_stream_post_id"
     t.index ["user_id"], name: "index_post_reactions_on_user_id"
   end
@@ -108,7 +134,7 @@ ActiveRecord::Schema.define(version: 2019_10_10_023114) do
     t.datetime "last_login"
     t.datetime "last_viewed_alerts"
     t.string "photo_hash"
-    t.datetime "last_photo_updated", default: -> { "now()" }, null: false
+    t.datetime "last_photo_updated", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "room_number"
     t.string "real_name"
     t.string "home_location"
@@ -127,9 +153,13 @@ ActiveRecord::Schema.define(version: 2019_10_10_023114) do
 
   add_foreign_key "announcements", "users", column: "author"
   add_foreign_key "announcements", "users", column: "original_author"
+  add_foreign_key "forum_posts", "users", column: "author"
+  add_foreign_key "forum_posts", "users", column: "original_author"
   add_foreign_key "photo_metadata", "users"
+  add_foreign_key "post_photos", "forum_posts", on_delete: :cascade
   add_foreign_key "post_photos", "photo_metadata", column: "photo_metadata_id", on_delete: :cascade
   add_foreign_key "post_photos", "stream_posts", on_delete: :cascade
+  add_foreign_key "post_reactions", "forum_posts", on_delete: :cascade
   add_foreign_key "post_reactions", "reactions", on_delete: :cascade
   add_foreign_key "post_reactions", "stream_posts", on_delete: :cascade
   add_foreign_key "post_reactions", "users"

@@ -39,7 +39,6 @@ gem 'handlebars-source'
 
 gem 'tzinfo-data'
 
-gem 'andand'
 gem 'browser'
 gem 'draper'
 

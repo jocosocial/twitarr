@@ -32,6 +32,8 @@ class ForumPost < ApplicationRecord
   # field :ph, as: :photos, type: Array
 
   has_many :post_reactions, dependent: :destroy
+  belongs_to :forum, inverse_of: :posts
+  belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :forum_posts
 
   # embedded_in :forum, inverse_of: :posts
 

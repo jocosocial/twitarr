@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2019_11_24_040002) do
     t.string "hash_tags", default: [], null: false, array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "forum_id", null: false
     t.index "to_tsvector('english'::regconfig, (text)::text)", name: "index_forum_posts_text", using: :gin
     t.index ["author"], name: "index_forum_posts_on_author"
     t.index ["created_at"], name: "index_forum_posts_on_created_at", order: :desc
@@ -153,6 +154,7 @@ ActiveRecord::Schema.define(version: 2019_11_24_040002) do
 
   add_foreign_key "announcements", "users", column: "author"
   add_foreign_key "announcements", "users", column: "original_author"
+  add_foreign_key "forum_posts", "forums", on_delete: :cascade
   add_foreign_key "forum_posts", "users", column: "author"
   add_foreign_key "forum_posts", "users", column: "original_author"
   add_foreign_key "photo_metadata", "users"

@@ -52,9 +52,10 @@ class Forum < ApplicationRecord
   end
 
   def self.create_new_forum(author, subject, first_post_text, photos, original_author)
-    forum = Forum.new subject: subject
+    forum = Forum.new(subject: subject)
     # forum.last_post_time = Time.now
-    forum.posts << ForumPost.new(author: author, text: first_post_text, photos: photos, original_author: original_author)
+    #binding.pry
+    forum.posts << ForumPost.new(author: author, text: first_post_text, original_author: original_author)
     forum.save if forum.valid?
     forum
   end
@@ -62,7 +63,7 @@ class Forum < ApplicationRecord
   # This is just a terrible scheme
   def add_post(author, text, photos, original_author)
     self.last_post_time = Time.now
-    posts.create author: author, text: text, photos: photos, original_author: original_author
+    posts.create author: author, text: text, original_author: original_author
   end
 
   def self.view_mentions(params = {})

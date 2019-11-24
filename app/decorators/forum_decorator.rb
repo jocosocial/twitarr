@@ -9,19 +9,19 @@ class ForumDecorator < BaseDecorator
         sticky: sticky,
         locked: locked,
         last_post_author: {
-          username: posts.last.author,
-          display_name: User.display_name_from_username(posts.last.author),
-          last_photo_updated: User.last_photo_updated_from_username(posts.last.author).to_ms
+          username: posts.last.user.username,
+          display_name: posts.last.user.display_name,
+          last_photo_updated: posts.last.user.last_photo_updated.to_ms
         },
         posts: post_count,
         timestamp: last_post_time.to_ms,
         last_post_page: 0
     }
-    unless user.nil?
-      count = post_count_since(user.last_forum_view(id.to_s))
-      ret[:new_posts] = count if count > 0
-      ret[:last_post_page] = (post_count - count) / page_size
-    end
+    # unless user.nil?
+    #   count = post_count_since(user.last_forum_view(id.to_s))
+    #   ret[:new_posts] = count if count > 0
+    #   ret[:last_post_page] = (post_count - count) / page_size
+    # end
     ret
   end
 

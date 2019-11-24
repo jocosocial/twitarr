@@ -18,9 +18,7 @@ class StreamPostDecorator < BaseDecorator
         parent_chain: parent_chain
     }
     result[:photo] = { id: photo_metadata.id, animated: photo_metadata.animated, sizes: photo_metadata.sizes } if photo_metadata
-    if options.has_key? :remove
-      options[:remove].each { |k| result.delete k }
-    end
+    options[:remove].each { |k| result.delete k } if options.key? :remove
     result
   end
 

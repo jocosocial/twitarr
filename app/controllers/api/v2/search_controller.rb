@@ -7,6 +7,7 @@ class Api::V2::SearchController < ApplicationController
 
   def all
     return unless params_valid?(params)
+
     params[:current_username] = current_username
     render json: {
       status: 'ok',
@@ -21,6 +22,7 @@ class Api::V2::SearchController < ApplicationController
 
   def users
     return unless params_valid?(params)
+
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
@@ -31,16 +33,18 @@ class Api::V2::SearchController < ApplicationController
 
   def seamails
     return unless params_valid?(params)
+
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
       query: params[:query],
-      seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
+      seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) }
     }
   end
 
   def tweets
     return unless params_valid?(params)
+
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
@@ -51,6 +55,7 @@ class Api::V2::SearchController < ApplicationController
 
   def forums
     return unless params_valid?(params)
+
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
@@ -61,6 +66,7 @@ class Api::V2::SearchController < ApplicationController
 
   def events
     return unless params_valid?(params)
+
     params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
     render json: {
       status: 'ok',
@@ -70,30 +76,25 @@ class Api::V2::SearchController < ApplicationController
   end
 
   private
+
   def do_search(params, collection)
     query = collection.search(params)
     matches = query.map { |e| yield e }
-    {matches: matches, count: query.length, more: query.has_more?}
+    { matches: matches, count: query.length, more: query.has_more? }
   end
 
   def params_valid?(params)
     errors = []
-    unless params[:query]
-      errors.push 'Required parameter \'query\' not set.'
-    end
+    errors.push 'Required parameter \'query\' not set.' unless params[:query]
 
-    if !params[:limit].nil? && params[:limit].to_i < 1
-      errors.push "Limit must be greater than 0."
-    end
+    errors.push 'Limit must be greater than 0.' if !params[:limit].nil? && params[:limit].to_i < 1
 
-    if !params[:page].nil? && params[:page].to_i < 0
-      errors.push "Page must be greater than or equal to 0."
-    end
+    errors.push 'Page must be greater than or equal to 0.' if !params[:page].nil? && params[:page].to_i < 0
 
     if errors.count > 0
-      render status: :bad_request, json: {status: 'error', errors: errors}
+      render status: :bad_request, json: { status: 'error', errors: errors }
       return false
     end
-    return true
+    true
   end
 end

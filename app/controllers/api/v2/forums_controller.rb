@@ -98,7 +98,7 @@ module Api
       end
 
       def update_post
-        render(status: :forbidden, json: { status:'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_username) || tho?
+        render(status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_username) || tho?
         @post[:text] = params[:text]
         @post[:photos] = params[:photos]
         if @post.valid?
@@ -110,7 +110,7 @@ module Api
       end
 
       def delete_post
-        render(status: :forbidden, json: { status:'error', error: "You can not delete other users' posts." }) && return unless (@post.author == current_username) || moderator?
+        render(status: :forbidden, json: { status: 'error', error: "You can not delete other users' posts." }) && return unless (@post.author == current_username) || moderator?
         thread_deleted = false
         @post.destroy
         @forum.reload
@@ -122,7 +122,7 @@ module Api
       end
 
       def react
-        render(status: :bad_request, json: { status: 'error', error:'Reaction type must be included.' }) && return unless params.key?(:type)
+        render(status: :bad_request, json: { status: 'error', error: 'Reaction type must be included.' }) && return unless params.key?(:type)
         @post.add_reaction current_username, params[:type]
         if @post.valid?
           render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
@@ -132,11 +132,11 @@ module Api
       end
 
       def show_reacts
-        render json: { status: 'ok', reactions: @post.reactions.map {|x| x.decorate.to_hash } }
+        render json: { status: 'ok', reactions: @post.reactions.map { |x| x.decorate.to_hash } }
       end
 
       def unreact
-        render(status: :bad_request, json: { status: 'error', error:'Reaction type must be included.' }) && return unless params.key?(:type)
+        render(status: :bad_request, json: { status: 'error', error: 'Reaction type must be included.' }) && return unless params.key?(:type)
         @post.remove_reaction current_username, params[:type]
         render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
       end
@@ -179,24 +179,25 @@ module Api
       end
 
       private
+
       def fetch_forum
-        begin
-          @forum = Forum.find(params[:id])
-        rescue Mongoid::Errors::DocumentNotFound
-          render status: :not_found, json: { status:'error', error: 'Forum thread not found.' }
-        end
+
+        @forum = Forum.find(params[:id])
+      rescue Mongoid::Errors::DocumentNotFound
+        render status: :not_found, json: { status: 'error', error: 'Forum thread not found.' }
+
       end
 
       def fetch_post
-        begin
-          @post = @forum.posts.find(params[:post_id])
-        rescue Mongoid::Errors::DocumentNotFound
-          render status: :not_found, json: { status:'error', error: 'Post not found.' }
-        end
+
+        @post = @forum.posts.find(params[:post_id])
+      rescue Mongoid::Errors::DocumentNotFound
+        render status: :not_found, json: { status: 'error', error: 'Post not found.' }
+
       end
 
       def check_locked
-        if !moderator?
+        unless moderator?
           render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if @forum.locked
         end
       end

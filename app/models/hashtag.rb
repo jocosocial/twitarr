@@ -7,16 +7,16 @@ class Hashtag
   field :_id, type: String, as: :name
 
   def self.add_tag(hashtag)
-    begin
-      hashtag = hashtag[1..-1] if hashtag[0] == '#'
-      hashtag = hashtag.downcase
-      hashtag.strip!
-      doc = Hashtag.new(name:hashtag)
-      doc.upsert
-      doc
-    rescue Exception => e
-      logger.error e
-    end
+
+    hashtag = hashtag[1..-1] if hashtag[0] == '#'
+    hashtag = hashtag.downcase
+    hashtag.strip!
+    doc = Hashtag.new(name: hashtag)
+    doc.upsert
+    doc
+  rescue Exception => e
+    logger.error e
+
   end
 
   def self.auto_complete(prefix)

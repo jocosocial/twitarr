@@ -22,16 +22,17 @@ class ForumPostDecorator < BaseDecorator
 
   def decorate_photos
     return [] unless photos
-    photos.map { |x| 
-      begin
-        img = PhotoMetadata.find(x)
-        { 
-          id: x, 
-          animated: img.animated,
-          sizes: img.sizes
-        } 
-      rescue Mongoid::Errors::DocumentNotFound
-      end
-    }.compact
+
+    photos.map do |x|
+
+      img = PhotoMetadata.find(x)
+      {
+        id: x,
+        animated: img.animated,
+        sizes: img.sizes
+      }
+    rescue Mongoid::Errors::DocumentNotFound
+
+    end.compact
   end
 end

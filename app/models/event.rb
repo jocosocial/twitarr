@@ -4,7 +4,7 @@ class Event
   include Mongoid::Paranoia
   include Searchable
 
-  DST_START = Time.new(2019, 3, 11, 2, 0, 0, "-05:00")
+  DST_START = Time.new(2019, 3, 11, 2, 0, 0, '-05:00')
 
   field :tl, as: :title, type: String
   field :sm, as: :description, type: String
@@ -12,7 +12,7 @@ class Event
   field :st, as: :start_time, type: Time
   field :et, as: :end_time, type: Time
   field :fa, as: :favorites, type: Array, default: []
-  # TODO add type
+  # TODO: add type
   field :of, as: :official, type: Boolean
 
   validates :title, :start_time, presence: true
@@ -20,15 +20,15 @@ class Event
   # 1 = ASC, -1 DESC
   index start_time: 1
   index title: 1
-  index({:title => 'text', :description => 'text', :location => 'text'})
+  index(title: 'text', description: 'text', location: 'text')
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = Event.or({title: /^#{search_text}.*/}, {'$text' => {'$search' => "\"#{search_text}\""}})
+    criteria = Event.or({ title: /^#{search_text}.*/ }, '$text' => { '$search' => "\"#{search_text}\"" })
     limit_criteria(criteria, params).order_by(id: :desc)
   end
 
-  def self.create_new_event(author, title, start_time, options={})
+  def self.create_new_event(_author, title, start_time, options = {})
     event = Event.new(title: title, start_time: start_time)
     event.description = options[:description] unless options[:description].nil?
     event.location = options[:location] unless options[:location].nil?
@@ -42,7 +42,7 @@ class Event
     event = Event.where(id: ics_event.uid).first
     if event.nil?
       event = Event.new(
-          _id: ics_event.uid
+        _id: ics_event.uid
       )
     end
     event.title = ics_event.summary.force_encoding('utf-8')
@@ -72,11 +72,11 @@ class Event
   end
 
   def follow(username)
-    self.favorites << username unless self.favorites.include? username
+    favorites << username unless favorites.include? username
   end
 
   def unfollow(username)
-    self.favorites.delete username
+    favorites.delete username
   end
 
 end

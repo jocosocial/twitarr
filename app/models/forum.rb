@@ -51,17 +51,17 @@ class Forum < ApplicationRecord
     posts.first.author
   end
 
-  def self.create_new_forum(author, subject, first_post_text, photos, original_author)
+  def self.create_new_forum(author, subject, first_post_text, _photos, original_author)
     forum = Forum.new(subject: subject)
     # forum.last_post_time = Time.now
-    #binding.pry
+    # binding.pry
     forum.posts << ForumPost.new(author: author, text: first_post_text, original_author: original_author)
     forum.save if forum.valid?
     forum
   end
 
   # This is just a terrible scheme
-  def add_post(author, text, photos, original_author)
+  def add_post(author, text, _photos, original_author)
     self.last_post_time = Time.now
     posts.create author: author, text: text, original_author: original_author
   end
@@ -74,14 +74,14 @@ class Forum < ApplicationRecord
     queryParams[:mn] = query_string
     if params[:after]
       val = Time.from_param(params[:after])
-      queryParams[:ts] = {'$gt' => val} if val
+      queryParams[:ts] = { '$gt' => val } if val
     end
-    query = where(:posts => {"$elemMatch" => queryParams}).order_by(id: :desc).skip(start_loc*limit).limit(limit)
+    query = where(posts: { '$elemMatch' => queryParams }).order_by(id: :desc).skip(start_loc * limit).limit(limit)
   end
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = Forum.or({:'fp.au' => /^#{search_text}.*/i}, { '$text' => { '$search' => "\"#{search_text}\"" } })
+    criteria = Forum.or({ 'fp.au': /^#{search_text}.*/i }, '$text' => { '$search' => "\"#{search_text}\"" })
     limit_criteria(criteria, params)
   end
 end

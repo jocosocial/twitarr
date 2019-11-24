@@ -18,7 +18,7 @@ class BaseDecorator < Draper::Decorator
       CGI.escapeHTML(text || '').gsub("\n", '<br />')
     end
   end
-  
+
   def replace_emoji(text, options = {})
     if options[:app] == 'CM'
       text.gsub(@@emojiRE, @@emojiReplaceCM)
@@ -33,11 +33,11 @@ class BaseDecorator < Draper::Decorator
     summary = Hash.new
     post_reactions.each do |x|
       reaction = x.reaction.name
-      if summary.has_key?(reaction) then
-        summary[reaction] = {count: summary[reaction].fetch(:count) + 1, me: ((summary[reaction].fetch(:me) == true) || x.user_id == user_id)}
-      else
-        summary[reaction] = {count: 1, me: x.user_id == user_id}
-      end
+      summary[reaction] = if summary.key?(reaction)
+                            { count: summary[reaction].fetch(:count) + 1, me: ((summary[reaction].fetch(:me) == true) || x.user_id == user_id) }
+                          else
+                            { count: 1, me: x.user_id == user_id }
+                          end
     end
     summary
   end

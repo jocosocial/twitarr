@@ -184,7 +184,7 @@ class ApplicationController < ActionController::Base
   def parse_key(key)
     return nil if key.nil?
 
-    key = URI.unescape(key)
+    key = CGI.unescape(key)
     key = key.split(':')
     return nil if key.length != 3
 
@@ -194,7 +194,7 @@ class ApplicationController < ActionController::Base
   def valid_key?(key)
     return false if key.nil? # No key was passed, abort
 
-    key = URI.unescape(key)
+    key = CGI.unescape(key)
     username, expiration, digest = parse_key(key)
     return false if username.nil? || expiration.nil? || digest.nil?
 

@@ -14,7 +14,7 @@ class Hashtag
     doc = Hashtag.new(name: hashtag)
     doc.upsert
     doc
-  rescue Exception => e
+  rescue StandardError => e
     logger.error e
 
   end

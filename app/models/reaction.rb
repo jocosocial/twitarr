@@ -18,7 +18,7 @@ class Reaction < ApplicationRecord
 
     doc = Reaction.find_or_create_by(name: reaction)
     doc
-  rescue Exception => e
+  rescue StandardError => e
     logger.error e
 
   end

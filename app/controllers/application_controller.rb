@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   end
 
   def route_not_found
-    render status: :not_found, json: {status: :error, error: 'Route not found.'}
+    render status: :not_found, json: { status: :error, error: 'Route not found.' }
   end
 
   def append_info_to_payload(payload)
@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
 
   def validate_login(username, password)
     user = User.get username
-    result = {user: user}
+    result = { user: user }
     if user.nil?
       result[:error] = 'Invalid username or password.'
     elsif user.password.blank? # We need to check this condition before comparing passwords
@@ -114,23 +114,23 @@ class ApplicationController < ActionController::Base
     expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
 
     digest = OpenSSL::HMAC.hexdigest(
-        OpenSSL::Digest::SHA1.new,
-        Rails.application.secrets.secret_key_base,
-        "#{name}#{hashed_password}#{expiration}"
+      OpenSSL::Digest::SHA1.new,
+      Rails.application.secrets.secret_key_base,
+      "#{name}#{hashed_password}#{expiration}"
     )
     "#{name}:#{expiration}:#{digest}"
   end
 
   def request_options
     ret = {}
-    ret[:app] = params[:app] if !params.nil? and params.has_key?(:app)
+    ret[:app] = params[:app] if !params.nil? && params.key?(:app)
     ret
   end
 
   def post_as_user(params)
-    if params.has_key?(:as_mod) && params[:as_mod].to_bool && moderator?
+    if params.key?(:as_mod) && params[:as_mod].to_bool && moderator?
       return moderator_user.id
-    elsif params.has_key?(:as_admin) && params[:as_admin].to_bool && admin?
+    elsif params.key?(:as_admin) && params[:as_admin].to_bool && admin?
       return admin_user.id
     end
 
@@ -184,7 +184,7 @@ class ApplicationController < ActionController::Base
   def parse_key(key)
     return nil if key.nil?
 
-    key = URI.unescape(key)
+    key = CGI.unescape(key)
     key = key.split(':')
     return nil if key.length != 3
 
@@ -194,13 +194,13 @@ class ApplicationController < ActionController::Base
   def valid_key?(key)
     return false if key.nil? # No key was passed, abort
 
-    key = URI.unescape(key)
+    key = CGI.unescape(key)
     username, expiration, digest = parse_key(key)
-    return false if username.nil? || expiration.nil? or digest.nil?
+    return false if username.nil? || expiration.nil? || digest.nil?
 
     begin
       return false if Time.from_param(expiration) < Time.now # Key expiration is in the past, abort
-    rescue
+    rescue StandardError
       return false # Couldn't parse the expiration, abort
     end
 

@@ -52,11 +52,14 @@ module Twitarr
     end
 
     config.assets.precompile += ['respond.js']
+    config.assets.precompile = ['manifest.js']
 
     config.autoload_paths += Dir[Rails.root.join('app', 'contexts', '{**}')]
 
     config.action_dispatch.perform_deep_munge = false
 
     config.photo_store = 'photo_storage'
+
+    config.active_record.schema_format = :sql
   end
 end

@@ -1,6 +1,6 @@
 class AnnouncementDecorator < BaseDecorator
   delegate_all
-  include Twitter::Autolink
+  include Twitter::TwitterText::Autolink
 
   def to_hash(options = {})
     {

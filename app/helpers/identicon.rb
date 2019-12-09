@@ -8,8 +8,8 @@ module Identicon
       square_size: 50,
       grid_size: 7,
       background_color: 'transparent',
-      key: "1234567890abcdef"
-  }
+      key: '1234567890abcdef'
+  }.freeze
 
   # create an identicon image
   #
@@ -23,8 +23,8 @@ module Identicon
   def self.create(title, options = {})
     options = DEFAULT_OPTIONS.merge(options)
 
-    raise 'title cannot be nil' if title == nil
-    raise 'key is nil or less than 16 bytes' if options[:key] == nil || options[:key].length < 16
+    raise 'title cannot be nil' if title.nil?
+    raise 'key is nil or less than 16 bytes' if options[:key].nil? || options[:key].length < 16
     raise 'grid_size must be between 4 and 9' if options[:grid_size] < 4 || options[:grid_size] > 9
     raise 'invalid border size' if options[:border_size] < 0
     raise 'invalid square size' if options[:square_size] < 0
@@ -33,17 +33,15 @@ module Identicon
 
     canvas = Magick::ImageList.new
     dimensions = (options[:border_size] * 2) + (options[:square_size] * options[:grid_size])
-    canvas.new_image(dimensions, dimensions) {
-      if options[:background_color] and options[:background_color] != 'transparent'
-        self.background_color = options[:background_color]
-      end
-    }
+    canvas.new_image(dimensions, dimensions) do
+      self.background_color = options[:background_color] if options[:background_color] && (options[:background_color] != 'transparent')
+    end
     blocks = Magick::Draw.new
 
 
     # set the stroke color based off of the hash
     # set the foreground color by using the first three bytes of the hash value
-    color = '#%02X%02X%02X' % [(hash & 0xff), ((hash >> 8) & 0xff), ((hash >> 16) & 0xff)]
+    color = format('#%02X%02X%02X', (hash & 0xff), ((hash >> 8) & 0xff), ((hash >> 16) & 0xff))
     # Rails.logger.info "Using color #{color}"
     blocks.stroke color
     blocks.fill color

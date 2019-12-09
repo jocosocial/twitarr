@@ -1,39 +1,39 @@
-class Forum
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Paranoia
+# == Schema Information
+#
+# Table name: forums
+#
+#  id             :bigint           not null, primary key
+#  subject        :string           not null
+#  last_post_time :datetime         not null
+#  sticky         :boolean          default(FALSE), not null
+#  locked         :boolean          default(FALSE), not null
+#
+# Indexes
+#
+#  index_forums_on_sticky_and_last_post_time  (sticky,last_post_time)
+#  index_forums_subject                       (to_tsvector('english'::regconfig, (subject)::text)) USING gin
+#
+
+class Forum < ApplicationRecord
   include Searchable
 
   PAGE_SIZE = 20
 
-  field :sj, as: :subject, type: String
-  field :lp, as: :last_post_time, type: Time
-  field :st, as: :sticky, type: Boolean, default: false
-  field :lo, as: :locked, type: Boolean, default: false
+  has_many :posts, class_name: 'ForumPost', dependent: :destroy
+  has_many :forum_view_timestamps, dependent: :destroy
 
-  embeds_many :posts, class_name: 'ForumPost', store_as: :fp, order: :timestamp.asc, validate: false
-
-  index({:subject => 'text', :'fp.tx' => 'text'})
-  # 1 = ASC, -1 DESC
-  index 'fp.au' => 1
-  index 'fp.lk' => 1
-  index 'fp.ts' => -1
-  index ({:sticky => -1, :last_post_time => -1})
-  
-  validates :subject, presence: true, length: {maximum: 200}
+  validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts
 
   def validate_posts
-    errors[:base] << 'Must have a post' if posts.size < 1
+    errors[:base] << 'Must have a post' if posts.empty?
     posts.each do |post|
-      unless post.valid?
-        post.errors.full_messages.each { |x| errors[:base] << x }
-      end
+      post.errors.full_messages.each { |x| errors[:base] << x } unless post.valid?
     end
   end
 
   def subject=(subject)
-    super subject.andand.strip
+    super subject&.strip
   end
 
   def last_post
@@ -45,27 +45,25 @@ class Forum
   end
 
   def post_count_since(timestamp)
-    posts.select { |x| x.ts > timestamp } .count
+    posts.select { |x| x.created_at > timestamp }.count
   end
 
   def created_by
     posts.first.author
   end
 
-  def self.create_new_forum(author, subject, first_post_text, photos, original_author)
-    forum = Forum.new subject: subject
-    forum.last_post_time = Time.now
-    forum.posts << ForumPost.new(author: author, text: first_post_text, timestamp: Time.now, photos: photos, original_author: original_author)
-    if forum.valid?
-      forum.save
-    end
+  def self.create_new_forum(author, subject, first_post_text, _photos, original_author)
+    forum = Forum.new(subject: subject, last_post_time: DateTime.now)
+    # binding.pry
+    forum.posts << ForumPost.new(author: author, text: first_post_text, original_author: original_author)
+    forum.save if forum.valid?
     forum
   end
 
   # This is just a terrible scheme
-  def add_post(author, text, photos, original_author)
+  def add_post(author, text, _photos, original_author)
     self.last_post_time = Time.now
-    posts.create author: author, text: text, timestamp: Time.now, photos: photos, original_author: original_author
+    posts.create author: author, text: text, original_author: original_author
   end
 
   def self.view_mentions(params = {})
@@ -76,16 +74,14 @@ class Forum
     queryParams[:mn] = query_string
     if params[:after]
       val = Time.from_param(params[:after])
-      if val
-        queryParams[:ts] = {'$gt' => val}
-      end
+      queryParams[:ts] = { '$gt' => val } if val
     end
-    query = where(:posts => {"$elemMatch" => queryParams}).order_by(id: :desc).skip(start_loc*limit).limit(limit)
+    query = where(posts: { '$elemMatch' => queryParams }).order_by(id: :desc).skip(start_loc * limit).limit(limit)
   end
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = Forum.or({:'fp.au' => /^#{search_text}.*/i}, { '$text' => { '$search' => "\"#{search_text}\"" } })
+    criteria = Forum.or({ 'fp.au': /^#{search_text}.*/i }, '$text' => { '$search' => "\"#{search_text}\"" })
     limit_criteria(criteria, params)
   end
 end

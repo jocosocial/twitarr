@@ -9,29 +9,25 @@ class Seamail
   field :up, as: :last_update, type: Time
   embeds_many :messages, class_name: 'SeamailMessage', store_as: :sm, order: :timestamp.desc, validate: false
 
-  validates :subject, presence: true, length: {maximum: 200}
+  validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_users
   validate :validate_messages
 
   index usernames: 1
-  index :'sm.rd' => 1
-  index({:subject => 'text', :'sm.tx' => 'text'})
+  index 'sm.rd': 1
+  index(subject: 'text', 'sm.tx': 'text')
 
   def validate_users
     errors[:base] << 'Must send seamail to another user of Twit-arr' unless usernames.count > 1
     usernames.each do |username|
-      unless User.exist? username
-        errors[:base] << "#{username} is not a valid username"
-      end
+      errors[:base] << "#{username} is not a valid username" unless User.exist? username
     end
   end
 
   def validate_messages
-    errors[:base] << 'Must include a message' if messages.size < 1
+    errors[:base] << 'Must include a message' if messages.empty?
     messages.each do |message|
-      unless message.valid?
-        message.errors.full_messages.each { |x| errors[:base] << x }
-      end
+      message.errors.full_messages.each { |x| errors[:base] << x } unless message.valid?
     end
   end
 
@@ -40,7 +36,7 @@ class Seamail
   end
 
   def subject=(subject)
-    super subject.andand.strip
+    super subject&.strip
   end
 
   def last_message
@@ -63,16 +59,14 @@ class Seamail
     to_users << author unless to_users.include? author
     seamail = Seamail.new(usernames: to_users, subject: subject, last_update: right_now)
     seamail.messages << SeamailMessage.new(author: author, text: first_message_text, timestamp: right_now, read_users: [author], original_author: original_author)
-    if seamail.valid?
-      seamail.save
-    end
+    seamail.save if seamail.valid?
     seamail
   end
 
   def add_message(author, text, original_author)
     right_now = Time.now
     self.last_update = right_now
-    self.save
+    save
     messages.create author: author, text: text, timestamp: right_now, read_users: [author], original_author: original_author
   end
 
@@ -80,7 +74,7 @@ class Seamail
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
     current_username = params[:current_username]
     criteria = Seamail.where(usernames: current_username).or({ usernames: /^#{search_text}.*/ },
-                                                              { '$text' => { '$search' => "\"#{search_text}\"" } })
+                                                             '$text' => { '$search' => "\"#{search_text}\"" })
     limit_criteria(criteria, params).order_by(last_update: :desc)
   end
 

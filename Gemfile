@@ -1,18 +1,18 @@
 source 'https://rubygems.org'
-ruby='2.6.5'
+ruby '2.6.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'sassc-rails'
+gem 'puma'
 gem 'rails', '5.2.3'
+gem 'sassc-rails'
 gem 'sprockets'
 gem 'sprockets-rails'
 
+gem 'bcrypt'
 gem 'bootsnap'
-
 gem 'coffee-rails'
 
 gem 'therubyracer'
-gem 'bcrypt'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'
@@ -25,30 +25,26 @@ gem 'underscore-rails'
 gem 'jbuilder'
 
 # handle CORS
-gem 'rack-cors', :require => 'rack/cors'
+gem 'rack-cors', require: 'rack/cors'
 
 gem 'pg'
 
 # soft deletes
 gem 'discard'
 
-gem 'ember-rails', '~> 0.19.0'
-gem 'ember-source', '~> 1.13.0'
 gem 'ember-data-source', '~> 1.13.0'
+gem 'ember-rails', '~> 0.21.0'
+gem 'ember-source', '~> 1.13.0'
 gem 'handlebars-source'
 
 gem 'tzinfo-data'
 
-gem 'draper'
-gem 'andand'
 gem 'browser'
+gem 'draper'
 
 gem 'rmagick'
-gem 'puma'
-
 gem 'siphash'
-
-gem 'twitter-text', '~> 1.10.0'
+gem 'twitter-text'
 
 gem 'momentjs-rails'
 
@@ -60,7 +56,7 @@ group :development do
   gem 'annotate'
   gem 'better_errors'
   gem 'listen'
-  gem 'pry'
+  gem 'pry-byebug'
   gem 'rubocop-rails'
   gem 'solargraph'
   gem 'spring'
@@ -70,6 +66,6 @@ group :test do
   # these versions are based on: http://stackoverflow.com/a/21639154
   gem 'minitest'
   gem 'minitest-spec-rails'
+  gem 'mocha', require: false
   gem 'turn'
-  gem 'mocha', :require => false
 end

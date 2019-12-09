@@ -74,10 +74,12 @@ class User < ApplicationRecord
   # field :pc, as: :personal_comments, type: Hash, default: {}
   # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
-  has_many :stream_posts, inverse_of: :author
-  has_many :announcements, inverse_of: :author
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id
-  
+  has_many :stream_posts, inverse_of: :author, dependent: :destroy
+  has_many :forum_posts, inverse_of: :author, dependent: :destroy
+  has_many :forum_view_timestamps, dependent: :destroy
+  has_many :announcements, inverse_of: :author, dependent: :destroy
+  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
+
   # noinspection RubyResolve
   after_save :update_display_name_cache
 
@@ -91,7 +93,7 @@ class User < ApplicationRecord
   validates :email, allow_blank: true, format: { with: URI::MailTo::EMAIL_REGEXP, message: 'E-mail address is not valid.' }
   validate :valid_password?
   validate :valid_room_number?
-  validates :home_location, :real_name, :pronouns, length: {maximum: 100}
+  validates :home_location, :real_name, :pronouns, length: { maximum: 100 }
   validates :room_number, allow_blank: true, length: { minimum: 4, maximum: 5 }
 
   def valid_role?
@@ -174,15 +176,15 @@ class User < ApplicationRecord
   end
 
   def display_name=(val)
-    super val.andand.strip
+    super val&.strip
   end
 
   def real_name=(val)
-    super val.andand.strip
+    super val&.strip
   end
 
   def home_location=(val)
-    super val.andand.strip
+    super val&.strip
   end
 
   def registration_code=(val)
@@ -191,26 +193,27 @@ class User < ApplicationRecord
 
   def upcoming_events(alerts = false)
     events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
-    events = events.map { |x| x if !x.end_time or x.end_time <= Time.now }.compact
+    events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
     events = events.map { |x| x if x.favorites.include? username }.compact
     if alerts
-      events = events.map { |e| e unless self.acknowledged_event_alerts.include? e.id }.compact
-      events.each { |e| self.acknowledged_event_alerts << e.id unless self.acknowledged_event_alerts.include? e.id }
+      events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
+      events.each { |e| acknowledged_event_alerts << e.id unless acknowledged_event_alerts.include? e.id }
       save!
     end
     events
   end
 
   def unnoticed_upcoming_events
-    events = upcoming_events
-    events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
-    events.count
+    # events = upcoming_events
+    # events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
+    # events.count
+    0
   end
 
   def seamails(params = {})
     thread_query = Hash.new
     thread_query['us'] = username
-    thread_query['up'] = { '$gt': params[:after]} if params.key?(:after)
+    thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)
 
     post_query = Hash.new
     post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
@@ -238,26 +241,27 @@ class User < ApplicationRecord
 
     result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
 
-    result.sort_by { |x| x.last_message }.reverse
+    result.sort_by(&:last_message).reverse
   end
 
   def seamail_unread_count
-    Seamail.collection.aggregate([
-      {
-        "$match" => { "us" => username }
-      },
-      {
-        "$unwind" => "$sm"
-      },
-      {
-        "$match" => { "sm.rd" => {"$ne" => username } }
-      },
-      {
-        "$group" => {
-          "_id" => "$_id"
-        }
-      }
-    ]).count
+    # Seamail.collection.aggregate([
+    #   {
+    #     "$match" => { "us" => username }
+    #   },
+    #   {
+    #     "$unwind" => "$sm"
+    #   },
+    #   {
+    #     "$match" => { "sm.rd" => {"$ne" => username } }
+    #   },
+    #   {
+    #     "$group" => {
+    #       "_id" => "$_id"
+    #     }
+    #   }
+    # ]).count
+    0
   end
 
   def seamail_count
@@ -269,11 +273,11 @@ class User < ApplicationRecord
   end
 
   def number_of_mentions
-    StreamPost.where(mentions: username).count
+    StreamPost.where('mentions @> ?', "{#{username}}").count
   end
 
   def self.format_username(username)
-    username.andand.downcase.andand.strip
+    username&.downcase&.strip
   end
 
   def self.exist?(username)
@@ -281,7 +285,7 @@ class User < ApplicationRecord
   end
 
   def self.get(username)
-    where(username: format_username(username)).first
+    find_by(username: format_username(username))
   end
 
   def reset_photo
@@ -306,24 +310,25 @@ class User < ApplicationRecord
 
   def profile_picture_path
     path = PhotoStore.instance.small_profile_path(username)
-    reset_photo unless File.exists? path
+    reset_photo unless File.exist? path
     path
   end
 
   def full_profile_picture_path
     path = PhotoStore.instance.full_profile_path(username)
-    reset_photo unless File.exists? path
+    reset_photo unless File.exist? path
     path
   end
 
   def unnoticed_mentions
-    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
-      Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count # +
+    # Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
   def update_forum_view(forum_id)
-    self.forum_view_timestamps[forum_id] = Time.now
-    save
+    ts = forum_view_timestamps.find_or_initialize_by(forum_id: forum_id)
+    ts.view_time = Time.now
+    ts.save
   end
 
   def mark_all_forums_read(participated_only)
@@ -331,7 +336,7 @@ class User < ApplicationRecord
 
     now = Time.now
     hash = Hash.new
-    query.pluck(:id).each{|x| hash[x.to_s] = now}
+    query.pluck(:id).each { |x| hash[x.to_s] = now }
     self.forum_view_timestamps = hash
     save
   end
@@ -372,7 +377,8 @@ class User < ApplicationRecord
   end
 
   def last_forum_view(forum_id)
-    self.forum_view_timestamps[forum_id] || Time.new(0)
+    ts = forum_view_timestamps.find_by(forum_id: forum_id)
+    ts ? ts.view_time : Time.new(0)
   end
 
   def self.search(params = {})

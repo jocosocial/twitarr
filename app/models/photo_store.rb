@@ -11,7 +11,9 @@ class PhotoStore
   IMAGE_MAX_FILESIZE = 20000000 # 20MB
 
   def upload(temp_file, uploader)
-    return { status: 'error', error: 'File must be uploaded as form-data.'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+    return { status: 'error', error: 'File must be uploaded as form-data.' } unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+
+    original_filename = temp_file.original_filename
 
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
@@ -27,13 +29,14 @@ class PhotoStore
     end
 
     photo = store(temp_file, uploader)
+    photo.original_filename = original_filename
     tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
 
     sizes = {}
     sizes[:full] = "#{img.columns}x#{img.rows}"
 
     tmp = img
-    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if(tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE)
+    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE
     sizes[:medium_thumb] = "#{tmp.columns}x#{tmp.rows}"
     tmp.write tmp_path
     FileUtils.move tmp_path, md_thumb_path(photo.store_filename)
@@ -50,12 +53,12 @@ class PhotoStore
   end
 
   def read_image(temp_file)
-    img = Magick::Image::read(temp_file).first
+    img = Magick::Image.read(temp_file).first
     img.auto_orient
   end
 
   def upload_profile_photo(temp_file, username)
-    return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+    return { status: 'error', error: 'File must be uploaded as form-data' } unless temp_file.is_a? ActionDispatch::Http::UploadedFile
 
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?

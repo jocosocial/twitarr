@@ -12,18 +12,18 @@
 
 class Reaction < ApplicationRecord
 
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :reaction_id, inverse_of: :reaction
+  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :reaction_id, inverse_of: :reaction, dependent: :destroy
 
   def self.add_reaction(reaction)
-    begin
-      doc = Reaction.find_or_create_by(name: reaction)
-      doc
-    rescue Exception => e
-      logger.error e
-    end
+
+    doc = Reaction.find_or_create_by(name: reaction)
+    doc
+  rescue StandardError => e
+    logger.error e
+
   end
 
   def self.valid_reaction?(reaction)
-    (reaction.nil? || reaction.empty?) || Reaction.where(name: reaction).exists?
+    reaction.blank? || Reaction.where(name: reaction).exists?
   end
 end

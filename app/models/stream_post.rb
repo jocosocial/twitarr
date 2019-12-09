@@ -11,11 +11,15 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  parent_chain    :bigint           default([]), is an Array
+#  mentions        :string           default([]), not null, is an Array
+#  hash_tags       :string           default([]), not null, is an Array
 #
 # Indexes
 #
 #  index_stream_posts_on_author        (author)
+#  index_stream_posts_on_hash_tags     (hash_tags) USING gin
 #  index_stream_posts_on_location_id   (location_id)
+#  index_stream_posts_on_mentions      (mentions) USING gin
 #  index_stream_posts_on_parent_chain  (parent_chain) USING gin
 #  index_stream_posts_text             (to_tsvector('english'::regconfig, (text)::text)) USING gin
 #
@@ -42,15 +46,13 @@ class StreamPost < ApplicationRecord
 
   has_many :post_reactions, dependent: :destroy
   has_many :reactions, class_name: 'Reaction', through: :post_reactions
-  # embeds_many :reactions, class_name: 'PostReaction', store_as: :rn, order: :reaction.asc, validate: true
 
   has_one :post_photo, dependent: :destroy
   has_one :photo_metadata, class_name: 'PhotoMetadata', through: :post_photo
 
   validates :author, :original_author, presence: true
-  validates :text, presence: true, length: {maximum: 2000}
+  validates :text, presence: true, length: { maximum: 2000 }
   # validate :validate_location
-  # validate :validate_photo
 
   after_destroy :reparent_children
 
@@ -59,38 +61,37 @@ class StreamPost < ApplicationRecord
   # index hash_tags: 1
   # index text: 'text'
 
-  # before_validation :parse_hash_tags
+  before_validation :parse_hash_tags
   before_save :post_create_operations
 
-
   def self.at_or_before(ms_since_epoch, options = {})
-    query = where("created_at <= ?", Time.at(ms_since_epoch.to_i / 1000.0))
-    query = query.where(:author.in => options[:filter_authors]) if options.has_key? :filter_authors and !options[:filter_authors].nil?
-    query = query.where(author: options[:filter_author]) if options.has_key? :filter_author and !options[:filter_author].nil?
+    query = where('stream_posts.created_at <= ?', Time.at(ms_since_epoch.to_i / 1000.0))
+    query = query.where(:author.in => options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
+    query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
     # query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
-    if options.has_key? :filter_mentions and !options[:filter_mentions].nil?
-      if options[:mentions_only]
-        query = query.where(mentions: options[:filter_mentions])
-      else
-        query = query.or({mentions: options[:filter_mentions]}, {author: options[:filter_mentions]})
-      end
+    if options.key?(:filter_mentions) && !options[:filter_mentions].nil?
+      query = if options[:mentions_only]
+                query.where('mentions @> ?', "{#{options[:filter_mentions]}}")
+              else
+                query.where('mentions @> ?', "{#{options[:filter_mentions]}}").or(query.where(author: options[:filter_mentions]))
+              end
     end
     query
   end
 
   def self.at_or_after(ms_since_epoch, options = {})
-    query = where(:timestamp.gte => Time.at(ms_since_epoch.to_i / 1000.0))
-    query = query.where(:author.in => options[:filter_authors]) if options.has_key? :filter_authors and !options[:filter_authors].nil?
-    query = query.where(author: options[:filter_author]) if options.has_key? :filter_author and !options[:filter_author].nil?
-    query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
-    query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
-    if options.has_key? :filter_mentions and !options[:filter_mentions].nil?
-      if options[:mentions_only]
-        query = query.where(mentions: options[:filter_mentions])
-      else
-        query = query.or({mentions: options[:filter_mentions]}, {author: options[:filter_mentions]})
-      end
+    query = where('stream_posts.created_at >= ?', Time.at(ms_since_epoch.to_i / 1000.0))
+    query = query.where(:author.in => options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
+    query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
+    # query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
+    # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
+    if options.key?(:filter_mentions) && !options[:filter_mentions].nil?
+      query = if options[:mentions_only]
+                query.where('mentions @> ?', "{#{options[:filter_mentions]}}")
+              else
+                query.where('mentions @> ?', "{#{options[:filter_mentions]}}").or(query.where(author: options[:filter_mentions]))
+              end
     end
     query
   end
@@ -115,14 +116,7 @@ class StreamPost < ApplicationRecord
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = StreamPost.or({ author: /^#{search_text}.*/ }, { '$text' => { '$search' => "\"#{search_text}\"" } })
+    criteria = StreamPost.or({ author: /^#{search_text}.*/ }, '$text' => { '$search' => "\"#{search_text}\"" })
     limit_criteria(criteria, params).order_by(id: :desc)
   end
-
-  # def validate_photo
-  #   return if photo.blank?
-  #   unless PhotoMetadata.exists?(photo)
-  #     errors[:base] << "#{photo} is not a valid photo id"
-  #   end
-  # end
 end

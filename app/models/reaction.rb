@@ -12,7 +12,7 @@
 
 class Reaction < ApplicationRecord
 
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :reaction_id, inverse_of: :reaction
+  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :reaction_id, inverse_of: :reaction, dependent: :destroy
 
   def self.add_reaction(reaction)
 

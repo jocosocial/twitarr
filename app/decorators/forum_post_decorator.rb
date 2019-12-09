@@ -23,7 +23,7 @@ class ForumPostDecorator < BaseDecorator
   def decorate_photos
     return [] unless post_photos
 
-    photo_metadatas.each do |img|
+    photo_metadatas.map do |img|
       {
         id: img.id,
         animated: img.animated,

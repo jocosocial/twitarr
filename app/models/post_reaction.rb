@@ -28,11 +28,9 @@ class PostReaction < ApplicationRecord
   belongs_to :user, inverse_of: :post_reactions
 
   validates :reaction_id, :user_id, presence: true
-  validate :has_association
+  validate :validate_association
 
-  def has_association
-    if stream_post_id.blank? && forum_post_id.blank?
-      errors[:base] = "Must be associated to a stream post or forum post"
-    end
+  def validate_association
+    errors[:base] = 'Must be associated to a stream post or forum post' if stream_post_id.blank? && forum_post_id.blank?
   end
 end

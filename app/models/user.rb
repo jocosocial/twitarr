@@ -74,11 +74,11 @@ class User < ApplicationRecord
   # field :pc, as: :personal_comments, type: Hash, default: {}
   # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
-  has_many :stream_posts, inverse_of: :author
-  has_many :forum_posts, inverse_of: :author
-  has_many :forum_view_timestamps
-  has_many :announcements, inverse_of: :author
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id
+  has_many :stream_posts, inverse_of: :author, dependent: :destroy
+  has_many :forum_posts, inverse_of: :author, dependent: :destroy
+  has_many :forum_view_timestamps, dependent: :destroy
+  has_many :announcements, inverse_of: :author, dependent: :destroy
+  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
 
   # noinspection RubyResolve
   after_save :update_display_name_cache
@@ -285,7 +285,7 @@ class User < ApplicationRecord
   end
 
   def self.get(username)
-    where(username: format_username(username)).first
+    find_by(username: format_username(username))
   end
 
   def reset_photo

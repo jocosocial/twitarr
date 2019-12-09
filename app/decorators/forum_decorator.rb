@@ -2,7 +2,7 @@ class ForumDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::TextHelper
 
-  def to_meta_hash(_user = nil, _page_size = Forum::PAGE_SIZE)
+  def to_meta_hash(_current_user = nil, _page_size = Forum::PAGE_SIZE)
     ret = {
         id: id.to_s,
         subject: subject,
@@ -25,8 +25,8 @@ class ForumDecorator < BaseDecorator
     ret
   end
 
-  def to_hash(user = nil, options = {})
-    last_view = user&.last_forum_view(id.to_s)
+  def to_hash(current_user = nil, options = {})
+    last_view = current_user&.last_forum_view(id.to_s)
     post_count = posts.count
     ret = {
       id: id.to_s,
@@ -34,14 +34,14 @@ class ForumDecorator < BaseDecorator
       sticky: sticky,
       locked: locked,
       post_count: post_count,
-      posts: posts.map { |x| x.decorate.to_hash(locked, user, last_view, options) }
+      posts: posts.map { |x| x.decorate.to_hash(locked, current_user, last_view, options) }
     }
-    ret[:latest_read] = last_view.to_ms unless user.nil?
+    ret[:latest_read] = last_view.to_ms unless current_user.nil?
     ret
   end
 
-  def to_paginated_hash(page, limit = Forum::PAGE_SIZE, user = nil, options = {})
-    last_view = user&.last_forum_view(id.to_s)
+  def to_paginated_hash(page, limit = Forum::PAGE_SIZE, current_user = nil, options = {})
+    last_view = current_user&.last_forum_view(id.to_s)
 
     per_page = limit
     offset = page * per_page
@@ -62,9 +62,9 @@ class ForumDecorator < BaseDecorator
       page: page,
       page_count: page_count,
       post_count: post_count,
-      posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(locked, user, last_view, options) }
+      posts: posts.limit(per_page).offset(offset).map { |x| x.decorate.to_hash(locked, current_user, last_view, options) }
     }
-    ret[:latest_read] = last_view.to_ms unless user.nil?
+    ret[:latest_read] = last_view.to_ms unless current_user.nil?
     ret
   end
 

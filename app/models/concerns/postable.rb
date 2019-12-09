@@ -18,10 +18,12 @@ module Postable
       self.mentions = []
       entities.each do |entity|
         entity = entity.inject({}) { |x, (k, v)| x[k.to_sym] = v; x }
-        if entity.key? :hashtag
-          hash_tags << entity[:hashtag].downcase
-        elsif entity.key? :screen_name
-          mentions << entity[:screen_name].downcase
+        if entity.key?(:hashtag)
+          hash_tag = entity[:hashtag].downcase
+          hash_tags << hash_tag unless hash_tags.include?(hash_tag)
+        elsif entity.key?(:screen_name)
+          screen_name = entity[:screen_name].downcase
+          mentions << screen_name unless mentions.include?(screen_name)
         end
       end
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_011020) do
+ActiveRecord::Schema.define(version: 2019_12_09_043219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 2019_12_09_011020) do
     t.jsonb "sizes", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "original_filename", null: false
     t.index ["md5_hash"], name: "index_photo_metadata_on_md5_hash"
     t.index ["user_id"], name: "index_photo_metadata_on_user_id"
   end

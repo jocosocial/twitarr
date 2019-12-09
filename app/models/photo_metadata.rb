@@ -2,15 +2,16 @@
 #
 # Table name: photo_metadata
 #
-#  id             :bigint           not null, primary key
-#  user_id        :bigint           not null
-#  content_type   :string           not null
-#  store_filename :string           not null
-#  animated       :boolean          default(FALSE), not null
-#  md5_hash       :string           not null
-#  sizes          :jsonb            not null
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
+#  id                :bigint           not null, primary key
+#  user_id           :bigint           not null
+#  content_type      :string           not null
+#  store_filename    :string           not null
+#  animated          :boolean          default(FALSE), not null
+#  md5_hash          :string           not null
+#  sizes             :jsonb            not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  original_filename :string           not null
 #
 # Indexes
 #

@@ -13,6 +13,8 @@ class PhotoStore
   def upload(temp_file, uploader)
     return { status: 'error', error: 'File must be uploaded as form-data.' } unless temp_file.is_a? ActionDispatch::Http::UploadedFile
 
+    original_filename = temp_file.original_filename
+
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
     return { status: 'error', error: 'File exceeds maximum file size of 20MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
@@ -27,6 +29,7 @@ class PhotoStore
     end
 
     photo = store(temp_file, uploader)
+    photo.original_filename = original_filename
     tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
 
     sizes = {}

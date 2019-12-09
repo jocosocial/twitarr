@@ -181,19 +181,15 @@ module Api
       private
 
       def fetch_forum
-
         @forum = Forum.find(params[:id])
       rescue Mongoid::Errors::DocumentNotFound
         render status: :not_found, json: { status: 'error', error: 'Forum thread not found.' }
-
       end
 
       def fetch_post
-
         @post = @forum.posts.find(params[:post_id])
       rescue Mongoid::Errors::DocumentNotFound
         render status: :not_found, json: { status: 'error', error: 'Post not found.' }
-
       end
 
       def check_locked

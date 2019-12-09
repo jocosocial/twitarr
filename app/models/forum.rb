@@ -52,8 +52,7 @@ class Forum < ApplicationRecord
   end
 
   def self.create_new_forum(author, subject, first_post_text, _photos, original_author)
-    forum = Forum.new(subject: subject)
-    # forum.last_post_time = Time.now
+    forum = Forum.new(subject: subject, last_post_time: DateTime.now)
     # binding.pry
     forum.posts << ForumPost.new(author: author, text: first_post_text, original_author: original_author)
     forum.save if forum.valid?

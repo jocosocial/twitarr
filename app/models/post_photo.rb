@@ -20,6 +20,6 @@
 
 class PostPhoto < ApplicationRecord
   belongs_to :photo_metadata, inverse_of: :post_photos
-  belongs_to :forum_post, inverse_of: :post_photos
-  belongs_to :stream_post, inverse_of: :post_photo
+  belongs_to :forum_post, inverse_of: :post_photos, optional: true
+  belongs_to :stream_post, inverse_of: :post_photo, optional: true
 end

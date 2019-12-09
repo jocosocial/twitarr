@@ -42,7 +42,7 @@ module Api
         end
 
         has_next_page = posts.count > params[:limit]
-        posts = posts.limit(params[:limit]).order(id: sort)
+        posts = posts.limit(params[:limit]).order(created_at: sort, id: sort)
 
         posts = posts.map { |x| x } # Execute the query, so that our results are the expected size
 
@@ -78,7 +78,7 @@ module Api
 
         # TODO: Figure out if there's a way to combine these queries
         has_next_page = thread.count > ((start_loc + 1) * limit)
-        children = thread.limit(limit).offset(start_loc * limit).order(id: :asc).map { |x| x.decorate.to_hash(current_user, show_options) }
+        children = thread.limit(limit).offset(start_loc * limit).order(created_at: :asc, id: :asc).map { |x| x.decorate.to_hash(current_user, show_options) }
 
         post_result = @post.decorate.to_hash(current_user, request_options)
         post_result[:children] = children unless children&.empty?

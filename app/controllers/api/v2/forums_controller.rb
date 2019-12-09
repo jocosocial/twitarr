@@ -67,7 +67,7 @@ module Api
       end
 
       def create
-        forum = Forum.create_new_forum post_as_user(params), params[:subject], params[:text], params[:photos], current_user.id
+        forum = Forum.create_new_forum(post_as_user(params), params[:subject], params[:text], params[:photos], current_user.id)
         if forum.valid?
           render json: { status: 'ok', forum_thread: forum.decorate.to_hash(current_user, request_options) }
         else
@@ -84,7 +84,7 @@ module Api
       end
 
       def new_post
-        post = @forum.add_post post_as_user(params), params[:text], params[:photos], current_username
+        post = @forum.add_post(post_as_user(params), params[:text], params[:photos], current_user.id)
         if post.valid?
           @forum.save
           render json: { status: 'ok', forum_post: post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
@@ -98,9 +98,9 @@ module Api
       end
 
       def update_post
-        render(status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_username) || tho?
+        render(status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_user.id) || tho?
         @post[:text] = params[:text]
-        @post[:photos] = params[:photos]
+        # @post[:photos] = params[:photos]
         if @post.valid?
           @post.save
           render json: { status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
@@ -110,7 +110,7 @@ module Api
       end
 
       def delete_post
-        render(status: :forbidden, json: { status: 'error', error: "You can not delete other users' posts." }) && return unless (@post.author == current_username) || moderator?
+        render(status: :forbidden, json: { status: 'error', error: "You can not delete other users' posts." }) && return unless (@post.author == current_user.id) || moderator?
         thread_deleted = false
         @post.destroy
         @forum.reload
@@ -122,23 +122,43 @@ module Api
       end
 
       def react
-        render(status: :bad_request, json: { status: 'error', error: 'Reaction type must be included.' }) && return unless params.key?(:type)
-        @post.add_reaction current_username, params[:type]
+        unless params.key?(:type)
+          render status: :bad_request, json: { status: 'error', error: 'Reaction type must be included.' }
+          return
+        end
+
+        reaction = Reaction.find_by(name: params[:type])
+        unless reaction
+          render status: :bad_request, json: { status: 'error', error: "Invalid reaction: #{params[:type]}" }
+          return
+        end
+
+        @post.add_reaction(current_user.id, reaction.id)
         if @post.valid?
-          render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
+          render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.post_reactions, current_user.id) }
         else
           render status: :bad_request, json: { status: 'error', error: "Invalid reaction: #{params[:type]}" }
         end
       end
 
       def show_reacts
-        render json: { status: 'ok', reactions: @post.reactions.map { |x| x.decorate.to_hash } }
+        render json: { status: 'ok', reactions: @post.post_reactions.map { |x| x.decorate.to_hash } }
       end
 
       def unreact
-        render(status: :bad_request, json: { status: 'error', error: 'Reaction type must be included.' }) && return unless params.key?(:type)
-        @post.remove_reaction current_username, params[:type]
-        render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.reactions, current_username) }
+        unless params.key?(:type)
+          render status: :bad_request, json: { status: 'error', error: 'Reaction type must be included.' }
+          return
+        end
+
+        reaction = Reaction.find_by(name: params[:type])
+        unless reaction
+          render status: :bad_request, json: { status: 'error', error: "Invalid reaction: #{params[:type]}" }
+          return
+        end
+
+        @post.remove_reaction(current_user.id, reaction.id)
+        render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.post_reactions, current_user.id) }
       end
 
       def sticky

@@ -247,7 +247,7 @@ module Api
       end
 
       def show_reacts
-        render json: { status: 'ok', reactions: @post.reactions.map { |x| x.decorate.to_hash } }
+        render json: { status: 'ok', reactions: @post.post_reactions.map { |x| x.decorate.to_hash } }
       end
 
       def unreact

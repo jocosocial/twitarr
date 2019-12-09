@@ -20,6 +20,7 @@ class Forum < ApplicationRecord
   PAGE_SIZE = 20
 
   has_many :posts, class_name: 'ForumPost', dependent: :destroy
+  has_many :forum_view_timestamps, dependent: :destroy
 
   validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts

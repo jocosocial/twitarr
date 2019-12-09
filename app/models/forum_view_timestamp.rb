@@ -20,6 +20,6 @@
 #
 
 class ForumViewTimestamp < ApplicationRecord
-  belongs_to :user, dependent: :destroy
-  belongs_to :forum, dependent: :destroy
+  belongs_to :user
+  belongs_to :forum
 end

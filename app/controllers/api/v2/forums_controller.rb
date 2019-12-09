@@ -202,13 +202,13 @@ module Api
 
       def fetch_forum
         @forum = Forum.find(params[:id])
-      rescue Mongoid::Errors::DocumentNotFound
+      rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Forum thread not found.' }
       end
 
       def fetch_post
         @post = @forum.posts.find(params[:post_id])
-      rescue Mongoid::Errors::DocumentNotFound
+      rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Post not found.' }
       end
 

@@ -59,5 +59,7 @@ module Twitarr
     config.action_dispatch.perform_deep_munge = false
 
     config.photo_store = 'photo_storage'
+
+    config.active_record.schema_format = :sql
   end
 end

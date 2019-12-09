@@ -16,7 +16,7 @@ class ForumPostDecorator < BaseDecorator
         photos: decorate_photos,
         reactions: BaseDecorator.reaction_summary(post_reactions, current_user&.username)
     }
-    ret[:new] = (timestamp > last_view) unless last_view.nil?
+    ret[:new] = (created_at > last_view) unless last_view.nil?
     ret
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_24_040002) do
+ActiveRecord::Schema.define(version: 2019_12_09_011020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,15 @@ ActiveRecord::Schema.define(version: 2019_11_24_040002) do
     t.index ["created_at"], name: "index_forum_posts_on_created_at", order: :desc
     t.index ["hash_tags"], name: "index_forum_posts_on_hash_tags", using: :gin
     t.index ["mentions"], name: "index_forum_posts_on_mentions", using: :gin
+  end
+
+  create_table "forum_view_timestamps", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "forum_id", null: false
+    t.datetime "view_time", null: false
+    t.index ["forum_id"], name: "index_forum_view_timestamps_on_forum_id"
+    t.index ["user_id", "forum_id"], name: "index_forum_view_timestamps_on_user_id_and_forum_id", unique: true
+    t.index ["user_id"], name: "index_forum_view_timestamps_on_user_id"
   end
 
   create_table "forums", force: :cascade do |t|
@@ -157,6 +166,8 @@ ActiveRecord::Schema.define(version: 2019_11_24_040002) do
   add_foreign_key "forum_posts", "forums", on_delete: :cascade
   add_foreign_key "forum_posts", "users", column: "author"
   add_foreign_key "forum_posts", "users", column: "original_author"
+  add_foreign_key "forum_view_timestamps", "forums"
+  add_foreign_key "forum_view_timestamps", "users"
   add_foreign_key "photo_metadata", "users"
   add_foreign_key "post_photos", "forum_posts", on_delete: :cascade
   add_foreign_key "post_photos", "photo_metadata", column: "photo_metadata_id", on_delete: :cascade

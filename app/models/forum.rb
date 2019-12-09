@@ -44,7 +44,7 @@ class Forum < ApplicationRecord
   end
 
   def post_count_since(timestamp)
-    posts.select { |x| x.ts > timestamp }.count
+    posts.select { |x| x.created_at > timestamp }.count
   end
 
   def created_by

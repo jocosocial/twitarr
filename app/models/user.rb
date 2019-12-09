@@ -76,6 +76,7 @@ class User < ApplicationRecord
 
   has_many :stream_posts, inverse_of: :author
   has_many :forum_posts, inverse_of: :author
+  has_many :forum_view_timestamps
   has_many :announcements, inverse_of: :author
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id
 
@@ -325,8 +326,9 @@ class User < ApplicationRecord
   end
 
   def update_forum_view(forum_id)
-    forum_view_timestamps[forum_id] = Time.now
-    save
+    ts = forum_view_timestamps.find_or_initialize_by(forum_id: forum_id)
+    ts.view_time = Time.now
+    ts.save
   end
 
   def mark_all_forums_read(participated_only)
@@ -375,7 +377,8 @@ class User < ApplicationRecord
   end
 
   def last_forum_view(forum_id)
-    forum_view_timestamps[forum_id] || Time.new(0)
+    ts = forum_view_timestamps.find_by(forum_id: forum_id)
+    ts ? ts.view_time : Time.new(0)
   end
 
   def self.search(params = {})

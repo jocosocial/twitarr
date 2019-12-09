@@ -10,6 +10,7 @@
 #  hash_tags       :string           default([]), not null, is an Array
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  forum_id        :bigint           not null
 #
 # Indexes
 #
@@ -22,6 +23,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (author => users.id)
+#  fk_rails_...  (forum_id => forums.id) ON DELETE => cascade
 #  fk_rails_...  (original_author => users.id)
 #
 

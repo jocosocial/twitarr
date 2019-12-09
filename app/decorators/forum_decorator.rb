@@ -2,7 +2,7 @@ class ForumDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::TextHelper
 
-  def to_meta_hash(_current_user = nil, _page_size = Forum::PAGE_SIZE)
+  def to_meta_hash(current_user = nil, page_size = Forum::PAGE_SIZE)
     ret = {
         id: id.to_s,
         subject: subject,
@@ -17,11 +17,11 @@ class ForumDecorator < BaseDecorator
         timestamp: last_post_time.to_ms,
         last_post_page: 0
     }
-    # unless user.nil?
-    #   count = post_count_since(user.last_forum_view(id.to_s))
-    #   ret[:new_posts] = count if count > 0
-    #   ret[:last_post_page] = (post_count - count) / page_size
-    # end
+    unless current_user.nil?
+      count = post_count_since(current_user.last_forum_view(id))
+      ret[:new_posts] = count if count > 0
+      ret[:last_post_page] = (post_count - count) / page_size
+    end
     ret
   end
 

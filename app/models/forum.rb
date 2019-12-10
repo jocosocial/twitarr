@@ -41,19 +41,21 @@ class Forum < ApplicationRecord
   end
 
   def update_cache
-    Rails.cache.fetch("forum:last_post_author:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
-      {
-          username: last_post.user.username,
-          display_name: last_post.user.display_name,
-          last_photo_updated: last_post.user.last_photo_updated.to_ms
-      }
-    end
-    Rails.cache.fetch("forum:post_count:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
-      posts.count
-    end
+    if last_post
+      Rails.cache.fetch("forum:last_post_author:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+        {
+            username: last_post.user.username,
+            display_name: last_post.user.display_name,
+            last_photo_updated: last_post.user.last_photo_updated.to_ms
+        }
+      end
+      Rails.cache.fetch("forum:post_count:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+        posts.count
+      end
 
-    self.last_post_time = last_post.created_at
-    save
+      self.last_post_time = last_post.created_at
+      save
+    end
   end
 
   def last_post_author

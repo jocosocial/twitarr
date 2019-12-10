@@ -43,8 +43,7 @@ class ForumPost < ApplicationRecord
   before_validation :parse_hash_tags
   before_save :post_create_operations
 
-  after_save :update_cache
-  after_destroy :update_cache
+  after_commit :update_cache
   delegate :update_cache, to: :forum
 
   has_many :post_photos, dependent: :destroy

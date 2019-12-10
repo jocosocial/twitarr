@@ -335,7 +335,7 @@ class User < ApplicationRecord
 
   def mark_all_forums_read(participated_only)
     query = Forum.all
-    query = query.includes(:posts).where('forum_posts.author is null or forum_posts.author = ?', id).references(:forum_posts) if participated_only
+    query = query.includes(:posts).where('forum_posts.author = ?', id).references(:forum_posts) if participated_only
 
     now = Time.now
     timestamps = query.pluck(:id).each_with_object({}) { |id, hash| hash[id.to_s] = now }

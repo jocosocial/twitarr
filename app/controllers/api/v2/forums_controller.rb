@@ -24,7 +24,7 @@ module Api
 
         if logged_in? && params.key?(:participated) && params[:participated].to_bool
           begin
-            query = query.includes(:posts).where('forum_posts.author is null or forum_posts.author = ?', current_user.id).references(:forum_posts)
+            query = query.includes(:posts).where('forum_posts.author = ?', current_user.id).references(:forum_posts)
           rescue ArgumentError => e
             errors.push e.message
           end

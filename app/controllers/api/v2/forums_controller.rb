@@ -99,9 +99,14 @@ module Api
 
       def update_post
         render(status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_user.id) || tho?
-        @post[:text] = params[:text]
-        # @post[:photos] = params[:photos]
+
+        @post.text = params[:text]
         if @post.valid?
+          if params[:photos]
+            @post.post_photos.replace(params[:photos].map { |photo| PostPhoto.new(photo_metadata_id: photo) })
+          else
+            @post.post_photos.destroy_all
+          end
           @post.save
           render json: { status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
         else

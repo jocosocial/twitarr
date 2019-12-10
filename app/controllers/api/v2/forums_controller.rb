@@ -20,14 +20,14 @@ module Api
 
         errors.push 'Page must be greater than or equal to zero.' if page < 0
 
-        begin
-          query = if logged_in? && params.key?(:participated) && params[:participated].to_bool
-                    Forum.where('fp.au': current_username).all
-                  else
-                    Forum.all
-                  end
-        rescue ArgumentError => e
-          errors.push e.message
+        query = Forum.all
+        if logged_in?
+          query = Forum.includes(:forum_view_timestamps).where('forum_view_timestamps.user_id is null or forum_view_timestamps.user_id = ?', current_user.id).references(:forum_view_timestamps)
+          begin
+            query.where('fp.au': current_username) if params.key?(:participated) && params[:participated].to_bool
+          rescue ArgumentError => e
+            errors.push e.message
+          end
         end
 
         render(status: :bad_request, json: { status: 'error', errors: errors }) && return if errors.count > 0
@@ -38,7 +38,7 @@ module Api
 
         next_page = (page + 1 if thread_count > (page + 1) * page_size)
         prev_page = (page - 1 if page > 0)
-        render json: { status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page,
+        render json: { status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) }, next_page: next_page,
                       prev_page: prev_page, thread_count: thread_count, page: page, page_count: page_count }
       end
 

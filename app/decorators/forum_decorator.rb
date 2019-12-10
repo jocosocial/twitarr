@@ -8,17 +8,13 @@ class ForumDecorator < BaseDecorator
         subject: subject,
         sticky: sticky,
         locked: locked,
-        last_post_author: {
-          username: posts.last.user.username,
-          display_name: posts.last.user.display_name,
-          last_photo_updated: posts.last.user.last_photo_updated.to_ms
-        },
+        last_post_author: last_post_author,
         posts: post_count,
         timestamp: last_post_time.to_ms,
         last_post_page: 0
     }
     unless current_user.nil?
-      count = post_count_since(current_user.last_forum_view(id))
+      count = post_count_since(forum_view_timestamps.first&.view_time)
       ret[:new_posts] = count if count > 0
       ret[:last_post_page] = (post_count - count) / page_size
     end
@@ -27,7 +23,6 @@ class ForumDecorator < BaseDecorator
 
   def to_hash(current_user = nil, options = {})
     last_view = current_user&.last_forum_view(id.to_s)
-    post_count = posts.count
     ret = {
       id: id.to_s,
       subject: subject,

@@ -169,9 +169,9 @@ def create_forum(subject, text, author, timestamp, photos)
   photos = [photos] unless photos.is_a? Array
   photos = photos.map { |p| p.id }
   forum = Forum.create_new_forum(author, subject, text, photos, author)
-  forum.posts.first.created_at = timestamp
-  forum.last_post_time = timestamp
-  forum.save!
+  post = forum.posts.first
+  post.created_at = timestamp
+  post.save!
   forum
 end
 
@@ -182,8 +182,6 @@ def add_forum_post(forum, text, author, timestamp, photos)
   post =  forum.add_post author, text, photos, author
   post.created_at = timestamp
   post.save!
-  forum.last_post_time = timestamp
-  forum.save
   post
 end
 
@@ -197,10 +195,10 @@ if Forum.count == 0
   add_forum_post f, '@james I <3 food', steve, at_time(8, 20), forum_photos[4]
   add_forum_post f, '@steve @james I think this needs some #warmbread', kvort, at_time(8, 22), forum_photos[5]
 
-  #puts 'Spamming forums...'
-  #for i in 0..1000 do
-  #  create_forum i.to_s, i.to_s, kvort, at_time(8, i%60), []
-  #end
+  puts 'Spamming forums...'
+  for i in 0..1000 do
+   create_forum i.to_s, i.to_s, kvort, at_time(8, i%60), []
+  end
 end
 
 =begin

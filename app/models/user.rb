@@ -80,8 +80,7 @@ class User < ApplicationRecord
   has_many :announcements, inverse_of: :author, dependent: :destroy
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
 
-  # noinspection RubyResolve
-  after_save :update_display_name_cache
+  after_save :update_cache_for_user
 
   validate :valid_role?
   validate :valid_mute_reason?
@@ -356,18 +355,18 @@ class User < ApplicationRecord
   def self.display_name_from_username(username)
     username = format_username(username)
     Rails.cache.fetch("display_name:#{username}", expires_in: USERNAME_CACHE_TIME) do
-      User.where(username: username).only(:display_name).map(:display_name).first
+      User.find_by(username: username).display_name
     end
   end
 
   def self.last_photo_updated_from_username(username)
     username = format_username(username)
     Rails.cache.fetch("last_photo_updated:#{username}", expires_in: USERNAME_CACHE_TIME) do
-      User.where(username: username).only(:last_photo_updated).map(:last_photo_updated).first
+      User.find_by(username: username).last_photo_updated
     end
   end
 
-  def update_display_name_cache
+  def update_cache_for_user
     Rails.cache.fetch("display_name:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
       display_name
     end

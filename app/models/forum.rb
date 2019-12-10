@@ -3,10 +3,10 @@
 # Table name: forums
 #
 #  id             :bigint           not null, primary key
-#  subject        :string           not null
 #  last_post_time :datetime         not null
-#  sticky         :boolean          default(FALSE), not null
 #  locked         :boolean          default(FALSE), not null
+#  sticky         :boolean          default(FALSE), not null
+#  subject        :string           not null
 #
 # Indexes
 #
@@ -18,8 +18,9 @@ class Forum < ApplicationRecord
   include Searchable
 
   PAGE_SIZE = 20
+  FORUM_CACHE_TIME = 30.minutes
 
-  has_many :posts, class_name: 'ForumPost', dependent: :destroy
+  has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum
   has_many :forum_view_timestamps, dependent: :destroy
 
   validates :subject, presence: true, length: { maximum: 200 }
@@ -37,33 +38,58 @@ class Forum < ApplicationRecord
   end
 
   def last_post
-    posts.last.timestamp
+    posts.includes(:user).order(:created_at).last
+  end
+
+  def update_cache
+    Rails.cache.fetch("forum:last_post_author:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+      {
+          username: last_post.user.username,
+          display_name: last_post.user.display_name,
+          last_photo_updated: last_post.user.last_photo_updated.to_ms
+      }
+    end
+    Rails.cache.fetch("forum:post_count:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+      posts.count
+    end
+
+    self.last_post_time = last_post.created_at
+    save
+  end
+
+  def last_post_author
+    Rails.cache.fetch("forum:last_post_author:#{id}", expires_in: FORUM_CACHE_TIME) do
+      {
+          username: last_post.user.username,
+          display_name: last_post.user.display_name,
+          last_photo_updated: last_post.user.last_photo_updated.to_ms
+      }
+    end
   end
 
   def post_count
-    posts.size
+    Rails.cache.fetch("forum:post_count:#{id}", expires_in: FORUM_CACHE_TIME) do
+      posts.count
+    end
   end
 
   def post_count_since(timestamp)
-    posts.select { |x| x.created_at > timestamp }.count
-  end
-
-  def created_by
-    posts.first.author
+    if timestamp
+      posts.where('created_at > ?', timestamp).count
+    else
+      post_count
+    end
   end
 
   def self.create_new_forum(author, subject, first_post_text, _photos, original_author)
-    forum = Forum.new(subject: subject, last_post_time: DateTime.now)
-    # binding.pry
+    forum = Forum.new(subject: subject)
     forum.posts << ForumPost.new(author: author, text: first_post_text, original_author: original_author)
     forum.save if forum.valid?
     forum
   end
 
-  # This is just a terrible scheme
   def add_post(author, text, _photos, original_author)
-    self.last_post_time = Time.now
-    posts.create author: author, text: text, original_author: original_author
+    posts.create(author: author, text: text, original_author: original_author)
   end
 
   def self.view_mentions(params = {})

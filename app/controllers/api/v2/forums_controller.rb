@@ -32,7 +32,7 @@ module Api
         render(status: :bad_request, json: { status: 'error', errors: errors }) && return if errors.count > 0
 
         thread_count = query.count
-        query = query.order(sticky: :desc, last_post_time: :desc).offset(page * page_size).limit(page_size)
+        query = query.order(sticky: :desc, last_post_time: :desc, id: :desc).offset(page * page_size).limit(page_size)
         page_count = (thread_count.to_f / page_size).ceil
 
         next_page = (page + 1 if thread_count > (page + 1) * page_size)

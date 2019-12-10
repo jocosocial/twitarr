@@ -20,10 +20,11 @@ module Api
 
         errors.push 'Page must be greater than or equal to zero.' if page < 0
 
-        query = Forum.base_query(current_user)
-        if logged_in?
+        query = Forum.all
+
+        if logged_in? && params.key?(:participated) && params[:participated].to_bool
           begin
-            query.where('fp.au': current_username) if params.key?(:participated) && params[:participated].to_bool
+            query = query.includes(:posts).where('forum_posts.author is null or forum_posts.author = ?', current_user.id).references(:forum_posts)
           rescue ArgumentError => e
             errors.push e.message
           end
@@ -200,7 +201,7 @@ module Api
       private
 
       def fetch_forum
-        @forum = Forum.base_query(current_user).includes(:posts).find(params[:id])
+        @forum = Forum.includes(:posts).find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Forum thread not found.' }
       end

@@ -14,7 +14,7 @@ class ForumDecorator < BaseDecorator
         last_post_page: 0
     }
     unless current_user.nil?
-      count = post_count_since(forum_view_timestamps.first&.view_time)
+      count = post_count_since(current_user.forum_last_view(id))
       ret[:new_posts] = count if count > 0
       ret[:last_post_page] = (post_count - count) / page_size
     end
@@ -22,7 +22,7 @@ class ForumDecorator < BaseDecorator
   end
 
   def to_hash(current_user = nil, options = {})
-    last_view = forum_view_timestamps.first&.view_time
+    last_view = current_user&.forum_last_view(id)
 
     ret = {
       id: id.to_s,
@@ -45,7 +45,7 @@ class ForumDecorator < BaseDecorator
     prev_page = page - 1 unless (offset - 1) < 0
     page_count = (posts.count.to_f / page_size).ceil
 
-    last_view = forum_view_timestamps.first&.view_time
+    last_view = current_user&.forum_last_view(id)
 
     ret = {
       id: id.to_s,

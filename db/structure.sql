@@ -54,8 +54,8 @@ ALTER SEQUENCE public.announcements_id_seq OWNED BY public.announcements.id;
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -93,37 +93,6 @@ CREATE SEQUENCE public.forum_posts_id_seq
 --
 
 ALTER SEQUENCE public.forum_posts_id_seq OWNED BY public.forum_posts.id;
-
-
---
--- Name: forum_view_timestamps; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.forum_view_timestamps (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    forum_id bigint NOT NULL,
-    view_time timestamp without time zone NOT NULL
-);
-
-
---
--- Name: forum_view_timestamps_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.forum_view_timestamps_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: forum_view_timestamps_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.forum_view_timestamps_id_seq OWNED BY public.forum_view_timestamps.id;
 
 
 --
@@ -454,7 +423,8 @@ CREATE TABLE public.users (
     ban_reason character varying,
     mute_thread character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    forum_view_timestamps jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -489,13 +459,6 @@ ALTER TABLE ONLY public.announcements ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.forum_posts ALTER COLUMN id SET DEFAULT nextval('public.forum_posts_id_seq'::regclass);
-
-
---
--- Name: forum_view_timestamps id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.forum_view_timestamps ALTER COLUMN id SET DEFAULT nextval('public.forum_view_timestamps_id_seq'::regclass);
 
 
 --
@@ -590,14 +553,6 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 ALTER TABLE ONLY public.forum_posts
     ADD CONSTRAINT forum_posts_pkey PRIMARY KEY (id);
-
-
---
--- Name: forum_view_timestamps forum_view_timestamps_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.forum_view_timestamps
-    ADD CONSTRAINT forum_view_timestamps_pkey PRIMARY KEY (id);
 
 
 --
@@ -728,27 +683,6 @@ CREATE INDEX index_forum_posts_on_mentions ON public.forum_posts USING gin (ment
 --
 
 CREATE INDEX index_forum_posts_text ON public.forum_posts USING gin (to_tsvector('english'::regconfig, (text)::text));
-
-
---
--- Name: index_forum_view_timestamps_on_forum_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_forum_view_timestamps_on_forum_id ON public.forum_view_timestamps USING btree (forum_id);
-
-
---
--- Name: index_forum_view_timestamps_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_forum_view_timestamps_on_user_id ON public.forum_view_timestamps USING btree (user_id);
-
-
---
--- Name: index_forum_view_timestamps_on_user_id_and_forum_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_forum_view_timestamps_on_user_id_and_forum_id ON public.forum_view_timestamps USING btree (user_id, forum_id);
 
 
 --
@@ -924,14 +858,6 @@ ALTER TABLE ONLY public.announcements
 
 
 --
--- Name: forum_view_timestamps fk_rails_34535562e7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.forum_view_timestamps
-    ADD CONSTRAINT fk_rails_34535562e7 FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: forum_posts fk_rails_3ddde06812; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1017,14 +943,6 @@ ALTER TABLE ONLY public.photo_metadata
 
 ALTER TABLE ONLY public.announcements
     ADD CONSTRAINT fk_rails_bd87d26586 FOREIGN KEY (original_author) REFERENCES public.users(id);
-
-
---
--- Name: forum_view_timestamps fk_rails_e10c416a5a; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.forum_view_timestamps
-    ADD CONSTRAINT fk_rails_e10c416a5a FOREIGN KEY (forum_id) REFERENCES public.forums(id);
 
 
 --

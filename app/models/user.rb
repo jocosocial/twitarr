@@ -2,28 +2,29 @@
 #
 # Table name: users
 #
-#  id                 :bigint           not null, primary key
-#  username           :string
-#  password           :string
-#  role               :integer
-#  status             :string
-#  email              :string
-#  display_name       :string
-#  last_login         :datetime
-#  last_viewed_alerts :datetime
-#  photo_hash         :string
-#  last_photo_updated :datetime         not null
-#  room_number        :string
-#  real_name          :string
-#  home_location      :string
-#  current_location   :string
-#  registration_code  :string
-#  pronouns           :string
-#  mute_reason        :string
-#  ban_reason         :string
-#  mute_thread        :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
+#  id                    :bigint           not null, primary key
+#  ban_reason            :string
+#  current_location      :string
+#  display_name          :string
+#  email                 :string
+#  forum_view_timestamps :jsonb            not null
+#  home_location         :string
+#  last_login            :datetime
+#  last_photo_updated    :datetime         not null
+#  last_viewed_alerts    :datetime
+#  mute_reason           :string
+#  mute_thread           :string
+#  password              :string
+#  photo_hash            :string
+#  pronouns              :string
+#  real_name             :string
+#  registration_code     :string
+#  role                  :integer
+#  room_number           :string
+#  status                :string
+#  username              :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -76,7 +77,6 @@ class User < ApplicationRecord
 
   has_many :stream_posts, inverse_of: :author, dependent: :destroy
   has_many :forum_posts, inverse_of: :author, dependent: :destroy
-  has_many :forum_view_timestamps, dependent: :destroy
   has_many :announcements, inverse_of: :author, dependent: :destroy
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
 
@@ -324,19 +324,22 @@ class User < ApplicationRecord
     # Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
+  def forum_last_view(forum_id)
+    forum_view_timestamps[forum_id.to_s]&.to_time
+  end
+
   def update_forum_view(forum_id)
-    ts = forum_view_timestamps.find_or_initialize_by(forum_id: forum_id)
-    ts.view_time = Time.now
-    ts.save
+    forum_view_timestamps[forum_id.to_s] = Time.now
+    save
   end
 
   def mark_all_forums_read(participated_only)
-    query = participated_only ? Forum.where('fp.au': username).all : Forum.all
+    query = Forum.all
+    query = query.includes(:posts).where('forum_posts.author is null or forum_posts.author = ?', id).references(:forum_posts) if participated_only
 
     now = Time.now
-    hash = Hash.new
-    query.pluck(:id).each { |x| hash[x.to_s] = now }
-    self.forum_view_timestamps = hash
+    timestamps = query.pluck(:id).each_with_object({}) { |id, hash| hash[id.to_s] = now }
+    self.forum_view_timestamps = timestamps
     save
   end
 

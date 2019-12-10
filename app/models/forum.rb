@@ -21,18 +21,9 @@ class Forum < ApplicationRecord
   FORUM_CACHE_TIME = 30.minutes
 
   has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum
-  has_many :forum_view_timestamps, dependent: :destroy
 
   validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts
-
-  def self.base_query(current_user)
-    if current_user
-      Forum.includes(:forum_view_timestamps).where('forum_view_timestamps.user_id is null or forum_view_timestamps.user_id = ?', current_user.id).references(:forum_view_timestamps)
-    else
-      Forum.all
-    end
-  end
 
   def validate_posts
     errors[:base] << 'Must have a post' if posts.empty?

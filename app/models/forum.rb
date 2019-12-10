@@ -82,15 +82,24 @@ class Forum < ApplicationRecord
     end
   end
 
-  def self.create_new_forum(author, subject, first_post_text, _photos, original_author)
+  def self.create_new_forum(author, subject, first_post_text, photos, original_author)
     forum = Forum.new(subject: subject)
-    forum.posts << ForumPost.new(author: author, text: first_post_text, original_author: original_author)
+    post = ForumPost.new(author: author, text: first_post_text, original_author: original_author)
+    photos&.each do |photo|
+      post.post_photos << PostPhoto.new(photo_metadata_id: photo)
+    end
+    forum.posts << post
     forum.save if forum.valid?
     forum
   end
 
-  def add_post(author, text, _photos, original_author)
-    posts.create(author: author, text: text, original_author: original_author)
+  def add_post(author, text, photos, original_author)
+    post = ForumPost.new(author: author, text: text, original_author: original_author)
+    photos&.each do |photo|
+      post.post_photos << PostPhoto.new(photo_metadata_id: photo)
+    end
+    posts << post
+    post
   end
 
   def self.view_mentions(params = {})

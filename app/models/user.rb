@@ -329,8 +329,9 @@ class User < ApplicationRecord
   end
 
   def update_forum_view(forum_id)
-    forum_view_timestamps[forum_id.to_s] = Time.now
-    save
+    # rubocop:disable Rails/SkipsModelValidations
+    User.where(id: id).update_all("forum_view_timestamps = jsonb_set(forum_view_timestamps, '{#{forum_id}}', '\"#{Time.now}\"'::jsonb)")
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def mark_all_forums_read(participated_only)

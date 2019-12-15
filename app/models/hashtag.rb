@@ -36,10 +36,10 @@ class Hashtag < ApplicationRecord
 
   # this is probably not going to be a fast operation
   def self.repopulate_hashtags
-    StreamPost.distinct(:hash_tags).each do |ht|
+    StreamPost.all.pluck(:hash_tags).flatten.uniq.each do |ht|
       Hashtag.add_tag ht
     end
-    ForumPost.distinct(:hash_tags).each do |ht|
+    ForumPost.all.pluck(:hash_tags).flatten.uniq.each do |ht|
       Hashtag.add_tag ht
     end
   end

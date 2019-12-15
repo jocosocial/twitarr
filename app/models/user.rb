@@ -2,29 +2,28 @@
 #
 # Table name: users
 #
-#  id                    :bigint           not null, primary key
-#  ban_reason            :string
-#  current_location      :string
-#  display_name          :string
-#  email                 :string
-#  forum_view_timestamps :jsonb            not null
-#  home_location         :string
-#  last_login            :datetime
-#  last_photo_updated    :datetime         not null
-#  last_viewed_alerts    :datetime
-#  mute_reason           :string
-#  mute_thread           :string
-#  password              :string
-#  photo_hash            :string
-#  pronouns              :string
-#  real_name             :string
-#  registration_code     :string
-#  role                  :integer
-#  room_number           :string
-#  status                :string
-#  username              :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
+#  id                 :bigint           not null, primary key
+#  ban_reason         :string
+#  current_location   :string
+#  display_name       :string
+#  email              :string
+#  home_location      :string
+#  last_login         :datetime
+#  last_photo_updated :datetime         not null
+#  last_viewed_alerts :datetime
+#  mute_reason        :string
+#  mute_thread        :string
+#  password           :string
+#  photo_hash         :string
+#  pronouns           :string
+#  real_name          :string
+#  registration_code  :string
+#  role               :integer
+#  room_number        :string
+#  status             :string
+#  username           :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 # Indexes
 #
@@ -79,7 +78,9 @@ class User < ApplicationRecord
   has_many :forum_posts, inverse_of: :author, dependent: :destroy
   has_many :announcements, inverse_of: :author, dependent: :destroy
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
+  has_one :forum_view, class_name: 'UserForumView', dependent: :destroy, autosave: true
 
+  before_create :build_forum_view
   after_save :update_cache_for_user
 
   validate :valid_role?
@@ -324,25 +325,16 @@ class User < ApplicationRecord
     # Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
+  def build_forum_view
+    self.forum_view = UserForumView.create
+  end
+
   def forum_last_view(forum_id)
-    forum_view_timestamps[forum_id.to_s]&.to_time
+    forum_view&.data[forum_id.to_s]&.to_datetime
   end
 
-  def update_forum_view(forum_id)
-    # rubocop:disable Rails/SkipsModelValidations
-    User.where(id: id).update_all("forum_view_timestamps = jsonb_set(forum_view_timestamps, '{#{forum_id}}', '\"#{Time.now}\"'::jsonb)")
-    # rubocop:enable Rails/SkipsModelValidations
-  end
-
-  def mark_all_forums_read(participated_only)
-    query = Forum.all
-    query = query.includes(:posts).where('forum_posts.author = ?', id).references(:forum_posts) if participated_only
-
-    now = Time.now
-    timestamps = query.pluck(:id).each_with_object({}) { |id, hash| hash[id.to_s] = now }
-    self.forum_view_timestamps = timestamps
-    save
-  end
+  delegate :update_forum_view, to: :forum_view
+  delegate :mark_all_forums_read, to: :forum_view
 
   def reset_last_viewed_alerts(time = Time.now)
     self.last_viewed_alerts = time

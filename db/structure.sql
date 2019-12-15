@@ -398,6 +398,36 @@ ALTER SEQUENCE public.stream_posts_id_seq OWNED BY public.stream_posts.id;
 
 
 --
+-- Name: user_forum_views; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_forum_views (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: user_forum_views_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_forum_views_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_forum_views_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_forum_views_id_seq OWNED BY public.user_forum_views.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -423,8 +453,7 @@ CREATE TABLE public.users (
     ban_reason character varying,
     mute_thread character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    forum_view_timestamps jsonb DEFAULT '{}'::jsonb NOT NULL
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -522,6 +551,13 @@ ALTER TABLE ONLY public.sections ALTER COLUMN id SET DEFAULT nextval('public.sec
 --
 
 ALTER TABLE ONLY public.stream_posts ALTER COLUMN id SET DEFAULT nextval('public.stream_posts_id_seq'::regclass);
+
+
+--
+-- Name: user_forum_views id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_forum_views ALTER COLUMN id SET DEFAULT nextval('public.user_forum_views_id_seq'::regclass);
 
 
 --
@@ -633,6 +669,14 @@ ALTER TABLE ONLY public.sections
 
 ALTER TABLE ONLY public.stream_posts
     ADD CONSTRAINT stream_posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_forum_views user_forum_views_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_forum_views
+    ADD CONSTRAINT user_forum_views_pkey PRIMARY KEY (id);
 
 
 --
@@ -805,6 +849,13 @@ CREATE INDEX index_stream_posts_text ON public.stream_posts USING gin (to_tsvect
 
 
 --
+-- Name: index_user_forum_views_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_forum_views_on_user_id ON public.user_forum_views USING btree (user_id);
+
+
+--
 -- Name: index_users_on_display_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -855,6 +906,14 @@ ALTER TABLE ONLY public.post_reactions
 
 ALTER TABLE ONLY public.announcements
     ADD CONSTRAINT fk_rails_2eb97675c2 FOREIGN KEY (author) REFERENCES public.users(id);
+
+
+--
+-- Name: user_forum_views fk_rails_3a04857500; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_forum_views
+    ADD CONSTRAINT fk_rails_3a04857500 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

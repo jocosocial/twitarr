@@ -174,7 +174,7 @@ module Api
           parent_locked = parent.locked
         end
 
-        post = StreamPost.create(
+        post = StreamPost.new(
           text: params[:text],
           author: post_as_user(params),
           parent_chain: parent_chain,
@@ -182,10 +182,10 @@ module Api
           original_author: current_user.id,
           locked: parent_locked
         )
-
-        post.post_photo = PostPhoto.create(photo_metadata_id: params[:photo]) if params.key?(:photo) && params[:photo].present?
+        post.post_photo = PostPhoto.new(photo_metadata_id: params[:photo]) if params.key?(:photo) && params[:photo].present?
 
         if post.valid?
+          post.save
           if params[:location]
             # if the location field was used, update the user's last known location
             current_user.current_location = params[:location]

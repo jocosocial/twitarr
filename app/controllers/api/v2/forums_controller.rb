@@ -20,25 +20,25 @@ module Api
 
         errors.push 'Page must be greater than or equal to zero.' if page < 0
 
-        begin
-          query = if logged_in? && params.key?(:participated) && params[:participated].to_bool
-                    Forum.where('fp.au': current_username).all
-                  else
-                    Forum.all
-                  end
-        rescue ArgumentError => e
-          errors.push e.message
+        query = Forum.all
+
+        if logged_in? && params.key?(:participated) && params[:participated].to_bool
+          begin
+            query = query.includes(:posts).where('forum_posts.author = ?', current_user.id).references(:forum_posts)
+          rescue ArgumentError => e
+            errors.push e.message
+          end
         end
 
         render(status: :bad_request, json: { status: 'error', errors: errors }) && return if errors.count > 0
 
         thread_count = query.count
-        query = query.order(sticky: :desc, last_post_time: :desc).offset(page * page_size).limit(page_size)
+        query = query.order(sticky: :desc, last_post_time: :desc, id: :desc).offset(page * page_size).limit(page_size)
         page_count = (thread_count.to_f / page_size).ceil
 
         next_page = (page + 1 if thread_count > (page + 1) * page_size)
         prev_page = (page - 1 if page > 0)
-        render json: { status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(current_user, page_size) }, next_page: next_page,
+        render json: { status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) }, next_page: next_page,
                       prev_page: prev_page, thread_count: thread_count, page: page, page_count: page_count }
       end
 
@@ -99,9 +99,14 @@ module Api
 
       def update_post
         render(status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_user.id) || tho?
-        @post[:text] = params[:text]
-        # @post[:photos] = params[:photos]
+
+        @post.text = params[:text]
         if @post.valid?
+          if params[:photos]
+            @post.post_photos.replace(params[:photos].map { |photo| PostPhoto.new(photo_metadata_id: photo) })
+          else
+            @post.post_photos.destroy_all
+          end
           @post.save
           render json: { status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
         else
@@ -201,13 +206,13 @@ module Api
       private
 
       def fetch_forum
-        @forum = Forum.find(params[:id])
+        @forum = Forum.includes(:posts).find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Forum thread not found.' }
       end
 
       def fetch_post
-        @post = @forum.posts.find(params[:post_id])
+        @post = ForumPost.find(params[:post_id])
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Post not found.' }
       end

@@ -6,7 +6,7 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
         window.scrollTo(0, position.top - 80)
     )
   )
-  
+
   has_new_posts: (->
     for post in @get('model.forum.posts')
       return true if post.timestamp > @get('model.forum.latest_read')
@@ -47,7 +47,7 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
   can_reply: (->
     @get('logged_in') and (@get('model.next_page') is null or undefined) and (not @get('model.forum.locked') or @get('role_moderator'))
   ).property('logged_in', 'model.forum.locked', 'application.login_role')
-  
+
   actions:
     handleKeyDown: (v,e) ->
       @send('new') if e.ctrlKey and e.keyCode == 13
@@ -70,10 +70,10 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
         Ember.run =>
           @set 'posting', false
           @set 'model.new_post', ''
-          @set('model.errors', Ember.A())
+          @get('errors').clear()
           @get('photo_ids').clear()
           @send 'reload'
-      )        
+      )
     next_page: ->
       return if @get('model.next_page') is null or undefined
       @transitionToRoute('forums.detail', @get('model.next_page'))
@@ -191,7 +191,7 @@ Twitarr.ForumsNewController = Twitarr.Controller.extend Twitarr.MultiplePhotoUpl
           @set 'posting', false
           @set 'subject', ''
           @set 'text', ''
-          @set 'errors', Ember.A()
+          @get('errors').clear()
           @get('photo_ids').clear()
           @transitionToRoute('forums.detail', response.forum.id, 0)
       )
@@ -246,7 +246,7 @@ Twitarr.ForumsMetaPartialController = Twitarr.Controller.extend
       "#{@get('model.posts')} #{post_word}, #{@get('model.new_posts')} <b class=\"highlight\">new</b>"
     else
       "#{@get('model.posts')} #{post_word}"
-  ).property('model.posts', 'model.new_posts') 
+  ).property('model.posts', 'model.new_posts')
 
 Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
   maxPagesToDisplay: 9 # Should be odd
@@ -268,7 +268,7 @@ Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
       excluded: false
       page: pageNumber
       current: currentPage == pageNumber-1
-    
+
     if pages.length > maxPages
       currentPage = currentPage + 1
       currentPosition = ((maxPages - 1) / 2) + 1
@@ -276,7 +276,7 @@ Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
         currentPosition = currentPage
       if (pageCount - currentPage) < (maxPages - currentPosition)
         currentPosition = maxPages - (pageCount - currentPage)
-      
+
       if (pageCount - currentPage) > (maxPages - currentPosition)
         maxDistance = maxPages - currentPosition
         overspill = pageCount - currentPage - maxDistance
@@ -285,7 +285,7 @@ Twitarr.ForumsPagingPartialController = Twitarr.Controller.extend
         pages.replace idx, toRemove, [
           excluded: true
         ]
-      
+
       if currentPage > currentPosition
         maxDistance = currentPosition
         overspill = currentPage - currentPosition
@@ -316,7 +316,7 @@ Twitarr.ForumsEditController = Twitarr.Controller.extend Twitarr.MultiplePhotoUp
 
     cancel: ->
       window.history.back()
-    
+
     save: ->
       if @get('application.uploads_pending')
         alert('Please wait for uploads to finish.')
@@ -333,7 +333,7 @@ Twitarr.ForumsEditController = Twitarr.Controller.extend Twitarr.MultiplePhotoUp
           alert 'Post could not be saved! Please try again later. Or try again someplace without so many seamonkeys.'
       ).then((response) =>
         Ember.run =>
-          @set('model.errors', Ember.A())
+          @get('errors').clear()
           @set 'posting', false
           window.history.back()
       )

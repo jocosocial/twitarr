@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by(username: current_username)
+    @current_user ||= User.find_by(username: current_username) if current_username
   end
 
   def admin_user

@@ -37,13 +37,17 @@ class ForumPost < ApplicationRecord
   belongs_to :forum, inverse_of: :posts
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :forum_posts
 
-  # embedded_in :forum, inverse_of: :posts
+  has_many :post_photos, dependent: :destroy
+  has_many :photo_metadata, class_name: 'PhotoMetadata', through: :post_photos
 
   validates :author, :original_author, presence: true
   validates :text, presence: true, length: { maximum: 10000 }
 
   before_validation :parse_hash_tags
   before_save :post_create_operations
+
+  after_commit :update_cache
+  delegate :update_cache, to: :forum
 
   has_many :post_photos, dependent: :destroy
   has_many :photo_metadatas, class_name: 'PhotoMetadata', through: :post_photos

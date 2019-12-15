@@ -3,25 +3,25 @@
 # Table name: users
 #
 #  id                 :bigint           not null, primary key
-#  username           :string
-#  password           :string
-#  role               :integer
-#  status             :string
-#  email              :string
-#  display_name       :string
-#  last_login         :datetime
-#  last_viewed_alerts :datetime
-#  photo_hash         :string
-#  last_photo_updated :datetime         not null
-#  room_number        :string
-#  real_name          :string
-#  home_location      :string
-#  current_location   :string
-#  registration_code  :string
-#  pronouns           :string
-#  mute_reason        :string
 #  ban_reason         :string
+#  current_location   :string
+#  display_name       :string
+#  email              :string
+#  home_location      :string
+#  last_login         :datetime
+#  last_photo_updated :datetime         not null
+#  last_viewed_alerts :datetime
+#  mute_reason        :string
 #  mute_thread        :string
+#  password           :string
+#  photo_hash         :string
+#  pronouns           :string
+#  real_name          :string
+#  registration_code  :string
+#  role               :integer
+#  room_number        :string
+#  status             :string
+#  username           :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
@@ -76,12 +76,12 @@ class User < ApplicationRecord
 
   has_many :stream_posts, inverse_of: :author, dependent: :destroy
   has_many :forum_posts, inverse_of: :author, dependent: :destroy
-  has_many :forum_view_timestamps, dependent: :destroy
   has_many :announcements, inverse_of: :author, dependent: :destroy
   has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
+  has_one :forum_view, class_name: 'UserForumView', dependent: :destroy, autosave: true
 
-  # noinspection RubyResolve
-  after_save :update_display_name_cache
+  before_create :build_forum_view
+  after_save :update_cache_for_user
 
   validate :valid_role?
   validate :valid_mute_reason?
@@ -192,15 +192,16 @@ class User < ApplicationRecord
   end
 
   def upcoming_events(alerts = false)
-    events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
-    events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
-    events = events.map { |x| x if x.favorites.include? username }.compact
-    if alerts
-      events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
-      events.each { |e| acknowledged_event_alerts << e.id unless acknowledged_event_alerts.include? e.id }
-      save!
-    end
-    events
+    # events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
+    # events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
+    # events = events.map { |x| x if x.favorites.include? username }.compact
+    # if alerts
+    #  events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
+    #  events.each { |e| acknowledged_event_alerts << e.id unless acknowledged_event_alerts.include? e.id }
+    #  save!
+    # end
+    # events
+    []
   end
 
   def unnoticed_upcoming_events
@@ -211,37 +212,38 @@ class User < ApplicationRecord
   end
 
   def seamails(params = {})
-    thread_query = Hash.new
-    thread_query['us'] = username
-    thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)
-
-    post_query = Hash.new
-    post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
-    post_query['sm.ts'] = { '$gt': params[:after] } if params.key?(:after)
-
-    aggregation = Array.new
-    aggregation.push('$match' => thread_query)
-    aggregation.push('$unwind' => '$sm')
-
-    aggregation.push('$match' => post_query) unless post_query.empty?
-
-    aggregation.push('$sort' => { 'sm.ts' => -1 })
-    aggregation.push(
-      '$group' => {
-        '_id': '$_id',
-        'deleted_at': { '$first': '$deleted_at' },
-        'us': { '$first': '$us' },
-        'sj': { '$first': '$sj' },
-        'up': { '$first': '$up' },
-        'updated_at': { '$first': '$updated_at' },
-        'created_at': { '$first': '$created_at' },
-        'sm': { '$push': '$sm' }
-      }
-    )
-
-    result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
-
-    result.sort_by(&:last_message).reverse
+    # thread_query = Hash.new
+    # thread_query['us'] = username
+    # thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)
+    #
+    # post_query = Hash.new
+    # post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
+    # post_query['sm.ts'] = { '$gt': params[:after] } if params.key?(:after)
+    #
+    # aggregation = Array.new
+    # aggregation.push('$match' => thread_query)
+    # aggregation.push('$unwind' => '$sm')
+    #
+    # aggregation.push('$match' => post_query) unless post_query.empty?
+    #
+    # aggregation.push('$sort' => { 'sm.ts' => -1 })
+    # aggregation.push(
+    #  '$group' => {
+    #    '_id': '$_id',
+    #    'deleted_at': { '$first': '$deleted_at' },
+    #    'us': { '$first': '$us' },
+    #    'sj': { '$first': '$sj' },
+    #    'up': { '$first': '$up' },
+    #    'updated_at': { '$first': '$updated_at' },
+    #    'created_at': { '$first': '$created_at' },
+    #    'sm': { '$push': '$sm' }
+    #  }
+    # )
+    #
+    # result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
+    #
+    # result.sort_by(&:last_message).reverse
+    []
   end
 
   def seamail_unread_count
@@ -321,25 +323,20 @@ class User < ApplicationRecord
   end
 
   def unnoticed_mentions
-    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count # +
-    # Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
+    Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
-  def update_forum_view(forum_id)
-    ts = forum_view_timestamps.find_or_initialize_by(forum_id: forum_id)
-    ts.view_time = Time.now
-    ts.save
+  def build_forum_view
+    self.forum_view = UserForumView.create
   end
 
-  def mark_all_forums_read(participated_only)
-    query = participated_only ? Forum.where('fp.au': username).all : Forum.all
-
-    now = Time.now
-    hash = Hash.new
-    query.pluck(:id).each { |x| hash[x.to_s] = now }
-    self.forum_view_timestamps = hash
-    save
+  def forum_last_view(forum_id)
+    forum_view.data[forum_id.to_s]&.to_datetime
   end
+
+  delegate :update_forum_view, to: :forum_view
+  delegate :mark_all_forums_read, to: :forum_view
 
   def reset_last_viewed_alerts(time = Time.now)
     self.last_viewed_alerts = time
@@ -356,18 +353,18 @@ class User < ApplicationRecord
   def self.display_name_from_username(username)
     username = format_username(username)
     Rails.cache.fetch("display_name:#{username}", expires_in: USERNAME_CACHE_TIME) do
-      User.where(username: username).only(:display_name).map(:display_name).first
+      User.find_by(username: username).display_name
     end
   end
 
   def self.last_photo_updated_from_username(username)
     username = format_username(username)
     Rails.cache.fetch("last_photo_updated:#{username}", expires_in: USERNAME_CACHE_TIME) do
-      User.where(username: username).only(:last_photo_updated).map(:last_photo_updated).first
+      User.find_by(username: username).last_photo_updated
     end
   end
 
-  def update_display_name_cache
+  def update_cache_for_user
     Rails.cache.fetch("display_name:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
       display_name
     end

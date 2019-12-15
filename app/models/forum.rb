@@ -106,13 +106,18 @@ class Forum < ApplicationRecord
     query_string = params[:query]
     start_loc = params[:page] || 0
     limit = params[:limit] || 20
-    queryParams = Hash.new
-    queryParams[:mn] = query_string
+    query = includes(:posts).references(:forum_posts)
+    query = if params[:mentions_only]
+              query.where('forum_posts.mentions @> ?', "{#{query_string}}")
+            else
+              user_id = User.find_by_username(query_string).id
+              query.where('forum_posts.mentions @> ? or forum_posts.author = ?', "{#{query_string}}", user_id)
+            end
     if params[:after]
       val = Time.from_param(params[:after])
-      queryParams[:ts] = { '$gt' => val } if val
+      query = query.where('forum_posts.created_at > ?', val) if val
     end
-    query = where(posts: { '$elemMatch' => queryParams }).order_by(id: :desc).skip(start_loc * limit).limit(limit)
+    query.order(id: :desc).offset(start_loc * limit).limit(limit)
   end
 
   def self.search(params = {})

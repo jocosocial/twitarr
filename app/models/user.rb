@@ -321,8 +321,8 @@ class User < ApplicationRecord
   end
 
   def unnoticed_mentions
-    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count # +
-    # Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
+    Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
   def build_forum_view
@@ -330,7 +330,7 @@ class User < ApplicationRecord
   end
 
   def forum_last_view(forum_id)
-    forum_view&.data[forum_id.to_s]&.to_datetime
+    forum_view.data[forum_id.to_s]&.to_datetime
   end
 
   delegate :update_forum_view, to: :forum_view

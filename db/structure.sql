@@ -128,6 +128,37 @@ ALTER SEQUENCE public.forums_id_seq OWNED BY public.forums.id;
 
 
 --
+-- Name: hashtags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.hashtags (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: hashtags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.hashtags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: hashtags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.hashtags_id_seq OWNED BY public.hashtags.id;
+
+
+--
 -- Name: locations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -498,6 +529,13 @@ ALTER TABLE ONLY public.forums ALTER COLUMN id SET DEFAULT nextval('public.forum
 
 
 --
+-- Name: hashtags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hashtags ALTER COLUMN id SET DEFAULT nextval('public.hashtags_id_seq'::regclass);
+
+
+--
 -- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -597,6 +635,14 @@ ALTER TABLE ONLY public.forum_posts
 
 ALTER TABLE ONLY public.forums
     ADD CONSTRAINT forums_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: hashtags hashtags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hashtags
+    ADD CONSTRAINT hashtags_pkey PRIMARY KEY (id);
 
 
 --
@@ -741,6 +787,13 @@ CREATE INDEX index_forums_on_sticky_and_last_post_time ON public.forums USING bt
 --
 
 CREATE INDEX index_forums_subject ON public.forums USING gin (to_tsvector('english'::regconfig, (subject)::text));
+
+
+--
+-- Name: index_hashtags_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_hashtags_on_name ON public.hashtags USING btree (name);
 
 
 --
@@ -1033,6 +1086,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191124032402'),
 ('20191124040002'),
 ('20191209011020'),
-('20191209043219');
+('20191209043219'),
+('20191215025936');
 
 

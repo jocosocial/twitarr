@@ -1,27 +1,37 @@
-class Hashtag
-  include Mongoid::Document
+# == Schema Information
+#
+# Table name: hashtags
+#
+#  id         :bigint           not null, primary key
+#  name       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_hashtags_on_name  (name) UNIQUE
+#
+
+class Hashtag < ApplicationRecord
 
   MIN_AUTO_COMPLETE_LEN = 3
   AUTO_COMPLETE_LIMIT = 10
 
-  field :_id, type: String, as: :name
-
   def self.add_tag(hashtag)
-
     hashtag = hashtag[1..-1] if hashtag[0] == '#'
-    hashtag = hashtag.downcase
-    hashtag.strip!
-    doc = Hashtag.new(name: hashtag)
-    doc.upsert
+    begin
+      doc = Hashtag.find_or_create_by(name: hashtag.downcase.strip)
+    rescue ActiveRecord::RecordNotUnique
+      retry
+    end
     doc
   rescue StandardError => e
     logger.error e
-
   end
 
   def self.auto_complete(prefix)
-    prefix = prefix.downcase
-    Hashtag.where(name: /^#{prefix}/).asc(:name).limit(AUTO_COMPLETE_LIMIT)
+    prefix = prefix.downcase.strip
+    Hashtag.where('name like ?', "#{prefix}%").asc(:name).limit(AUTO_COMPLETE_LIMIT)
   end
 
   # this is probably not going to be a fast operation

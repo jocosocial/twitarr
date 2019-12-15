@@ -7,11 +7,6 @@ module Postable
   module InstanceMethods
     include Twitter::TwitterText::Extractor
 
-    def location=(loc)
-      location_id = loc
-    end
-
-    # noinspection RubyResolve
     def parse_hash_tags
       entities = extract_entities_with_indices text
       # self.hash_tags = []
@@ -29,7 +24,7 @@ module Postable
     end
 
     def post_create_operations
-      # record_hashtags
+      record_hashtags
     end
 
     def record_hashtags
@@ -46,7 +41,7 @@ module Postable
     end
 
     def add_reaction(user_id, reaction_id)
-      doc = post_reactions.find_or_create_by(user_id: user_id, reaction_id: reaction_id)
+      post_reactions.find_or_create_by(user_id: user_id, reaction_id: reaction_id)
     end
 
     def remove_reaction(user_id, reaction_id)
@@ -69,21 +64,21 @@ module Postable
               end
       if params[:after]
         val = Time.from_param(params[:after])
-        query = query.where(:timestamp.gt => val) if val
+        query = query.where('created_at > ?', val) if val
       end
-      query.order(id: :desc).offset(start_loc * limit).limit(limit)
+      query.order(created_at: :desc, id: :desc).offset(start_loc * limit).limit(limit)
     end
 
     def view_hashtags(params = {})
       query_string = params[:query]
       start_loc = params[:page] || 0
       limit = params[:limit] || 20
-      query = where(hash_tags: query_string)
+      query = where('hash_tags @> ?', "{#{query_string}}")
       if params[:after]
         val = Time.from_param(params[:after])
-        query = query.where(:timestamp.gt => params[:after]) if val
+        query = query.where('created_at > ?', val) if val
       end
-      query.order_by(id: :desc).skip(start_loc * limit).limit(limit)
+      query.order(created_at: :desc, id: :desc).offset(start_loc * limit).limit(limit)
     end
   end
 end

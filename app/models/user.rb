@@ -192,15 +192,16 @@ class User < ApplicationRecord
   end
 
   def upcoming_events(alerts = false)
-    events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
-    events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
-    events = events.map { |x| x if x.favorites.include? username }.compact
-    if alerts
-      events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
-      events.each { |e| acknowledged_event_alerts << e.id unless acknowledged_event_alerts.include? e.id }
-      save!
-    end
-    events
+    # events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
+    # events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
+    # events = events.map { |x| x if x.favorites.include? username }.compact
+    # if alerts
+    #  events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
+    #  events.each { |e| acknowledged_event_alerts << e.id unless acknowledged_event_alerts.include? e.id }
+    #  save!
+    # end
+    # events
+    []
   end
 
   def unnoticed_upcoming_events
@@ -211,37 +212,38 @@ class User < ApplicationRecord
   end
 
   def seamails(params = {})
-    thread_query = Hash.new
-    thread_query['us'] = username
-    thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)
-
-    post_query = Hash.new
-    post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
-    post_query['sm.ts'] = { '$gt': params[:after] } if params.key?(:after)
-
-    aggregation = Array.new
-    aggregation.push('$match' => thread_query)
-    aggregation.push('$unwind' => '$sm')
-
-    aggregation.push('$match' => post_query) unless post_query.empty?
-
-    aggregation.push('$sort' => { 'sm.ts' => -1 })
-    aggregation.push(
-      '$group' => {
-        '_id': '$_id',
-        'deleted_at': { '$first': '$deleted_at' },
-        'us': { '$first': '$us' },
-        'sj': { '$first': '$sj' },
-        'up': { '$first': '$up' },
-        'updated_at': { '$first': '$updated_at' },
-        'created_at': { '$first': '$created_at' },
-        'sm': { '$push': '$sm' }
-      }
-    )
-
-    result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
-
-    result.sort_by(&:last_message).reverse
+    # thread_query = Hash.new
+    # thread_query['us'] = username
+    # thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)
+    #
+    # post_query = Hash.new
+    # post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
+    # post_query['sm.ts'] = { '$gt': params[:after] } if params.key?(:after)
+    #
+    # aggregation = Array.new
+    # aggregation.push('$match' => thread_query)
+    # aggregation.push('$unwind' => '$sm')
+    #
+    # aggregation.push('$match' => post_query) unless post_query.empty?
+    #
+    # aggregation.push('$sort' => { 'sm.ts' => -1 })
+    # aggregation.push(
+    #  '$group' => {
+    #    '_id': '$_id',
+    #    'deleted_at': { '$first': '$deleted_at' },
+    #    'us': { '$first': '$us' },
+    #    'sj': { '$first': '$sj' },
+    #    'up': { '$first': '$up' },
+    #    'updated_at': { '$first': '$updated_at' },
+    #    'created_at': { '$first': '$created_at' },
+    #    'sm': { '$push': '$sm' }
+    #  }
+    # )
+    #
+    # result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
+    #
+    # result.sort_by(&:last_message).reverse
+    []
   end
 
   def seamail_unread_count

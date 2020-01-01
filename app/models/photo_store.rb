@@ -70,7 +70,7 @@ class PhotoStore
       return { status: 'error', error: "Photo could not be read: #{e}" }
     end
 
-    tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
+    tmp_store_path = Rails.root.join('tmp', "#{username}.jpg")
     img.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
 
@@ -82,7 +82,7 @@ class PhotoStore
 
   def reset_profile_photo(username)
     identicon = Identicon.create(username)
-    tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
+    tmp_store_path = Rails.root.join('tmp', "#{username}.jpg")
     identicon.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     identicon.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
@@ -107,7 +107,7 @@ class PhotoStore
       Rails.logger.info photo.store_filename
       begin
         img = read_image(photo_path(photo.store_filename))
-        tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
+        tmp_path = Rails.root.join('tmp', photo.store_filename)
         img.resize_to_fill(SMALL_IMAGE_SIZE).write tmp_path
 
         FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
@@ -123,7 +123,7 @@ class PhotoStore
       begin
         img = read_image(full_profile_path(user.username))
 
-        tmp_store_path = "#{Rails.root}/tmp/#{user.username}.jpg"
+        tmp_store_path = Rails.root.join('tmp', "#{user.username}.jpg")
         img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
 
         FileUtils.move tmp_store_path, small_profile_path(user.username)
@@ -168,10 +168,10 @@ class PhotoStore
     @profiles_full + "#{username}.jpg"
   end
 
-  @@mutex = Mutex.new
+  @mutex = Mutex.new
 
   def build_directory(root_path, filename)
-    @@mutex.synchronize do
+    @mutex.synchronize do
       first = root_path + filename[0]
       first.mkdir unless first.exist?
       second = first + filename[1]

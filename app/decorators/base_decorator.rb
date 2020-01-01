@@ -3,9 +3,9 @@ class BaseDecorator < Draper::Decorator
   include Twitter::TwitterText::Autolink
   include CruiseMonkeyHelper
 
-  @@emojiRE = Regexp.new('\:(buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie)\:')
-  @@emojiReplace = '<img src="/img/emoji/small/\1.png" class="emoji" />'
-  @@emojiReplaceCM = '<cm-emoji type="\1" />'
+  EMOJI_REGEX = Regexp.new('\:(buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie)\:')
+  EMOJI_REPLACE = '<img src="/img/emoji/small/\1.png" class="emoji" />'.freeze
+  EMOJI_REPLACE_CM = '<cm-emoji type="\1" />'.freeze
 
   def format_text(text, options = {})
     twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options)
@@ -21,11 +21,11 @@ class BaseDecorator < Draper::Decorator
 
   def replace_emoji(text, options = {})
     if options[:app] == 'CM'
-      text.gsub(@@emojiRE, @@emojiReplaceCM)
+      text.gsub(EMOJI_REGEX, EMOJI_REPLACE_CM)
     elsif options[:app] == 'plain'
       text
     else
-      text.gsub(@@emojiRE, @@emojiReplace)
+      text.gsub(EMOJI_REGEX, EMOJI_REPLACE)
     end
   end
 

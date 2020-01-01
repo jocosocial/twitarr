@@ -178,7 +178,7 @@ module Api
           text: params[:text],
           author: post_as_user(params),
           parent_chain: parent_chain,
-          location: params[:location],
+          location_id: params[:location],
           original_author: current_user.id,
           locked: parent_locked
         )

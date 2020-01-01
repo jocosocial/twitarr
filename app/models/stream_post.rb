@@ -111,7 +111,9 @@ class StreamPost < ApplicationRecord
   end
 
   def reparent_children
+    # rubocop:disable Rails/SkipsModelValidations
     StreamPost.thread(id).update_all(['parent_chain = array_remove(parent_chain, CAST(? AS BIGINT))', id])
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def self.search(params = {})

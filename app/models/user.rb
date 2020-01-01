@@ -191,7 +191,7 @@ class User < ApplicationRecord
     super val.upcase.gsub(/[^A-Z0-9]/, '')
   end
 
-  def upcoming_events(alerts = false)
+  def upcoming_events(_alerts = false)
     # events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
     # events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
     # events = events.map { |x| x if x.favorites.include? username }.compact
@@ -211,7 +211,7 @@ class User < ApplicationRecord
     0
   end
 
-  def seamails(params = {})
+  def seamails(_params = {})
     # thread_query = Hash.new
     # thread_query['us'] = username
     # thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)

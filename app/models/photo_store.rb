@@ -135,6 +135,7 @@ class PhotoStore
 
   def initialize
     @root = Rails.root.join(Rails.configuration.photo_store)
+    @mutex = Mutex.new
 
     @full = @root + 'full'
     @thumb = @root + 'thumb'
@@ -167,8 +168,6 @@ class PhotoStore
   def full_profile_path(username)
     @profiles_full + "#{username}.jpg"
   end
-
-  @mutex = Mutex.new
 
   def build_directory(root_path, filename)
     @mutex.synchronize do

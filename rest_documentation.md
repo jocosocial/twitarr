@@ -945,7 +945,14 @@ Gets a list of images that have been uploaded to the server. This endpoint is cu
 
 #### Query parameters
 
-* sort_by=string - Optional (Default: upload_time) - The field used for sorting the results.
+* sort_by=string - Optional (Default: created_at) - The field used for sorting the results. Allowed values:
+    * created_at (default)
+    * id
+    * animated
+    * store_filename
+    * md5_hash
+    * content_type
+    * user_id
 * order=string - Optional (Default: asc) - Sort direction. Either asc or desc.
 * limit=Integer - Optional (Default: 20) - Number of photos to return
 * page=Integer - Optional (Default: 0) - The page of photos to retrieve, zero-indexed. Multiplied by `limit` to determine number of photos to skip.

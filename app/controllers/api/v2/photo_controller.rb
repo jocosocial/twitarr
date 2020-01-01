@@ -10,7 +10,7 @@ module Api
       before_action :fetch_photo, except: [:index, :create]
 
       def fetch_photo
-        @photo = PhotoMetadata.find(params[:id])
+        @photo = PhotoMetadata.includes(:user).references(:users).find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Photo not found.' }
       end

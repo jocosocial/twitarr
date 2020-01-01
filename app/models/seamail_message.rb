@@ -1,38 +1,33 @@
-class SeamailMessage
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Paranoia
+# == Schema Information
+#
+# Table name: seamail_messages
+#
+#  id              :bigint           not null, primary key
+#  author          :bigint           not null
+#  original_author :bigint           not null
+#  read_users      :bigint           default([]), not null, is an Array
+#  text            :string           not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  seamail_id      :bigint           not null
+#
+# Indexes
+#
+#  index_seamail_messages_on_author      (author)
+#  index_seamail_messages_on_seamail_id  (seamail_id)
+#  index_seamail_messages_text           (to_tsvector('english'::regconfig, (text)::text)) USING gin
+#
+# Foreign Keys
+#
+#  fk_rails_...  (author => users.id)
+#  fk_rails_...  (original_author => users.id)
+#  fk_rails_...  (seamail_id => seamails.id)
+#
 
-  field :au, as: :author, type: String
-  field :oa, as: :original_author, type: String, default: -> { author }
-  field :tx, as: :text, type: String
-  field :ts, as: :timestamp, type: Time
-  field :rd, as: :read_users, type: Array, default: []
-  embedded_in :seamail, inverse_of: :messages
+class SeamailMessage < ApplicationRecord
+  belongs_to :seamail, inverse_of: :seamail_messages, dependent: :destroy
+  belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :seamail_messages_authored
 
-  validates :author, :timestamp, presence: true
   validates :text, presence: true, length: { maximum: 10000 }
-  validate :validate_author
-  validate :validate_original_author
-
-  def validate_author
-    return if author.blank?
-
-    errors[:base] << "#{author} is not a valid username" unless User.exist? author
-  end
-
-  def validate_original_author
-    return if original_author.blank?
-
-    errors[:base] << "#{original_author} is not a valid username" unless User.exist? original_author
-  end
-
-  def author=(username)
-    super User.format_username username
-  end
-
-  def original_author=(_username)
-    super User.format_username original_author
-  end
-
+  validates :author, :original_author, presence: true
 end

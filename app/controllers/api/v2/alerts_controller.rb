@@ -14,7 +14,7 @@ module Api
           forum_mentions = Forum.view_mentions(query: current_username, after: current_user[:last_viewed_alerts],
                                                mentions_only: true).map { |p| p.decorate.to_meta_hash(current_user) }
 
-          unread_seamail = current_user.seamails(unread: true).map { |m| m.decorate.to_meta_hash(current_username, true) }
+          unread_seamail = current_user.seamail_threads(unread: true).map { |m| m.decorate.to_meta_hash(current_user.id, true) }
 
           upcoming_events = current_user.upcoming_events(true).map { |e| e.decorate.to_hash(current_user, request_options) }
 

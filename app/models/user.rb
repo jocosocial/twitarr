@@ -69,16 +69,19 @@ class User < ApplicationRecord
   RESET_PASSWORD = 'seamonkey'.freeze
 
   # TODO: Create these as separate tables
-  # field :lf, as: :forum_view_timestamps, type: Hash, default: {}
   # field :us, as: :starred_users, type: Array, default: []
   # field :pc, as: :personal_comments, type: Hash, default: {}
   # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
-  has_many :stream_posts, inverse_of: :author, dependent: :destroy
-  has_many :forum_posts, inverse_of: :author, dependent: :destroy
-  has_many :announcements, inverse_of: :author, dependent: :destroy
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :user_id, inverse_of: :user, dependent: :destroy
-  has_one :forum_view, class_name: 'UserForumView', dependent: :destroy, autosave: true
+  has_many :stream_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
+  has_many :forum_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
+  has_many :announcements, inverse_of: :user, foreign_key: :author, dependent: :destroy
+  has_many :post_reactions, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'PostReaction'
+  has_one :forum_view, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserForumView', autosave: true
+  has_many :user_seamails, inverse_of: :user, dependent: :destroy
+  has_many :seamails, through: :user_seamails
+  has_many :seamail_messages, through: :seamails
+  has_many :seamail_messages_authored, inverse_of: :user, foreign_key: :author, dependent: :destroy, class_name: 'SeamailMessage'
 
   before_create :build_forum_view
   after_save :update_cache_for_user
@@ -211,67 +214,28 @@ class User < ApplicationRecord
     0
   end
 
-  def seamails(_params = {})
-    # thread_query = Hash.new
-    # thread_query['us'] = username
-    # thread_query['up'] = { '$gt': params[:after] } if params.key?(:after)
-    #
-    # post_query = Hash.new
-    # post_query['sm.rd'] = { '$ne': username } if params.key?(:unread)
-    # post_query['sm.ts'] = { '$gt': params[:after] } if params.key?(:after)
-    #
-    # aggregation = Array.new
-    # aggregation.push('$match' => thread_query)
-    # aggregation.push('$unwind' => '$sm')
-    #
-    # aggregation.push('$match' => post_query) unless post_query.empty?
-    #
-    # aggregation.push('$sort' => { 'sm.ts' => -1 })
-    # aggregation.push(
-    #  '$group' => {
-    #    '_id': '$_id',
-    #    'deleted_at': { '$first': '$deleted_at' },
-    #    'us': { '$first': '$us' },
-    #    'sj': { '$first': '$sj' },
-    #    'up': { '$first': '$up' },
-    #    'updated_at': { '$first': '$updated_at' },
-    #    'created_at': { '$first': '$created_at' },
-    #    'sm': { '$push': '$sm' }
-    #  }
-    # )
-    #
-    # result = Seamail.collection.aggregate(aggregation).map { |x| Seamail.new(x) { |o| o.new_record = false } }
-    #
-    # result.sort_by(&:last_message).reverse
-    []
+  def seamail_threads(params = {})
+    query = seamails
+    query = query.where('seamails.last_update > ?', params[:after]) if params.key?(:after)
+
+    if params.key?(:unread)
+      query = query.includes(:seamail_messages).where('user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed').references('seamail_messages')
+      query = query.where('seamail_messages.created_at > ?', params[:after]) if params.key?(:after)
+    end
+
+    query.order(last_update: :desc)
   end
 
   def seamail_unread_count
-    # Seamail.collection.aggregate([
-    #   {
-    #     "$match" => { "us" => username }
-    #   },
-    #   {
-    #     "$unwind" => "$sm"
-    #   },
-    #   {
-    #     "$match" => { "sm.rd" => {"$ne" => username } }
-    #   },
-    #   {
-    #     "$group" => {
-    #       "_id" => "$_id"
-    #     }
-    #   }
-    # ]).count
-    0
+    seamail_messages.where('seamail_messages.created_at > user_seamails.last_viewed').count
   end
 
   def seamail_count
-    Seamail.where(usernames: username).length
+    seamail_messages.count
   end
 
   def number_of_tweets
-    StreamPost.where(author: username).count
+    stream_posts.count
   end
 
   def number_of_mentions
@@ -385,6 +349,7 @@ class User < ApplicationRecord
   end
 
   def self.auto_complete(query)
-    User.or(username: /^#{query}/, display_name: /^#{query}/i).limit(AUTO_COMPLETE_LIMIT)
+    query += '%'
+    User.where('username like ? or display_name like ?', query, query).limit(AUTO_COMPLETE_LIMIT)
   end
 end

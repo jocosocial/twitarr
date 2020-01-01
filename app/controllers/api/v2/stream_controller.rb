@@ -176,7 +176,7 @@ module Api
 
         post = StreamPost.new(
           text: params[:text],
-          author: post_as_user(params),
+          author: post_as_user(params).id,
           parent_chain: parent_chain,
           location_id: params[:location],
           original_author: current_user.id,

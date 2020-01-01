@@ -35,13 +35,6 @@ class StreamPost < ApplicationRecord
   include Searchable
   include Postable
 
-  # Common fields between stream_post and forum_post
-  # field :ht, as: :hash_tags, type: Array
-  # field :mn, as: :mentions, type: Array
-  # field :et, as: :entities, type: Array
-  #
-  # field :p, as: :photo, type: String
-
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :stream_posts
 
   has_many :post_reactions, dependent: :destroy
@@ -55,11 +48,6 @@ class StreamPost < ApplicationRecord
   # validate :validate_location
 
   after_destroy :reparent_children
-
-  # 1 = ASC, -1 DESC
-  # index mentions: 1
-  # index hash_tags: 1
-  # index text: 'text'
 
   before_validation :parse_hash_tags
   before_save :post_create_operations
@@ -111,7 +99,9 @@ class StreamPost < ApplicationRecord
   end
 
   def reparent_children
+    # rubocop:disable Rails/SkipsModelValidations
     StreamPost.thread(id).update_all(['parent_chain = array_remove(parent_chain, CAST(? AS BIGINT))', id])
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def self.search(params = {})

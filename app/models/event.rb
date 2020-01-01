@@ -39,7 +39,7 @@ class Event
   end
 
   def self.create_from_ics(ics_event)
-    event = Event.where(id: ics_event.uid).first
+    event = Event.find_by(id: ics_event.uid)
     if event.nil?
       event = Event.new(
         _id: ics_event.uid

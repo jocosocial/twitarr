@@ -9,10 +9,11 @@ module Postable
 
     def parse_hash_tags
       entities = extract_entities_with_indices text
-      # self.hash_tags = []
-      self.mentions = []
       entities.each do |entity|
-        entity = entity.inject({}) { |x, (k, v)| x[k.to_sym] = v; x }
+        entity = entity.inject({}) do |x, (k, v)|
+          x[k.to_sym] = v
+          x
+        end
         if entity.key?(:hashtag)
           hash_tag = entity[:hashtag].downcase
           hash_tags << hash_tag unless hash_tags.include?(hash_tag)

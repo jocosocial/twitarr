@@ -32,11 +32,11 @@ class ApplicationController < ActionController::Base
   end
 
   def admin_user
-    @admin_user ||= User.find_by(username: 'twitarrteam')
+    @admin_user ||= User.get('twitarrteam')
   end
 
   def moderator_user
-    @moderator_user ||= User.find_by(username: 'moderator')
+    @moderator_user ||= User.get('moderator')
   end
 
   def login_user(user)
@@ -129,12 +129,12 @@ class ApplicationController < ActionController::Base
 
   def post_as_user(params)
     if params.key?(:as_mod) && params[:as_mod].to_bool && moderator?
-      return moderator_user.id
+      return moderator_user
     elsif params.key?(:as_admin) && params[:as_admin].to_bool && admin?
-      return admin_user.id
+      return admin_user
     end
 
-    current_user.id
+    current_user
   end
 
   def forums_enabled

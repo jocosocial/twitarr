@@ -359,6 +359,73 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: seamail_messages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.seamail_messages (
+    id bigint NOT NULL,
+    seamail_id bigint NOT NULL,
+    author bigint NOT NULL,
+    original_author bigint NOT NULL,
+    text character varying NOT NULL,
+    read_users bigint[] DEFAULT '{}'::bigint[] NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: seamail_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.seamail_messages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: seamail_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.seamail_messages_id_seq OWNED BY public.seamail_messages.id;
+
+
+--
+-- Name: seamails; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.seamails (
+    id bigint NOT NULL,
+    subject character varying NOT NULL,
+    last_update timestamp without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: seamails_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.seamails_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: seamails_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.seamails_id_seq OWNED BY public.seamails.id;
+
+
+--
 -- Name: sections; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -456,6 +523,37 @@ CREATE SEQUENCE public.user_forum_views_id_seq
 --
 
 ALTER SEQUENCE public.user_forum_views_id_seq OWNED BY public.user_forum_views.id;
+
+
+--
+-- Name: user_seamails; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_seamails (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    seamail_id bigint NOT NULL,
+    last_viewed timestamp without time zone
+);
+
+
+--
+-- Name: user_seamails_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_seamails_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_seamails_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_seamails_id_seq OWNED BY public.user_seamails.id;
 
 
 --
@@ -578,6 +676,20 @@ ALTER TABLE ONLY public.registration_codes ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: seamail_messages id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamail_messages ALTER COLUMN id SET DEFAULT nextval('public.seamail_messages_id_seq'::regclass);
+
+
+--
+-- Name: seamails id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamails ALTER COLUMN id SET DEFAULT nextval('public.seamails_id_seq'::regclass);
+
+
+--
 -- Name: sections id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -596,6 +708,13 @@ ALTER TABLE ONLY public.stream_posts ALTER COLUMN id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.user_forum_views ALTER COLUMN id SET DEFAULT nextval('public.user_forum_views_id_seq'::regclass);
+
+
+--
+-- Name: user_seamails id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_seamails ALTER COLUMN id SET DEFAULT nextval('public.user_seamails_id_seq'::regclass);
 
 
 --
@@ -702,6 +821,22 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: seamail_messages seamail_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamail_messages
+    ADD CONSTRAINT seamail_messages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seamails seamails_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamails
+    ADD CONSTRAINT seamails_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sections sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -723,6 +858,14 @@ ALTER TABLE ONLY public.stream_posts
 
 ALTER TABLE ONLY public.user_forum_views
     ADD CONSTRAINT user_forum_views_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_seamails user_seamails_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_seamails
+    ADD CONSTRAINT user_seamails_pkey PRIMARY KEY (id);
 
 
 --
@@ -853,6 +996,34 @@ CREATE UNIQUE INDEX index_registration_codes_on_code ON public.registration_code
 
 
 --
+-- Name: index_seamail_messages_on_author; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_seamail_messages_on_author ON public.seamail_messages USING btree (author);
+
+
+--
+-- Name: index_seamail_messages_on_seamail_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_seamail_messages_on_seamail_id ON public.seamail_messages USING btree (seamail_id);
+
+
+--
+-- Name: index_seamail_messages_text; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_seamail_messages_text ON public.seamail_messages USING gin (to_tsvector('english'::regconfig, (text)::text));
+
+
+--
+-- Name: index_seamails_subject; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_seamails_subject ON public.seamails USING gin (to_tsvector('english'::regconfig, (subject)::text));
+
+
+--
 -- Name: index_sections_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -909,6 +1080,20 @@ CREATE INDEX index_user_forum_views_on_user_id ON public.user_forum_views USING 
 
 
 --
+-- Name: index_user_seamails_on_seamail_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_seamails_on_seamail_id ON public.user_seamails USING btree (seamail_id);
+
+
+--
+-- Name: index_user_seamails_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_seamails_on_user_id ON public.user_seamails USING btree (user_id);
+
+
+--
 -- Name: index_users_on_display_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -927,6 +1112,14 @@ CREATE UNIQUE INDEX index_users_on_registration_code ON public.users USING btree
 --
 
 CREATE UNIQUE INDEX index_users_on_username ON public.users USING btree (username);
+
+
+--
+-- Name: user_seamails fk_rails_0660a07f4a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_seamails
+    ADD CONSTRAINT fk_rails_0660a07f4a FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -954,6 +1147,14 @@ ALTER TABLE ONLY public.post_reactions
 
 
 --
+-- Name: user_seamails fk_rails_2c19e2fc28; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_seamails
+    ADD CONSTRAINT fk_rails_2c19e2fc28 FOREIGN KEY (seamail_id) REFERENCES public.seamails(id);
+
+
+--
 -- Name: announcements fk_rails_2eb97675c2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -975,6 +1176,14 @@ ALTER TABLE ONLY public.user_forum_views
 
 ALTER TABLE ONLY public.forum_posts
     ADD CONSTRAINT fk_rails_3ddde06812 FOREIGN KEY (original_author) REFERENCES public.users(id);
+
+
+--
+-- Name: seamail_messages fk_rails_5318d0c920; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamail_messages
+    ADD CONSTRAINT fk_rails_5318d0c920 FOREIGN KEY (author) REFERENCES public.users(id);
 
 
 --
@@ -1015,6 +1224,14 @@ ALTER TABLE ONLY public.post_reactions
 
 ALTER TABLE ONLY public.stream_posts
     ADD CONSTRAINT fk_rails_83c30e49f6 FOREIGN KEY (original_author) REFERENCES public.users(id);
+
+
+--
+-- Name: seamail_messages fk_rails_8680c74b83; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamail_messages
+    ADD CONSTRAINT fk_rails_8680c74b83 FOREIGN KEY (original_author) REFERENCES public.users(id);
 
 
 --
@@ -1066,6 +1283,14 @@ ALTER TABLE ONLY public.stream_posts
 
 
 --
+-- Name: seamail_messages fk_rails_f1327bf07f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.seamail_messages
+    ADD CONSTRAINT fk_rails_f1327bf07f FOREIGN KEY (seamail_id) REFERENCES public.seamails(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -1087,6 +1312,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191124040002'),
 ('20191209011020'),
 ('20191209043219'),
-('20191215025936');
+('20191215025936'),
+('20191217050310'),
+('20191217050326'),
+('20191217050340');
 
 

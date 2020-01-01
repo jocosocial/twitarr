@@ -67,7 +67,7 @@ module Api
       end
 
       def create
-        forum = Forum.create_new_forum(post_as_user(params), params[:subject], params[:text], params[:photos], current_user.id)
+        forum = Forum.create_new_forum(post_as_user(params).id, params[:subject], params[:text], params[:photos], current_user.id)
         if forum.valid?
           render json: { status: 'ok', forum_thread: forum.decorate.to_hash(current_user, request_options) }
         else
@@ -84,7 +84,7 @@ module Api
       end
 
       def new_post
-        post = @forum.add_post(post_as_user(params), params[:text], params[:photos], current_user.id)
+        post = @forum.add_post(post_as_user(params).id, params[:text], params[:photos], current_user.id)
         if post.valid?
           @forum.save
           render json: { status: 'ok', forum_post: post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }

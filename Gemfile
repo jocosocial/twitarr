@@ -56,6 +56,7 @@ group :development do
   gem 'annotate'
   gem 'better_errors'
   gem 'listen'
+  gem 'overcommit', require: false
   gem 'pry-byebug'
   gem 'rubocop-rails'
   gem 'solargraph'

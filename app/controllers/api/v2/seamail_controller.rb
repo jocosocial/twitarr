@@ -5,24 +5,18 @@ module Api
       before_action :login_required
       before_action :not_muted, only: [:create, :new_message, :recipients]
       before_action :fetch_seamail, only: [:show, :new_message, :recipients]
-      before_action :fetch_as_user
 
       def fetch_seamail
         begin
           @seamail = Seamail.find(params[:id])
-        rescue Mongoid::Errors::DocumentNotFound
-          render(status: :not_found, json: { status: 'error', error: 'Seamail not found' }) && (return)
+        rescue ActiveRecord::RecordNotFound
+          render(status: :not_found, json: { status: 'error', error: 'Seamail not found' }) && return
         end
-        render(status: :not_found, json: { status: 'error', error: 'Seamail not found' }) && return unless @seamail.usernames.include?(current_username) || (moderator? && @seamail.usernames.include?('moderator')) || (admin? && @seamail.usernames.include?('twitarrteam'))
+        render(status: :not_found, json: { status: 'error', error: 'Seamail not found' }) && return unless @seamail.user_seamails.where(user_id: current_user.id).any? || (moderator? && @seamail.user_seamails.where(user_id: moderator_user.id).any?) || (admin? && @seamail.user_seamails.where(user_id: admin_user.id).any?)
       end
 
-      def fetch_as_user
-        post_as_username = post_as_user(params)
-        @as_user = if post_as_username != current_username
-                     User.get post_as_username
-                   else
-                     current_user
-                   end
+      def as_user
+        @as_user ||= post_as_user(params)
       end
 
       def index
@@ -41,16 +35,16 @@ module Api
           extra_query[:after] = val if val
         end
 
-        mails = @as_user.seamails extra_query
+        mails = as_user.seamail_threads extra_query
 
         if @include_messages
           output = 'seamail_threads'
           options = request_options
           options[:exclude_read_messages] = true if @exclude_read_messages
-          mails = mails.map { |x| x.decorate.to_hash(options, @as_user.username, counting_unread) }
+          mails = mails.map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
         else
           output = 'seamail_meta'
-          mails = mails.map { |x| x.decorate.to_meta_hash(@as_user.username, counting_unread) }
+          mails = mails.map { |x| x.decorate.to_meta_hash(as_user.id, counting_unread) }
         end
 
         render json: { status: 'ok', output => mails, last_checked: Time.now.to_ms }
@@ -63,25 +57,25 @@ module Api
       end
 
       def show
-        mails = @seamail.decorate.to_hash(request_options, @as_user.username)
-        @seamail.mark_as_read @as_user.username unless params[:skip_mark_read]
+        mails = @seamail.decorate.to_hash(request_options, as_user.id)
+        @seamail.mark_as_read as_user.username unless params[:skip_mark_read]
         render json: { status: 'ok', seamail: mails }
       end
 
       def create
-        Rails.logger.info "Posting as user: #{@as_user.username}"
-        seamail = Seamail.create_new_seamail @as_user.username, params[:users], params[:subject], params[:text], current_username
+        Rails.logger.info "Posting as user: #{as_user.username}"
+        seamail = Seamail.create_new_seamail as_user.username, params[:users], params[:subject], params[:text], current_username
         if seamail.valid?
-          render json: { status: 'ok', seamail: seamail.decorate.to_hash(request_options, @as_user.username) }
+          render json: { status: 'ok', seamail: seamail.decorate.to_hash(request_options, as_user.id) }
         else
           render status: :bad_request, json: { status: 'error', errors: seamail.errors.full_messages }
         end
       end
 
       def new_message
-        message = @seamail.add_message @as_user.username, params[:text], current_username
+        message = @seamail.add_message as_user.username, params[:text], current_username
         if message.valid?
-          render json: { status: 'ok', seamail_message: message.decorate.to_hash(request_options, @as_user.username) }
+          render json: { status: 'ok', seamail_message: message.decorate.to_hash(request_options, as_user.id) }
         else
           render status: :bad_request, json: { status: 'error', errors: message.errors.full_messages }
         end
@@ -91,7 +85,7 @@ module Api
         # this ensures that the logged in user is also specified
         usernames = params[:users]
         usernames ||= []
-        usernames << @as_user.username unless usernames.include? @as_user.username
+        usernames << as_user.username unless usernames.include? as_user.username
         usernames = usernames.map(&:downcase).uniq
         @seamail.usernames = usernames
         if @seamail.valid?
@@ -99,7 +93,7 @@ module Api
         else
           render(status: :bad_request, json: { status: 'error', errors: @seamail.errors.full_messages }) && return
         end
-        render json: { status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(@as_user.username) }
+        render json: { status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(as_user.id) }
       end
     end
   end

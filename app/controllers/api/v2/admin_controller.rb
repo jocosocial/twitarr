@@ -153,11 +153,11 @@ module Api
         end
 
         as_user = post_as_user(params)
-        errors.push('Only admins may post as TwitarrTeam.') if !admin? || (as_user == moderator_user.id)
+        errors.push('Only admins may post as TwitarrTeam.') if !admin? || (as_user.id == moderator_user.id)
 
         render(status: :bad_request, json: { status: 'error', errors: errors }) && return unless errors.empty?
 
-        announcement = Announcement.create(author: as_user, text: params[:text], valid_until: valid_until, original_author: current_user.id)
+        announcement = Announcement.create(author: as_user.id, text: params[:text], valid_until: valid_until, original_author: current_user.id)
         render json: { status: 'ok', announcement: announcement.decorate.to_admin_hash(request_options) }
       end
 

@@ -82,6 +82,8 @@ class User < ApplicationRecord
   has_many :seamails, through: :user_seamails
   has_many :seamail_messages, through: :seamails
   has_many :seamail_messages_authored, inverse_of: :user, foreign_key: :author, dependent: :destroy, class_name: 'SeamailMessage'
+  has_many :starred_users, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserStar'
+  has_many :starred_by_users, inverse_of: :starred_user, foreign_key: :starred_user_id, dependent: :destroy, class_name: 'UserStar'
 
   before_create :build_forum_view
   after_save :update_cache_for_user

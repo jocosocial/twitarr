@@ -14,11 +14,9 @@
 
 class RegistrationCode < ApplicationRecord
   def self.add_code(code)
-
     RegistrationCode.find_or_create_by(code: code.upcase.gsub(/[^A-Z0-9]/, ''))
   rescue StandardError => e
     logger.error e
-
   end
 
   def self.valid_code?(code)

@@ -85,13 +85,12 @@ module Api
       end
 
       def star
-        starred = current_user.starred_users.include? @user.username
+        starred = current_user.starred_users.find_by(starred_user_id: @user.id)
         if starred
-          current_user.starred_users.delete @user.username
+          starred.delete
         else
-          current_user.starred_users << @user.username
+          current_user.starred_users << UserStar.new(starred_user_id: @user.id)
         end
-        current_user.save
         render json: { status: 'ok', starred: !starred }
       end
 

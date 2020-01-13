@@ -557,6 +557,38 @@ ALTER SEQUENCE public.user_seamails_id_seq OWNED BY public.user_seamails.id;
 
 
 --
+-- Name: user_stars; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_stars (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    starred_user_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: user_stars_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_stars_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_stars_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_stars_id_seq OWNED BY public.user_stars.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -718,6 +750,13 @@ ALTER TABLE ONLY public.user_seamails ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: user_stars id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_stars ALTER COLUMN id SET DEFAULT nextval('public.user_stars_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -866,6 +905,14 @@ ALTER TABLE ONLY public.user_forum_views
 
 ALTER TABLE ONLY public.user_seamails
     ADD CONSTRAINT user_seamails_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_stars user_stars_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_stars
+    ADD CONSTRAINT user_stars_pkey PRIMARY KEY (id);
 
 
 --
@@ -1094,6 +1141,13 @@ CREATE INDEX index_user_seamails_on_user_id ON public.user_seamails USING btree 
 
 
 --
+-- Name: index_user_stars_on_user_id_and_starred_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_user_stars_on_user_id_and_starred_user_id ON public.user_stars USING btree (user_id, starred_user_id);
+
+
+--
 -- Name: index_users_on_display_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1187,11 +1241,27 @@ ALTER TABLE ONLY public.seamail_messages
 
 
 --
+-- Name: user_stars fk_rails_573ad1a98c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_stars
+    ADD CONSTRAINT fk_rails_573ad1a98c FOREIGN KEY (starred_user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: forum_posts fk_rails_61f00b1427; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.forum_posts
     ADD CONSTRAINT fk_rails_61f00b1427 FOREIGN KEY (forum_id) REFERENCES public.forums(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_stars fk_rails_756c2c1f92; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_stars
+    ADD CONSTRAINT fk_rails_756c2c1f92 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -1315,6 +1385,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191215025936'),
 ('20191217050310'),
 ('20191217050326'),
-('20191217050340');
+('20191217050340'),
+('20200113030923');
 
 

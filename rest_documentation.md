@@ -33,7 +33,9 @@ These output types are used throughout the API
   ```
 * marked_up_text - A string with inline HTML. Allowed HTML is limited. If you do not want any HTML, include app=plain in your query parameters. This parameter will cause any marked_up_text to instead be returned as plain text. Examples of allowed tags:
   * a - Hashtags. Example for the hashtag, #some_tag
-    * `<a class="tweet-url hashtag" href="#/tag/some_tag" title="#some_tag">#some_tag</a>` 
+    * `<a class="tweet-url hashtag" href="#/tag/some_tag" title="#some_tag">#some_tag</a>`
+    * Hashtags have a maximum length of 100 characters, excluding the #. The server will return an error message if a long hashtag is submitted.
+    * Hashtags are parsed using twitter-text, which states "a hashtag can contain most letters or numbers but cannot be solely numbers and cannot contain punctuation" - See https://github.com/twitter/twitter-text/tree/master/rb#hashtags
   * a - User mentions. Example for the user mention, @some_user
     * `<a class="tweet-url username" href="#/user/some_user">@some_user</a>`
   * img - Emoji. Example for the emoji, :buffet:
@@ -645,7 +647,8 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
         "status": "error", 
         "errors": [
             "Text can't be blank",
-            "Text is too long (maximum is 2000 characters)"
+            "Text is too long (maximum is 2000 characters)",
+            "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
     }
@@ -732,7 +735,8 @@ Both text and photo are optional, however, at least one must be specified.  If o
         "status": "error", 
         "errors": [
             "Text can't be blank",
-            "Text is too long (maximum is 2000 characters)"
+            "Text is too long (maximum is 2000 characters)",
+            "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
     }
@@ -2109,6 +2113,7 @@ Creates a forum thread and its first post.
         "Subject is too long (maximum is 200 characters)",
         "Text can't be blank",
         "Text is too long (maximum is 10000 characters)",
+        "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag,
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2188,6 +2193,7 @@ Creates a new post in the thread.
     "errors": [
         "Text can't be blank",
         "Text is too long (maximum is 10000 characters)",
+        "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2346,6 +2352,7 @@ Edits a post in the thread.
     "errors": [
         "Text can't be blank",
         "Text is too long (maximum is 10000 characters)",
+        "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag,
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }

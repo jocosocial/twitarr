@@ -16,6 +16,9 @@ class Hashtag < ApplicationRecord
 
   MIN_AUTO_COMPLETE_LEN = 3
   AUTO_COMPLETE_LIMIT = 10
+  MAX_LENGTH = 100
+
+  validates :name, length: { maximum: MAX_LENGTH }
 
   def self.add_tag(hashtag)
     hashtag = hashtag[1..-1] if hashtag[0] == '#'

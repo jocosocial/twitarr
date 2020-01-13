@@ -16,7 +16,7 @@ class UserDecorator < Draper::Decorator
       last_photo_updated: last_photo_updated.to_ms
     }
     unless current_user.nil?
-      # ret[:starred] = current_user.starred_users.include?(username)
+      ret[:starred] = current_user.starred_users.where(starred_user_id: id).exists?
       # ret[:comment] = current_user.personal_comments[username]
     end
     ret
@@ -59,8 +59,7 @@ class UserDecorator < Draper::Decorator
     hsh = admin_hash
     hsh.delete(:mute_reason)
     hsh.delete(:ban_reason)
-    # TODO: Fix unnoticed alerts - migrate to postgres
-    hsh[:unnoticed_alerts] = {} # unnoticed_alerts
+    hsh[:unnoticed_alerts] = unnoticed_alerts
     hsh
   end
 

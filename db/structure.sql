@@ -9,6 +9,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -54,6 +68,23 @@ ALTER SEQUENCE public.announcements_id_seq OWNED BY public.announcements.id;
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.events (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    title character varying NOT NULL,
+    description character varying,
+    location character varying,
+    start_time timestamp without time zone NOT NULL,
+    end_time timestamp without time zone,
+    official boolean,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -780,6 +811,14 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 
 --
+-- Name: events events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: forum_posts forum_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -928,6 +967,48 @@ ALTER TABLE ONLY public.users
 --
 
 CREATE INDEX index_announcements_on_author ON public.announcements USING btree (author);
+
+
+--
+-- Name: index_events_on_official; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_events_on_official ON public.events USING btree (official);
+
+
+--
+-- Name: index_events_on_start_time; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_events_on_start_time ON public.events USING btree (start_time);
+
+
+--
+-- Name: index_events_on_title; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_events_on_title ON public.events USING btree (title);
+
+
+--
+-- Name: index_events_search_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_events_search_desc ON public.events USING gin (to_tsvector('english'::regconfig, (description)::text));
+
+
+--
+-- Name: index_events_search_loc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_events_search_loc ON public.events USING gin (to_tsvector('english'::regconfig, (location)::text));
+
+
+--
+-- Name: index_events_search_title; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_events_search_title ON public.events USING gin (to_tsvector('english'::regconfig, (title)::text));
 
 
 --
@@ -1386,6 +1467,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191217050310'),
 ('20191217050326'),
 ('20191217050340'),
-('20200113030923');
+('20200113030923'),
+('20200114050246'),
+('20200114050321');
 
 

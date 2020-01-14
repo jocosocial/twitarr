@@ -82,13 +82,13 @@ module Api
 
       def mine
         day = Time.from_param(params[:day])
-        events = Event.where(:start_time.gte => day.beginning_of_day).where(:start_time.lt => day.end_of_day).where(favorites: current_username).order_by(:start_time.asc)
+        events = Event.where("start_time >= '#{day.beginning_of_day}' AND start_time <= '#{day.end_of_day}'").where(favorites: current_username).order(:start_time.asc)
         render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_username, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms }
       end
 
       def day
         day = Time.from_param(params[:day])
-        events = Event.where(:start_time.gte => day.beginning_of_day).where(:start_time.lt => day.end_of_day).order_by(:start_time.asc)
+        events = Event.where("start_time >= '#{day.beginning_of_day}' AND start_time <= '#{day.end_of_day}'").order(start_time: :asc)
         render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_username, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms }
       end
 
@@ -97,7 +97,7 @@ module Api
       def fetch_event
 
         @event = Event.find(params[:id])
-      rescue Mongoid::Errors::DocumentNotFound
+      rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', id: params[:id], error: 'Event not found.' }
 
       end

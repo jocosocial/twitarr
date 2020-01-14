@@ -1,26 +1,36 @@
-class Event
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Paranoia
+# == Schema Information
+#
+# Table name: events
+#
+#  id          :uuid             not null, primary key
+#  description :string
+#  end_time    :datetime
+#  location    :string
+#  official    :boolean
+#  start_time  :datetime         not null
+#  title       :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_events_on_official    (official)
+#  index_events_on_start_time  (start_time)
+#  index_events_on_title       (title)
+#  index_events_search_desc    (to_tsvector('english'::regconfig, (description)::text)) USING gin
+#  index_events_search_loc     (to_tsvector('english'::regconfig, (location)::text)) USING gin
+#  index_events_search_title   (to_tsvector('english'::regconfig, (title)::text)) USING gin
+#
+
+class Event < ApplicationRecord
   include Searchable
 
   DST_START = Time.new(2019, 3, 11, 2, 0, 0, '-05:00')
 
-  field :tl, as: :title, type: String
-  field :sm, as: :description, type: String
-  field :lc, as: :location, type: String
-  field :st, as: :start_time, type: Time
-  field :et, as: :end_time, type: Time
-  field :fa, as: :favorites, type: Array, default: []
-  # TODO: add type
-  field :of, as: :official, type: Boolean
+  # TODO: migrate
+  # field :fa, as: :favorites, type: Array, default: []
 
   validates :title, :start_time, presence: true
-
-  # 1 = ASC, -1 DESC
-  index start_time: 1
-  index title: 1
-  index(title: 'text', description: 'text', location: 'text')
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
@@ -39,12 +49,8 @@ class Event
   end
 
   def self.create_from_ics(ics_event)
-    event = Event.find_by(id: ics_event.uid)
-    if event.nil?
-      event = Event.new(
-        _id: ics_event.uid
-      )
-    end
+    event = Event.find_or_initialize_by(id: ics_event.uid)
+
     event.title = ics_event.summary.force_encoding('utf-8')
     event.description = ics_event.description.force_encoding('utf-8')
     if ics_event.dtstart <= DST_START
@@ -58,15 +64,16 @@ class Event
     # locations tend to have trailing commas for some reason
     event.location = ics_event.location.force_encoding('utf-8').strip.gsub(/,$/, '')
     event.save
+  rescue ActiveRecord::RecordNotUnique
+    retry
   end
 
   def self.favorite_from_ics(ics_event, username)
     uid = ics_event.uid.split('@')[0]
-    begin
-      event = Event.find(uid)
-    rescue Mongoid::Errors::DocumentNotFound
-      return
-    end
+    event = Event.find_by(id: uid)
+
+    return unless event
+
     event.favorites << username unless event.favorites.include? username
     event.save
   end

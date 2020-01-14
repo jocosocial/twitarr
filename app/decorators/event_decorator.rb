@@ -1,16 +1,16 @@
 class EventDecorator < BaseDecorator
   delegate_all
 
-  def to_hash(username = nil, options = {})
+  def to_hash(_username = nil, options = {})
     result = {
-        id: as_str(id),
-        title: title,
-        location: location,
-        start_time: nil,
-        end_time: nil,
-        official: official,
-        description: nil,
-        following: favorites.include?(username)
+      id: id.to_s,
+      title: title,
+      location: location,
+      start_time: nil,
+      end_time: nil,
+      official: official,
+      description: nil # ,
+      # following: favorites.include?(username)
     }
     # If DST hasn't started yet and we're viewing events that begin after DST starts,
     # adjust the displayed event start/end times to appear as if DST had not yet begun

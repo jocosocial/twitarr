@@ -99,6 +99,7 @@ Dir.mktmpdir do |dir|
   photos.push add_photo('http://lorempixel.com/1900/1200/cats/8/', File.join(dir, 'tired_cat.jpg'), james, at_time(12, 5))
   photos.push add_photo('http://i.imgur.com/FJdle9E.jpg', File.join(dir, 'warm_bread.jpg'), kvort, at_time(11, 15))
 end
+
 def create_post(text, author, timestamp, photo)
   post = StreamPost.create(text: text, author: author, original_author: author, created_at: timestamp)
   post.post_photo = PostPhoto.create(photo_metadata_id: photo) if photo
@@ -201,28 +202,34 @@ if Forum.count == 0
   end
 end
 
-=begin
-
 def create_seamail(subject, text, author, recipients, timestamp)
   seamail = Seamail.create_new_seamail author, recipients, subject, text, author
   seamail.last_update = timestamp
-  seamail.messages.first.timestamp = timestamp
+  seamail.created_at = timestamp
+  seamail.updated_at = timestamp
+  message = seamail.seamail_messages.first
+  message.created_at = timestamp
+  message.updated_at = timestamp
+  message.save!
   seamail.save!
   seamail
 end
+
 def reply_seamail(seamail, text, author, timestamp)
   message = seamail.add_message author, text, author
-  message.timestamp = timestamp
+  message.created_at = timestamp
+  message.updated_at = timestamp
   message.save!
   message
 end
+
 Seamail.delete_all
 if Seamail.count == 0
-  seamail = create_seamail 'Hey lets meet up', 'How about at 10:30?', james, [kvort], at_time(8, 23)
-  reply_seamail seamail, 'Alright, 10-forward?', kvort, at_time(8, 26)
-  reply_seamail seamail, 'Sounds great to me!', james, at_time(8, 28)
-  seamail = create_seamail 'artemis?', 'We should go to the game room and play artemis at 15:00!', steve, [kvort, james], at_time(9, 23)
-  reply_seamail seamail, 'Awesome!', james, at_time(9, 30)
+  seamail = create_seamail 'Hey lets meet up', 'How about at 10:30?', 'james', ['kvort'], at_time(8, 23)
+  reply_seamail seamail, 'Alright, 10-forward?', 'kvort', at_time(8, 26)
+  reply_seamail seamail, 'Sounds great to me!', 'james', at_time(8, 28)
+  seamail = create_seamail 'artemis?', 'We should go to the game room and play artemis at 15:00!', 'steve', ['kvort', 'james'], at_time(9, 23)
+  reply_seamail seamail, 'Awesome!', 'james', at_time(9, 30)
 end
 
 puts 'Creating events...'
@@ -237,8 +244,6 @@ File.open(cal_filename + ".tmp", "w") { |file| file << cal_text }
 
 cal_file = File.open(cal_filename + ".tmp")
 Icalendar::Calendar.parse(cal_file).first.events.map { |x| Event.create_from_ics x }
-
-=end
 
 def create_reaction(tag)
   reaction = Reaction.add_reaction tag

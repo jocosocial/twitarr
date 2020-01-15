@@ -61,18 +61,13 @@ unless User.exist? 'moderator'
   raise Exception.new("No user named 'moderator'!  Create one first!")
 end
 
-def add_photo(url, localfilename, uploader, upload_date)
-
+def add_photo(path, localfilename, uploader, upload_date)
   photo_basename = File.basename localfilename
   photo_md = PhotoMetadata.find_by(original_filename: photo_basename)
   return photo_md if photo_md
-  puts "Using photo #{url} => #{photo_basename}"
-  open(url, 'rb') { |remote|
-    open(localfilename, 'wb') { |local|
-      local.write(remote.read)
-    }
-  }
-  local_file = ActionDispatch::Http::UploadedFile.new(:tempfile => File.new(localfilename),
+
+  puts "Using photo #{path} => #{photo_basename}"
+  local_file = ActionDispatch::Http::UploadedFile.new(:tempfile => File.new(path),
                                                       :filename => photo_basename,
                                                       :type     => "image/jpeg"
                                                      )
@@ -94,10 +89,10 @@ end
 
 photos = []
 Dir.mktmpdir do |dir|
-  photos.push add_photo('http://lorempixel.com/1900/1200/cats/5/', File.join(dir, 'cute_cat.jpg'), james, at_time(14, 30, offset: -1.day))
-  photos.push add_photo('http://lorempixel.com/1900/1200/cats/2/', File.join(dir, 'mean_cat.jpg'), steve, at_time(12, 0))
-  photos.push add_photo('http://lorempixel.com/1900/1200/cats/8/', File.join(dir, 'tired_cat.jpg'), james, at_time(12, 5))
-  photos.push add_photo('http://i.imgur.com/FJdle9E.jpg', File.join(dir, 'warm_bread.jpg'), kvort, at_time(11, 15))
+  photos.push add_photo('db/seeds/images/1.jpg', File.join(dir, 'cute_cat.jpg'), james, at_time(14, 30, offset: -1.day))
+  photos.push add_photo('db/seeds/images/2.jpg', File.join(dir, 'mean_cat.jpg'), steve, at_time(12, 0))
+  photos.push add_photo('db/seeds/images/3.jpg', File.join(dir, 'tired_cat.jpg'), james, at_time(12, 5))
+  photos.push add_photo('db/seeds/images/4.jpg', File.join(dir, 'warm_bread.jpg'), kvort, at_time(11, 15))
 end
 
 def create_post(text, author, timestamp, photo)
@@ -157,12 +152,12 @@ end
 
 forum_photos = []
 Dir.mktmpdir do |dir|
-  forum_photos.push add_photo('http://lorempixel.com/1900/1200/cats/9/', File.join(dir, 'forum1_init_cat.jpg'), kvort, at_time(8, 5))
-  forum_photos.push add_photo('http://lorempixel.com/1900/1200/cats/10/', File.join(dir, 'forum1_init2_cat.jpg'), kvort, at_time(8, 6))
-  forum_photos.push add_photo('http://lorempixel.com/1900/1200/cats/11/', File.join(dir, 'forum1_post1_cat.jpg'), james, at_time(8, 15))
-  forum_photos.push add_photo('http://lorempixel.com/1900/1200/food/1/', File.join(dir, 'forum2_init1_food.jpg'), james, at_time(8, 20))
-  forum_photos.push add_photo('http://lorempixel.com/1900/1200/food/3/', File.join(dir, 'forum2_post2_food.jpg'), steve, at_time(8, 21))
-  forum_photos.push add_photo('http://lorempixel.com/1900/1200/food/7/', File.join(dir, 'forum2_post3_bread.jpg'), kvort, at_time(8, 22))
+  forum_photos.push add_photo('db/seeds/images/5.jpg', File.join(dir, 'forum1_init_cat.jpg'), kvort, at_time(8, 5))
+  forum_photos.push add_photo('db/seeds/images/6.jpg', File.join(dir, 'forum1_init2_cat.jpg'), kvort, at_time(8, 6))
+  forum_photos.push add_photo('db/seeds/images/7.jpg', File.join(dir, 'forum1_post1_cat.jpg'), james, at_time(8, 15))
+  forum_photos.push add_photo('db/seeds/images/8.jpg', File.join(dir, 'forum2_init1_food.jpg'), james, at_time(8, 20))
+  forum_photos.push add_photo('db/seeds/images/9.jpg', File.join(dir, 'forum2_post2_food.jpg'), steve, at_time(8, 21))
+  forum_photos.push add_photo('db/seeds/images/10.jpg', File.join(dir, 'forum2_post3_bread.jpg'), kvort, at_time(8, 22))
 end
 
 def create_forum(subject, text, author, timestamp, photos)

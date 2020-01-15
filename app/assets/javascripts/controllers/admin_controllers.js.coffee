@@ -39,6 +39,8 @@ Twitarr.AdminUploadScheduleController = Twitarr.Controller.extend
             alert data.jqXHR.responseJSON.error
           else
             alert 'An upload has failed!'
+      $('#schedule-upload-div').click ->
+        $('#scheduleupload').click()
     )
   )
 

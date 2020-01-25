@@ -88,7 +88,6 @@ module Api
 
         if @photo.destroy
           head(:no_content, status: :ok)
-          return
         else
           render status: :bad_request, json: { status: 'error', errors: @photo.errors }
         end

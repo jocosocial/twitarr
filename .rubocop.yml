@@ -28,7 +28,7 @@ Lint/AmbiguousOperator:
 Style/Alias:
   EnforcedStyle: prefer_alias_method
 
-Layout/AlignHash:
+Layout/HashAlignment:
   Enabled: false
 
 Style/Documentation:
@@ -79,7 +79,7 @@ Style/GuardClause:
   Enabled: false
 
 # does not make sense to enable this without AlignHash
-Layout/IndentFirstHashElement:
+Layout/FirstHashElementIndentation:
   Enabled: false
 
 Style/Lambda:
@@ -98,6 +98,11 @@ Layout/MultilineOperationIndentation:
   Enabled: false
 
 Layout/MultilineBlockLayout:
+  Enabled: false
+
+# Disabling line length enforcement since annotate generates
+# some pretty long lines
+Layout/LineLength:
   Enabled: false
 
 # This cop complains about values like 05.
@@ -160,11 +165,6 @@ Metrics/ClassLength:
   Enabled: false
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
-
-# Disabling line length enforcement since annotate generates
-# some pretty long lines
-Metrics/LineLength:
   Enabled: false
 
 Metrics/MethodLength:

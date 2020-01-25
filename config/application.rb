@@ -50,7 +50,7 @@ module Twitarr
     config.assets.precompile += ['respond.js']
     config.assets.precompile = ['manifest.js']
 
-    config.autoload_paths += Dir[Rails.root.join('app', 'contexts', '{**}')]
+    config.autoload_paths += Dir[Rails.root.join('app/contexts/{**}')]
 
     config.action_dispatch.perform_deep_munge = false
 

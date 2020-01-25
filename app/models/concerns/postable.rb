@@ -51,7 +51,10 @@ module Postable
 
     def remove_reaction(user_id, reaction_id)
       doc = post_reactions.find_by(user_id: user_id, reaction_id: reaction_id)
-      doc.destroy && return if doc
+      if doc
+        doc.destroy
+        return
+      end
 
       logger.info "Could not find reaction to remove. UserID: #{user_id}, ReactionID: #{reaction_id}"
     end

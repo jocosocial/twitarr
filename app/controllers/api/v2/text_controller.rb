@@ -3,9 +3,12 @@ module Api
     class TextController < ApplicationController
       def index
         filename = params['filename'].strip.downcase.gsub(/[^\w-]/, '')
-        render(status: :not_found, json: { status: 'error', error: 'File not found.' }) && return unless File.exist?("public/text/#{filename}.json")
-        file = File.read("public/text/#{filename}.json")
-        render json: file
+        if File.exist?("public/text/#{filename}.json")
+          file = File.read("public/text/#{filename}.json")
+          render json: file
+        else
+          render(status: :not_found, json: { status: 'error', error: 'File not found.' })
+        end
       end
 
       def time

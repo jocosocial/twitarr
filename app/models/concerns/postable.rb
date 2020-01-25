@@ -8,22 +8,24 @@ module Postable
     include Twitter::TwitterText::Extractor
 
     def parse_hash_tags
-      entities = extract_entities_with_indices text
-      entities.each do |entity|
-        entity = entity.inject({}) do |x, (k, v)|
-          x[k.to_sym] = v
-          x
-        end
-        if entity.key?(:hashtag)
-          hash_tag = entity[:hashtag].downcase
-          if hash_tag.length > Hashtag::MAX_LENGTH
-            errors[:base] << "Hashtag max length is #{Hashtag::MAX_LENGTH} characters. Too long: #{hash_tag}"
-          else
-            hash_tags << hash_tag unless hash_tags.include?(hash_tag)
+      if text
+        entities = extract_entities_with_indices text
+        entities.each do |entity|
+          entity = entity.inject({}) do |x, (k, v)|
+            x[k.to_sym] = v
+            x
           end
-        elsif entity.key?(:screen_name)
-          screen_name = entity[:screen_name].downcase
-          mentions << screen_name unless mentions.include?(screen_name)
+          if entity.key?(:hashtag)
+            hash_tag = entity[:hashtag].downcase
+            if hash_tag.length > Hashtag::MAX_LENGTH
+              errors[:base] << "Hashtag max length is #{Hashtag::MAX_LENGTH} characters. Too long: #{hash_tag}"
+            else
+              hash_tags << hash_tag unless hash_tags.include?(hash_tag)
+            end
+          elsif entity.key?(:screen_name)
+            screen_name = entity[:screen_name].downcase
+            mentions << screen_name unless mentions.include?(screen_name)
+          end
         end
       end
     end

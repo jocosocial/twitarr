@@ -20,7 +20,7 @@ class Forum < ApplicationRecord
   PAGE_SIZE = 20
   FORUM_CACHE_TIME = 30.minutes
 
-  has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum
+  has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum, validate: false
 
   validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts

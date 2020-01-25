@@ -94,10 +94,11 @@ class Seamail < ApplicationRecord
     right_now = Time.now
     self.last_update = right_now
     author_id = User.get(author).id
-    seamail_messages << SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id)
+    new_message = SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id)
+    seamail_messages << new_message
     user_seamails.where(user_id: author_id).update(last_viewed: right_now)
     save if valid?
-    self
+    new_message
   end
 
   def self.search(params = {})

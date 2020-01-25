@@ -10,9 +10,10 @@ module Api
         begin
           @seamail = Seamail.find(params[:id])
         rescue ActiveRecord::RecordNotFound
-          render(status: :not_found, json: { status: 'error', error: 'Seamail not found' }) && return
+          render status: :not_found, json: { status: 'error', error: 'Seamail not found' }
+          return
         end
-        render(status: :not_found, json: { status: 'error', error: 'Seamail not found' }) && return unless @seamail.user_seamails.where(user_id: current_user.id).any? || (moderator? && @seamail.user_seamails.where(user_id: moderator_user.id).any?) || (admin? && @seamail.user_seamails.where(user_id: admin_user.id).any?)
+        render status: :not_found, json: { status: 'error', error: 'Seamail not found' } unless @seamail.user_seamails.where(user_id: current_user.id).any? || (moderator? && @seamail.user_seamails.where(user_id: moderator_user.id).any?) || (admin? && @seamail.user_seamails.where(user_id: admin_user.id).any?)
       end
 
       def as_user
@@ -28,7 +29,8 @@ module Api
             counting_unread = true
           end
         rescue ArgumentError => e
-          render(status: :bad_request, json: { status: 'error', error: e.message }) && (return)
+          render status: :bad_request, json: { status: 'error', error: e.message }
+          return
         end
         if params[:after]
           val = Time.from_param(params[:after])
@@ -88,12 +90,13 @@ module Api
         usernames << as_user.username unless usernames.include? as_user.username
         usernames = usernames.map(&:downcase).uniq
         @seamail.usernames = usernames
+
         if @seamail.valid?
           @seamail.save!
+          render json: { status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(as_user.id) }
         else
-          render(status: :bad_request, json: { status: 'error', errors: @seamail.errors.full_messages }) && return
+          render status: :bad_request, json: { status: 'error', errors: @seamail.errors.full_messages }
         end
-        render json: { status: 'ok', seamail_meta: @seamail.decorate.to_meta_hash(as_user.id) }
       end
     end
   end

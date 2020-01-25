@@ -63,7 +63,8 @@ module Api
           role_errors.each do |x|
             @user.errors.add(:role, x)
           end
-          render(status: :bad_request, json: { status: 'error', errors: @user.errors.messages }) && return
+          render status: :bad_request, json: { status: 'error', errors: @user.errors.messages }
+          return
         end
 
         @user.save
@@ -155,10 +156,12 @@ module Api
         as_user = post_as_user(params)
         errors.push('Only admins may post as TwitarrTeam.') if !admin? || (as_user.id == moderator_user.id)
 
-        render(status: :bad_request, json: { status: 'error', errors: errors }) && return unless errors.empty?
-
-        announcement = Announcement.create(author: as_user.id, text: params[:text], valid_until: valid_until, original_author: current_user.id)
-        render json: { status: 'ok', announcement: announcement.decorate.to_admin_hash(request_options) }
+        if errors.empty?
+          announcement = Announcement.create(author: as_user.id, text: params[:text], valid_until: valid_until, original_author: current_user.id)
+          render json: { status: 'ok', announcement: announcement.decorate.to_admin_hash(request_options) }
+        else
+          render status: :bad_request, json: { status: 'error', errors: errors }
+        end
       end
 
       def announcement
@@ -179,7 +182,10 @@ module Api
           errors.push('Valid until must be in the future.') unless valid_until > time
         end
 
-        render(status: :bad_request, json: { status: 'error', errors: errors }) && return unless errors.empty?
+        if errors.any?
+          render status: :bad_request, json: { status: 'error', errors: errors }
+          return
+        end
 
         @announcement.text = params[:text]
         @announcement.valid_until = valid_until
@@ -205,7 +211,8 @@ module Api
           temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
           Icalendar::Calendar.parse(temp).first.events.map { |x| Event.create_from_ics x }
         rescue StandardError => e
-          render(status: :bad_request, json: { status: 'error', error: "Unable to parse schedule: #{e.message}" }) && (return)
+          render status: :bad_request, json: { status: 'error', error: "Unable to parse schedule: #{e.message}" }
+          return
         end
         render json: { status: 'ok' }
       end
@@ -225,13 +232,13 @@ module Api
 
       def fetch_user
         @user = User.get params[:username]
-        render(status: :not_found, json: { status: 'error', error: 'User not found.' }) && return unless @user
+        render status: :not_found, json: { status: 'error', error: 'User not found.' } unless @user
       end
 
       def fetch_announcement
         @announcement = Announcement.find(params[:id])
       rescue StandardError
-        render(status: :not_found, json: { status: 'error', error: 'Announcement not found.' }) && (return)
+        render status: :not_found, json: { status: 'error', error: 'Announcement not found.' }
       end
     end
   end

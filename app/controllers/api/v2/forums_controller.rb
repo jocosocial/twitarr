@@ -30,7 +30,10 @@ module Api
           end
         end
 
-        render(status: :bad_request, json: { status: 'error', errors: errors }) && return if errors.count > 0
+        if errors.count > 0
+          render status: :bad_request, json: { status: 'error', errors: errors }
+          return
+        end
 
         thread_count = query.count
         query = query.order(sticky: :desc, last_post_time: :desc, id: :desc).offset(page * page_size).limit(page_size)
@@ -38,8 +41,15 @@ module Api
 
         next_page = (page + 1 if thread_count > (page + 1) * page_size)
         prev_page = (page - 1 if page > 0)
-        render json: { status: 'ok', forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) }, next_page: next_page,
-                      prev_page: prev_page, thread_count: thread_count, page: page, page_count: page_count }
+        render json: {
+            status: 'ok',
+            forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) },
+            next_page: next_page,
+            prev_page: prev_page,
+            thread_count: thread_count,
+            page: page,
+            page_count: page_count
+        }
       end
 
       def show
@@ -51,7 +61,10 @@ module Api
 
         errors.push 'Page must be greater than or equal to zero.' if page < 0
 
-        render(status: :bad_request, json: { status: 'error', errors: errors }) && return if errors.count > 0
+        if errors.count > 0
+          render status: :bad_request, json: { status: 'error', errors: errors }
+          return
+        end
 
         query = @forum.decorate
 
@@ -98,7 +111,10 @@ module Api
       end
 
       def update_post
-        render(status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }) && return unless (@post.author == current_user.id) || tho?
+        unless (@post.author == current_user.id) || tho?
+          render status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }
+          return
+        end
 
         @post.text = params[:text]
         if @post.valid?
@@ -115,7 +131,11 @@ module Api
       end
 
       def delete_post
-        render(status: :forbidden, json: { status: 'error', error: "You can not delete other users' posts." }) && return unless (@post.author == current_user.id) || moderator?
+        unless (@post.author == current_user.id) || moderator?
+          render status: :forbidden, json: { status: 'error', error: "You can not delete other users' posts." }
+          return
+        end
+
         thread_deleted = false
         @post.destroy
         @forum.reload
@@ -170,7 +190,8 @@ module Api
         begin
           @forum.sticky = params[:sticky].to_bool
         rescue ArgumentError => e
-          render(status: :bad_request, json: { status: 'error', error: e.message }) && (return)
+          render status: :bad_request, json: { status: 'error', error: e.message }
+          return
         end
         if @forum.valid? && @forum.save
           render json: { status: 'ok', sticky: @forum.sticky }
@@ -183,7 +204,8 @@ module Api
         begin
           @forum.locked = params[:locked].to_bool
         rescue ArgumentError => e
-          render(status: :bad_request, json: { status: 'error', error: e.message }) && (return)
+          render status: :bad_request, json: { status: 'error', error: e.message }
+          return
         end
         if @forum.valid? && @forum.save
           render json: { status: 'ok', locked: @forum.locked }
@@ -193,11 +215,11 @@ module Api
       end
 
       def mark_all_read
-        participated_only = false
         begin
           participated_only = params[:participated].to_bool
         rescue ArgumentError => e
-          render(status: :bad_request, json: { status: 'error', error: e.message }) && (return)
+          render status: :bad_request, json: { status: 'error', error: e.message }
+          return
         end
         current_user.mark_all_forums_read(participated_only)
         render json: { status: 'ok' }

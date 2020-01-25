@@ -14,13 +14,17 @@ module Api
           render status: :bad_request, json: { status: 'error', errors: { general: ['Already logged in - log out before creating a new account.'] } }
           return
         end
+
         new_username = params[:new_username].present? ? params[:new_username].downcase : ''
         display_name = params[:display_name]
         display_name = params[:new_username] if params[:display_name].blank?
         user = User.new username: new_username, display_name: display_name, password: params[:new_password],
                         role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
 
-        render status: :bad_request, json: { status: 'error', errors: user.errors.messages } && return unless user.valid?
+        if user.invalid?
+          render status: :bad_request, json: { status: 'error', errors: user.errors.messages }
+          return
+        end
 
         user.change_password params[:new_password]
         user.update_last_login
@@ -31,28 +35,36 @@ module Api
 
       def auth
         login_result = validate_login params[:username], params[:password]
-        if login_result.key? :error
-          render status: :unauthorized, json: { status: 'error', error: login_result[:error] } && return
-        else
-          @user = login_result[:user]
-          login_user @user
-          render json: { status: 'ok', username: @user.username, key: build_key(@user.username, @user.password) }
+
+        if login_result.key?(:error)
+          render status: :unauthorized, json: { status: 'error', error: login_result[:error] }
+          return
         end
+
+        @user = login_result[:user]
+        login_user @user
+        render json: { status: 'ok', username: @user.username, key: build_key(@user.username, @user.password) }
       end
 
       def reset_password
         params[:username] ||= ''
         params[:registration_code] ||= ''
         user = User.where(username: User.format_username(params[:username])).first
+
         if user.nil? || user.registration_code != params[:registration_code].upcase.gsub(/[^A-Z0-9]/, '')
           sleep 10.seconds.to_i
-          render status: :bad_request, json: { status: 'error', errors: { username: ['Username and registration code combination not found.'] } } && return
+          render status: :bad_request, json: { status: 'error', errors: { username: ['Username and registration code combination not found.'] } }
+          return
         end
 
         # Check validity of new password
         new_pass = params[:new_password]
         user.password = new_pass
-        render status: :bad_request, json: { status: 'error', errors: { password: ['New password must be at least six characters long.'] } } && return unless user.valid?
+
+        if user.invalid?
+          render status: :bad_request, json: { status: 'error', errors: { password: ['New password must be at least six characters long.'] } }
+          return
+        end
 
         user.change_password params[:new_password]
         user.save!
@@ -68,7 +80,10 @@ module Api
         query = params[:query].downcase
         query = query[1..-1] if query[0] == '@'
 
-        render status: :bad_request, json: { status: 'error', error: "Minimum length is #{User::MIN_AUTO_COMPLETE_LEN}" } && return unless query && query.size >= User::MIN_AUTO_COMPLETE_LEN
+        unless query && query.size >= User::MIN_AUTO_COMPLETE_LEN
+          render status: :bad_request, json: { status: 'error', error: "Minimum length is #{User::MIN_AUTO_COMPLETE_LEN}" }
+          return
+        end
 
         render json: { status: 'ok', users: User.auto_complete(query).map { |x| x.decorate.gui_hash } }
       end
@@ -106,7 +121,11 @@ module Api
       end
 
       def personal_comment
-        render status: :bad_request, json: { status: 'error', error: 'Comment is too long (maximum is 5000 characters)' } && return if !params[:comment].nil? && params[:comment].length > 5000
+        if !params[:comment].nil? && params[:comment].length > 5000
+          render status: :bad_request, json: { status: 'error', error: 'Comment is too long (maximum is 5000 characters)' }
+          return
+        end
+
         current_user.personal_comments[@user.username] = params[:comment]
         current_user.save
         render json: { status: 'ok', user: @user.decorate.public_hash(current_user) }
@@ -144,7 +163,8 @@ module Api
 
         if !current_user.valid? || muted_change
           current_user.errors.add(:general, 'You have been muted. You may set fields to blank, but you may not otherwise change them.') if muted_change
-          render status: :bad_request, json: { status: 'error', errors: current_user.errors } && return
+          render status: :bad_request, json: { status: 'error', errors: current_user.errors }
+          return
         end
 
         current_user.save
@@ -158,14 +178,15 @@ module Api
 
         current_user.password = params[:new_password]
 
-
         errors[:new_password] = ['New password must be at least six characters long, and cannot be more than 100 characters long.'] unless current_user.valid?
 
-        render status: :bad_request, json: { status: 'error', errors: errors } && return unless errors.empty?
-
-        current_user.change_password params[:new_password]
-        current_user.save
-        render json: { status: 'ok', key: build_key(current_user.username, current_user.password) }
+        if errors.empty?
+          current_user.change_password params[:new_password]
+          current_user.save
+          render json: { status: 'ok', key: build_key(current_user.username, current_user.password) }
+        else
+          render status: :bad_request, json: { status: 'error', errors: errors }
+        end
       end
 
       def photo
@@ -184,7 +205,11 @@ module Api
       end
 
       def update_photo
-        render status: :bad_request, json: { status: 'error', error: 'Must provide photo to upload.' } && return unless params[:file]
+        unless params[:file]
+          render status: :bad_request, json: { status: 'error', error: 'Must provide photo to upload.' }
+          return
+        end
+
         results = current_user.update_photo(params[:file])
         if results.fetch(:status) == 'error'
           render status: :bad_request, json: results
@@ -203,7 +228,8 @@ module Api
           temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
           Icalendar::Calendar.parse(temp).first.events.map { |x| Event.favorite_from_ics(x, current_username) }
         rescue StandardError => e
-          render status: :bad_request, json: { status: 'error', error: "Unable to parse schedule: #{e.message}" } && return
+          render status: :bad_request, json: { status: 'error', error: "Unable to parse schedule: #{e.message}" }
+          return
         end
         render json: { status: 'ok' }
       end

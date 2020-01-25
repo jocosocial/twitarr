@@ -30,11 +30,13 @@ module Api
         order = (params[:order] || 'asc').to_sym
         errors.push 'Order must be either asc or desc' unless [:asc, :desc].include? order
 
-        render(status: :bad_request, json: { status: 'error', errors: errors }) && return unless errors.empty?
-
-        query = PhotoMetadata.all.includes(:user).references(:users).order(sort_by => order).offset(limit * page).limit(limit)
-        count = query.length
-        render json: { status: 'ok', total_count: count, page: page, photos: query.map { |x| x.decorate.to_hash } }
+        if errors.empty?
+          query = PhotoMetadata.all.includes(:user).references(:users).order(sort_by => order).offset(limit * page).limit(limit)
+          count = query.length
+          render json: { status: 'ok', total_count: count, page: page, photos: query.map { |x| x.decorate.to_hash } }
+        else
+          render status: :bad_request, json: { status: 'error', errors: errors }
+        end
       end
 
       def show
@@ -42,7 +44,10 @@ module Api
       end
 
       def create
-        render(status: :bad_request, json: { status: 'error', error: 'Must provide photo to upload.' }) && return if params[:file].blank? || !params[:file].is_a?(ActionDispatch::Http::UploadedFile)
+        if params[:file].blank? || !params[:file].is_a?(ActionDispatch::Http::UploadedFile)
+          render status: :bad_request, json: { status: 'error', error: 'Must provide photo to upload.' }
+          return
+        end
 
         results = PhotoStore.instance.upload(params[:file], current_user.id)
 
@@ -55,7 +60,10 @@ module Api
       end
 
       def destroy
-        render(status: :bad_request, json: { status: 'error', error: 'You can not delete other users\' photos' }) && return unless (@photo.user_id == current_user.id) || moderator?
+        unless (@photo.user_id == current_user.id) || moderator?
+          render status: :bad_request, json: { status: 'error', error: 'You can not delete other users\' photos' }
+          return
+        end
 
         begin
           Rails.logger.info 'deleting ' + PhotoStore.instance.photo_path(@photo.store_filename)
@@ -79,7 +87,8 @@ module Api
         end
 
         if @photo.destroy
-          head(:no_content, status: :ok) && return
+          head(:no_content, status: :ok)
+          return
         else
           render status: :bad_request, json: { status: 'error', errors: @photo.errors }
         end

@@ -51,9 +51,13 @@ module Api
         begin
           last_checked_time = Time.from_param(params[:last_checked_time])
         rescue StandardError
-          render(status: :bad_request, json: { status: 'error', error: 'Unable to parse timestamp.' }) && (return)
-        else
-          render(status: :bad_request, json: { status: 'error', error: 'Timestamp must be in the past.' }) && return unless last_checked_time <= Time.now
+          render status: :bad_request, json: { status: 'error', error: 'Unable to parse timestamp.' }
+          return
+        end
+
+        if last_checked_time >= Time.now
+          render status: :bad_request, json: { status: 'error', error: 'Timestamp must be in the past.' }
+          return
         end
 
         current_user.reset_last_viewed_alerts(last_checked_time)

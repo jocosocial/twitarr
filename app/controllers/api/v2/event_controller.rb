@@ -1,7 +1,7 @@
 require 'csv'
 module Api
   module V2
-    class EventController < ApplicationController
+    class EventController < ApiController
       before_action :events_enabled
       before_action :login_required, only: [:follow, :unfollow, :mine]
       before_action :tho_required, only: [:destroy, :update]

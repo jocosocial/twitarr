@@ -1,6 +1,6 @@
 module Api
   module V2
-    class SearchController < ApplicationController
+    class SearchController < ApiController
       include Twitter::TwitterText::Extractor
 
       before_action :search_enabled

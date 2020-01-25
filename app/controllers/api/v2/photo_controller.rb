@@ -2,7 +2,7 @@ require 'tempfile'
 
 module Api
   module V2
-    class PhotoController < ApplicationController
+    class PhotoController < ApiController
       PAGE_LENGTH = 20
       before_action :login_required, only: [:create, :destroy]
       before_action :not_muted, only: [:create]

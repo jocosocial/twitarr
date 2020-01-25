@@ -1,6 +1,6 @@
 module Api
   module V2
-    class StreamController < ApplicationController
+    class StreamController < ApiController
       PAGE_LENGTH = 20
       before_action :stream_enabled
       before_action :login_required, only: [:create, :delete, :update, :react, :unreact]

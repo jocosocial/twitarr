@@ -1,6 +1,6 @@
 module Api
   module V2
-    class AlertsController < ApplicationController
+    class AlertsController < ApiController
       before_action :login_required, only: [:last_checked]
 
       def index

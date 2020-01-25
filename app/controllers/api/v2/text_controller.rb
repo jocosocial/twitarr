@@ -1,6 +1,6 @@
 module Api
   module V2
-    class TextController < ApplicationController
+    class TextController < ApiController
       def index
         filename = params['filename'].strip.downcase.gsub(/[^\w-]/, '')
         if File.exist?("public/text/#{filename}.json")

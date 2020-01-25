@@ -1,6 +1,6 @@
 module Api
   module V2
-    class HashtagController < ApplicationController
+    class HashtagController < ApiController
       before_action :admin_required, only: [:populate_hashtags]
 
       def populate_hashtags

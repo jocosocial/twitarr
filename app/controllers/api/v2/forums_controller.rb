@@ -1,6 +1,6 @@
 module Api
   module V2
-    class ForumsController < ApplicationController
+    class ForumsController < ApiController
       before_action :forums_enabled
       before_action :login_required, only: [:create, :new_post, :update_post, :delete_post, :react, :unreact, :mark_all_read]
       before_action :tho_required, only: [:sticky]

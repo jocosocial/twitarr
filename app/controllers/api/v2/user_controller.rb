@@ -1,6 +1,6 @@
 module Api
   module V2
-    class UserController < ApplicationController
+    class UserController < ApiController
       before_action :registration_enabled, only: [:new]
       before_action :profile_enabled, only: [:show, :update_profile, :reset_photo, :update_photo]
       before_action :seamail_enabled, only: [:new_seamail]

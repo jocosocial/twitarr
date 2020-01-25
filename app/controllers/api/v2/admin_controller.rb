@@ -1,6 +1,6 @@
 module Api
   module V2
-    class AdminController < ApplicationController
+    class AdminController < ApiController
       before_action :moderator_required, only: [:users, :user, :profile, :update_user, :reset_photo]
       before_action :tho_required, only: [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement, :regcode, :section_toggle]
       before_action :admin_required, only: [:upload_schedule, :activate]

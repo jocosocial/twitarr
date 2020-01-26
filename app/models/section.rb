@@ -14,6 +14,7 @@
 #
 
 class Section < ApplicationRecord
+  default_scope { order(name: :asc) }
   def self.add(section)
     Section.find_or_create_by(name: section) do |doc|
       doc.enabled = true
@@ -33,6 +34,7 @@ class Section < ApplicationRecord
     if doc
       doc.enabled = enabled
       doc.save
+      doc
     end
   end
 end

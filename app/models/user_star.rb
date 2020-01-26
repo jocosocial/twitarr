@@ -19,6 +19,6 @@
 #
 
 class UserStar < ApplicationRecord
-  belongs_to :user, class_name: 'User', foreign_key: :user_id, inverse_of: :starred_users
+  belongs_to :user, class_name: 'User', foreign_key: :user_id, inverse_of: :user_stars
   belongs_to :starred_user, class_name: 'User', foreign_key: :starred_user_id, inverse_of: :starred_by_users
 end

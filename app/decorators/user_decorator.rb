@@ -16,7 +16,7 @@ class UserDecorator < Draper::Decorator
       last_photo_updated: last_photo_updated.to_ms
     }
     unless current_user.nil?
-      ret[:starred] = current_user.starred_users.where(starred_user_id: id).exists?
+      ret[:starred] = current_user.user_stars.where(starred_user_id: id).exists?
       ret[:comment] = current_user.user_comments.find_by(commented_user_id: id)&.comment
     end
     ret

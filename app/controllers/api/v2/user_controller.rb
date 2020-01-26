@@ -226,7 +226,7 @@ module Api
         begin
           upload = params[:schedule].tempfile.read
           temp = upload.gsub(/&amp;/, '&').gsub(/(?<!\\);/, '\;')
-          Icalendar::Calendar.parse(temp).first.events.map { |x| Event.favorite_from_ics(x, current_username) }
+          Icalendar::Calendar.parse(temp).first.events.map { |x| Event.favorite_from_ics(x, current_user.id) }
         rescue StandardError => e
           render status: :bad_request, json: { status: 'error', error: "Unable to parse schedule: #{e.message}" }
           return

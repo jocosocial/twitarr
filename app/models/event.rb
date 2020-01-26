@@ -25,6 +25,10 @@
 class Event < ApplicationRecord
   include Searchable
 
+  has_many :user_events, inverse_of: :event, dependent: :destroy
+
+  default_scope { order(start_time: :asc, title: :asc) }
+
   DST_START = Time.new(2019, 3, 11, 2, 0, 0, '-05:00')
 
   # TODO: migrate
@@ -68,22 +72,22 @@ class Event < ApplicationRecord
     retry
   end
 
-  def self.favorite_from_ics(ics_event, username)
+  def self.favorite_from_ics(ics_event, user_id)
     uid = ics_event.uid.split('@')[0]
     event = Event.find_by(id: uid)
 
     return unless event
 
-    event.favorites << username unless event.favorites.include? username
-    event.save
+    user_events.find_or_create_by(user_id: user_id)
   end
 
-  def follow(username)
-    favorites << username unless favorites.include? username
+  def follow(user_id)
+    user_events.find_or_create_by(user_id: user_id)
   end
 
-  def unfollow(username)
-    favorites.delete username
+  def unfollow(user_id)
+    doc = user_events.find_by(user_id: user_id)
+    doc.destroy if doc
   end
 
 end

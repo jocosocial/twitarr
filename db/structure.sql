@@ -527,6 +527,39 @@ ALTER SEQUENCE public.stream_posts_id_seq OWNED BY public.stream_posts.id;
 
 
 --
+-- Name: user_comments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_comments (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    commented_user_id bigint NOT NULL,
+    comment character varying DEFAULT ''::character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: user_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_comments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_comments_id_seq OWNED BY public.user_comments.id;
+
+
+--
 -- Name: user_events; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -798,6 +831,13 @@ ALTER TABLE ONLY public.stream_posts ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: user_comments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_comments ALTER COLUMN id SET DEFAULT nextval('public.user_comments_id_seq'::regclass);
+
+
+--
 -- Name: user_events id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -966,6 +1006,14 @@ ALTER TABLE ONLY public.sections
 
 ALTER TABLE ONLY public.stream_posts
     ADD CONSTRAINT stream_posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_comments user_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_comments
+    ADD CONSTRAINT user_comments_pkey PRIMARY KEY (id);
 
 
 --
@@ -1247,6 +1295,13 @@ CREATE INDEX index_stream_posts_text ON public.stream_posts USING gin (to_tsvect
 
 
 --
+-- Name: index_user_comments_on_user_id_and_commented_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_user_comments_on_user_id_and_commented_user_id ON public.user_comments USING btree (user_id, commented_user_id);
+
+
+--
 -- Name: index_user_events_on_event_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1315,6 +1370,14 @@ CREATE UNIQUE INDEX index_users_on_username ON public.users USING btree (usernam
 
 ALTER TABLE ONLY public.user_seamails
     ADD CONSTRAINT fk_rails_0660a07f4a FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: user_comments fk_rails_086a665748; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_comments
+    ADD CONSTRAINT fk_rails_086a665748 FOREIGN KEY (commented_user_id) REFERENCES public.users(id);
 
 
 --
@@ -1502,6 +1565,14 @@ ALTER TABLE ONLY public.announcements
 
 
 --
+-- Name: user_comments fk_rails_c4e95a001e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_comments
+    ADD CONSTRAINT fk_rails_c4e95a001e FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: stream_posts fk_rails_eb175487ec; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1546,6 +1617,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200113030923'),
 ('20200114050246'),
 ('20200114050321'),
-('20200126003047');
+('20200126003047'),
+('20200126023443');
 
 

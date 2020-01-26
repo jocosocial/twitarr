@@ -69,7 +69,6 @@ class User < ApplicationRecord
   RESET_PASSWORD = 'seamonkey'.freeze
 
   # TODO: Create these as separate tables
-  # field :us, as: :starred_users, type: Array, default: []
   # field :pc, as: :personal_comments, type: Hash, default: {}
 
   has_many :stream_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
@@ -83,6 +82,8 @@ class User < ApplicationRecord
   has_many :seamail_messages_authored, inverse_of: :user, foreign_key: :author, dependent: :destroy, class_name: 'SeamailMessage'
   has_many :starred_users, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserStar'
   has_many :starred_by_users, inverse_of: :starred_user, foreign_key: :starred_user_id, dependent: :destroy, class_name: 'UserStar'
+  has_many :user_comments, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserComment'
+  has_many :commented_by_users, inverse_of: :commented_user, foreign_key: :commented_user_id, dependent: :destroy, class_name: 'UserComment'
   has_many :user_events, inverse_of: :user, dependent: :destroy
   has_many :events, through: :user_events
 
@@ -215,6 +216,12 @@ class User < ApplicationRecord
 
   def unnoticed_upcoming_events
     upcoming_events(false, true).count
+  end
+
+  def comment(commenting_user_id, comment)
+    user_comment = commented_by_users.find_or_initialize_by(user_id: commenting_user_id)
+    user_comment.comment = comment
+    user_comment.save if user_comment.valid?
   end
 
   def seamail_threads(params = {})

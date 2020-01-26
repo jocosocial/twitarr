@@ -17,7 +17,7 @@ class UserDecorator < Draper::Decorator
     }
     unless current_user.nil?
       ret[:starred] = current_user.starred_users.where(starred_user_id: id).exists?
-      # ret[:comment] = current_user.personal_comments[username]
+      ret[:comment] = current_user.user_comments.find_by(commented_user_id: id)&.comment
     end
     ret
   end

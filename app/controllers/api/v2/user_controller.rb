@@ -126,8 +126,7 @@ module Api
           return
         end
 
-        current_user.personal_comments[@user.username] = params[:comment]
-        current_user.save
+        @user.comment(current_user.id, params[:comment])
         render json: { status: 'ok', user: @user.decorate.public_hash(current_user) }
       end
 

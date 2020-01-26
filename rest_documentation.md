@@ -648,7 +648,7 @@ Creates a new tweet in the tweet stream. The author will be the logged in user. 
         "errors": [
             "Text can't be blank",
             "Text is too long (maximum is 2000 characters)",
-            "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
+            "Hashtag max length is 100 characters. This hashtag is too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
     }
@@ -736,7 +736,7 @@ Both text and photo are optional, however, at least one must be specified.  If o
         "errors": [
             "Text can't be blank",
             "Text is too long (maximum is 2000 characters)",
-            "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
+            "Hashtag max length is 100 characters. This hashtag is too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
             "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the posted photo id
         ]
     }
@@ -2113,7 +2113,7 @@ Creates a forum thread and its first post.
         "Subject is too long (maximum is 200 characters)",
         "Text can't be blank",
         "Text is too long (maximum is 10000 characters)",
-        "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag,
+        "Hashtag max length is 100 characters. This hashtag is too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag,
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2193,7 +2193,7 @@ Creates a new post in the thread.
     "errors": [
         "Text can't be blank",
         "Text is too long (maximum is 10000 characters)",
-        "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
+        "Hashtag max length is 100 characters. This hashtag is too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }
@@ -2352,7 +2352,7 @@ Edits a post in the thread.
     "errors": [
         "Text can't be blank",
         "Text is too long (maximum is 10000 characters)",
-        "Hashtag max length is 100 characters. Too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag,
+        "Hashtag max length is 100 characters. This hashtag is too long: hashtag_string", # hashtag_string will be replaced with the invalid hashtag,
         "photo_id_string is not a valid photo id" # photo_id_string will be replaced with the invalid photo id
     ]
 }

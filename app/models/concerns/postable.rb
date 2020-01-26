@@ -18,7 +18,7 @@ module Postable
           if entity.key?(:hashtag)
             hash_tag = entity[:hashtag].downcase
             if hash_tag.length > Hashtag::MAX_LENGTH
-              errors[:base] << "Hashtag max length is #{Hashtag::MAX_LENGTH} characters. Too long: #{hash_tag}"
+              errors[:base] << "Hashtag max length is #{Hashtag::MAX_LENGTH} characters. This hashtag is too long: ##{hash_tag}"
             else
               hash_tags << hash_tag unless hash_tags.include?(hash_tag)
             end

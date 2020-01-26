@@ -67,7 +67,7 @@ module Api
       end
 
       def index
-        filtered_query = Event.all.eager_load(:user_events).map { |x| x.decorate.to_hash(current_user, request_options) }
+        filtered_query = Event.all.includes(:user_events).references(:user_events).map { |x| x.decorate.to_hash(current_user, request_options) }
         render json: { status: 'ok', total_count: filtered_query.length, events: filtered_query }
       end
 
@@ -77,20 +77,28 @@ module Api
 
       def mine
         day = Time.from_param(params[:day])
-        events = Event.eager_load(:user_events).where("start_time >= '#{day.beginning_of_day}' AND start_time <= '#{day.end_of_day}'").where('user_events.user_id = ?', current_user.id)
-        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms }
+        events = day_query(day).where('user_events.user_id = ?', current_user.id)
+        render json: event_list_output(day, events)
       end
 
       def day
         day = Time.from_param(params[:day])
-        events = Event.eager_load(:user_events).where("start_time >= '#{day.beginning_of_day}' AND start_time <= '#{day.end_of_day}'")
-        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms }
+        events = day_query(day)
+        render json: event_list_output(day, events)
       end
 
       private
 
+      def day_query(day)
+        Event.includes(:user_events).references(:user_events).where('start_time >= ? AND start_time <= ?', day.beginning_of_day, day.end_of_day)
+      end
+
+      def event_list_output(day, events)
+        { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms }
+      end
+
       def fetch_event
-        @event = Event.eager_load(:user_events).find(params[:id])
+        @event = Event.includes(:user_events).references(:user_events).find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', id: params[:id], error: 'Event not found.' }
       end

@@ -71,7 +71,6 @@ class User < ApplicationRecord
   # TODO: Create these as separate tables
   # field :us, as: :starred_users, type: Array, default: []
   # field :pc, as: :personal_comments, type: Hash, default: {}
-  # field :ea, as: :acknowledged_event_alerts, type: Array, default: []
 
   has_many :stream_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
   has_many :forum_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
@@ -84,6 +83,8 @@ class User < ApplicationRecord
   has_many :seamail_messages_authored, inverse_of: :user, foreign_key: :author, dependent: :destroy, class_name: 'SeamailMessage'
   has_many :starred_users, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserStar'
   has_many :starred_by_users, inverse_of: :starred_user, foreign_key: :starred_user_id, dependent: :destroy, class_name: 'UserStar'
+  has_many :user_events, inverse_of: :user, dependent: :destroy
+  has_many :events, through: :user_events
 
   before_create :build_forum_view
   after_save :update_cache_for_user
@@ -196,24 +197,24 @@ class User < ApplicationRecord
     super val.upcase.gsub(/[^A-Z0-9]/, '')
   end
 
-  def upcoming_events(_alerts = false)
-    # events = Event.where(:start_time.gte => (Time.now - 1.hour)).where(:start_time.lte => (Time.now + 2.hours)).limit(20).order_by(:start_time.asc)
-    # events = events.map { |x| x if !x.end_time || (x.end_time <= Time.now) }.compact
-    # events = events.map { |x| x if x.favorites.include? username }.compact
-    # if alerts
-    #  events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
-    #  events.each { |e| acknowledged_event_alerts << e.id unless acknowledged_event_alerts.include? e.id }
-    #  save!
-    # end
-    # events
-    []
+  def upcoming_events(alerts = false, unnoticed = false)
+    upcoming = user_events.includes(:event).references(:events)
+                   .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', Time.now - 1.hour, Time.now + 2.hours, Time.now)
+
+    if unnoticed
+      upcoming = upcoming.where(acknowledged_alert: false)
+    else
+      upcoming = upcoming.order(start_time: :asc, title: :asc).limit(20)
+      # rubocop:disable Rails/SkipsModelValidations
+      upcoming.update_all(acknowledged_alert: true) if alerts
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    upcoming.map(&:event)
   end
 
   def unnoticed_upcoming_events
-    # events = upcoming_events
-    # events = events.map { |e| e unless acknowledged_event_alerts.include? e.id }.compact
-    # events.count
-    0
+    upcoming_events(false, true).count
   end
 
   def seamail_threads(params = {})

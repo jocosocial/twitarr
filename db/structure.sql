@@ -527,6 +527,37 @@ ALTER SEQUENCE public.stream_posts_id_seq OWNED BY public.stream_posts.id;
 
 
 --
+-- Name: user_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_events (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    event_id uuid NOT NULL,
+    acknowledged_alert boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- Name: user_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_events_id_seq OWNED BY public.user_events.id;
+
+
+--
 -- Name: user_forum_views; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -767,6 +798,13 @@ ALTER TABLE ONLY public.stream_posts ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: user_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_events ALTER COLUMN id SET DEFAULT nextval('public.user_events_id_seq'::regclass);
+
+
+--
 -- Name: user_forum_views id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -928,6 +966,14 @@ ALTER TABLE ONLY public.sections
 
 ALTER TABLE ONLY public.stream_posts
     ADD CONSTRAINT stream_posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_events user_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_events
+    ADD CONSTRAINT user_events_pkey PRIMARY KEY (id);
 
 
 --
@@ -1201,6 +1247,20 @@ CREATE INDEX index_stream_posts_text ON public.stream_posts USING gin (to_tsvect
 
 
 --
+-- Name: index_user_events_on_event_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_events_on_event_id ON public.user_events USING btree (event_id);
+
+
+--
+-- Name: index_user_events_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_events_on_user_id ON public.user_events USING btree (user_id);
+
+
+--
 -- Name: index_user_forum_views_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1263,6 +1323,14 @@ ALTER TABLE ONLY public.user_seamails
 
 ALTER TABLE ONLY public.post_photos
     ADD CONSTRAINT fk_rails_0af974c734 FOREIGN KEY (forum_post_id) REFERENCES public.forum_posts(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_events fk_rails_1b0b06bbc7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_events
+    ADD CONSTRAINT fk_rails_1b0b06bbc7 FOREIGN KEY (event_id) REFERENCES public.events(id);
 
 
 --
@@ -1335,6 +1403,14 @@ ALTER TABLE ONLY public.user_stars
 
 ALTER TABLE ONLY public.forum_posts
     ADD CONSTRAINT fk_rails_61f00b1427 FOREIGN KEY (forum_id) REFERENCES public.forums(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_events fk_rails_717ccf5f73; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_events
+    ADD CONSTRAINT fk_rails_717ccf5f73 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -1469,6 +1545,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191217050340'),
 ('20200113030923'),
 ('20200114050246'),
-('20200114050321');
+('20200114050321'),
+('20200126003047');
 
 

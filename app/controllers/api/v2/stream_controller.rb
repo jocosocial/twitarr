@@ -20,7 +20,7 @@ module Api
 
         begin
           param_newer_posts = params.key?(:newer_posts) && params[:newer_posts].to_bool
-          query[:filter_authors] = current_user.starred_users.reject { |x| x == current_username } if params.key?(:starred) && params[:starred].to_bool
+          query[:filter_authors] = current_user.starred_users.reject { |x| x.id == current_user.id }.pluck(:id) if params.key?(:starred) && params[:starred].to_bool
           query[:filter_reactions] = current_username if params.key?(:reacted) && params[:reacted].to_bool
         rescue ArgumentError => e
           render status: :bad_request, json: { status: 'error', error: e.message }
@@ -40,6 +40,8 @@ module Api
           posts = newer_posts(query)
           sort = :asc # Change the sort direction so mongo returns the expected posts, instead of the oldest posts.
         end
+
+        posts = posts.includes(:user, :post_reactions, :photo_metadata).references(:users, :post_reactions, :photo_metadata)
 
         has_next_page = posts.count > params[:limit]
         posts = posts.limit(params[:limit]).order(created_at: sort, id: sort)

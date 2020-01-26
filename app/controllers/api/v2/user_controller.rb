@@ -100,21 +100,20 @@ module Api
       end
 
       def star
-        starred = current_user.starred_users.find_by(starred_user_id: @user.id)
+        starred = current_user.user_stars.find_by(starred_user_id: @user.id)
         if starred
           starred.delete
         else
-          current_user.starred_users << UserStar.new(starred_user_id: @user.id)
+          current_user.user_stars << UserStar.new(starred_user_id: @user.id)
         end
         render json: { status: 'ok', starred: !starred }
       end
 
       def starred
-        users = User.where(:username.in => current_user.starred_users)
+        users = current_user.starred_users.includes(:commented_by_users).references(:commented_by_users)
         hash = users.map do |u|
-          username = User.format_username u.username
           uu = u.decorate.gui_hash
-          uu.merge!(comment: current_user.personal_comments[username])
+          uu.merge!(comment: u.commented_by_users.filter { |x| x.user_id == current_user.id }.first&.comment)
           uu
         end
         render json: { status: 'ok', users: hash }
@@ -126,8 +125,7 @@ module Api
           return
         end
 
-        current_user.personal_comments[@user.username] = params[:comment]
-        current_user.save
+        @user.comment(current_user.id, params[:comment])
         render json: { status: 'ok', user: @user.decorate.public_hash(current_user) }
       end
 

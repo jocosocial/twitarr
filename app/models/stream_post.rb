@@ -54,7 +54,7 @@ class StreamPost < ApplicationRecord
 
   def self.at_or_before(ms_since_epoch, options = {})
     query = where('stream_posts.created_at <= ?', Time.at(ms_since_epoch.to_i / 1000.0))
-    query = query.where(:author.in => options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
+    query = query.where('stream_posts.author IN (?)', options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
     query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
     # query = query.where(:'rn.un' => options[:filter_reactions]) if options.has_key? :filter_reactions and !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       post 'event/:id/favorite', to: 'event#follow'
       delete 'event/:id/favorite', to: 'event#unfollow'
       get 'event/mine/:day', to: 'event#mine'
+      get 'event/mine_soon/:minutes', to: 'event#mine_soon'
       get 'event/day/:day', to: 'event#day'
 
       get 'forums', to: 'forums#index'

@@ -11,16 +11,15 @@ class SeamailMessageDecorator < BaseDecorator
           last_photo_updated: user.last_photo_updated.to_ms
         },
         text: format_text(text, options),
-        timestamp: created_at.to_ms # ,
-        # read_users: read_users.map do |user|
-        #  {
-        #    username: user,
-        #    display_name: User.display_name_from_username(user),
-        #    last_photo_updated: User.last_photo_updated_from_username(user).to_ms
-        #  }
-        # end
+        timestamp: created_at.to_ms,
+        read_users: read_users.map do |read_user|
+          {
+            username: read_user.username,
+            display_name: read_user.display_name,
+            last_photo_updated: read_user.last_photo_updated.to_ms
+          }
+        end
       }
     end
   end
-
 end

@@ -2609,6 +2609,23 @@ Gets a list of favorited events with a start time on the same day as :epoch.
 #### Error Responses
 * status_code_only - HTTP 401 if user is not logged in
 
+### GET /api/v2/event/mine_soon/:minutes
+
+Gets a list of favorited events with a start time within the next :minutes minutes. :minutes is required.
+
+#### Returns
+
+```
+{
+    "status": "ok",
+    "events": [Event{}, ...],
+    "minutes": integer
+}
+```
+
+#### Error Responses
+* status_code_only - HTTP 401 if user is not logged in
+
 ### GET /api/v2/event/:id
 
 Get details of an event.

@@ -5,7 +5,6 @@
 #  id              :bigint           not null, primary key
 #  author          :bigint           not null
 #  original_author :bigint           not null
-#  read_users      :bigint           default([]), not null, is an Array
 #  text            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -26,8 +25,14 @@
 
 class SeamailMessage < ApplicationRecord
   belongs_to :seamail, inverse_of: :seamail_messages, dependent: :destroy
+  has_many :user_seamails, through: :seamail
+  has_many :users, through: :user_seamails
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :seamail_messages_authored
 
   validates :text, presence: true, length: { maximum: 10000 }
   validates :author, :original_author, presence: true
+
+  def read_users
+    users.includes(:user_seamails).references(:user_seamails).where('user_seamails.last_viewed is null OR user_seamails.last_viewed < ?', created_at)
+  end
 end

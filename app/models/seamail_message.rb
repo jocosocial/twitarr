@@ -33,6 +33,6 @@ class SeamailMessage < ApplicationRecord
   validates :author, :original_author, presence: true
 
   def read_users
-    users.includes(:user_seamails).references(:user_seamails).where('user_seamails.last_viewed is null OR user_seamails.last_viewed < ?', created_at)
+    users.includes(:user_seamails).references(:user_seamails).where('user_seamails.last_viewed is null OR user_seamails.last_viewed >= ?', created_at)
   end
 end

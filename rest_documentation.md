@@ -2611,7 +2611,7 @@ Gets a list of favorited events with a start time on the same day as :epoch.
 
 ### GET /api/v2/event/mine_soon/:minutes
 
-Gets a list of favorited events with a start time within the next :minutes minutes.
+Gets a list of favorited events with a start time within the next :minutes minutes. :minutes is required.
 
 #### Returns
 

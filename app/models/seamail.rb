@@ -59,8 +59,8 @@ class Seamail < ApplicationRecord
     seamail_messages.count
   end
 
-  def mark_as_read(username)
-    user_seamails.where(user_id: User.get(username).id).update(last_viewed: DateTime.now)
+  def mark_as_read(user_id)
+    user_seamails.where(user_id: user_id).update(last_viewed: DateTime.now)
   end
 
   def unread_for_user?(user_id)

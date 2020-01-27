@@ -60,7 +60,7 @@ module Api
 
       def show
         mails = @seamail.decorate.to_hash(request_options, as_user.id)
-        @seamail.mark_as_read as_user.username unless params[:skip_mark_read]
+        @seamail.mark_as_read as_user.id unless params[:skip_mark_read]
         render json: { status: 'ok', seamail: mails }
       end
 

@@ -21,9 +21,18 @@ class Forum < ApplicationRecord
   FORUM_CACHE_TIME = 30.minutes
 
   has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum, validate: false
+  has_many :users, through: :posts
 
   validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts
+
+  pg_search_scope :pg_search,
+                  against: :subject,
+                  associated_against: { posts: :text },
+                  using: {
+                      trigram: { word_similarity: true },
+                      tsearch: { any_word: true, prefix: true }
+                  }
 
   def validate_posts
     errors[:base] << 'Must have a post' if posts.empty?
@@ -122,7 +131,6 @@ class Forum < ApplicationRecord
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = Forum.or({ 'fp.au': /^#{search_text}.*/i }, '$text' => { '$search' => "\"#{search_text}\"" })
-    limit_criteria(criteria, params)
+    limit_criteria(Forum.pg_search(search_text), params)
   end
 end

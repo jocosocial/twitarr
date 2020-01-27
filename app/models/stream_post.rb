@@ -32,8 +32,8 @@
 
 # noinspection RubyStringKeysInHashInspection
 class StreamPost < ApplicationRecord
-  include Searchable
   include Postable
+  include Searchable
 
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :stream_posts
 
@@ -51,6 +51,14 @@ class StreamPost < ApplicationRecord
 
   before_validation :parse_hash_tags
   before_save :post_create_operations
+
+  pg_search_scope :pg_search,
+                  against: :text,
+                  associated_against: { user: [:username, :display_name] },
+                  using: {
+                      trigram: { word_similarity: true },
+                      tsearch: { any_word: true, prefix: true }
+                  }
 
   def self.at_or_before(ms_since_epoch, options = {})
     query = where('stream_posts.created_at <= ?', Time.at(ms_since_epoch.to_i / 1000.0))
@@ -106,7 +114,6 @@ class StreamPost < ApplicationRecord
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = StreamPost.or({ author: /^#{search_text}.*/ }, '$text' => { '$search' => "\"#{search_text}\"" })
-    limit_criteria(criteria, params).order_by(id: :desc)
+    limit_criteria(StreamPost.pg_search(search_text), params)
   end
 end

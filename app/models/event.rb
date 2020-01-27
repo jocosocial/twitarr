@@ -27,6 +27,13 @@ class Event < ApplicationRecord
 
   has_many :user_events, inverse_of: :event, dependent: :destroy
 
+  pg_search_scope :pg_search,
+                  against: [:description, :location, :title],
+                  using: {
+                      trigram: { word_similarity: true },
+                      tsearch: { any_word: true, prefix: true }
+                  }
+
   default_scope { order(start_time: :asc, title: :asc) }
 
   DST_START = Time.new(2019, 3, 11, 2, 0, 0, '-05:00')
@@ -38,8 +45,7 @@ class Event < ApplicationRecord
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = Event.or({ title: /^#{search_text}.*/ }, '$text' => { '$search' => "\"#{search_text}\"" })
-    limit_criteria(criteria, params).order_by(id: :desc)
+    limit_criteria(Event.pg_search(search_text), params)
   end
 
   def self.create_new_event(_author, title, start_time, options = {})

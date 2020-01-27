@@ -1,5 +1,6 @@
 module Searchable
   def self.included(base)
+    base.send :include, PgSearch::Model
     base.send :include, InstanceMethods
     base.extend ClassMethods
   end
@@ -15,7 +16,7 @@ module Searchable
       start = (params[:page] || 0).to_i * limit
       # Rails.logger.info "Start = #{start}"
       criteria = criteria.limit(limit)
-      criteria = criteria.skip(start) if start > 0
+      criteria = criteria.offset(start) if start > 0
       criteria
     end
   end

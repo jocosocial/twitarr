@@ -10,12 +10,12 @@ module Api
       def all
         return unless params_valid?(params)
 
-        params[:current_username] = current_username
+        params[:current_user_id] = current_user&.id
         render json: {
           status: 'ok',
           query: params[:query],
           users: do_search(params, User) { |e| e.decorate.gui_hash },
-          seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) },
+          seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_user.id) },
           tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_user, request_options) },
           forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash(current_user) },
           events: do_search(params, Event) { |e| e.decorate.to_hash(current_username, request_options) }
@@ -36,11 +36,12 @@ module Api
       def seamails
         return unless params_valid?(params)
 
+        params[:current_user_id] = current_user&.id
         params[:limit] = DETAILED_SEARCH_MAX unless params[:limit]
         render json: {
           status: 'ok',
           query: params[:query],
-          seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_username) }
+          seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_user&.id) }
         }
       end
 
@@ -81,8 +82,10 @@ module Api
 
       def do_search(params, collection)
         query = collection.search(params)
+        count = query.limit(nil).count
         matches = query.map { |e| yield e }
-        { matches: matches, count: query.length, more: query.has_more? }
+        more = count > (query.limit_value + (query.offset_value || 0))
+        { matches: matches, count: count, more: more }
       end
 
       def params_valid?(params)

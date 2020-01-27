@@ -104,6 +104,13 @@ class User < ApplicationRecord
   validates :home_location, :real_name, :pronouns, length: { maximum: 100 }
   validates :room_number, allow_blank: true, length: { minimum: 4, maximum: 5 }
 
+  pg_search_scope :pg_search,
+                  against: [:username, :display_name],
+                  using: {
+                      trigram: { word_similarity: true },
+                      tsearch: { any_word: true, prefix: true }
+                  }
+
   def valid_role?
     errors.add(:role, "Invalid role. Must be one of: #{User::Role::STRINGS * ', '}.") if role.nil? || User::Role.as_string(role).nil?
   end
@@ -354,9 +361,8 @@ class User < ApplicationRecord
   end
 
   def self.search(params = {})
-    query = params[:query].strip.downcase.gsub(/[^\w&\s-]/, '')
-    criteria = User.or({ username: /^#{query}.*/i }, { display_name: /^#{query}.*/i }, '$text': { '$search': "\"#{query}\"" })
-    limit_criteria(criteria, params)
+    search_text = params[:query].strip.downcase.gsub(/[^\w&\s-]/, '')
+    limit_criteria(User.pg_search(search_text), params)
   end
 
   def self.auto_complete(query)

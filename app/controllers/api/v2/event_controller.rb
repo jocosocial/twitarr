@@ -3,7 +3,7 @@ module Api
   module V2
     class EventController < ApiController
       before_action :events_enabled
-      before_action :login_required, only: [:follow, :unfollow, :mine]
+      before_action :login_required, only: [:follow, :unfollow, :mine, :mine_soon]
       before_action :tho_required, only: [:destroy, :update]
       before_action :fetch_event, only: [:update, :destroy, :ical, :follow, :unfollow, :show]
 
@@ -81,6 +81,12 @@ module Api
         render json: event_list_output(day, events)
       end
 
+      def mine_soon
+        minutes = params[:minutes]&.to_i
+        events = mine_soon_query(minutes)
+        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, minutes: minutes }
+      end
+
       def day
         day = Time.from_param(params[:day])
         events = day_query(day)
@@ -91,6 +97,10 @@ module Api
 
       def day_query(day)
         Event.includes(:user_events).references(:user_events).where('start_time >= ? AND start_time <= ?', day.beginning_of_day, day.end_of_day)
+      end
+
+      def mine_soon_query(minutes)
+        Event.includes(:user_events).references(:user_events).where('user_events.user_id = ? AND start_time >= ? AND start_time <= ?', current_user.id, Time.now, Time.now + minutes.minutes)
       end
 
       def event_list_output(day, events)

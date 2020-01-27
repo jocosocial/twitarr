@@ -413,7 +413,6 @@ CREATE TABLE public.seamail_messages (
     author bigint NOT NULL,
     original_author bigint NOT NULL,
     text character varying NOT NULL,
-    read_users bigint[] DEFAULT '{}'::bigint[] NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -1633,6 +1632,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200114050321'),
 ('20200126003047'),
 ('20200126023443'),
-('20200127021313');
+('20200127021313'),
+('20200127032332');
 
 

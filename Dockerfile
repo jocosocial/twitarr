@@ -17,9 +17,8 @@ ADD . $app
 
 RUN chmod +x start-docker.sh
 
-# these steps are done by start.sh:
-# RUN cp config/mongoid-example.yml config/mongoid.yml
-# RUN rake db:mongoid:create_indexes
+# these steps are done by start-docker.sh:
+# RUN rake db:setup
 # RUN rake db:seed
 
 EXPOSE 3000

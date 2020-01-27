@@ -38,7 +38,7 @@ module Api
           posts = older_posts(query)
         elsif want_newer_posts?
           posts = newer_posts(query)
-          sort = :asc # Change the sort direction so mongo returns the expected posts, instead of the oldest posts.
+          sort = :asc # Change the sort direction so the query returns the expected posts, instead of the oldest posts.
         end
 
         posts = posts.includes(:user, :post_reactions, :photo_metadata).references(:users, :post_reactions, :photo_metadata)
@@ -51,7 +51,7 @@ module Api
         next_page = posts.last.nil? ? 0 : posts.last.created_at.to_ms - 1
 
         if sort == :asc
-          posts = posts.reverse # Restore sort direction of output to be by time descending - the opposite of what mongo gave us
+          posts = posts.reverse # Restore sort direction of output to be by time descending - the opposite of what the query gave us
           next_page += 1 # Since we're moving in the opposite direction, undo previous next_page calculation, and add an additional ms
         end
 

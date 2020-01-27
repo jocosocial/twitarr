@@ -28,6 +28,7 @@ gem 'jbuilder'
 gem 'rack-cors', require: 'rack/cors'
 
 gem 'pg'
+gem 'pg_search'
 
 # soft deletes
 gem 'discard'

@@ -24,6 +24,14 @@ class Seamail < ApplicationRecord
   validate :validate_users
   validate :validate_messages
 
+  pg_search_scope :pg_search,
+                  against: :subject,
+                  associated_against: { users: [:username, :display_name], seamail_messages: :text },
+                  using: {
+                      trigram: { word_similarity: true },
+                      tsearch: { any_word: true, prefix: true }
+                  }
+
   def validate_users
     errors[:base] << 'Must send seamail to another user of Twit-arr' unless user_seamails.length > 1
   end
@@ -103,10 +111,9 @@ class Seamail < ApplicationRecord
 
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    current_username = params[:current_username]
-    criteria = Seamail.where(usernames: current_username).or({ usernames: /^#{search_text}.*/ },
-                                                             '$text' => { '$search' => "\"#{search_text}\"" })
-    limit_criteria(criteria, params).order(last_update: :desc)
+    user_id = params[:current_user_id]
+    query = Seamail.pg_search(search_text).joins(:user_seamails).where('user_seamails_seamails.user_id = ?', user_id)
+    limit_criteria(query, params)
   end
 
 end

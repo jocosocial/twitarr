@@ -43,7 +43,7 @@ module Api
           output = 'seamail_threads'
           options = request_options
           options[:exclude_read_messages] = true if @exclude_read_messages
-          mails = mails.map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
+          mails = mails.includes(:seamail_messages).references(:seamail_messages).map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
         else
           output = 'seamail_meta'
           mails = mails.map { |x| x.decorate.to_meta_hash(as_user.id, counting_unread) }

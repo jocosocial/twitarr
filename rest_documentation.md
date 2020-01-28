@@ -2619,7 +2619,8 @@ Gets a list of favorited events with a start time within the next :minutes minut
 {
     "status": "ok",
     "events": [Event{}, ...],
-    "minutes": integer
+    "minutes": integer,
+    "now": epoch # Current server time
 }
 ```
 

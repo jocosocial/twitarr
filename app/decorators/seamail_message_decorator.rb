@@ -2,7 +2,7 @@ class SeamailMessageDecorator < BaseDecorator
   delegate_all
 
   def to_hash(options = {}, current_user_id = 0, last_view = nil)
-    unless options[:exclude_read_messages] && current_user_id != 0 && last_view && created_at > last_view
+    unless options[:exclude_read_messages] && current_user_id != 0 && last_view && created_at < last_view
       {
         id: id.to_s,
         author: {

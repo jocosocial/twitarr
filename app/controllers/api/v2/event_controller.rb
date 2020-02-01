@@ -68,11 +68,11 @@ module Api
 
       def index
         filtered_query = Event.all.includes(:user_events).references(:user_events).map { |x| x.decorate.to_hash(current_user, request_options) }
-        render json: { status: 'ok', total_count: filtered_query.length, events: filtered_query }
+        render json: { status: 'ok', total_count: filtered_query.length, events: filtered_query, now: DateTime.current.to_ms }
       end
 
       def show
-        render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options) }
+        render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options), now: DateTime.current.to_ms }
       end
 
       def mine
@@ -84,7 +84,7 @@ module Api
       def mine_soon
         minutes = params[:minutes]&.to_i
         events = mine_soon_query(minutes)
-        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, minutes: minutes }
+        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, minutes: minutes, now: DateTime.current.to_ms }
       end
 
       def day
@@ -104,7 +104,7 @@ module Api
       end
 
       def event_list_output(day, events)
-        { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms }
+        { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, today: day.to_ms, prev_day: (day - 1.day).to_ms, next_day: (day + 1.day).to_ms, now: DateTime.current.to_ms }
       end
 
       def fetch_event

@@ -2826,7 +2826,7 @@ Returns the server time.
     "status": "ok",
     "epoch": epoch,
     "time": "time_string", # Uses this ruby format: '%B %d, %l:%M %P %Z'
-    "offset": Integer # Server timezone offset
+    "offset": Integer # Server timezone offset - in seconds from UTC
 }
 ```
 

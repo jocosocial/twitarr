@@ -2,16 +2,22 @@
 #
 # Table name: forums
 #
-#  id             :bigint           not null, primary key
-#  last_post_time :datetime         not null
-#  locked         :boolean          default(FALSE), not null
-#  sticky         :boolean          default(FALSE), not null
-#  subject        :string           not null
+#  id                :bigint           not null, primary key
+#  forum_posts_count :integer          default(0), not null
+#  last_post_time    :datetime         not null
+#  locked            :boolean          default(FALSE), not null
+#  sticky            :boolean          default(FALSE), not null
+#  subject           :string           not null
+#  last_post_user_id :bigint
 #
 # Indexes
 #
 #  index_forums_on_sticky_and_last_post_time  (sticky,last_post_time)
 #  index_forums_subject                       (to_tsvector('english'::regconfig, (subject)::text)) USING gin
+#
+# Foreign Keys
+#
+#  fk_rails_...  (last_post_user_id => users.id)
 #
 
 class Forum < ApplicationRecord
@@ -22,9 +28,12 @@ class Forum < ApplicationRecord
 
   has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum, validate: false
   has_many :users, through: :posts
+  belongs_to :last_post_user, class_name: 'User', foreign_key: :last_post_user_id, inverse_of: :forums_last_poster
 
   validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts
+
+  default_scope { includes(:last_post_user).references(:last_post_user) }
 
   pg_search_scope :pg_search,
                   against: :subject,
@@ -50,44 +59,23 @@ class Forum < ApplicationRecord
   end
 
   def update_cache
+    post = last_post
     if last_post
-      Rails.cache.fetch("forum:last_post_author:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
-        {
-            username: last_post.user.username,
-            display_name: last_post.user.display_name,
-            last_photo_updated: last_post.user.last_photo_updated.to_ms
-        }
-      end
-      Rails.cache.fetch("forum:post_count:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
-        posts.count
-      end
-
-      self.last_post_time = last_post.created_at
-      save
-    end
-  end
-
-  def last_post_author
-    Rails.cache.fetch("forum:last_post_author:#{id}", expires_in: FORUM_CACHE_TIME) do
-      {
-          username: last_post.user.username,
-          display_name: last_post.user.display_name,
-          last_photo_updated: last_post.user.last_photo_updated.to_ms
-      }
-    end
-  end
-
-  def post_count
-    Rails.cache.fetch("forum:post_count:#{id}", expires_in: FORUM_CACHE_TIME) do
-      posts.count
-    end
-  end
-
-  def post_count_since(timestamp)
-    if timestamp
-      posts.where('created_at > ?', timestamp).count
+      Rails.cache.delete_matched("forum:post_count_since:#{post.forum_id}:.*")
+      update(last_post_time: post.created_at, last_post_user_id: post.author)
     else
-      post_count
+      destroy
+    end
+  end
+
+  def post_count_since_last_visit(user)
+    timestamp = user.forum_last_view(id)
+    if timestamp
+      Rails.cache.fetch("forum:post_count_since:#{id}:#{user.id}", expires_in: Forum::FORUM_CACHE_TIME) do
+        posts.where('forum_posts.created_at > ?', timestamp).count
+      end
+    else
+      forum_posts_count
     end
   end
 

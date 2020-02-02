@@ -20,8 +20,11 @@ class UserForumView < ApplicationRecord
 
   def update_forum_view(forum_id)
     # rubocop:disable Rails/SkipsModelValidations
-    UserForumView.where(id: id).update_all("data = jsonb_set(data, '{#{forum_id}}', '\"#{Time.now}\"'::jsonb)")
+    UserForumView.where(id: id).update_all("data = jsonb_set(data, '{#{forum_id}}', '\"#{Time.now.to_ms}\"'::jsonb)")
     # rubocop:enable Rails/SkipsModelValidations
+    Rails.cache.fetch("forum:post_count_since:#{forum_id}:#{user_id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+      0
+    end
   end
 
   def mark_all_forums_read(participated_only)
@@ -29,7 +32,12 @@ class UserForumView < ApplicationRecord
     query = query.includes(:posts).where('forum_posts.author = ?', id).references(:forum_posts) if participated_only
 
     now = Time.now
-    timestamps = query.pluck(:id).each_with_object({}) { |id, hash| hash[id.to_s] = now }
+    timestamps = query.pluck(:id).each_with_object({}) do |id, hash|
+      Rails.cache.fetch("forum:post_count_since:#{id}:#{user_id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+        0
+      end
+      hash[id.to_s] = now
+    end
     self.data = timestamps
     save
   end

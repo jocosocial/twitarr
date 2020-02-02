@@ -34,7 +34,7 @@ class ForumPost < ApplicationRecord
   # field :ph, as: :photos, type: Array
 
   has_many :post_reactions, dependent: :destroy
-  belongs_to :forum, inverse_of: :posts
+  belongs_to :forum, inverse_of: :posts, counter_cache: true
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :forum_posts
 
   has_many :post_photos, dependent: :destroy
@@ -51,4 +51,6 @@ class ForumPost < ApplicationRecord
 
   has_many :post_photos, dependent: :destroy
   has_many :photo_metadatas, class_name: 'PhotoMetadata', through: :post_photos
+
+  default_scope { includes(:forum, :user, :post_reactions).references(:forums, :users, :post_reactions) }
 end

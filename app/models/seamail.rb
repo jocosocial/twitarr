@@ -83,7 +83,7 @@ class Seamail < ApplicationRecord
     to_users << author unless to_users.include? author
 
     seamail = Seamail.new(subject: subject, last_update: right_now)
-    seamail.seamail_messages << SeamailMessage.new(author: User.get(author).id, text: first_message_text, original_author: User.get(original_author).id)
+    seamail.seamail_messages << SeamailMessage.new(author: User.get(author).id, text: first_message_text, original_author: User.get(original_author).id, created_at: right_now)
 
     recipients = User.where(username: to_users)
 
@@ -107,7 +107,7 @@ class Seamail < ApplicationRecord
     right_now = Time.now
     self.last_update = right_now
     author_id = User.get(author).id
-    new_message = SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id)
+    new_message = SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id, created_at: right_now)
     seamail_messages << new_message
     user_seamails.where(user_id: author_id).update(last_viewed: right_now)
     save if valid?

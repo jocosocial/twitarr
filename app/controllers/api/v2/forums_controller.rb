@@ -6,7 +6,7 @@ module Api
       before_action :tho_required, only: [:sticky]
       before_action :moderator_required, only: [:delete, :locked]
       before_action :not_muted, only: [:create, :new_post, :update_post, :react]
-      before_action :fetch_forum, except: [:index, :create, :mark_all_read]
+      before_action :fetch_forum, only: [:show, :delete, :new_post, :load_post, :update_post, :delete_post, :sticky, :locked]
       before_action :fetch_post, only: [:load_post, :update_post, :delete_post, :react, :unreact, :show_reacts]
       before_action :check_locked, only: [:new_post, :update_post, :delete_post, :react, :unreact]
 
@@ -100,14 +100,14 @@ module Api
         post = @forum.add_post(post_as_user(params).id, params[:text], params[:photos], current_user.id)
         if post.valid?
           @forum.save
-          render json: { status: 'ok', forum_post: post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
+          render json: { status: 'ok', forum_post: post.decorate.to_hash(current_user, nil, request_options) }
         else
           render status: :bad_request, json: { status: 'error', errors: post.errors.full_messages }
         end
       end
 
       def load_post
-        render json: { status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
+        render json: { status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options) }
       end
 
       def update_post
@@ -124,7 +124,7 @@ module Api
             @post.post_photos.destroy_all
           end
           @post.save
-          render json: { status: 'ok', forum_post: @post.decorate.to_hash(@forum.locked, current_user, nil, request_options) }
+          render json: { status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options) }
         else
           render status: :bad_request, json: { status: 'error', errors: @post.errors.full_messages }
         end
@@ -136,13 +136,9 @@ module Api
           return
         end
 
-        thread_deleted = false
         @post.destroy
-        @forum.reload
-        if @forum.posts.count == 0
-          @forum.destroy
-          thread_deleted = true
-        end
+        thread_deleted = @forum.posts.count == 0
+
         render json: { status: 'ok', thread_deleted: thread_deleted }
       end
 

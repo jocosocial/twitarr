@@ -30,6 +30,8 @@ class PostReaction < ApplicationRecord
   validates :reaction_id, :user_id, presence: true
   validate :validate_association
 
+  default_scope { includes(:user, :reaction).references(:users, :reactions) }
+
   def validate_association
     errors[:base] = 'Must be associated to a stream post or forum post' if stream_post_id.blank? && forum_post_id.blank?
   end

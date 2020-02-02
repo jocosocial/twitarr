@@ -149,7 +149,9 @@ CREATE TABLE public.forums (
     subject character varying NOT NULL,
     last_post_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     sticky boolean DEFAULT false NOT NULL,
-    locked boolean DEFAULT false NOT NULL
+    locked boolean DEFAULT false NOT NULL,
+    forum_posts_count integer DEFAULT 0 NOT NULL,
+    last_post_user_id bigint
 );
 
 
@@ -1538,6 +1540,14 @@ ALTER TABLE ONLY public.seamail_messages
 
 
 --
+-- Name: forums fk_rails_89726d284b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.forums
+    ADD CONSTRAINT fk_rails_89726d284b FOREIGN KEY (last_post_user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: post_photos fk_rails_8978c3e2f7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1633,6 +1643,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200126003047'),
 ('20200126023443'),
 ('20200127021313'),
-('20200127032332');
+('20200127032332'),
+('20200202185203');
 
 

@@ -87,6 +87,7 @@ class User < ApplicationRecord
   has_many :commented_by_users, inverse_of: :commented_user, foreign_key: :commented_user_id, dependent: :destroy, class_name: 'UserComment'
   has_many :user_events, inverse_of: :user, dependent: :destroy
   has_many :events, through: :user_events
+  has_many :forums_last_poster, inverse_of: :last_post_user, foreign_key: :last_post_user_id, dependent: :nullify, class_name: 'Forum'
 
   before_create :build_forum_view
   after_save :update_cache_for_user
@@ -314,7 +315,7 @@ class User < ApplicationRecord
   end
 
   def forum_last_view(forum_id)
-    forum_view.data[forum_id.to_s]&.to_datetime
+    Time.from_param(forum_view.data[forum_id.to_s])
   end
 
   delegate :update_forum_view, to: :forum_view

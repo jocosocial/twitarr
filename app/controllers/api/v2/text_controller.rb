@@ -17,7 +17,7 @@ module Api
           status: 'ok',
           epoch: now.to_ms,
           time: now.strftime('%B %d, %l:%M %P %Z'),
-          offset: now.utc_offset / 3600
+          offset: now.utc_offset
         }
       end
 

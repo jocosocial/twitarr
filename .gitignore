@@ -9,7 +9,6 @@
 # vi editor droppings
 .*.swp
 
-/config/mongoid.yml
 /config/secrets.yml
 
 /public/img/photos/*
@@ -19,6 +18,7 @@
 *.gem
 *.rbc
 .config
+.env
 coverage
 pkg
 rdoc

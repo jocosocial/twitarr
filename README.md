@@ -6,7 +6,7 @@ Twit-arr is a micro-blogging site that is set up for [JoCo Cruise](https://jococ
 
 Twit-arr was the name for the Status.net instance brought onto the cruise ship for JCCC2 and JCCC3. Status.net being
 less than optimal for this environment, I took it upon myself to build a new version, completely customized for
-the cruise. It does help that I wanted to have a chance to use Ember.js and Mongodb in production.
+the cruise.
 
 ## Docker setup
 If you're not running on linux, or just want an isolated environment, you can run twitarr in docker.
@@ -16,7 +16,7 @@ If you're not running on linux, or just want an isolated environment, you can ru
 You'll need the Docker [toolbox](https://www.docker.com/docker-toolbox).  I (Joey) used version 1.16.1.  The default install on a Mac is Just Fine; not sure about other platforms.
 
 ### Configuration
-* Create a `mongoid.yml` and `secrets.yml` file based on the respective `examples` files. The tokens are just random hex strings (I think).
+* Create a `secrets.yml` file based on the `secrets_example.yml` file. The tokens are just random hex strings. You can generate a secret using `rails secret`.
 * If you want to run with local changes (so that you can change the Ruby code and not have to rebuild the world each time), modify docker-compose accordingly:
 ```
   volumes:   # Remove this for production use
@@ -30,25 +30,22 @@ Run:
    $ docker-compose up
 ```
 
-This will create a docker image based on ruby, as well as download a MongoDB image.
+This will create a docker image based on ruby, as well as download a postgres image.
 
-This can take 10 minute to set up, as it generates indexes and seed data in mongo.
+This can take a while to set up, as it generates the database and seed data in postgres.
 Once it completes you should be able to reach twitarr via http://localhost:3000.
 
 ### Quicker startup
-After running the server once, it is no longer necessary to reseed the database. You can comment out the following lines in `start-docker.sh`:
+After running the server once, it is no longer necessary to setup the database. You should comment out the following lines in `start-docker.sh`:
 ```
-#rake db:mongoid:create_indexes
-#rake db:seed
+rails db:setup
 ```
 
 ## Setup
 
-Mongo
-
-You will need to make the config/secrets.yml and config/mongoid.yml files.
-There's already an example with some good defaults in config/*_example.yml, you just values for your instance. You
-can generate a rails secret token using the command "rake secret".
+You will need to make the `config/secrets.yml`.
+There's already an example with some good defaults in `config/secrets_example.yml`, you just need values for your instance. You
+can generate a rails secret token using the command `rails secret`.
 
 This was originally compatible in both MRI and JRuby - in theory it still is although it might require a little effort to
 get the images and crypto working in both. It is currently compatible with MRI.
@@ -68,30 +65,22 @@ To install [RVM](http://rvm.io/) run:
 Then install `ruby` via [RVM](http://rvm.io/):
 
 ```
-  $ rvm install ruby-2.6.3
+  $ rvm install ruby-2.6.5
 ```
 
-Once it's installed, rvm should automatically detect that ruby 2.6.3 should be used for this project. If it doesn't, you can use `rvm use` to set the terminal session environment to the correct version:
+Once it's installed, rvm should automatically detect that ruby 2.6.5 should be used for this project. If it doesn't, you can use `rvm use` to set the terminal session environment to the correct version:
 
 ```
-  $ rvm use ruby-2.6.3
+  $ rvm use ruby-2.6.5
 ```
 
-You will also need to download and run [Mongodb](http://www.mongodb.org/)
-
-Since I like to keep my database just for this project, when I execute the mongod process I run:
-
-```
- $ mkdir -p temp/data/db && mongod --dbpath temp/data/db
-```
-
-This will create the mongo database within this project's temp directory.  The temp directory is also explicitly ignored in the `.gitignore` file, so you don't have to worry about checking it in.
+You will also need to download and run [PostgreSQL](https://www.postgresql.org/)
 
 ### Project setup
-We are currently using bundler 2.0.1, so make sure you have that version installed:
+This project requires bundler version 2 or higher. Currently, version 2.0.2 is used:
 
 ```
-  $ gem install bundler:2.0.1
+  $ gem install bundler:2.0.2
 ```
 
 Then you will need to run:
@@ -102,23 +91,20 @@ Then you will need to run:
 
 Remember to set up your secrets file: (http://guides.rubyonrails.org/v4.2/upgrading_ruby_on_rails.html#config-secrets-yml)
 
-Then you will need to setup mongo:
+Then you will need to setup postgres:
 
 ```
-   $ cp config/mongoid-example.yml config/mongoid.yml
+   $ cp .env-example .env
 ```
 
-Now you have to tell mongoid to create the required indexes.  If you forget to do this you will get strange errors that claims you must have indexes created in order to perform text searches.
+If you use a non-default postgres configuration, you will need to update the environment variables in `.env`
+
+Now you have to tell postgres to create the database.
 
 ```
-  $ rake db:mongoid:create_indexes
+  $ rails db:setup
 ```
 
-Now you can seed the database with some initial data:
-
-```
-  $ rake db:seed
-```
 This will create 20 reusable registration codes, which can be used for creating new users. The created codes are numbered, code1 through code20.
 
 It will also create 4 users.  Each of the users' password is the same as their username.

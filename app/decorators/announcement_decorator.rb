@@ -1,26 +1,26 @@
 class AnnouncementDecorator < BaseDecorator
   delegate_all
-  include Twitter::Autolink
+  include Twitter::TwitterText::Autolink
 
   def to_hash(options = {})
     {
-        id: as_str(id),
+        id: id.to_s,
         author: {
-          username: author,
-          display_name: User.display_name_from_username(author),
-          last_photo_updated: User.last_photo_updated_from_username(author).to_ms
+          username: user.username,
+          display_name: user.display_name,
+          last_photo_updated: user.last_photo_updated.to_ms
         },
         text: format_text(text, options),
-        timestamp: timestamp.to_ms
+        timestamp: created_at.to_ms
     }
   end
 
   def to_admin_hash(options = {})
     {
-        id: as_str(id),
-        author: author,
+        id: id.to_s,
+        author: user.username,
         text: format_text(text, options),
-        timestamp: timestamp.to_ms,
+        timestamp: created_at.to_ms,
         valid_until: valid_until.to_ms
     }
   end

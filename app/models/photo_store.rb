@@ -8,31 +8,35 @@ class PhotoStore
   SMALL_IMAGE_SIZE = 200
   MEDIUM_IMAGE_SIZE = 800
 
-  IMAGE_MAX_FILESIZE = 10000000 # 10MB
+  IMAGE_MAX_FILESIZE = 20000000 # 20MB
 
   def upload(temp_file, uploader)
-    return { status: 'error', error: 'File must be uploaded as form-data.'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+    return { status: 'error', error: 'File must be uploaded as form-data.' } unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+
+    original_filename = temp_file.original_filename
+
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
+    return { status: 'error', error: 'File exceeds maximum file size of 20MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
 
-    existing_photo = PhotoMetadata.where(md5_hash: temp_file.md5_hash, uploader: uploader).first
+    existing_photo = PhotoMetadata.find_by(md5_hash: temp_file.md5_hash, user_id: uploader)
     return { status: 'ok', photo: existing_photo.id.to_s } unless existing_photo.nil?
 
     begin
       img = read_image(temp_file.tempfile.path)
-    rescue => e
+    rescue StandardError => e
       return { status: 'error', error: "Photo could not be read: #{e}" }
     end
 
     photo = store(temp_file, uploader)
+    photo.original_filename = original_filename
     tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
 
     sizes = {}
     sizes[:full] = "#{img.columns}x#{img.rows}"
 
     tmp = img
-    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if(tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE)
+    tmp = tmp.resize_to_fit(MEDIUM_IMAGE_SIZE) if tmp.columns > MEDIUM_IMAGE_SIZE || tmp.rows > MEDIUM_IMAGE_SIZE
     sizes[:medium_thumb] = "#{tmp.columns}x#{tmp.rows}"
     tmp.write tmp_path
     FileUtils.move tmp_path, md_thumb_path(photo.store_filename)
@@ -44,27 +48,29 @@ class PhotoStore
 
     photo.sizes = sizes
     photo.save
-    { status: 'ok', photo: photo.id.to_s }
+
+    { status: 'ok', photo: photo.id }
   end
 
   def read_image(temp_file)
-    img = Magick::Image::read(temp_file).first
+    img = Magick::Image.read(temp_file).first
     img.auto_orient
   end
 
   def upload_profile_photo(temp_file, username)
-    return { status: 'error', error: 'File must be uploaded as form-data'} unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+    return { status: 'error', error: 'File must be uploaded as form-data' } unless temp_file.is_a? ActionDispatch::Http::UploadedFile
+
     temp_file = UploadFile.new(temp_file)
     return { status: 'error', error: 'File was not an allowed image type - only jpg, gif, and png accepted.' } unless temp_file.photo_type?
-    return { status: 'error', error: 'File exceeds maximum file size of 10MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
-    
+    return { status: 'error', error: 'File exceeds maximum file size of 20MB.' } if temp_file.tempfile.size > IMAGE_MAX_FILESIZE
+
     begin
       img = read_image(temp_file.tempfile.path)
-    rescue => e
+    rescue StandardError => e
       return { status: 'error', error: "Photo could not be read: #{e}" }
     end
 
-    tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
+    tmp_store_path = Rails.root.join('tmp', "#{username}.jpg")
     img.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
 
@@ -76,7 +82,7 @@ class PhotoStore
 
   def reset_profile_photo(username)
     identicon = Identicon.create(username)
-    tmp_store_path = "#{Rails.root}/tmp/#{username}.jpg"
+    tmp_store_path = Rails.root.join('tmp', "#{username}.jpg")
     identicon.write tmp_store_path
     FileUtils.move tmp_store_path, PhotoStore.instance.full_profile_path(username)
     identicon.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
@@ -87,10 +93,9 @@ class PhotoStore
 
   def store(file, uploader)
     animated_image = Magick::ImageList.new(file.tempfile.path).length > 1
-    photo = PhotoMetadata.new uploader: uploader,
+    photo = PhotoMetadata.new user_id: uploader,
                               content_type: file.content_type,
                               store_filename: file.filename,
-                              upload_time: Time.now,
                               md5_hash: file.md5_hash,
                               animated: animated_image
     FileUtils.copy file.tempfile, photo_path(photo.store_filename)
@@ -102,12 +107,11 @@ class PhotoStore
       Rails.logger.info photo.store_filename
       begin
         img = read_image(photo_path(photo.store_filename))
-
-        tmp_path = "#{Rails.root}/tmp/#{photo.store_filename}"
-        tmp = img.resize_to_fill(SMALL_IMAGE_SIZE).write tmp_path
+        tmp_path = Rails.root.join('tmp', photo.store_filename)
+        img.resize_to_fill(SMALL_IMAGE_SIZE).write tmp_path
 
         FileUtils.move tmp_path, sm_thumb_path(photo.store_filename)
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error e
       end
     end
@@ -119,11 +123,11 @@ class PhotoStore
       begin
         img = read_image(full_profile_path(user.username))
 
-        tmp_store_path = "#{Rails.root}/tmp/#{user.username}.jpg"
+        tmp_store_path = Rails.root.join('tmp', "#{user.username}.jpg")
         img.resize_to_fill(SMALL_PROFILE_PHOTO_SIZE).write tmp_store_path
-        
+
         FileUtils.move tmp_store_path, small_profile_path(user.username)
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error e
       end
     end
@@ -131,6 +135,7 @@ class PhotoStore
 
   def initialize
     @root = Rails.root.join(Rails.configuration.photo_store)
+    @mutex = Mutex.new
 
     @full = @root + 'full'
     @thumb = @root + 'thumb'
@@ -164,10 +169,8 @@ class PhotoStore
     @profiles_full + "#{username}.jpg"
   end
 
-  @@mutex = Mutex.new
-
   def build_directory(root_path, filename)
-    @@mutex.synchronize do
+    @mutex.synchronize do
       first = root_path + filename[0]
       first.mkdir unless first.exist?
       second = first + filename[1]
@@ -195,6 +198,7 @@ class PhotoStore
 
     def photo_type?
       return true if PHOTO_CONTENT_TYPES.include?(content_type)
+
       false
     end
 
@@ -203,7 +207,7 @@ class PhotoStore
     end
 
     def md5_hash
-      @hash ||= Digest::MD5.file(@file.tempfile).hexdigest
+      @md5_hash ||= Digest::MD5.file(@file.tempfile).hexdigest
     end
 
     def filename

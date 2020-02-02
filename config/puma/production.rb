@@ -1,7 +1,8 @@
 environment 'production'
 
-directory '/var/www/twitarr'
+directory '/home/jccadmin/twitarr'
 pidfile 'tmp/puma.pid'
-bind 'unix:///var/www/twitarr/tmp/puma.sock'
+bind 'unix:///home/jccadmin/twitarr/tmp/puma.sock'
 quiet
-threads 8, 32
+workers 8
+threads 20, 20

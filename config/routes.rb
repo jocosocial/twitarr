@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       post 'event/:id/favorite', to: 'event#follow'
       delete 'event/:id/favorite', to: 'event#unfollow'
       get 'event/mine/:day', to: 'event#mine'
+      get 'event/mine_soon/:minutes', to: 'event#mine_soon'
       get 'event/day/:day', to: 'event#day'
 
       get 'forums', to: 'forums#index'
@@ -17,7 +18,7 @@ Rails.application.routes.draw do
       get 'forums/:id', to: 'forums#show'
       post 'forums/:id', to: 'forums#new_post'
       delete 'forums/:id', to: 'forums#delete'
-      get 'forums/:id/:post_id', to: 'forums#get_post'
+      get 'forums/:id/:post_id', to: 'forums#load_post'
       post 'forums/:id/:post_id', to: 'forums#update_post'
       delete 'forums/:id/:post_id', to: 'forums#delete_post'
       post 'forums/:id/:post_id/react/:type', to: 'forums#react'
@@ -30,8 +31,8 @@ Rails.application.routes.draw do
       resources :stream, only: [:new, :create]
       get 'stream', to: 'stream#index'
       get 'stream/:start', to: 'stream#index'
-      get 'stream/m/:query', to: 'stream#view_mention', query: /.*/ 
-      get 'stream/h/:query', to: 'stream#view_hash_tag', query: /.*/ 
+      get 'stream/m/:query', to: 'stream#view_mention', query: /.*/
+      get 'stream/h/:query', to: 'stream#view_hash_tag', query: /.*/
 
       get 'thread/:id', to: 'stream#show'
       get 'tweet/:id', to: 'stream#get'
@@ -44,7 +45,7 @@ Rails.application.routes.draw do
 
       post 'user/new', to: 'user#new'
       get 'user/new_seamail', to: 'user#new_seamail'
-      get 'user/mentions', to:'user#mentions'
+      get 'user/mentions', to: 'user#mentions'
       get 'user/auth', to: 'user#auth'
       post 'user/auth', to: 'user#auth'
       post 'user/reset_password', to: 'user#reset_password'
@@ -57,28 +58,28 @@ Rails.application.routes.draw do
       get 'user/profile/:username', to: 'user#show'
       post 'user/profile/:username/star', to: 'user#star'
       post 'user/profile/:username/personal_comment', to: 'user#personal_comment'
-      get 'user/ac/:query', to: 'user#auto_complete', query: /.*/ 
+      get 'user/ac/:query', to: 'user#auto_complete', query: /.*/
       get 'user/starred', to: 'user#starred'
-      get 'user/photo/:username', to: 'user#get_photo'
+      get 'user/photo/:username', to: 'user#photo'
       post 'user/photo', to: 'user#update_photo'
       delete 'user/photo', to: 'user#reset_photo'
       post 'user/schedule', to: 'user#upload_schedule'
 
       get 'hashtag/repopulate', to: 'hashtag#populate_hashtags'
-      get 'hashtag/ac/:query', to: 'hashtag#auto_complete', query: /.*/ 
+      get 'hashtag/ac/:query', to: 'hashtag#auto_complete', query: /.*/
 
-      get 'search/all/:query', to: 'search#all', query: /.*/ 
-      get 'search/users/:query', to: 'search#users', query: /.*/ 
-      get 'search/seamails/:query', to: 'search#seamails', query: /.*/ 
-      get 'search/tweets/:query', to: 'search#tweets', query: /.*/ 
-      get 'search/forums/:query', to: 'search#forums', query: /.*/ 
-      get 'search/events/:query', to: 'search#events', query: /.*/ 
+      get 'search/all/:query', to: 'search#all', query: /.*/
+      get 'search/users/:query', to: 'search#users', query: /.*/
+      get 'search/seamails/:query', to: 'search#seamails', query: /.*/
+      get 'search/tweets/:query', to: 'search#tweets', query: /.*/
+      get 'search/forums/:query', to: 'search#forums', query: /.*/
+      get 'search/events/:query', to: 'search#events', query: /.*/
 
       get 'alerts', to: 'alerts#index'
       get 'alerts/check', to: 'alerts#check'
       post 'alerts/last_checked', to: 'alerts#last_checked'
 
-      resources :seamail, except: [:destroy, :edit, :new], :defaults => { :format => 'json' }
+      resources :seamail, except: [:destroy, :edit, :new], defaults: { format: 'json' }
       get 'seamail_threads', to: 'seamail#threads'
       post 'seamail/:id/', to: 'seamail#new_message'
       # post 'seamail/:id/recipients', to: 'seamail#recipients'
@@ -88,26 +89,26 @@ Rails.application.routes.draw do
       get 'reactions', to: 'text#reactions'
       get 'announcements', to: 'text#announcements'
 
-      resources :photo, only: [:index, :create, :destroy, :show], :defaults => { :format => 'json' }
+      resources :photo, only: [:index, :create, :destroy, :show], defaults: { format: 'json' }
       get 'photo/small_thumb/:id', to: 'photo#small_thumb'
       get 'photo/medium_thumb/:id', to: 'photo#medium_thumb'
       get 'photo/full/:id', to: 'photo#full'
 
       get 'admin/users', to: 'admin#users'
-      get 'admin/users/:query', to: 'admin#user', query: /.*/ 
+      get 'admin/users/:query', to: 'admin#user', query: /.*/
       get 'admin/user/:username/profile', to: 'admin#profile'
       post 'admin/user/:username', to: 'admin#update_user'
       # post 'admin/user/:username/activate', to: 'admin#activate'
       post 'admin/user/:username/reset_password', to: 'admin#reset_password'
       post 'admin/user/:username/reset_photo', to: 'admin#reset_photo'
       get 'admin/user/:username/regcode', to: 'admin#regcode'
-      
+
       get 'admin/announcements', to: 'admin#announcements'
       post 'admin/announcements', to: 'admin#new_announcement'
       get 'admin/announcements/:id', to: 'admin#announcement'
       post 'admin/announcements/:id', to: 'admin#update_announcement'
       delete 'admin/announcements/:id', to: 'admin#delete_announcement'
-      
+
       post 'admin/schedule', to: 'admin#upload_schedule'
 
       get 'admin/sections', to: 'admin#sections'

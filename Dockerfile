@@ -1,9 +1,9 @@
-FROM ruby:2.6.3
+FROM ruby:2.6.5
 
 COPY Gemfile* /tmp/
 WORKDIR /tmp
 
-RUN gem install bundler:2.0.1 && bundle install
+RUN gem install bundler:2.0.2 && bundle install
 # todo - this warn against running as root, should we make an app user?
 
 # set the container's time zone
@@ -17,9 +17,8 @@ ADD . $app
 
 RUN chmod +x start-docker.sh
 
-# these steps are done by start.sh:
-# RUN cp config/mongoid-example.yml config/mongoid.yml
-# RUN rake db:mongoid:create_indexes
+# these steps are done by start-docker.sh:
+# RUN rake db:setup
 # RUN rake db:seed
 
 EXPOSE 3000

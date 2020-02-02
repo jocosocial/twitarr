@@ -1,16 +1,22 @@
-class RegistrationCode
-  include Mongoid::Document
+# == Schema Information
+#
+# Table name: registration_codes
+#
+#  id         :bigint           not null, primary key
+#  code       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_registration_codes_on_code  (code) UNIQUE
+#
 
-  field :_id, type: String, as: :code
-
+class RegistrationCode < ApplicationRecord
   def self.add_code(code)
-    begin
-      doc = RegistrationCode.new(code:code.upcase.gsub(/[^A-Z0-9]/, ""))
-      doc.upsert
-      doc
-    rescue Exception => e
-      logger.error e
-    end
+    RegistrationCode.find_or_create_by(code: code.upcase.gsub(/[^A-Z0-9]/, ''))
+  rescue StandardError => e
+    logger.error e
   end
 
   def self.valid_code?(code)

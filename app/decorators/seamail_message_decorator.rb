@@ -1,26 +1,25 @@
 class SeamailMessageDecorator < BaseDecorator
   delegate_all
 
-  def to_hash(options = {}, current_username = '')
-    unless options[:exclude_read_messages] && current_username.length > 0 && read_users.include?(current_username)
+  def to_hash(options = {}, current_user_id = 0, last_view = nil)
+    unless options[:exclude_read_messages] && current_user_id != 0 && last_view && created_at < last_view
       {
         id: id.to_s,
         author: {
-          username: author,
-          display_name: User.display_name_from_username(author),
-          last_photo_updated: User.last_photo_updated_from_username(author).to_ms,
+          username: user.username,
+          display_name: user.display_name,
+          last_photo_updated: user.last_photo_updated.to_ms
         },
         text: format_text(text, options),
-        timestamp: timestamp.to_ms,
-        read_users: read_users.map { |user| 
+        timestamp: created_at.to_ms,
+        read_users: read_users.map do |read_user|
           {
-            username: user,
-            display_name: User.display_name_from_username(user),
-            last_photo_updated: User.last_photo_updated_from_username(user).to_ms
+            username: read_user.username,
+            display_name: read_user.display_name,
+            last_photo_updated: read_user.last_photo_updated.to_ms
           }
-        }
+        end
       }
     end
   end
-
 end

@@ -1,34 +1,54 @@
-class Event
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Paranoia
+# == Schema Information
+#
+# Table name: events
+#
+#  id          :uuid             not null, primary key
+#  description :string
+#  end_time    :datetime
+#  location    :string
+#  official    :boolean
+#  start_time  :datetime         not null
+#  title       :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_events_on_official    (official)
+#  index_events_on_start_time  (start_time)
+#  index_events_on_title       (title)
+#  index_events_search_desc    (to_tsvector('english'::regconfig, (description)::text)) USING gin
+#  index_events_search_loc     (to_tsvector('english'::regconfig, (location)::text)) USING gin
+#  index_events_search_title   (to_tsvector('english'::regconfig, (title)::text)) USING gin
+#
+
+class Event < ApplicationRecord
   include Searchable
 
-  DST_START = Time.new(2019, 3, 11, 2, 0, 0, "-05:00")
+  has_many :user_events, inverse_of: :event, dependent: :destroy
 
-  field :tl, as: :title, type: String
-  field :sm, as: :description, type: String
-  field :lc, as: :location, type: String
-  field :st, as: :start_time, type: Time
-  field :et, as: :end_time, type: Time
-  field :fa, as: :favorites, type: Array, default: []
-  # TODO add type
-  field :of, as: :official, type: Boolean
+  pg_search_scope :pg_search,
+                  against: [:description, :location, :title],
+                  using: {
+                      trigram: { word_similarity: true },
+                      tsearch: { any_word: true, prefix: true }
+                  }
+
+  default_scope { order(start_time: :asc, title: :asc) }
+
+  DST_START = Time.new(2019, 3, 11, 2, 0, 0, '-05:00')
+
+  # TODO: migrate
+  # field :fa, as: :favorites, type: Array, default: []
 
   validates :title, :start_time, presence: true
 
-  # 1 = ASC, -1 DESC
-  index start_time: 1
-  index title: 1
-  index({:title => 'text', :description => 'text', :location => 'text'})
-
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
-    criteria = Event.or({title: /^#{search_text}.*/}, {'$text' => {'$search' => "\"#{search_text}\""}})
-    limit_criteria(criteria, params).order_by(id: :desc)
+    limit_criteria(Event.pg_search(search_text), params)
   end
 
-  def self.create_new_event(author, title, start_time, options={})
+  def self.create_new_event(_author, title, start_time, options = {})
     event = Event.new(title: title, start_time: start_time)
     event.description = options[:description] unless options[:description].nil?
     event.location = options[:location] unless options[:location].nil?
@@ -39,12 +59,8 @@ class Event
   end
 
   def self.create_from_ics(ics_event)
-    event = Event.where(id: ics_event.uid).first
-    if event.nil?
-      event = Event.new(
-          _id: ics_event.uid
-      )
-    end
+    event = Event.find_or_initialize_by(id: ics_event.uid)
+
     event.title = ics_event.summary.force_encoding('utf-8')
     event.description = ics_event.description.force_encoding('utf-8')
     if ics_event.dtstart <= DST_START
@@ -58,25 +74,26 @@ class Event
     # locations tend to have trailing commas for some reason
     event.location = ics_event.location.force_encoding('utf-8').strip.gsub(/,$/, '')
     event.save
+  rescue ActiveRecord::RecordNotUnique
+    retry
   end
 
-  def self.favorite_from_ics(ics_event, username)
+  def self.favorite_from_ics(ics_event, user_id)
     uid = ics_event.uid.split('@')[0]
-    begin
-      event = Event.find(uid)
-    rescue Mongoid::Errors::DocumentNotFound
-      return
-    end
-    event.favorites << username unless event.favorites.include? username
-    event.save
+    event = Event.find_by(id: uid)
+
+    return unless event
+
+    user_events.find_or_create_by(user_id: user_id)
   end
 
-  def follow(username)
-    self.favorites << username unless self.favorites.include? username
+  def follow(user_id)
+    user_events.find_or_create_by(user_id: user_id)
   end
 
-  def unfollow(username)
-    self.favorites.delete username
+  def unfollow(user_id)
+    doc = user_events.find_by(user_id: user_id)
+    doc.destroy if doc
   end
 
 end

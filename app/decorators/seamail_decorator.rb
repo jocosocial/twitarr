@@ -2,27 +2,27 @@ class SeamailDecorator < Draper::Decorator
   delegate_all
   include ActionView::Helpers::TextHelper
 
-  def to_meta_hash(current_username = '', count_is_unread = false)
+  def to_meta_hash(current_user_id = 0, count_is_unread = false)
     {
         id: id.to_s,
-        users: usernames.map { |x| { username: x, display_name: User.display_name_from_username(x), last_photo_updated: User.last_photo_updated_from_username(x).to_ms }},
+        users: users.map { |x| { username: x.username, display_name: x.display_name, last_photo_updated: x.last_photo_updated.to_ms } },
         subject: subject,
         message_count: seamail_count,
         timestamp: last_message.to_ms,
-        is_unread: messages.any? { |message| message.read_users.exclude?(current_username) },
+        is_unread: unread_for_user?(current_user_id),
         count_is_unread: count_is_unread
     }
   end
 
-  def to_hash(options = {}, current_username = '', count_is_unread = false)
+  def to_hash(options = {}, current_user_id = 0, count_is_unread = false)
     {
         id: id.to_s,
-        users: usernames.map { |x| { username: x, display_name: User.display_name_from_username(x), last_photo_updated: User.last_photo_updated_from_username(x).to_ms }},
+        users: users.map { |x| { username: x.username, display_name: x.display_name, last_photo_updated: x.last_photo_updated.to_ms } },
         subject: subject,
-        messages: messages.map { |x| x.decorate.to_hash(options, current_username) }.compact,
+        messages: seamail_messages.map { |x| x.decorate.to_hash(options, current_user_id, last_viewed(current_user_id)) }.compact,
         message_count: seamail_count,
         timestamp: last_message.to_ms,
-        is_unread: messages.any? { |message| message.read_users.exclude?(current_username) },
+        is_unread: unread_for_user?(current_user_id),
         count_is_unread: count_is_unread
     }
   end

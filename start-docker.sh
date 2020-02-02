@@ -7,13 +7,11 @@
 set -e
 set -x
 
-# docker passes in the linked mongo container by environment variables.
-# plug it into mongoid.yml here
-sed -e "s/127.0.0.1:27017/${MONGO_PORT#tcp://}/" config/mongoid_example.yml > config/mongoid.yml
+# setup steps (which we only need to do once - comment it out once the initial db is set up)
+rails db:setup
 
-# setup steps (which we only need to do once)
-rails db:mongoid:create_indexes
-rails db:seed
+# apply any db updates
+rails db:migrate
 
 # remove any temp files left behind by previous runs
 rails tmp:clear

@@ -10,7 +10,7 @@ class SeamailDecorator < Draper::Decorator
         message_count: seamail_count(count_is_unread, current_user_id),
         timestamp: last_message.to_ms,
         is_unread: unread_for_user?(current_user_id),
-        count_is_unread: count_is_unread
+        count_is_unread: count_is_unread && current_user_id > 0
     }
   end
 
@@ -23,7 +23,7 @@ class SeamailDecorator < Draper::Decorator
         message_count: seamail_count(count_is_unread, current_user_id),
         timestamp: last_message.to_ms,
         is_unread: unread_for_user?(current_user_id),
-        count_is_unread: count_is_unread
+        count_is_unread: count_is_unread && current_user_id > 0
     }
   end
 

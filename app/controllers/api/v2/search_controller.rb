@@ -4,6 +4,11 @@ module Api
       include Twitter::TwitterText::Extractor
 
       before_action :search_enabled
+      before_action :profile_enabled, only: [:users]
+      before_action :seamail_enabled, only: [:seamails]
+      before_action :stream_enabled, only: [:tweets]
+      before_action :forums_enabled, only: [:forums]
+      before_action :events_enabled, only: [:events]
 
       DETAILED_SEARCH_MAX = 20
 
@@ -14,11 +19,11 @@ module Api
         render json: {
           status: 'ok',
           query: params[:query],
-          users: do_search(params, User) { |e| e.decorate.gui_hash },
-          seamails: do_search(params, Seamail) { |e| e.decorate.to_meta_hash(current_user.id) },
-          tweets: do_search(params, StreamPost) { |e| e.decorate.to_hash(current_user, request_options) },
-          forums: do_search(params, Forum) { |e| e.decorate.to_meta_hash(current_user) },
-          events: do_search(params, Event) { |e| e.decorate.to_hash(current_username, request_options) }
+          users:  do_search(params, User, Section.enabled?(:user_profile)) { |e| e.decorate.gui_hash },
+          seamails: do_search(params, Seamail, Section.enabled?(:seamail)) { |e| e.decorate.to_meta_hash(current_user.id) },
+          tweets: do_search(params, StreamPost, Section.enabled?(:stream)) { |e| e.decorate.to_hash(current_user, request_options) },
+          forums: do_search(params, Forum, Section.enabled?(:forums)) { |e| e.decorate.to_meta_hash(current_user) },
+          events: do_search(params, Event, Section.enabled?(:calendar)) { |e| e.decorate.to_hash(current_username, request_options) }
         }
       end
 
@@ -80,12 +85,16 @@ module Api
 
       private
 
-      def do_search(params, collection)
-        query = collection.search(params)
-        count = query.limit(nil).count
-        matches = query.map { |e| yield e }
-        more = count > (query.limit_value + (query.offset_value || 0))
-        { matches: matches, count: count, more: more }
+      def do_search(params, collection, enabled = true)
+        if enabled
+          query = collection.search(params)
+          count = query.limit(nil).count
+          matches = query.map { |e| yield e }
+          more = count > (query.limit_value + (query.offset_value || 0))
+          { matches: matches, count: count, more: more }
+        else
+          { matches: [], count: 0, more: false }
+        end
       end
 
       def params_valid?(params)

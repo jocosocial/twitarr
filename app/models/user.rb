@@ -237,7 +237,7 @@ class User < ApplicationRecord
     query = query.where('seamails.last_update > ?', params[:after]) if params.key?(:after)
 
     if params.key?(:unread)
-      query = query.includes(:seamail_messages).where('user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed').references('seamail_messages')
+      query = query.includes(:seamail_messages).references(:seamail_messages).where('user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed')
       query = query.where('seamail_messages.created_at > ?', params[:after]) if params.key?(:after)
     end
 

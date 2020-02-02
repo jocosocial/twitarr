@@ -55,8 +55,13 @@ class Seamail < ApplicationRecord
     last_update
   end
 
-  def seamail_count
-    seamail_messages.count
+  def seamail_count(count_is_unread = false, user_id = 0)
+    if count_is_unread && user_id > 0
+      seamail_messages.includes(:user_seamails).references(:user_seamails)
+          .where('user_seamails.user_id = ? AND (user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed)', user_id).count
+    else
+      seamail_messages.count
+    end
   end
 
   def mark_as_read(user_id)

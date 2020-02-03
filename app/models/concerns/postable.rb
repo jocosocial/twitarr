@@ -55,6 +55,7 @@ module Postable
       doc = post_reactions.find_by(user_id: user_id, reaction_id: reaction_id)
       if doc
         doc.destroy
+        reload
         return
       end
 

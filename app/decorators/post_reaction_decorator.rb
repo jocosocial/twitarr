@@ -3,7 +3,7 @@ class PostReactionDecorator < Draper::Decorator
 
   def to_hash
     {
-        reaction: reaction,
+        reaction: reaction.name,
         user: {
           username: user.username,
           display_name: user.display_name,

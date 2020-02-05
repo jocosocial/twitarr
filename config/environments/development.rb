@@ -53,4 +53,6 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.ember.variant = :development
+
+  config.disable_registration_codes = true
 end

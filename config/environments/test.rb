@@ -36,4 +36,6 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.ember.variant = :test
+
+  config.disable_registration_codes = true
 end

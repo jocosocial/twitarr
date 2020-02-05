@@ -57,5 +57,7 @@ module Twitarr
     config.photo_store = 'photo_storage'
 
     config.active_record.schema_format = :sql
+
+    config.disable_registration_codes = ActiveModel::Type::Boolean.new.cast(ENV.fetch('DISABLE_REGISTRATION_CODES', 'false'))
   end
 end

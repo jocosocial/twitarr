@@ -141,7 +141,7 @@ class User < ApplicationRecord
   end
 
   def valid_registration_code?
-    return true if Rails.env.downcase == 'test'
+    return true if Rails.configuration.disable_registration_codes
 
     errors.add(:registration_code, 'Invalid registration code.') if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.where(registration_code: registration_code).exists?)
   end

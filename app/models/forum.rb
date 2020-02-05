@@ -80,7 +80,7 @@ class Forum < ApplicationRecord
   end
 
   def self.create_new_forum(author, subject, first_post_text, photos, original_author)
-    forum = Forum.new(subject: subject)
+    forum = Forum.new(subject: subject, last_post_user_id: author)
     post = ForumPost.new(author: author, text: first_post_text, original_author: original_author)
     photos&.each do |photo|
       post.post_photos << PostPhoto.new(photo_metadata_id: photo)

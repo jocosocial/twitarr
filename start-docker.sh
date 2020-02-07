@@ -13,12 +13,8 @@ export RAILS_ENV=production
 # uncomment this if you don't care about registration codes (like, in a dev environment)
 # export DISABLE_REGISTRATION_CODES=true
 
-# initialize the database (which we only need to do once
-# comment it out once the initial db is set up, otherwise your db will be wiped every time you start docker
-rails db:reset
-
-# apply any db updates
-rails db:migrate
+# initialize the database
+rails db:prepare
 
 # remove any temp files left behind by previous runs
 rails tmp:clear

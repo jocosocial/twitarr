@@ -36,7 +36,7 @@ class Event < ApplicationRecord
 
   default_scope { order(start_time: :asc, title: :asc) }
 
-  DST_START = Time.new(2019, 3, 11, 2, 0, 0, '-05:00')
+  DST_START = Rails.configuration.dst_start
 
   # TODO: migrate
   # field :fa, as: :favorites, type: Array, default: []

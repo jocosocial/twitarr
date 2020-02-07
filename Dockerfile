@@ -17,8 +17,6 @@ RUN mkdir $app
 WORKDIR $app
 ADD . $app
 
-RUN chmod +x start-docker.sh
-
 EXPOSE 3000
 
 CMD [ "./start-docker.sh" ]

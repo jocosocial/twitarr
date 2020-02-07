@@ -1,10 +1,12 @@
 FROM ruby:2.6.5
 
 COPY Gemfile* /tmp/
+COPY docker-prereqs.sh /tmp/
 WORKDIR /tmp
 
+RUN ./docker-prereqs.sh
+
 RUN gem install bundler:2.0.2 && bundle install
-# todo - this warn against running as root, should we make an app user?
 
 # set the container's time zone
 ENV TZ=America/New_York
@@ -16,10 +18,6 @@ WORKDIR $app
 ADD . $app
 
 RUN chmod +x start-docker.sh
-
-# these steps are done by start-docker.sh:
-# RUN rake db:setup
-# RUN rake db:seed
 
 EXPOSE 3000
 

@@ -6,7 +6,7 @@ WORKDIR /tmp
 
 RUN ./docker-prereqs.sh
 
-RUN gem install bundler:2.0.2 && bundle install
+RUN gem install bundler:2.1.4 && bundle install
 
 # set the container's time zone
 ENV TZ=America/New_York

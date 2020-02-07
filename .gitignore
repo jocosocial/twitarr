@@ -9,6 +9,10 @@
 # vi editor droppings
 .*.swp
 
+# node and yarn
+node_modules
+yarn.lock
+
 /config/secrets.yml
 
 /public/img/photos/*

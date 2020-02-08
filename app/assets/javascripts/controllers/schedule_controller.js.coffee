@@ -47,7 +47,7 @@ Twitarr.ScheduleDetailController = Twitarr.Controller.extend
         r=@get('model').delete()
         @transitionToRoute 'schedule' if r
     ical: ->
-      window.location.replace("#{Twitarr.api_path}/event/#{@get('id')}/ical")
+      window.location.replace("#{Twitarr.api_path}/event/#{@get('model.id')}/ical")
 
 Twitarr.ScheduleEditController = Twitarr.Controller.extend
   errors: Ember.A()
@@ -70,7 +70,7 @@ Twitarr.ScheduleEditController = Twitarr.Controller.extend
           @set 'posting', false
           @transitionToRoute 'schedule.detail', @get('model.id')
       )
-  
+
 Twitarr.ScheduleUploadController = Twitarr.Controller.extend
   schedule_upload_url: (->
     "#{Twitarr.api_path}/user/schedule"

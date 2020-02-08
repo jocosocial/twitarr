@@ -3,7 +3,7 @@ class EventDecorator < BaseDecorator
 
   def to_hash(current_user = nil, options = {})
     result = {
-      id: id.to_s,
+      id: id,
       title: title,
       location: location,
       start_time: nil,

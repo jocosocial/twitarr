@@ -39,7 +39,6 @@ class Forum < ApplicationRecord
                   against: :subject,
                   associated_against: { posts: :text },
                   using: {
-                      trigram: { word_similarity: true },
                       tsearch: { any_word: true, prefix: true }
                   }
 

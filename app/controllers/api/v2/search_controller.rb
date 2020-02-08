@@ -23,7 +23,7 @@ module Api
           seamails: do_search(params, Seamail, Section.enabled?(:seamail)) { |e| e.decorate.to_meta_hash(current_user.id) },
           tweets: do_search(params, StreamPost, Section.enabled?(:stream)) { |e| e.decorate.to_hash(current_user, request_options) },
           forums: do_search(params, Forum, Section.enabled?(:forums)) { |e| e.decorate.to_meta_hash(current_user) },
-          events: do_search(params, Event, Section.enabled?(:calendar)) { |e| e.decorate.to_hash(current_username, request_options) }
+          events: do_search(params, Event, Section.enabled?(:calendar)) { |e| e.decorate.to_hash(current_user, request_options) }
         }
       end
 

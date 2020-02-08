@@ -84,7 +84,7 @@ class Event < ApplicationRecord
 
     return unless event
 
-    user_events.find_or_create_by(user_id: user_id)
+    event.user_events.find_or_create_by(user_id: user_id)
   end
 
   def follow(user_id)

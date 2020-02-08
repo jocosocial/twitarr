@@ -48,7 +48,7 @@ module Api
         cal_string << "END:VEVENT\n"
 
         cal_string << 'END:VCALENDAR'
-        headers['Content-Disposition'] = "inline; filename=\"#{@event.title.parameterize('_')}.ics\""
+        headers['Content-Disposition'] = "inline; filename=\"#{@event.title.parameterize.underscore}.ics\""
 
         render body: cal_string, content_type: 'text/vcard', layout: false
       end

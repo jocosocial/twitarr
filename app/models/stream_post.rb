@@ -56,7 +56,6 @@ class StreamPost < ApplicationRecord
                   against: :text,
                   associated_against: { user: [:username, :display_name] },
                   using: {
-                      trigram: { word_similarity: true },
                       tsearch: { any_word: true, prefix: true }
                   }
 

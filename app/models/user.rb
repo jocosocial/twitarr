@@ -108,7 +108,6 @@ class User < ApplicationRecord
   pg_search_scope :pg_search,
                   against: [:username, :display_name],
                   using: {
-                      trigram: { word_similarity: true },
                       tsearch: { any_word: true, prefix: true }
                   }
 

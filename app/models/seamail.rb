@@ -28,7 +28,6 @@ class Seamail < ApplicationRecord
                   against: :subject,
                   associated_against: { users: [:username, :display_name], seamail_messages: :text },
                   using: {
-                      trigram: { word_similarity: true },
                       tsearch: { any_word: true, prefix: true }
                   }
 

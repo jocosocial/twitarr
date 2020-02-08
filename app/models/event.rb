@@ -30,7 +30,6 @@ class Event < ApplicationRecord
   pg_search_scope :pg_search,
                   against: [:description, :location, :title],
                   using: {
-                      trigram: { word_similarity: true },
                       tsearch: { any_word: true, prefix: true }
                   }
 

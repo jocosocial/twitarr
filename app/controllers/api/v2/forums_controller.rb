@@ -237,7 +237,7 @@ module Api
 
       def check_locked
         unless moderator?
-          render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if @forum&.locked || @post.forum.locked
+          render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if @forum&.locked || @post&.forum&.locked
         end
       end
     end

@@ -23,6 +23,20 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -227,7 +241,6 @@ ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
 --
 
 CREATE TABLE public.photo_metadata (
-    id bigint NOT NULL,
     user_id bigint NOT NULL,
     content_type character varying NOT NULL,
     store_filename character varying NOT NULL,
@@ -236,27 +249,9 @@ CREATE TABLE public.photo_metadata (
     sizes jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    original_filename character varying NOT NULL
+    original_filename character varying NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL
 );
-
-
---
--- Name: photo_metadata_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.photo_metadata_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: photo_metadata_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.photo_metadata_id_seq OWNED BY public.photo_metadata.id;
 
 
 --
@@ -266,8 +261,8 @@ ALTER SEQUENCE public.photo_metadata_id_seq OWNED BY public.photo_metadata.id;
 CREATE TABLE public.post_photos (
     id bigint NOT NULL,
     stream_post_id bigint,
-    photo_metadata_id bigint NOT NULL,
-    forum_post_id bigint
+    forum_post_id bigint,
+    photo_metadata_id uuid NOT NULL
 );
 
 
@@ -766,13 +761,6 @@ ALTER TABLE ONLY public.hashtags ALTER COLUMN id SET DEFAULT nextval('public.has
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
-
-
---
--- Name: photo_metadata id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.photo_metadata ALTER COLUMN id SET DEFAULT nextval('public.photo_metadata_id_seq'::regclass);
 
 
 --
@@ -1490,7 +1478,7 @@ ALTER TABLE ONLY public.user_stars
 --
 
 ALTER TABLE ONLY public.post_photos
-    ADD CONSTRAINT fk_rails_75b2cf5242 FOREIGN KEY (photo_metadata_id) REFERENCES public.photo_metadata(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_75b2cf5242 FOREIGN KEY (photo_metadata_id) REFERENCES public.photo_metadata(id);
 
 
 --
@@ -1631,6 +1619,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200127021313'),
 ('20200127032332'),
 ('20200202185203'),
-('20200208063424');
+('20200208063424'),
+('20200209044205');
 
 

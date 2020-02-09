@@ -2,7 +2,7 @@
 #
 # Table name: photo_metadata
 #
-#  id                :bigint           not null, primary key
+#  id                :uuid             not null, primary key
 #  animated          :boolean          default(FALSE), not null
 #  content_type      :string           not null
 #  md5_hash          :string           not null

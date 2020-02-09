@@ -414,7 +414,7 @@ Get/post information on the tweet stream
     "text": "marked_up_text",
     "reactions": ReactionsSummary{},
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
-    "parent_chain": [ "stream_post_id_string", ... ]
+    "parent_chain": [ stream_post_id_int, ... ]
 }
 ```
 
@@ -428,7 +428,7 @@ Get/post information on the tweet stream
     "text": "marked up text",
     "timestamp": epoch,
     "reactions": ReactionsSummary{},
-    "parent_chain": [ "stream_post_id_string", ... ],
+    "parent_chain": [ stream_post_id_int, ... ],
     "photo": PhotoDetails{}, # photo will not be present if the post does not have a photo
     "children": [ # children will not be present if there are no child posts
         StreamPost{ WITHOUT parent_chain }, ...

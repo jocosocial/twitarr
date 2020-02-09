@@ -3,9 +3,9 @@
 # Table name: post_photos
 #
 #  id                :bigint           not null, primary key
-#  stream_post_id    :bigint
-#  photo_metadata_id :bigint           not null
 #  forum_post_id     :bigint
+#  photo_metadata_id :uuid             not null
+#  stream_post_id    :bigint
 #
 # Indexes
 #
@@ -14,7 +14,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (forum_post_id => forum_posts.id) ON DELETE => cascade
-#  fk_rails_...  (photo_metadata_id => photo_metadata.id) ON DELETE => cascade
+#  fk_rails_...  (photo_metadata_id => photo_metadata.id)
 #  fk_rails_...  (stream_post_id => stream_posts.id) ON DELETE => cascade
 #
 

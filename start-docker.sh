@@ -20,7 +20,6 @@ rails db:prepare
 rails tmp:clear
 
 # precompile asset
-yarn install
 rails assets:precompile
 
 # bind to all interfaces (this exposes ports out to docker)

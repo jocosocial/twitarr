@@ -96,26 +96,4 @@ if Reaction.count == 0
 end
 
 puts 'Creating sections...'
-Section.delete_all
-if Section.count == 0
-  Section.add(:forums, :global)
-  Section.add(:stream, :global)
-  Section.add(:seamail, :global)
-  Section.add(:calendar, :global)
-  Section.add(:deck_plans, :global)
-  Section.add(:games, :global)
-  Section.add(:karaoke, :global)
-  Section.add(:search, :global)
-  Section.add(:registration, :global)
-  Section.add(:user_profile, :global)
-  Section.add(:Kraken_forums, :kraken)
-  Section.add(:Kraken_stream, :kraken)
-  Section.add(:Kraken_seamail, :kraken)
-  Section.add(:Kraken_calendar, :kraken)
-  Section.add(:Kraken_deck_plans, :kraken)
-  Section.add(:Kraken_games, :kraken)
-  Section.add(:Kraken_karaoke, :kraken)
-  Section.add(:Kraken_search, :kraken)
-  Section.add(:Kraken_registration, :kraken)
-  Section.add(:Kraken_user_profile, :kraken)
-end
+Section.repopulate_sections

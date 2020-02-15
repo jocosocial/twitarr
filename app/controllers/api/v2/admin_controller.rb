@@ -225,7 +225,13 @@ module Api
       end
 
       def sections
-        render json: { status: 'ok', sections: Section.all.map { |x| x.decorate.to_hash } }
+        query = Section.all
+        if params[:category]
+          categories = ['global', params[:category]]
+          query = query.where('category in (?)', categories)
+        end
+
+        render json: { status: 'ok', sections: query.map { |x| x.decorate.to_hash } }
       end
 
       def section_toggle

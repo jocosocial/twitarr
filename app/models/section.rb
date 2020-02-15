@@ -11,17 +11,17 @@
 #
 # Indexes
 #
-#  index_sections_on_name  (name) UNIQUE
+#  index_sections_on_category  (category)
+#  index_sections_on_name      (name) UNIQUE
 #
 
 class Section < ApplicationRecord
   default_scope { order(category: :asc, name: :asc) }
+
   def self.add(section, category)
-    Section.find_or_create_by(name: section, category: category) do |doc|
-      doc.enabled = true
-    rescue StandardError => e
-      logger.error e
-    end
+    Section.find_or_create_by(name: section, category: category)
+  rescue StandardError => e
+    logger.error e
   end
 
   def self.enabled?(section)
@@ -37,5 +37,19 @@ class Section < ApplicationRecord
       doc.save
       doc
     end
+  end
+
+  def self.repopulate_sections
+    Section.delete_all
+    sections = %w(forums stream seamail calendar deck_plans games karaoke search registration)
+    categories = %w(global Kraken cruise_monkey rainbow_monkey)
+    categories.each do |category|
+      sections.each do |section|
+        name = section
+        name = "#{category}_#{section}" unless category == 'global'
+        Section.add(name, category)
+      end
+    end
+    Section.add('cruise_monkey_advanced_sync', 'cruise_monkey')
   end
 end

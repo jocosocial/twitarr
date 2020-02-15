@@ -102,6 +102,7 @@ Rails.application.routes.draw do
       post 'admin/user/:username/reset_password', to: 'admin#reset_password'
       post 'admin/user/:username/reset_photo', to: 'admin#reset_photo'
       get 'admin/user/:username/regcode', to: 'admin#regcode'
+      get 'admin/clear_text_cache', to: 'admin#clear_text_cache'
 
       get 'admin/announcements', to: 'admin#announcements'
       post 'admin/announcements', to: 'admin#new_announcement'

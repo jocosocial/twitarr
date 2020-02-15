@@ -3002,6 +3002,7 @@ Allows a user to set their last_checked_time time to a specific value.
 ```
 {
     "name": "string",
+    "category": "string",
     "enabled": boolean
 }
 ```
@@ -3436,6 +3437,10 @@ Valid section names:
 * search
 * registration
 * user_profile
+
+Section categories:
+* global
+* kraken - has its own set of section names, prefixed with `Kraken_`
 
 #### Returns
 

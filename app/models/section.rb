@@ -3,8 +3,9 @@
 # Table name: sections
 #
 #  id         :bigint           not null, primary key
-#  name       :string
+#  category   :string
 #  enabled    :boolean          default(TRUE), not null
+#  name       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -14,9 +15,9 @@
 #
 
 class Section < ApplicationRecord
-  default_scope { order(name: :asc) }
-  def self.add(section)
-    Section.find_or_create_by(name: section) do |doc|
+  default_scope { order(category: :asc, name: :asc) }
+  def self.add(section, category)
+    Section.find_or_create_by(name: section, category: category) do |doc|
       doc.enabled = true
     rescue StandardError => e
       logger.error e

@@ -16,7 +16,7 @@ module Api
 
         if @event.valid?
           @event.save
-          render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options) }
+          render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options), now: DateTime.current.to_ms }
         else
           render status: :bad_request, json: { status: 'error', errors: @event.errors.full_messages }
         end
@@ -55,7 +55,7 @@ module Api
 
       def follow
         if @event.follow(current_user.id)
-          render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options) }
+          render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options), now: DateTime.current.to_ms }
         else
           render status: :bad_request, json: { status: 'error', error: 'Unable to follow event.' }
         end
@@ -63,7 +63,7 @@ module Api
 
       def unfollow
         @event.unfollow(current_user.id)
-        render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options) }
+        render json: { status: 'ok', event: @event.decorate.to_hash(current_user, request_options), now: DateTime.current.to_ms }
       end
 
       def index

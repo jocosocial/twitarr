@@ -104,6 +104,7 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.5)
     crass (1.0.6)
+    dalli (2.7.10)
     discard (1.1.0)
       activerecord (>= 4.2, < 7)
     draper (4.0.0)
@@ -326,6 +327,7 @@ DEPENDENCIES
   bootsnap
   browser
   coffee-rails
+  dalli
   discard
   draper
   ember-data-source (~> 1.13.0)

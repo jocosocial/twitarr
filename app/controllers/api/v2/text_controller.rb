@@ -1,7 +1,7 @@
 module Api
   module V2
     class TextController < ApiController
-      FILE_CACHE_TIME = 5.minutes
+      FILE_CACHE_TIME = 10.minutes
 
       def index
         filename = params['filename'].strip.downcase.gsub(/[^\w-]/, '')

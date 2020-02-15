@@ -2,7 +2,7 @@ module Api
   module V2
     class AdminController < ApiController
       before_action :moderator_required, only: [:users, :user, :profile, :update_user, :reset_photo]
-      before_action :tho_required, only: [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement, :regcode, :section_toggle]
+      before_action :tho_required, only: [:reset_password, :announcements, :new_announcement, :update_announcement, :delete_announcement, :regcode, :section_toggle, :clear_text_cache]
       before_action :admin_required, only: [:upload_schedule, :activate]
       before_action :fetch_user, only: [:profile, :update_user, :activate, :reset_password, :reset_photo, :regcode]
       before_action :fetch_announcement, only: [:announcement, :update_announcement, :delete_announcement]
@@ -239,6 +239,11 @@ module Api
         render json: { status: 'ok', section: result.decorate.to_hash }
       rescue StandardError
         render status: :not_found, json: { status: 'error', error: 'Section not found.' }
+      end
+
+      def clear_text_cache
+        Rails.cache.delete_matched('file:.*')
+        render json: { status: 'ok' }
       end
 
       private

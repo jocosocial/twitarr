@@ -1,51 +1,51 @@
 [
-	{
-		"date": "2019-03-09",
-		"theme": "Welcome, New Monkeys!",
-		"theme_description": "We'll be holding events specifically designed to make our first-time Sea Monkeys feel welcome and to help them ease into the swing of things. Make a particular effort on this day to seek out new Monkeys and help show them what a great decision they've made by joining us!",
-		"port": "Fort Lauderdale",
-		"departs": "5 pm"
-	},
-	{
-		"date": "2019-03-10",
-		"theme": "Science!",
-		"theme_description": "It’s a fact: science should be celebrated! Cosplay as your favorite alien/space pirate/researcher/theorem/astronaut/astronomer/etc.; take some time to stargaze tonight; and generally Get Excited About Science!",
-		"port": "Half Moon Cay",
-		"arrives": "8 am",
-		"departs": "4 pm"
-	},
-	{
-		"date": "2019-03-11",
-		"theme": "Cosplay Day",
-		"theme_description": "We have a bunch of terrifically talented cosplayers every year, and today is your day to really pull out all the stops. Sky's the limit; show off your best!"
-	},
-	{
-		"date": "2019-03-12",
-		"port": "Tortola",
-		"arrives": "10 am",
-		"departs": "6 pm"
-	},
-	{
-		"date": "2019-03-13",
-		"port": "San Juan",
-		"arrives": "7 am",
-		"departs": "1 am"
-	},
-	{
-		"date": "2019-03-14",
-		"theme": "Formal Night",
-		"theme_description": "Formal wear is encouraged, <i>but not required</i>, at dinner.",
-		"theme_description_extra": "<ul><li>\"Formal wear\" is defined VERY flexibly. Tuxedo and cocktail dress? Fine. Sport coat and slacks? Sure. Starfleet uniform? Awesome. Full Scottish regalia? Bonnie. You get the idea.</li><li>Fezzes and tiaras are encouraged—but not required. (The wearing of fezzes and tiaras on Formal Night has become a sort of JCC tradition for many.)</li><li>The only restriction: no full face masks (HAL regulation).</li>"
-	},
-	{
-		"date": "2019-03-15",
-		"theme": "Jammies Day",
-		"theme_description": "Everyone's running out of clean clothes anyway, so today is one big day-long celebration of the fact that nobody can make us put on \"real\" clothes if we don't want to!"
-	},
-	{
-		"date": "2019-03-16",
-		"theme": "Sadness (Observed)",
-		"port": "Fort Lauderdale",
-		"arrives": "7 am"
-	}
+  {
+    "date": "2019-03-09",
+    "theme": "Welcome, New Monkeys!",
+    "theme_description": "We'll be holding events specifically designed to make our first-time Sea Monkeys feel welcome and to help them ease into the swing of things. Make a particular effort on this day to seek out new Monkeys and help show them what a great decision they've made by joining us!",
+    "port": "Fort Lauderdale",
+    "departs": "5 pm"
+  },
+  {
+    "date": "2019-03-10",
+    "theme": "Science!",
+    "theme_description": "It’s a fact: science should be celebrated! Cosplay as your favorite alien/space pirate/researcher/theorem/astronaut/astronomer/etc.; take some time to stargaze tonight; and generally Get Excited About Science!",
+    "port": "Half Moon Cay",
+    "arrives": "8 am",
+    "departs": "4 pm"
+  },
+  {
+    "date": "2019-03-11",
+    "theme": "Cosplay Day",
+    "theme_description": "We have a bunch of terrifically talented cosplayers every year, and today is your day to really pull out all the stops. Sky's the limit; show off your best!"
+  },
+  {
+    "date": "2019-03-12",
+    "port": "Tortola",
+    "arrives": "10 am",
+    "departs": "6 pm"
+  },
+  {
+    "date": "2019-03-13",
+    "port": "San Juan",
+    "arrives": "7 am",
+    "departs": "1 am"
+  },
+  {
+    "date": "2019-03-14",
+    "theme": "Formal Night",
+    "theme_description": "Formal wear is encouraged, <i>but not required</i>, at dinner.",
+    "theme_description_extra": "<ul><li>\"Formal wear\" is defined VERY flexibly. Tuxedo and cocktail dress? Fine. Sport coat and slacks? Sure. Starfleet uniform? Awesome. Full Scottish regalia? Bonnie. You get the idea.</li><li>Fezzes and tiaras are encouraged—but not required. (The wearing of fezzes and tiaras on Formal Night has become a sort of JCC tradition for many.)</li><li>The only restriction: no full face masks (HAL regulation).</li>"
+  },
+  {
+    "date": "2019-03-15",
+    "theme": "Jammies Day",
+    "theme_description": "Everyone's running out of clean clothes anyway, so today is one big day-long celebration of the fact that nobody can make us put on \"real\" clothes if we don't want to!"
+  },
+  {
+    "date": "2019-03-16",
+    "theme": "Sadness (Observed)",
+    "port": "Fort Lauderdale",
+    "arrives": "7 am"
+  }
 ]

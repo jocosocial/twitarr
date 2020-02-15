@@ -34,7 +34,7 @@ class Hashtag < ApplicationRecord
 
   def self.auto_complete(prefix)
     prefix = prefix.downcase.strip
-    Hashtag.where('name like ?', "#{prefix}%").asc(:name).limit(AUTO_COMPLETE_LIMIT)
+    Hashtag.where('name like ?', "#{prefix}%").order(name: :asc).limit(AUTO_COMPLETE_LIMIT)
   end
 
   # this is probably not going to be a fast operation

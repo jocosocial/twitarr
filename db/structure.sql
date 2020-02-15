@@ -461,7 +461,8 @@ CREATE TABLE public.sections (
     name character varying,
     enabled boolean DEFAULT true NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    category character varying
 );
 
 
@@ -1620,6 +1621,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200127032332'),
 ('20200202185203'),
 ('20200208063424'),
-('20200209044205');
+('20200209044205'),
+('20200215055700');
 
 

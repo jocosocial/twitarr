@@ -1236,6 +1236,13 @@ CREATE INDEX index_seamails_subject ON public.seamails USING gin (to_tsvector('e
 
 
 --
+-- Name: index_sections_on_category; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_sections_on_category ON public.sections USING btree (category);
+
+
+--
 -- Name: index_sections_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1622,6 +1629,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200202185203'),
 ('20200208063424'),
 ('20200209044205'),
-('20200215055700');
+('20200215055700'),
+('20200215191244');
 
 

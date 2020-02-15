@@ -3426,7 +3426,7 @@ Upload an .ics schedule. Schedule should be uploaded as form-data. Creates new e
 
 Gets the list of site sections and their current status. Note that this admin endpoint has no access restrictions.
 
-Valid section names:
+Section names:
 * forums
 * stream
 * seamail
@@ -3438,9 +3438,15 @@ Valid section names:
 * registration
 * user_profile
 
-Section categories:
+Categories:
 * global
 * kraken - has its own set of section names, prefixed with `Kraken_`
+* cruise_monkey - has its own set of section names, prefixed with `cruise_monkey_`
+* rainbow_monkey - has its own set of section names, prefixed with `rainbow_monkey_`
+
+#### Query Parameters
+
+* category=string - Optional. If present, results will be filtered to only include the sections in the global category plus the requested category.
 
 #### Returns
 

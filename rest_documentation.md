@@ -2602,7 +2602,8 @@ Gets a list of favorited events with a start time on the same day as :epoch.
     "events": [Event{}, ...],
     "today": epoch,
     "prev_day": epoch,
-    "next_day": epoch
+    "next_day": epoch,
+    "now": epoch # Current server time
 }
 ```
 
@@ -2636,7 +2637,8 @@ Get details of an event.
 ```
 {
     "status": "ok",
-    "event": Event{}
+    "event": Event{},
+    "now": epoch # Current server time
 }
 ```
 
@@ -2713,7 +2715,8 @@ Allows an admin to edit the title, description, location, start time, and end ti
 ```
 {
     "status": "ok",
-    "event": Event{}
+    "event": Event{},
+    "now": epoch # Current server time
 }
 ```
 
@@ -2739,7 +2742,8 @@ Allows the user to favorite an event.
 ```
 {
     "status": "ok",
-    "event": Event{}
+    "event": Event{},
+    "now": epoch # Current server time
 }
 ```
 
@@ -2765,7 +2769,8 @@ Allows the user to remove their favorite from an event.
 ```
 {
     "status": "ok",
-    "event": Event{}
+    "event": Event{},
+    "now": epoch # Current server time
 }
 ```
 

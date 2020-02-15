@@ -92,7 +92,7 @@ class Event < ApplicationRecord
 
   def unfollow(user_id)
     doc = user_events.find_by(user_id: user_id)
-    doc.destroy if doc
+    user_events.delete(doc) if doc
   end
 
 end

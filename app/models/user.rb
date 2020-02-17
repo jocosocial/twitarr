@@ -106,7 +106,7 @@ class User < ApplicationRecord
   validates :room_number, allow_blank: true, length: { minimum: 4, maximum: 5 }
 
   pg_search_scope :pg_search,
-                  against: [:username, :display_name],
+                  against: [:username, :display_name, :real_name],
                   using: {
                       tsearch: { any_word: true, prefix: true }
                   }

@@ -334,23 +334,23 @@ class User < ApplicationRecord
 
   def self.display_name_from_username(username)
     username = format_username(username)
-    Rails.cache.fetch("display_name:#{username}", expires_in: USERNAME_CACHE_TIME) do
+    Rails.cache.fetch("dn:#{username}", expires_in: USERNAME_CACHE_TIME) do
       User.find_by(username: username).display_name
     end
   end
 
   def self.last_photo_updated_from_username(username)
     username = format_username(username)
-    Rails.cache.fetch("last_photo_updated:#{username}", expires_in: USERNAME_CACHE_TIME) do
+    Rails.cache.fetch("lpu:#{username}", expires_in: USERNAME_CACHE_TIME) do
       User.find_by(username: username).last_photo_updated
     end
   end
 
   def update_cache_for_user
-    Rails.cache.fetch("display_name:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
+    Rails.cache.fetch("dn:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
       display_name
     end
-    Rails.cache.fetch("last_photo_updated:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
+    Rails.cache.fetch("lpu:#{username}", force: true, expires_in: USERNAME_CACHE_TIME) do
       last_photo_updated
     end
   end

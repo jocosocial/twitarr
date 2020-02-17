@@ -60,7 +60,10 @@ class Forum < ApplicationRecord
   def update_cache
     post = last_post
     if last_post
-      Rails.cache.delete_matched("forum:post_count_since:#{post.forum_id}:.*")
+      user_ids = User.all_user_ids
+      user_ids.each do |user_id|
+        Rails.cache.delete("forum:post_count_since:#{post.forum_id}:#{user_id}")
+      end
       update(last_post_time: post.created_at, last_post_user_id: post.author)
     else
       destroy

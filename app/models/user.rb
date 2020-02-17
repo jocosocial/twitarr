@@ -458,4 +458,10 @@ class User < ApplicationRecord
       user.save
     end
   end
+
+  def self.all_user_ids(update = false)
+    Rails.cache.fetch('user:all_ids', force: update, expires_in: User::USERNAME_CACHE_TIME) do
+      User.all.pluck(:id)
+    end
+  end
 end

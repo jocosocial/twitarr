@@ -5,7 +5,7 @@ Twitarr.SeamailIndexController = Twitarr.Controller.extend
 
   actions:
     compose_seamail: ->
-      @transitionToRoute('seamail.new', {queryParams: {as_mod: @get('as_mod'), as_admin: @get('as_admin')}})
+      @transitionToRoute('seamail.new', {queryParams: {as_mod: @get('as_mod'), as_admin: @get('as_admin'), to: null}})
     moderator_mode: ->
       @transitionToRoute('seamail.index', {queryParams: {as_mod: 'true', as_admin: 'false'}})
     admin_mode: ->
@@ -51,9 +51,10 @@ Twitarr.SeamailDetailController = Twitarr.Controller.extend
       )
 
 Twitarr.SeamailNewController = Twitarr.Controller.extend
-  queryParams: ['as_mod', 'as_admin']
+  queryParams: ['as_mod', 'as_admin', 'to']
   as_mod: false
   as_admin: false
+  to: null
   searchResults: Ember.A()
   toUsers: Ember.A()
   errors: Ember.A()
@@ -77,7 +78,7 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
   actions:
     handleKeyDown: (v,e) ->
       @send('new') if e.ctrlKey and e.keyCode == 13
-    
+
     handleKeyUp: (v,e) ->
       switch e.keyCode
         when 40
@@ -88,10 +89,10 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
           @send('cancel_autocomplete')
           $('#seamail-user-autocomplete').focus()
           return false
-    
+
     listKeyUp: (e) ->
       @send('handleKeyUp', null , e)
-    
+
     moveUp: ->
       if $('#seamail-user-autocomplete').is(':focus')
         $('.seamail-user-autocomplete-item:last').children('a').focus()
@@ -139,8 +140,8 @@ Twitarr.SeamailNewController = Twitarr.Controller.extend
     remove: (user) ->
       @get('toUsers').removeObject(user)
 
-    select: (name) ->
-      @get('toUsers').unshiftObject(name)
+    select: (user) ->
+      @get('toUsers').unshiftObject(user)
       @set 'toInput', ''
       @get('searchResults').clear()
       @last_search = ''

@@ -7,6 +7,9 @@ Twitarr.SeamailNewRoute = Ember.Route.extend
     controller.set('toUsers', Ember.A())
     controller.set('subject', '')
     controller.set('text', '')
+    if controller.get('to')
+      username = controller.get('to')
+      controller.get('toUsers').unshiftObject({username: username, display_name: username})
 
 Twitarr.SeamailIndexRoute = Ember.Route.extend
   queryParams: {
@@ -17,7 +20,7 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
       refreshModel: true
     }
   }
-  
+
   model: (params) ->
     Twitarr.SeamailMeta.list(params.as_mod, params.as_admin).fail((response)=>
       if response.status? && response.status == 503
@@ -31,7 +34,7 @@ Twitarr.SeamailIndexRoute = Ember.Route.extend
         alert('You must be logged in to view seamail.')
         @transitionTo('index')
         return
-      else 
+      else
         alert('Something went wrong. Please try again later.')
         @transitionTo('index')
         return
@@ -66,7 +69,7 @@ Twitarr.SeamailDetailRoute = Ember.Route.extend
   actions:
     reload: ->
       @refresh()
-  
+
   setupController: (controller, model) ->
     this._super(controller, model)
     controller.set('errors', Ember.A())

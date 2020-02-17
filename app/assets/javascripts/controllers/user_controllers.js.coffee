@@ -110,6 +110,9 @@ Twitarr.UserProfileController = Twitarr.Controller.extend
     admin_profile: (username) ->
       @transitionToRoute('admin.profile', username)
 
+    compose_seamail: (username) ->
+      @transitionToRoute('seamail.new', {queryParams: {to: username}})
+
 Twitarr.UserNewController = Twitarr.Controller.extend
   errors: null
 

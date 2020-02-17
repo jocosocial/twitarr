@@ -18,8 +18,8 @@ module Api
         new_username = params[:new_username].present? ? params[:new_username].downcase : ''
         display_name = params[:display_name]
         display_name = params[:new_username] if params[:display_name].blank?
-        user = User.new username: new_username, display_name: display_name, password: params[:new_password],
-                        role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code]
+        user = User.new(username: new_username, display_name: display_name, password: params[:new_password],
+                        role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code])
 
         if user.invalid?
           render status: :bad_request, json: { status: 'error', errors: user.errors.messages }
@@ -29,6 +29,7 @@ module Api
         user.change_password params[:new_password]
         user.update_last_login
         user.save
+        User.all_user_ids(true)
         login_user user
         render json: { status: 'ok', key: build_key(user.username, user.password), user: UserDecorator.decorate(user).self_hash }
       end

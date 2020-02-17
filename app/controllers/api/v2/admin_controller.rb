@@ -194,7 +194,10 @@ module Api
       end
 
       def clear_text_cache
-        Rails.cache.delete_matched('file:.*')
+        filenames = Dir.glob(Rails.root.join('public/text/*.json'))
+        filenames.each do |filename|
+          Rails.cache.delete_matched("file:#{filename}")
+        end
         render json: { status: 'ok' }
       end
 

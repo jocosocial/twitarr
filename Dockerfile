@@ -6,8 +6,12 @@ WORKDIR /tmp
 
 RUN ./docker-prereqs.sh
 
-# If running in development, remove the --without clause
-RUN gem install bundler:2.1.4 && bundle install --without development test
+RUN gem install bundler:2.1.4
+
+# If running in development, remove this line
+RUN bundle config set without 'development test'
+
+RUN bundle install
 
 # set the container's time zone
 ENV TZ=America/New_York

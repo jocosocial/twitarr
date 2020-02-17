@@ -10,7 +10,7 @@ class EventDecorator < BaseDecorator
       end_time: nil,
       official: official,
       description: nil,
-      following: current_user.present? && user_events.map { |x| x.user_id == current_user.id }.any?
+      following: current_user.present? && user_events.any? { |x| x.user_id == current_user.id }
     }
     # If DST hasn't started yet and we're viewing events that begin after DST starts,
     # adjust the displayed event start/end times to appear as if DST had not yet begun

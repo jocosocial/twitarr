@@ -10,45 +10,34 @@ end
 puts "Creating registration codes..."
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
-  for i in 1..20 do
+  (1..100).each { |i|
     create_registration_code "code#{i}"
-  end
+  }
 end
 
-unless User.exist? 'TwitarrTeam'
-  puts 'Creating user TwitarrTeam'
-  user = User.new username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
-  user.change_password user.password
-  user.save
-end
-
-unless User.exist? 'moderator'
-  puts 'Creating user moderator'
-  user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
-  role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
-  user.change_password user.password
-  user.save
-end
+puts 'Creating default users...'
+User.create_default_users
 
 unless User.exist? 'kvort'
   puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code3'
+    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code4'
   user.change_password 'kvort'
   user.save
 end
+
 unless User.exist? 'james'
   puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code4'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code5'
   user.change_password 'james'
   user.save
 end
+
 unless User.exist? 'steve'
   puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code5'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code6'
   user.change_password 'steve'
   user.save
 end
@@ -57,12 +46,20 @@ kvort = User.get('kvort').id
 james = User.get('james').id
 steve = User.get('steve').id
 
+unless User.exist? 'TwitarrTeam'
+  raise Exception.new("No user named 'TwitarrTeam'!  Create one first!")
+end
+
+unless User.exist? 'official'
+  raise Exception.new("No user named 'official'!  Create one first!")
+end
+
 unless User.exist? 'moderator'
   raise Exception.new("No user named 'moderator'!  Create one first!")
 end
 
-def add_photo(path, localfilename, uploader, upload_date)
-  photo_basename = File.basename localfilename
+def add_photo(path, local_filename, uploader, upload_date)
+  photo_basename = File.basename local_filename
   photo_md = PhotoMetadata.find_by(original_filename: photo_basename)
   return photo_md if photo_md
 
@@ -192,9 +189,9 @@ if Forum.count == 0
   add_forum_post f, '@steve @james I think this needs some #warmbread', kvort, at_time(8, 22), forum_photos[5]
 
   puts 'Spamming forums...'
-  for i in 0..1000 do
-   create_forum i.to_s, i.to_s, kvort, at_time(8, i%60), []
-  end
+  (0..100).each { |i|
+    create_forum i.to_s, i.to_s, kvort, at_time(8, i % 60), []
+  }
 end
 
 def create_seamail(subject, text, author, recipients, timestamp)
@@ -220,6 +217,10 @@ end
 
 Seamail.delete_all
 if Seamail.count == 0
+  puts 'Creating moderator seamail thread...'
+  Seamail.create_moderator_seamail
+
+  puts 'Creating additional seamail threads...'
   seamail = create_seamail 'Hey lets meet up', 'How about at 10:30?', 'james', ['kvort'], at_time(8, 23)
   reply_seamail seamail, 'Alright, 10-forward?', 'kvort', at_time(8, 26)
   reply_seamail seamail, 'Sounds great to me!', 'james', at_time(8, 28)

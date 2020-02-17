@@ -1,24 +1,22 @@
 require 'securerandom'
 
+puts 'Creating default users...'
+User.create_default_users
+
 unless User.exist? 'TwitarrTeam'
-  puts 'Creating user TwitarrTeam'
-  user = User.new(username: 'TwitarrTeam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
-                  role: User::Role::ADMIN, status: User::ACTIVE_STATUS, email: 'admin@james.com', registration_code: 'code1')
-  user.change_password user.password
-  user.save
+  raise Exception.new("No user named 'TwitarrTeam'!  Create one first!")
+end
+
+unless User.exist? 'official'
+  raise Exception.new("No user named 'official'!  Create one first!")
 end
 
 unless User.exist? 'moderator'
-  puts 'Creating user moderator'
-  user = User.new username: 'moderator', display_name: 'moderator', password: SecureRandom.hex,
-                  role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code2'
-  user.change_password user.password
-  user.save
+  raise Exception.new("No user named 'moderator'!  Create one first!")
 end
 
-unless User.exist? 'moderator'
-  raise Exception.new('No user named \'moderator\'!  Create one first!')
-end
+puts 'Creating moderator seamail thread...'
+Seamail.create_moderator_seamail
 
 puts 'Creating events...'
 cal_filename = 'db/seeds/all.ics'

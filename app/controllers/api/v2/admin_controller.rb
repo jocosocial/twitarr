@@ -23,28 +23,29 @@ module Api
 
       def update_user
         role_errors = []
-        send_muted_message = false
-        send_unmuted_message = false
+
+        old_role = @user.role
+        new_role = @user.role
 
         if params.key?(:role)
           new_role = User::Role.from_string(params[:role])
 
-          # You cannot change your own role
-          role_errors.push('You cannot change your own role.') if @user.username == current_username && @user.role != new_role
+          if old_role != new_role
+            # You cannot change your own role
+            role_errors.push('You cannot change your own role.') if @user.username == current_username
 
-          if @current_user.role == User::Role::MODERATOR
-            # Moderators cannot ban/unban users
-            role_errors.push('Only Admin and THO can ban or unban users.') if new_role == User::Role::BANNED || (@user.role == User::Role::BANNED && new_role != User::Role::BANNED)
+            if @current_user.role == User::Role::MODERATOR
+              # Moderators cannot ban/un-ban users
+              role_errors.push('Only Admin and THO can ban or un-ban users.') if new_role == User::Role::BANNED || (old_role == User::Role::BANNED && new_role != User::Role::BANNED)
 
-            # Moderators cannot alter priviliged roles
-            role_errors.push('Only Admin and THO can change priviliged roles.') if @user.role != new_role && (@user.role >= User::Role::MODERATOR || new_role >= User::Role::MODERATOR)
-          elsif @current_user.role < User::Role::ADMIN
-            role_errors.push('Only Admin can grant or revoke the admin role.') if @user.role != new_role && (@user.role >= User::Role::ADMIN || new_role >= User::Role::ADMIN)
+              # Moderators cannot alter privileged roles
+              role_errors.push('Only Admin and THO can change privileged roles.') if old_role >= User::Role::MODERATOR || new_role >= User::Role::MODERATOR
+            elsif @current_user.role < User::Role::ADMIN
+              role_errors.push('Only Admin can grant or revoke the admin role.') if old_role >= User::Role::ADMIN || new_role >= User::Role::ADMIN
+            end
+
+            @user.role = new_role
           end
-
-          send_muted_message = (new_role == User::Role::MUTED && @user.role != User::Role::MUTED)
-          send_unmuted_message = (new_role == User::Role::USER && @user.role == User::Role::MUTED)
-          @user.role = new_role
         end
 
         # @user.status = params[:status] if params.has_key? :status
@@ -68,56 +69,7 @@ module Api
         end
 
         @user.save
-
-        if send_muted_message
-          subject = 'You have been muted'
-          message = <<~MESSAGE
-            Hello #{@user.username},
-
-            This is an automated message letting you know that you have been muted. While you are muted, you will be unable to make any posts, send any seamail, or update your profile. It is likely that this muting is temporary, especially if this is the first time you have been muted.
-
-            You may be wondering why this has happened. Maybe a post you made was in violation of the Code of Conduct. Maybe a moderator thinks a thread was getting out of hand, and is doing some clean-up. Whatever the reason, it's not personal, it's just a moderator doing what they think best for the overall health of Twit-arr.
-
-            When muting happens, the moderator is required to enter a reason. Here is the reason that was provided for your mute:
-
-            #{@user.mute_reason}
-
-            A moderator may also send you additional seamail (either in this thread or a new thread) if they would like to provide you with more information. If you would like to discuss this with someone, please proceed to the info desk. They will be able to put you in touch with someone from the moderation team.
-
-            Bleep bloop,
-            The Twit-arr Robot
-          MESSAGE
-
-          begin
-            seamail = Seamail.find(@user.mute_thread)
-            seamail.add_message 'moderator', message, current_username
-          rescue StandardError
-            seamail = Seamail.create_new_seamail 'moderator', [@user.username], subject, message, current_username
-            @user.mute_thread = seamail.id.to_s
-            @user.save
-          end
-        end
-
-        if send_unmuted_message
-          message = <<~MESSAGE
-            Hello #{@user.username},
-
-            Good news! You have been unmuted. Please continue to enjoy your Twit-arr experience!
-
-            Bleep bloop,
-            The Twit-arr Robot
-          MESSAGE
-
-          begin
-            seamail = Seamail.find(@user.mute_thread)
-          rescue StandardError
-            subject = 'You have been unmuted'
-            seamail = Seamail.create_new_seamail 'moderator', [@user.username], subject, message, current_username
-            @user.mute_thread = seamail.id.to_s
-            @user.save
-          end
-          seamail.add_message 'moderator', message, current_username
-        end
+        @user.process_role_change(old_role, new_role, current_username) if old_role != new_role
 
         render json: { status: 'ok', user: @user.decorate.admin_hash }
       end

@@ -369,4 +369,93 @@ class User < ApplicationRecord
     query += '%'
     User.where('username like ? or display_name like ?', query, query).limit(AUTO_COMPLETE_LIMIT)
   end
+
+  def process_role_change(old_role, new_role, current_username)
+    # Handle access to moderator seamail message
+    if old_role < Role::MODERATOR && new_role >= Role::MODERATOR
+      # Scenario 1: User has been promoted to moderator or above - grant access to moderation thread
+      user_seamails.find_or_create_by(seamail_id: 1)
+    elsif old_role >= Role::MODERATOR && new_role < Role::MODERATOR
+      # Scenario 2: User has been demoted from moderator or above - remove access to modeartion thread
+      seamail = user_seamails.find_by(seamail_id: 1)
+      user_seamails.delete(seamail) if seamail
+    end
+
+    # Handle sending of muted/unmuted seamail
+    send_muted_message(current_username) if new_role == User::Role::MUTED && old_role != User::Role::MUTED
+    send_unmuted_message(current_username) if new_role >= User::Role::USER && old_role == User::Role::MUTED
+  end
+
+  def send_muted_message(current_username)
+    subject = 'You have been muted'
+    message = <<~MESSAGE
+      Hello #{username},
+
+      This is an automated message letting you know that you have been muted. While you are muted, you will be unable to make any posts, send any seamail, or update your profile. It is likely that this muting is temporary, especially if this is the first time you have been muted.
+
+      You may be wondering why this has happened. Maybe a post you made was in violation of the Code of Conduct. Maybe a moderator thinks a thread was getting out of hand, and is doing some clean-up. Whatever the reason, it's not personal, it's just a moderator doing what they think best for the overall health of Twit-arr.
+
+      When muting happens, the moderator is required to enter a reason. Here is the reason that was provided for your mute:
+
+      #{mute_reason}
+
+      A moderator may also send you additional seamail (either in this thread or a new thread) if they would like to provide you with more information. If you would like to discuss this with someone, please proceed to the info desk. They will be able to put you in touch with someone from the moderation team.
+
+      Bleep bloop,
+      The Twit-arr Robot
+    MESSAGE
+
+    begin
+      seamail = Seamail.find(mute_thread)
+      seamail.add_message 'moderator', message, current_username
+    rescue StandardError
+      seamail = Seamail.create_new_seamail 'moderator', [username], subject, message, current_username
+      self.mute_thread = seamail.id.to_s
+      save
+    end
+  end
+
+  def send_unmuted_message(current_username)
+    message = <<~MESSAGE
+      Hello #{username},
+
+      Good news! You have been unmuted. Please continue to enjoy your Twit-arr experience!
+
+      Bleep bloop,
+      The Twit-arr Robot
+    MESSAGE
+
+    begin
+      seamail = Seamail.find(mute_thread)
+    rescue StandardError
+      subject = 'You have been unmuted'
+      seamail = Seamail.create_new_seamail 'moderator', [username], subject, message, current_username
+      self.mute_thread = seamail.id.to_s
+      save
+    end
+    seamail.add_message 'moderator', message, current_username
+  end
+
+  def self.create_default_users
+    unless User.exist? 'twitarrteam'
+      user = User.new username: 'twitarrteam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
+                      role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
+      user.change_password user.password
+      user.save
+    end
+
+    unless User.exist? 'official'
+      user = User.new username: 'official', display_name: 'official', password: SecureRandom.hex,
+                      role: User::Role::THO, status: User::ACTIVE_STATUS, registration_code: 'code2'
+      user.change_password user.password
+      user.save
+    end
+
+    unless User.exist? 'moderator'
+      user = User.new username: 'moderator', display_name: 'moderator', password: Rails.application.secrets.initial_admin_password,
+                      role: User::Role::MODERATOR, status: User::ACTIVE_STATUS, registration_code: 'code3'
+      user.change_password user.password
+      user.save
+    end
+  end
 end

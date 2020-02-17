@@ -120,4 +120,16 @@ class Seamail < ApplicationRecord
     limit_criteria(query, params)
   end
 
+  def self.create_moderator_seamail
+    unless Seamail.any?
+      Seamail.create_new_seamail(
+        'twitarrteam',
+        %w(official moderator),
+        'Moderator Discussion',
+        'This seamail is for discussion of Twit-arr moderation.',
+        'TwitarrTeam'
+      )
+    end
+  end
+
 end

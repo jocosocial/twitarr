@@ -16,7 +16,7 @@
 class Seamail < ApplicationRecord
   include Searchable
 
-  has_many :seamail_messages, -> { order(:id) }, class_name: 'SeamailMessage', inverse_of: :seamail
+  has_many :seamail_messages, -> { order(:id) }, class_name: 'SeamailMessage', inverse_of: :seamail, dependent: :destroy
   has_many :user_seamails, inverse_of: :seamail, dependent: :destroy
   has_many :users, through: :user_seamails
 

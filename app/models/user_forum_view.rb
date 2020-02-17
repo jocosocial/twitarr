@@ -22,7 +22,7 @@ class UserForumView < ApplicationRecord
     # rubocop:disable Rails/SkipsModelValidations
     UserForumView.where(id: id).update_all("data = jsonb_set(data, '{#{forum_id}}', '\"#{Time.now.to_ms}\"'::jsonb)")
     # rubocop:enable Rails/SkipsModelValidations
-    Rails.cache.fetch("forum:post_count_since:#{forum_id}:#{user_id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+    Rails.cache.fetch("f:pcs:#{forum_id}:#{user_id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
       0
     end
   end
@@ -33,7 +33,7 @@ class UserForumView < ApplicationRecord
 
     now = Time.now
     timestamps = query.pluck(:id).each_with_object({}) do |id, hash|
-      Rails.cache.fetch("forum:post_count_since:#{id}:#{user_id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+      Rails.cache.fetch("f:pcs:#{id}:#{user_id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
         0
       end
       hash[id.to_s] = now

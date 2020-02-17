@@ -62,7 +62,7 @@ class Forum < ApplicationRecord
     if last_post
       user_ids = User.all_user_ids
       user_ids.each do |user_id|
-        Rails.cache.delete("forum:post_count_since:#{post.forum_id}:#{user_id}")
+        Rails.cache.delete("f:pcs:#{post.forum_id}:#{user_id}")
       end
       update(last_post_time: post.created_at, last_post_user_id: post.author)
     else
@@ -73,7 +73,7 @@ class Forum < ApplicationRecord
   def post_count_since_last_visit(user)
     timestamp = user.forum_last_view(id)
     if timestamp
-      Rails.cache.fetch("forum:post_count_since:#{id}:#{user.id}", expires_in: Forum::FORUM_CACHE_TIME) do
+      Rails.cache.fetch("f:pcs:#{id}:#{user.id}", expires_in: Forum::FORUM_CACHE_TIME) do
         posts.where('forum_posts.created_at > ?', timestamp).count
       end
     else

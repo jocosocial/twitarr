@@ -24,7 +24,7 @@
 #
 
 class SeamailMessage < ApplicationRecord
-  belongs_to :seamail, inverse_of: :seamail_messages, dependent: :destroy
+  belongs_to :seamail, inverse_of: :seamail_messages
   has_many :user_seamails, through: :seamail
   has_many :users, through: :user_seamails
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :seamail_messages_authored

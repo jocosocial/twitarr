@@ -5,7 +5,7 @@ module Api
 
       def index
         filename = params['filename'].strip.downcase.gsub(/[^\w-]/, '')
-        file = Rails.cache.fetch("file:#{filename}", expires_in: FILE_CACHE_TIME) do
+        file = Rails.cache.fetch("file:#{filename}.json", expires_in: FILE_CACHE_TIME) do
           File.read("public/text/#{filename}.json") if File.exist?("public/text/#{filename}.json")
         end
         if file

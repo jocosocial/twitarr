@@ -1,4 +1,5 @@
 {
   "seamail": 60,
-  "events": 300
+  "events": 300,
+  "update_intervals": 180
 }

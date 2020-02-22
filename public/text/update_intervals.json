@@ -1,4 +1,6 @@
 {
   "seamail": 60,
-  "events": 300
+  "events": 300,
+  "update_intervals": 180,
+  "ping_delay": 10
 }

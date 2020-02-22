@@ -11,12 +11,17 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  memcached:
+    image: memcached
+    restart: always
+
   web:
     build: .
     ports:
       - '3000:3000'
     links:
       - db
+      - memcached
     restart: always
 # For development, use a path on your docker-host for /dev/twitarr
 # This loads your host files into the container, getting updates without a rebuild.

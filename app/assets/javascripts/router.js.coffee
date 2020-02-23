@@ -55,6 +55,8 @@ Twitarr.Router.map ()->
     @route 'login', { path: 'login' }
     @route 'forgot_password', { path: 'forgot_password' }
 
+  @route 'karaoke', { path: 'karaoke' }
+
   @route 'tag', { path: 'tag/:tag_name', model: Twitarr.UserNew }
   @route 'alerts'
   @route 'starred'

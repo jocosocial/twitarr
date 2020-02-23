@@ -88,30 +88,3 @@ Twitarr.ConductRoute = Ember.Route.extend
   model: ->
     $.getJSON("#{Twitarr.api_path}/text/codeofconduct").then (data) =>
       data
-
-Twitarr.KaraokeRoute = Ember.Route.extend
-  model: ->
-    $.get("/JoCoKaraokeSongCatalog.txt").then (data) =>
-      songList = []
-
-      metadataTypes = {
-        'M': 'MIDI',
-        'VR': 'Reduced Vocals',
-        'Bowieoke': 'All-Bowie Karaoke',
-        '(No Lyrics)': 'Missing Lyrics Display',
-      }
-
-      data.split(/\r?\n/).forEach((line) =>
-        [artist, title, metadata] = line.split('\t')
-        if artist && title
-          songObj = { 'song': title, metadata: metadataTypes[metadata] }
-
-          artistObj = songList.find((x) -> x['artist'] == artist)
-
-          if artistObj
-            artistObj['songs'].push(songObj)
-          else
-            artistObj = { 'artist': artist, 'songs': [songObj] }
-            songList.push(artistObj)
-      )
-      {'songlist': songList}

@@ -1,0 +1,17 @@
+<div id="karaoke_page">
+  <div class="clearfix">
+    <h3>Karaoke Song List</h3>
+  </div>
+
+  {{#each artist in model.songlist}}
+    <h4>{{artist.artist}}</h4>
+    <ul>
+      {{#each song in artist.songs}}
+        <li>
+          {{song.song}}
+          {{#if song.metadata}} - <i>{{song.metadata}}</i>{{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  {{/each}}
+</div>

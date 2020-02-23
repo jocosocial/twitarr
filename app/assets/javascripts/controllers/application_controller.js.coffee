@@ -38,9 +38,6 @@ Twitarr.ApplicationController = Twitarr.Controller.extend
 
     go_to_star_feed: ->
       @transitionToRoute 'stream.star_page', Math.ceil(new Date().valueOf() + 1000)
-    
-    karaoke_list: ->
-      window.open("https://twitarr.com/cm/#/tab/info/karaoke")
 
   menu_toggle: ->
     $('#side-menu').animate { width: 'toggle' }, 100
@@ -73,7 +70,7 @@ Twitarr.ApplicationController = Twitarr.Controller.extend
           @set('email_count', data.user_alerts.seamail_unread_count)
           @set('posts_count', data.user_alerts.unnoticed_mentions)
           @set('alerts', data.user_alerts.unnoticed_alerts)
-    @timer = setTimeout (=> @tick()), 60000
+    @timer = setTimeout (=> @tick()), 300000
 
   logged_in: (->
     @get('login_user')?

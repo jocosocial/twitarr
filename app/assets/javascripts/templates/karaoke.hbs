@@ -3,15 +3,56 @@
     <h3>Karaoke List</h3>
   </div>
 
-  {{#each artist in model.songlist}}
-    <h4>{{artist.artist}}</h4>
-    <ul>
-      {{#each song in artist.songs}}
-        <li>
-          {{song.song}}
-          {{#if song.metadata}} - <i>{{song.metadata}}</i>{{/if}}
-        </li>
+  <div>
+    Artist starts with:
+    <select onchange={{action (mut letter) value="target.value"}}>
+      <option value="" selected={{eq letter ''}}>-</option>
+      <option value="#" selected={{eq letter '#'}}>#</option>
+      <option value="A" selected={{eq letter 'A'}}>A</option>
+      <option value="B" selected={{eq letter 'B'}}>B</option>
+      <option value="C" selected={{eq letter 'C'}}>C</option>
+      <option value="D" selected={{eq letter 'D'}}>D</option>
+      <option value="E" selected={{eq letter 'E'}}>E</option>
+      <option value="F" selected={{eq letter 'F'}}>F</option>
+      <option value="G" selected={{eq letter 'G'}}>G</option>
+      <option value="H" selected={{eq letter 'H'}}>H</option>
+      <option value="I" selected={{eq letter 'I'}}>I</option>
+      <option value="J" selected={{eq letter 'J'}}>J</option>
+      <option value="K" selected={{eq letter 'K'}}>K</option>
+      <option value="L" selected={{eq letter 'L'}}>L</option>
+      <option value="M" selected={{eq letter 'M'}}>M</option>
+      <option value="N" selected={{eq letter 'N'}}>N</option>
+      <option value="O" selected={{eq letter 'O'}}>O</option>
+      <option value="P" selected={{eq letter 'P'}}>P</option>
+      <option value="Q" selected={{eq letter 'Q'}}>Q</option>
+      <option value="R" selected={{eq letter 'R'}}>R</option>
+      <option value="S" selected={{eq letter 'S'}}>S</option>
+      <option value="T" selected={{eq letter 'T'}}>T</option>
+      <option value="U" selected={{eq letter 'U'}}>U</option>
+      <option value="V" selected={{eq letter 'V'}}>V</option>
+      <option value="W" selected={{eq letter 'W'}}>W</option>
+      <option value="X" selected={{eq letter 'X'}}>X</option>
+      <option value="Y" selected={{eq letter 'Y'}}>Y</option>
+      <option value="Z" selected={{eq letter 'Z'}}>Z</option>
+    </select>
+    Or search by
+    Artist: {{input value=model.search_artist class='input-short' name="artist"}}
+    Title: {{input value=model.search_song class='input-short' name="song"}}
+    <button type="button" class="menu-toggle" {{action 'karaoke_search_clear'}}>Clear</button>
+  </div>
+  {{#if model.loaded}}
+    {{#if model.filtered}}
+      {{#each artist in model.filtered_songs}}
+        <h4>{{artist.artist}}</h4>
+        <ul>
+          {{#each song in artist.songs}}
+            <li>
+              {{song.song}}
+              {{#if song.metadata}} - <i>{{song.metadata}}</i>{{/if}}
+            </li>
+          {{/each}}
+        </ul>
       {{/each}}
-    </ul>
-  {{/each}}
+    {{/if}}
+  {{/if}}
 </div>

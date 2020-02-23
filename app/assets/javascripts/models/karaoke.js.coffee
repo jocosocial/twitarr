@@ -10,14 +10,14 @@ Twitarr.Karaoke = Ember.Object.extend
     'Bowieoke': 'All-Bowie Karaoke',
     '(No Lyrics)': 'Missing Lyrics Display',
   }
-  filtered: Ember.computed('selected_letter', 'search_artist', 'search_song', ->
+  filtered: Ember.computed('letter', 'search_artist', 'search_song', ->
     letter = @get('letter')
     search_artist = @get('search_artist')
     search_song = @get('search_song')
 
     letter || (search_artist && search_artist.length > 2) || (search_song && search_song.length > 2)
   )
-  filtered_songs: Ember.computed('song_list', 'selected_letter', 'search_artist', 'search_song', ->
+  filtered_songs: Ember.computed('song_list', 'letter', 'search_artist', 'search_song', ->
     list = @get('song_list')
     letter = @get('letter')
     search_artist = @get('search_artist')

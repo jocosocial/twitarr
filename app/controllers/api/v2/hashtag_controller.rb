@@ -16,7 +16,7 @@ module Api
           render status: :bad_request, json: { status: 'error', error: "Minimum length is #{Hashtag::MIN_AUTO_COMPLETE_LEN}" }
           return
         end
-        values = Hashtag.auto_complete(query).map { |e|e[:id] }
+        values = Hashtag.auto_complete(query).map { |e|e[:name] }
         render json: { values: values }
       end
 

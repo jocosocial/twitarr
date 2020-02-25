@@ -64,20 +64,18 @@
     </div>
   </div>
   <div>
-    {{#if model.loaded}}
-      {{#if model.filtered}}
-        {{#each artist in model.filtered_songs}}
-          <h4>{{artist.name}}</h4>
-          <ul>
-            {{#each song in artist.songs}}
-              <li>
-                {{song.title}}
-                {{#if song.metadata}} - <i>{{song.metadata}}</i>{{/if}}
-              </li>
-            {{/each}}
-          </ul>
-        {{/each}}
-      {{/if}}
+    {{#if model.filtered}}
+      {{#each artist in model.filtered_songs}}
+        <h4>{{artist.name}}</h4>
+        <ul>
+          {{#each song in artist.songs}}
+            <li>
+              {{song.title}}
+              {{#if song.metadata}} - <i>{{song.metadata}}</i>{{/if}}
+            </li>
+          {{/each}}
+        </ul>
+      {{/each}}
     {{/if}}
   </div>
 </div>

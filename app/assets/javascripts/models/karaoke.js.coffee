@@ -35,7 +35,6 @@ Twitarr.Karaoke = Ember.Object.extend
         unless artist.name.toLowerCase().includes(search_artist.toLowerCase())
           return results
 
-      matched_songs = []
       if search_song && search_song.length > 2
         matched_songs = artist.songs.filter((song) => song.title.toLowerCase().includes(search_song.toLowerCase()))
       else

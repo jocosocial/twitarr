@@ -3,7 +3,6 @@ Twitarr.Karaoke = Ember.Object.extend
   search_artist: null
   search_song: null
   song_list: Ember.A()
-  loaded: false
   metadata_types: {
     'M': 'MIDI',
     'VR': 'Reduced Vocals',
@@ -68,5 +67,4 @@ Twitarr.Karaoke = Ember.Object.extend
             song_list.push(artistObj)
       )
       @set('song_list', song_list)
-      @set('loaded', true)
     )

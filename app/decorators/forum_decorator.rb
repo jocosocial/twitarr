@@ -8,11 +8,7 @@ class ForumDecorator < BaseDecorator
         subject: subject,
         sticky: sticky,
         locked: locked,
-        last_post_author: {
-            username: last_post_user.username,
-            display_name: last_post_user.display_name,
-            last_photo_updated: last_post_user.last_photo_updated.to_ms
-        },
+        last_post_author: last_post_user.decorate.gui_hash,
         posts: forum_posts_count,
         timestamp: last_post_time.to_ms,
         last_post_page: 0

@@ -5,11 +5,7 @@ class StreamPostDecorator < BaseDecorator
   def to_hash(current_user = nil, options = {})
     result = {
       id: id.to_s,
-      author: {
-        username: user.username,
-        display_name: user.display_name,
-        last_photo_updated: user.last_photo_updated.to_ms
-      },
+      author: user.decorate.gui_hash,
       locked: locked,
       timestamp: created_at.to_ms,
       text: format_text(text, options),

@@ -26,9 +26,10 @@ These output types are used throughout the API
 * UserInfo{} - A JSON object representing the most basic details of a user
   ```
   {
-      "username": username_string
-      "display_name": displayname_string
-      "last_photo_updated": epoch
+      "username": username_string,
+      "display_name": displayname_string,
+      "last_photo_updated": epoch,
+      "pronouns": string
   }
   ```
 * marked_up_text - A string with inline HTML. Allowed HTML is limited. If you do not want any HTML, include app=plain in your query parameters. This parameter will cause any marked_up_text to instead be returned as plain text. Examples of allowed tags:

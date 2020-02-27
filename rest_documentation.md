@@ -29,7 +29,7 @@ These output types are used throughout the API
       "username": username_string,
       "display_name": displayname_string,
       "last_photo_updated": epoch,
-      "pronouns": string
+      "pronouns": string # If user.show_pronouns is false, this will be an empty string
   }
   ```
 * marked_up_text - A string with inline HTML. Allowed HTML is limited. If you do not want any HTML, include app=plain in your query parameters. This parameter will cause any marked_up_text to instead be returned as plain text. Examples of allowed tags:
@@ -1415,6 +1415,7 @@ This is used by user and admin endpoints. When used with admin endpionts, unnoti
     "room_number": "string", # May be null
     "real_name": "string", # May be null
     "pronouns": "string", # May be null
+    "show_pronouns": boolean, # Controls if pronouns are included in UserInfo{}
     "home_location": "string", # May be null
     "unnoticed_alerts": boolean # Excluded from admin endpoints
 }

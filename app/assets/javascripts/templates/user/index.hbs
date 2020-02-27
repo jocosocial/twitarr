@@ -30,13 +30,55 @@
             </ul>
           {{/if}}
         </div>
-
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="email">Email (Optional, public)</label>
+          {{ input value=model.email class='input' name="email"}}
+          {{#if errors.email}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.email}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="home_location">Where are you from? (Optional, public)</label>
+          {{input value=model.home_location class='input' maxlength='100' name="home_location"}}
+          {{#if errors.home_location}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.home_location}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin: 1em 0;">
+      <div class="col-md-4">
         <div class="form-group">
           <label for="real_name">Real Name (Optional, public)</label>
           {{input value=model.real_name class='input' maxlength='100' name="real_name"}}
           {{#if errors.real_name}}
             <ul class="alert alert-warning" style="padding-left: 2em;">
               {{#each error in errors.real_name}}
+                <li>{{error}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="room_number">Room Number (Optional, public)</label>
+          {{input value=model.room_number class='input' maxlength='5' name="room_number"}}
+          {{#if errors.room_number}}
+            <ul class="alert alert-warning" style="padding-left: 2em;">
+              {{#each error in errors.room_number}}
                 <li>{{error}}</li>
               {{/each}}
             </ul>
@@ -56,39 +98,16 @@
           {{/if}}
         </div>
         <div class="form-group">
-          <label for="room_number">Room Number (Optional, public)</label>
-          {{input value=model.room_number class='input' maxlength='5' name="room_number"}}
-          {{#if errors.room_number}}
-            <ul class="alert alert-warning" style="padding-left: 2em;">
-              {{#each error in errors.room_number}}
-                <li>{{error}}</li>
-              {{/each}}
-            </ul>
-          {{/if}}
         </div>
       </div>
+    </div>
+    <div class="row" style="margin: 1em 0;">
+      <div class="col-md-4"></div>
+      <div class="col-md-4"></div>
       <div class="col-md-4">
         <div class="form-group">
-          <label for="home_location">Where are you from? (Optional, public)</label>
-          {{input value=model.home_location class='input' maxlength='100' name="home_location"}}
-          {{#if errors.home_location}}
-            <ul class="alert alert-warning" style="padding-left: 2em;">
-              {{#each error in errors.home_location}}
-                <li>{{error}}</li>
-              {{/each}}
-            </ul>
-          {{/if}}
-        </div>
-        <div class="form-group">
-          <label for="email">Email (Optional, public)</label>
-          {{ input value=model.email class='input' name="email"}}
-          {{#if errors.email}}
-            <ul class="alert alert-warning" style="padding-left: 2em;">
-              {{#each error in errors.email}}
-                <li>{{error}}</li>
-              {{/each}}
-            </ul>
-          {{/if}}
+          {{input type='checkbox' checked=model.show_pronouns name='display_pronouns' id='display_pronouns'}}
+          <label for="display_pronouns">Display preferred pronouns on posts</label>
         </div>
       </div>
     </div>

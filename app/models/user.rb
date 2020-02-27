@@ -20,6 +20,7 @@
 #  registration_code  :string
 #  role               :integer
 #  room_number        :string
+#  show_pronouns      :boolean          default(FALSE), not null
 #  status             :string
 #  username           :string
 #  created_at         :datetime         not null

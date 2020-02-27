@@ -1,11 +1,12 @@
 Twitarr.User = Ember.Object.extend
   save: ->
-    post_data = { 
-      display_name: @get('display_name'), 
-      email: @get('email'), 
-      room_number: @get('room_number'), 
+    post_data = {
+      display_name: @get('display_name'),
+      email: @get('email'),
+      room_number: @get('room_number'),
       real_name: @get('real_name'),
       pronouns: @get('pronouns'),
+      show_pronouns: @get('show_pronouns'),
       home_location: @get('home_location')
     }
     $.post("#{Twitarr.api_path}/user/profile", post_data)
@@ -16,7 +17,7 @@ Twitarr.User = Ember.Object.extend
       new_password: new_password
     }
     $.post("#{Twitarr.api_path}/user/change_password", post_data)
-  
+
   remove_photo: ->
     $.ajax("#{Twitarr.api_path}/user/photo", method: 'DELETE')
 
@@ -32,6 +33,7 @@ Twitarr.UserMeta = Ember.Object.extend
   room_number: null
   real_name: null
   pronouns: null
+  show_pronouns: false
   home_location: null
   number_of_tweets: null
   number_of_mentions: null
@@ -58,7 +60,7 @@ Twitarr.UserProfile.reopenClass
   get: (username) ->
     $.getJSON("#{Twitarr.api_path}/user/profile/#{username}").then (data) =>
       alert(data.status) unless data.status is 'ok'
-      @create data.user 
+      @create data.user
 
 Twitarr.UserNew = Ember.Object.extend
   post_data: {}
@@ -68,8 +70,8 @@ Twitarr.UserNew.reopenClass
     $.getJSON("#{Twitarr.api_path}/text/welcome").then (data) =>
       @create data
 
-  save: (registration_code, new_username, display_name, new_password) -> 
-    post_data = { 
+  save: (registration_code, new_username, display_name, new_password) ->
+    post_data = {
       new_username: new_username,
       display_name: display_name,
       new_password: new_password,

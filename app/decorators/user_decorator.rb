@@ -27,7 +27,7 @@ class UserDecorator < Draper::Decorator
       username: username,
       display_name: display_name,
       last_photo_updated: last_photo_updated.to_ms,
-      pronouns: user.pronouns
+      pronouns: user.show_pronouns ? user.pronouns : nil
     }
   end
 
@@ -50,6 +50,7 @@ class UserDecorator < Draper::Decorator
       room_number: room_number,
       real_name: real_name,
       pronouns: pronouns,
+      show_pronouns: show_pronouns,
       home_location: home_location,
       mute_reason: mute_reason,
       ban_reason: ban_reason

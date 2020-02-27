@@ -5,11 +5,7 @@ class ForumPostDecorator < BaseDecorator
     ret = {
         id: id.to_s,
         forum_id: forum_id.to_s,
-        author: {
-          username: user.username,
-          display_name: user.display_name,
-          last_photo_updated: user.last_photo_updated.to_ms
-        },
+        author: user.decorate.gui_hash,
         thread_locked: forum.locked,
         text: format_text(text, options),
         timestamp: created_at.to_ms,

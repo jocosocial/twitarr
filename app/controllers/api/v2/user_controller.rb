@@ -156,6 +156,8 @@ module Api
           current_user.pronouns = params[:pronouns] unless muted_change ||= (muted? && params[:pronouns].present? && current_user.pronouns != params[:pronouns])
         end
 
+        current_user.show_pronouns = params[:show_pronouns].to_bool if params.key?(:show_pronouns)
+
         if params.key?(:room_number)
           current_user.room_number = params[:room_number] unless muted_change ||= (muted? && params[:room_number].present? && current_user.room_number != params[:room_number])
         end

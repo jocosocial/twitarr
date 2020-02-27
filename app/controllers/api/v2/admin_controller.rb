@@ -56,6 +56,7 @@ module Api
         @user.home_location = params[:home_location] if params.key? :home_location
         @user.real_name = params[:real_name] if params.key? :real_name
         @user.pronouns = params[:pronouns] if params.key? :pronouns
+        @user.show_pronouns = params[:show_pronouns].to_bool if params.key? :show_pronouns
         @user.room_number = params[:room_number] if params.key? :room_number
         @user.mute_reason = params[:mute_reason] if params.key? :mute_reason
         @user.ban_reason = params[:ban_reason] if params.key? :ban_reason

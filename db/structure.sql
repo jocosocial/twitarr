@@ -706,7 +706,8 @@ CREATE TABLE public.users (
     ban_reason character varying,
     mute_thread character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    show_pronouns boolean DEFAULT false NOT NULL
 );
 
 
@@ -1630,6 +1631,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200208063424'),
 ('20200209044205'),
 ('20200215055700'),
-('20200215191244');
+('20200215191244'),
+('20200227055744');
 
 

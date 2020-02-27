@@ -16,11 +16,11 @@ Twitarr.AdminUsersRoute = Ember.Route.extend
   actions:
     reload: ->
       @refresh()
-    
+
     edit_profile: (username) ->
       if !!username
         @transitionTo('admin.profile', username)
-    
+
     search: (text) ->
       if !!text
         @transitionTo('admin.users', text)
@@ -36,7 +36,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
       window.history.back()
       return
     )
-  
+
   setupController: (controller, model) ->
     this._super(controller, model)
     if model.status isnt 'ok'
@@ -58,6 +58,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
         display_name: user.display_name,
         real_name: user.real_name,
         pronouns: user.pronouns,
+        show_pronouns: user.show_pronouns,
         home_location: user.home_location,
         room_number: user.room_number,
         mute_reason: user.mute_reason,
@@ -101,7 +102,7 @@ Twitarr.AdminProfileRoute = Ember.Route.extend
           alert('Password reset.')
           @refresh()
         )
-    
+
     get_regcode: (username) ->
       $.get("#{Twitarr.api_path}/admin/user/#{username}/regcode").fail((response) =>
         if response.status? && response.status == 401

@@ -27,7 +27,7 @@ class UserDecorator < Draper::Decorator
       username: username,
       display_name: display_name,
       last_photo_updated: last_photo_updated.to_ms,
-      pronouns: user.show_pronouns ? user.pronouns : nil
+      pronouns: user.show_pronouns ? user.pronouns : ''
     }
   end
 

@@ -1587,6 +1587,7 @@ Updates the user's profile. All fields are optional - anything left out of the r
 	"home_location": "string", # Max length: 100 chatarcters, UTF-8.
 	"real_name": "string", # Max length: 100 chatarcters, UTF-8.
 	"pronouns": "string", # Max length: 100 chatarcters, UTF-8.
+    "show_pronouns": boolean,
 	"room_number": Integer # If not null/empty, Min length: 4 characters, Max length: 5 characters, UTF-8. Also accepts string representation of an integer.
 }
 ```
@@ -3096,6 +3097,7 @@ Rules:
 	"home_location": "string", # Max length: 100 chatarcters, UTF-8.
 	"real_name": "string", # Max length: 100 chatarcters, UTF-8.
 	"pronouns": "string", # Max length: 100 chatarcters, UTF-8.
+    "show_pronouns": boolean,
 	"room_number": Integer # If not null/empty, Min length: 4 characters, Max length: 5 characters, UTF-8. Also accepts string representation of an integer.
     "mute_reason": "string" # Required if user role is "muted"
     "ban_reason": "string" # Required if user role is "banned"

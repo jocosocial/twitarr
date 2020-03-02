@@ -36,6 +36,6 @@ class SeamailMessage < ApplicationRecord
   default_scope { includes(:user, user_seamails: :user).references(:users, :user_seamails) }
 
   def read_users
-    user_seamails.filter { |user_seamail| user_seamail.last_viewed > created_at }.map(&:user)
+    user_seamails.filter { |user_seamail| user_seamail.last_viewed && user_seamail.last_viewed > created_at }.map(&:user)
   end
 end

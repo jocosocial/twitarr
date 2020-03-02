@@ -33,7 +33,9 @@ class SeamailMessage < ApplicationRecord
   validates :text, presence: true, length: { maximum: 10000 }
   validates :author, :original_author, presence: true
 
+  default_scope { includes(:user, user_seamails: :user).references(:users, :user_seamails) }
+
   def read_users
-    users.includes(:user_seamails).references(:user_seamails).where('user_seamails.last_viewed >= ?', created_at)
+    user_seamails.filter { |user_seamail| user_seamail.last_viewed > created_at }.map(&:user)
   end
 end

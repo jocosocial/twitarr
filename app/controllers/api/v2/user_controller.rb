@@ -90,7 +90,7 @@ module Api
       end
 
       def whoami
-        render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash, need_password_change: current_user.correct_password?(User::RESET_PASSWORD) }
+        render json: { status: 'ok', user: UserDecorator.decorate(current_user).self_hash, need_password_change: current_user.needs_password_change }
       end
 
       def show

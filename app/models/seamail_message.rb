@@ -13,6 +13,7 @@
 # Indexes
 #
 #  index_seamail_messages_on_author      (author)
+#  index_seamail_messages_on_created_at  (created_at)
 #  index_seamail_messages_on_seamail_id  (seamail_id)
 #  index_seamail_messages_text           (to_tsvector('english'::regconfig, (text)::text)) USING gin
 #

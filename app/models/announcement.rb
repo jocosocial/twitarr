@@ -12,7 +12,8 @@
 #
 # Indexes
 #
-#  index_announcements_on_author  (author)
+#  index_announcements_on_author      (author)
+#  index_announcements_on_updated_at  (updated_at)
 #
 # Foreign Keys
 #

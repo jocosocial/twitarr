@@ -4,19 +4,20 @@
 #
 #  id              :bigint           not null, primary key
 #  author          :bigint           not null
-#  original_author :bigint           not null
-#  text            :string           not null
-#  location_id     :bigint
+#  hash_tags       :string           default([]), not null, is an Array
 #  locked          :boolean          default(FALSE), not null
+#  mentions        :string           default([]), not null, is an Array
+#  original_author :bigint           not null
+#  parent_chain    :bigint           default([]), is an Array
+#  text            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  parent_chain    :bigint           default([]), is an Array
-#  mentions        :string           default([]), not null, is an Array
-#  hash_tags       :string           default([]), not null, is an Array
+#  location_id     :bigint
 #
 # Indexes
 #
 #  index_stream_posts_on_author        (author)
+#  index_stream_posts_on_created_at    (created_at)
 #  index_stream_posts_on_hash_tags     (hash_tags) USING gin
 #  index_stream_posts_on_location_id   (location_id)
 #  index_stream_posts_on_mentions      (mentions) USING gin

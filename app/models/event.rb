@@ -14,12 +14,12 @@
 #
 # Indexes
 #
-#  index_events_on_official    (official)
-#  index_events_on_start_time  (start_time)
-#  index_events_on_title       (title)
-#  index_events_search_desc    (to_tsvector('english'::regconfig, (description)::text)) USING gin
-#  index_events_search_loc     (to_tsvector('english'::regconfig, (location)::text)) USING gin
-#  index_events_search_title   (to_tsvector('english'::regconfig, (title)::text)) USING gin
+#  index_events_on_official                 (official)
+#  index_events_on_start_time_and_end_time  (start_time,end_time)
+#  index_events_on_title                    (title)
+#  index_events_search_desc                 (to_tsvector('english'::regconfig, (description)::text)) USING gin
+#  index_events_search_loc                  (to_tsvector('english'::regconfig, (location)::text)) USING gin
+#  index_events_search_title                (to_tsvector('english'::regconfig, (title)::text)) USING gin
 #
 
 class Event < ApplicationRecord

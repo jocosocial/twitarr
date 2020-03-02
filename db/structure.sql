@@ -1055,6 +1055,13 @@ CREATE INDEX index_announcements_on_author ON public.announcements USING btree (
 
 
 --
+-- Name: index_announcements_on_updated_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_announcements_on_updated_at ON public.announcements USING btree (updated_at);
+
+
+--
 -- Name: index_events_on_official; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1062,10 +1069,10 @@ CREATE INDEX index_events_on_official ON public.events USING btree (official);
 
 
 --
--- Name: index_events_on_start_time; Type: INDEX; Schema: public; Owner: -
+-- Name: index_events_on_start_time_and_end_time; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_events_on_start_time ON public.events USING btree (start_time);
+CREATE INDEX index_events_on_start_time_and_end_time ON public.events USING btree (start_time, end_time);
 
 
 --
@@ -1216,6 +1223,13 @@ CREATE INDEX index_seamail_messages_on_author ON public.seamail_messages USING b
 
 
 --
+-- Name: index_seamail_messages_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_seamail_messages_on_created_at ON public.seamail_messages USING btree (created_at);
+
+
+--
 -- Name: index_seamail_messages_on_seamail_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1255,6 +1269,13 @@ CREATE UNIQUE INDEX index_sections_on_name ON public.sections USING btree (name)
 --
 
 CREATE INDEX index_stream_posts_on_author ON public.stream_posts USING btree (author);
+
+
+--
+-- Name: index_stream_posts_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stream_posts_on_created_at ON public.stream_posts USING btree (created_at);
 
 
 --
@@ -1632,6 +1653,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200209044205'),
 ('20200215055700'),
 ('20200215191244'),
-('20200227055744');
+('20200227055744'),
+('20200302024606');
 
 

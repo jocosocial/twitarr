@@ -707,7 +707,8 @@ CREATE TABLE public.users (
     mute_thread character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    show_pronouns boolean DEFAULT false NOT NULL
+    show_pronouns boolean DEFAULT false NOT NULL,
+    needs_password_change boolean DEFAULT false NOT NULL
 );
 
 
@@ -1654,6 +1655,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200215055700'),
 ('20200215191244'),
 ('20200227055744'),
-('20200302024606');
+('20200302024606'),
+('20200302032059');
 
 

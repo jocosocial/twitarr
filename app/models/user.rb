@@ -2,29 +2,30 @@
 #
 # Table name: users
 #
-#  id                 :bigint           not null, primary key
-#  ban_reason         :string
-#  current_location   :string
-#  display_name       :string
-#  email              :string
-#  home_location      :string
-#  last_login         :datetime
-#  last_photo_updated :datetime         not null
-#  last_viewed_alerts :datetime
-#  mute_reason        :string
-#  mute_thread        :string
-#  password           :string
-#  photo_hash         :string
-#  pronouns           :string
-#  real_name          :string
-#  registration_code  :string
-#  role               :integer
-#  room_number        :string
-#  show_pronouns      :boolean          default(FALSE), not null
-#  status             :string
-#  username           :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
+#  id                    :bigint           not null, primary key
+#  ban_reason            :string
+#  current_location      :string
+#  display_name          :string
+#  email                 :string
+#  home_location         :string
+#  last_login            :datetime
+#  last_photo_updated    :datetime         not null
+#  last_viewed_alerts    :datetime
+#  mute_reason           :string
+#  mute_thread           :string
+#  needs_password_change :boolean          default(FALSE), not null
+#  password              :string
+#  photo_hash            :string
+#  pronouns              :string
+#  real_name             :string
+#  registration_code     :string
+#  role                  :integer
+#  room_number           :string
+#  show_pronouns         :boolean          default(FALSE), not null
+#  status                :string
+#  username              :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -172,6 +173,7 @@ class User < ApplicationRecord
 
   def change_password(pass)
     self.password = BCrypt::Password.create pass
+    self.needs_password_change = pass == RESET_PASSWORD
   end
 
   def correct_password?(pass)

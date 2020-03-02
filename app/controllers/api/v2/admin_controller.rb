@@ -86,7 +86,7 @@ module Api
       end
 
       def reset_password
-        @user.password = BCrypt::Password.create User::RESET_PASSWORD
+        @user.change_password(User::RESET_PASSWORD)
         @user.save
         render json: { status: 'ok' }
       end

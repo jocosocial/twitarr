@@ -15,11 +15,12 @@ class SeamailDecorator < Draper::Decorator
   end
 
   def to_hash(options = {}, current_user_id = 0, count_is_unread = false)
+    viewed_date = last_viewed(current_user_id)
     {
         id: id.to_s,
         users: users.map { |x| x.decorate.gui_hash },
         subject: subject,
-        messages: seamail_messages.map { |x| x.decorate.to_hash(options, current_user_id, last_viewed(current_user_id)) }.compact,
+        messages: seamail_messages.map { |x| x.decorate.to_hash(options, current_user_id, viewed_date) }.compact,
         message_count: seamail_count(count_is_unread, current_user_id),
         timestamp: last_message.to_ms,
         is_unread: unread_for_user?(current_user_id),

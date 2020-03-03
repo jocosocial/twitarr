@@ -1416,8 +1416,7 @@ This is used by user and admin endpoints. When used with admin endpionts, unnoti
     "real_name": "string", # May be null
     "pronouns": "string", # May be null
     "show_pronouns": boolean, # Controls if pronouns are included in UserInfo{}
-    "home_location": "string", # May be null
-    "unnoticed_alerts": boolean # Excluded from admin endpoints
+    "home_location": "string" # May be null
 }
 ```
 

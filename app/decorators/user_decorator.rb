@@ -61,7 +61,6 @@ class UserDecorator < Draper::Decorator
     hsh = admin_hash
     hsh.delete(:mute_reason)
     hsh.delete(:ban_reason)
-    hsh[:unnoticed_alerts] = unnoticed_alerts
     hsh
   end
 

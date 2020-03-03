@@ -308,8 +308,10 @@ class User < ApplicationRecord
   end
 
   def unnoticed_mentions
-    StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
-    Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+    @unnoticed_mentions ||= begin
+      StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
+      Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+    end
   end
 
   def build_forum_view
@@ -328,11 +330,11 @@ class User < ApplicationRecord
   end
 
   def unnoticed_announcements
-    Announcement.new_announcements(last_viewed_alerts).count
+    @unnoticed_announcements ||= Announcement.new_announcements(last_viewed_alerts).count
   end
 
   def unnoticed_alerts
-    (unnoticed_mentions || 0) > 0 || (seamail_unread_count || 0) > 0 || unnoticed_announcements >= 1 || unnoticed_upcoming_events >= 1
+    @unnoticed_alerts ||= (unnoticed_mentions || 0) > 0 || (seamail_unread_count || 0) > 0 || unnoticed_announcements >= 1 || unnoticed_upcoming_events >= 1
   end
 
   def self.display_name_from_username(username)

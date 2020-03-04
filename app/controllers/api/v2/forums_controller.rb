@@ -236,12 +236,12 @@ module Api
       end
 
       def current_forum
-        @current_forum ||= Forum.includes(:posts).find(params[:id])
+        @current_forum ||= Forum.find(params[:id])
       end
 
       def current_post
         if @current_forum
-          @current_post ||= @current_forum.posts.find(params[:post_id])
+          @current_post ||= @current_forum.posts_with_data.find(params[:post_id])
         else
           @current_post ||= ForumPost.includes(:forum).references(:forums).find(params[:post_id])
           @current_forum ||= @current_post.forum

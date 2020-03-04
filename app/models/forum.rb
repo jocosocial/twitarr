@@ -28,6 +28,7 @@ class Forum < ApplicationRecord
 
   has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum, validate: false
   has_many :users, through: :posts
+  has_many :forum_views, inverse_of: :forum, foreign_key: :forum_id, dependent: :destroy, class_name: 'UserForumView'
   belongs_to :last_post_user, class_name: 'User', foreign_key: :last_post_user_id, inverse_of: :forums_last_poster
 
   validates :subject, presence: true, length: { maximum: 200 }
@@ -42,17 +43,13 @@ class Forum < ApplicationRecord
                       tsearch: { any_word: true, prefix: true }
                   }
 
-  def posts_all
-    posts.includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user]).references(:users, :post_photos, :post_reactions, :photo_metadata, :reactions)
-  end
-
-  def posts_paginated(page_size, offset)
-    posts_all.limit(page_size).offset(offset)
+  def posts_with_data
+    posts.includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user])
   end
 
   def validate_posts
     errors[:base] << 'Must have a post' if posts.empty?
-    posts.each do |post|
+    posts.filter(&:changed?).each do |post|
       post.errors.full_messages.each { |x| errors[:base] << x } unless post.valid?
     end
   end
@@ -68,8 +65,7 @@ class Forum < ApplicationRecord
   def update_cache
     post = last_post
     if last_post
-      user_ids = User.all_user_ids
-      user_ids.each do |user_id|
+      User.all_user_ids.each do |user_id|
         Rails.cache.delete("f:pcs:#{post.forum_id}:#{user_id}")
       end
       update(last_post_time: post.created_at, last_post_user_id: post.author)
@@ -79,13 +75,19 @@ class Forum < ApplicationRecord
   end
 
   def post_count_since_last_visit(user)
-    timestamp = user.forum_last_view(id)
+    timestamp = forum_last_view(user.id)
     if timestamp
       Rails.cache.fetch("f:pcs:#{id}:#{user.id}", expires_in: Forum::FORUM_CACHE_TIME) do
         posts.where('forum_posts.created_at > ?', timestamp).count
       end
     else
       forum_posts_count
+    end
+  end
+
+  def forum_last_view(user_id)
+    Rails.cache.fetch("f:lv:#{id}:#{user_id}", expires_in: Forum::FORUM_CACHE_TIME) do
+      forum_views.find_by(user_id: user_id)&.last_viewed
     end
   end
 

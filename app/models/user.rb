@@ -77,7 +77,7 @@ class User < ApplicationRecord
   has_many :forum_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
   has_many :announcements, inverse_of: :user, foreign_key: :author, dependent: :destroy
   has_many :post_reactions, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'PostReaction'
-  has_one :forum_view, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserForumView', autosave: true
+  has_many :forum_views, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserForumView'
   has_many :user_seamails, inverse_of: :user, dependent: :destroy
   has_many :seamails, through: :user_seamails
   has_many :seamail_messages, through: :seamails
@@ -91,7 +91,6 @@ class User < ApplicationRecord
   has_many :events, through: :user_events
   has_many :forums_last_poster, inverse_of: :last_post_user, foreign_key: :last_post_user_id, dependent: :nullify, class_name: 'Forum'
 
-  before_create :build_forum_view
   after_save :update_cache_for_user
 
   validate :valid_role?
@@ -314,16 +313,40 @@ class User < ApplicationRecord
     end
   end
 
-  def build_forum_view
-    self.forum_view = UserForumView.create
-  end
-
   def forum_last_view(forum_id)
-    Time.from_param(forum_view.data[forum_id.to_s])
+    Rails.cache.fetch("f:lv:#{forum_id}:#{id}", expires_in: Forum::FORUM_CACHE_TIME) do
+      forum_views.find_by(forum_id: forum_id)&.last_viewed
+    end
   end
 
-  delegate :update_forum_view, to: :forum_view
-  delegate :mark_all_forums_read, to: :forum_view
+  def update_forum_view(forum_id)
+    now = Time.now
+
+    UserForumView.upsert({ user_id: id, forum_id: forum_id, last_viewed: now }, unique_by: [:user_id, :forum_id])
+
+    clear_forum_view_cache(forum_id, now)
+  end
+
+  def mark_all_forums_read(participated_only)
+    query = Forum.unscoped.all
+    query = query.includes(:posts).where('forum_posts.author = ?', id).references(:forum_posts) if participated_only
+
+    now = Time.now
+    timestamps = query.pluck(:id).map do |forum_id|
+      clear_forum_view_cache(forum_id, now)
+      { user_id: id, forum_id: forum_id, last_viewed: now }
+    end
+    UserForumView.upsert_all(timestamps, unique_by: [:user_id, :forum_id])
+  end
+
+  def clear_forum_view_cache(forum_id, now)
+    Rails.cache.fetch("f:pcs:#{forum_id}:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+      0
+    end
+    Rails.cache.fetch("f:lv:#{forum_id}:#{id}", force: true, expires_in: Forum::FORUM_CACHE_TIME) do
+      now
+    end
+  end
 
   def reset_last_viewed_alerts(time = Time.now)
     self.last_viewed_alerts = time

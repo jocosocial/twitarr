@@ -594,7 +594,8 @@ ALTER SEQUENCE public.user_events_id_seq OWNED BY public.user_events.id;
 CREATE TABLE public.user_forum_views (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    data jsonb DEFAULT '{}'::jsonb NOT NULL
+    forum_id bigint NOT NULL,
+    last_viewed timestamp without time zone NOT NULL
 );
 
 
@@ -1336,10 +1337,17 @@ CREATE INDEX index_user_events_on_user_id ON public.user_events USING btree (use
 
 
 --
--- Name: index_user_forum_views_on_user_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_user_forum_views_on_forum_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_user_forum_views_on_user_id ON public.user_forum_views USING btree (user_id);
+CREATE INDEX index_user_forum_views_on_forum_id ON public.user_forum_views USING btree (forum_id);
+
+
+--
+-- Name: index_user_forum_views_on_user_id_and_forum_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_user_forum_views_on_user_id_and_forum_id ON public.user_forum_views USING btree (user_id, forum_id);
 
 
 --
@@ -1406,6 +1414,14 @@ ALTER TABLE ONLY public.user_comments
 
 ALTER TABLE ONLY public.post_photos
     ADD CONSTRAINT fk_rails_0af974c734 FOREIGN KEY (forum_post_id) REFERENCES public.forum_posts(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_forum_views fk_rails_1486d2ad53; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_forum_views
+    ADD CONSTRAINT fk_rails_1486d2ad53 FOREIGN KEY (forum_id) REFERENCES public.forums(id) ON DELETE CASCADE;
 
 
 --
@@ -1656,6 +1672,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200215191244'),
 ('20200227055744'),
 ('20200302024606'),
-('20200302032059');
+('20200302032059'),
+('20200304060935');
 
 

@@ -22,7 +22,7 @@ class ForumDecorator < BaseDecorator
   end
 
   def to_hash(current_user = nil, options = {})
-    last_view = current_user&.forum_last_view(id)
+    last_view = current_user ? Forum.forum_last_view(id, current_user.id) : nil
 
     ret = {
       id: id.to_s,
@@ -45,7 +45,7 @@ class ForumDecorator < BaseDecorator
     prev_page = page - 1 unless (offset - 1) < 0
     page_count = (forum_posts_count.to_f / page_size).ceil
 
-    last_view = current_user&.forum_last_view(id)
+    last_view = current_user ? Forum.forum_last_view(id, current_user.id) : nil
 
     ret = {
       id: id.to_s,

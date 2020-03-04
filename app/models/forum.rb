@@ -86,9 +86,11 @@ class Forum < ApplicationRecord
   end
 
   def forum_last_view(user_id)
-    Rails.cache.fetch("f:lv:#{id}:#{user_id}", expires_in: Forum::FORUM_CACHE_TIME) do
-      forum_views.find_by(user_id: user_id)&.last_viewed
-    end
+    forum_views.filter { |x| x.user_id == user_id }.first&.last_viewed
+  end
+
+  def self.forum_last_view(forum_id, user_id)
+    UserForumView.find_by(forum_id: forum_id, user_id: user_id)&.last_viewed
   end
 
   def self.create_new_forum(author, subject, first_post_text, photos, original_author)

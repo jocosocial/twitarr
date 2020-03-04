@@ -313,12 +313,6 @@ class User < ApplicationRecord
     end
   end
 
-  def forum_last_view(forum_id)
-    Rails.cache.fetch("f:lv:#{forum_id}:#{id}", expires_in: Forum::FORUM_CACHE_TIME) do
-      forum_views.find_by(forum_id: forum_id)&.last_viewed
-    end
-  end
-
   def update_forum_view(forum_id)
     now = Time.now
 

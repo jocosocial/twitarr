@@ -22,11 +22,14 @@ module Api
 
         query = Forum.all
 
-        if logged_in? && params.key?(:participated) && params[:participated].to_bool
-          begin
-            query = query.includes(:posts).where('forum_posts.author = ?', current_user.id).references(:forum_posts)
-          rescue ArgumentError => e
-            errors.push e.message
+        if logged_in?
+          query = query.includes(:forum_views).references(:user_forum_views)
+          if params.key?(:participated) && params[:participated].to_bool
+            begin
+              query = query.includes(:posts).where('forum_posts.author = ?', current_user.id).references(:forum_posts)
+            rescue ArgumentError => e
+              errors.push e.message
+            end
           end
         end
 

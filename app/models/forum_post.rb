@@ -31,8 +31,6 @@ class ForumPost < ApplicationRecord
   include Searchable
   include Postable
 
-  # field :ph, as: :photos, type: Array
-
   has_many :post_reactions, dependent: :destroy
   has_many :reactions, through: :post_reactions
   belongs_to :forum, inverse_of: :posts, counter_cache: true
@@ -50,8 +48,13 @@ class ForumPost < ApplicationRecord
   after_commit :update_cache
   delegate :update_cache, to: :forum
 
-  has_many :post_photos, dependent: :destroy
-  has_many :photo_metadatas, class_name: 'PhotoMetadata', through: :post_photos
+  default_scope { includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user]).references(:users, :post_photos, :photo_metadata, :post_reactions, :reactions) }
 
-  default_scope { includes(:forum, :user, post_reactions: [:reaction, :user]).references(:forums, :users, :post_reactions, :reactions) }
+  def self.new_post(forum_id, author, text, photos, original_author)
+    post = ForumPost.new(forum_id: forum_id, author: author, text: text, original_author: original_author)
+    photos&.each do |photo|
+      post.post_photos << PostPhoto.new(photo_metadata_id: photo)
+    end
+    post
+  end
 end

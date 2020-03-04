@@ -42,6 +42,14 @@ class Forum < ApplicationRecord
                       tsearch: { any_word: true, prefix: true }
                   }
 
+  def posts_all
+    posts.includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user]).references(:users, :post_photos, :post_reactions, :photo_metadata, :reactions)
+  end
+
+  def posts_paginated(page_size, offset)
+    posts_all.limit(page_size).offset(offset)
+  end
+
   def validate_posts
     errors[:base] << 'Must have a post' if posts.empty?
     posts.each do |post|
@@ -90,15 +98,6 @@ class Forum < ApplicationRecord
     forum.posts << post
     forum.save if forum.valid?
     forum
-  end
-
-  def add_post(author, text, photos, original_author)
-    post = ForumPost.new(author: author, text: text, original_author: original_author)
-    photos&.each do |photo|
-      post.post_photos << PostPhoto.new(photo_metadata_id: photo)
-    end
-    posts << post
-    post
   end
 
   def self.view_mentions(params = {})

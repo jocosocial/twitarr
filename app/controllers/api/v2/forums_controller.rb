@@ -66,7 +66,7 @@ module Api
           return
         end
 
-        query = @forum.decorate
+        query = current_forum.decorate
 
         result = if params.key?(:page)
                    query.to_paginated_hash(page, limit, current_user, request_options)
@@ -89,17 +89,17 @@ module Api
       end
 
       def delete
-        if @forum.destroy
+        if current_forum.destroy
           render json: { status: 'ok' }
         else
-          render status: :bad_request, json: { status: 'error', errors: @forum.errors.full_messages }
+          render status: :bad_request, json: { status: 'error', errors: current_forum.errors.full_messages }
         end
       end
 
       def new_post
-        post = @forum.add_post(post_as_user(params).id, params[:text], params[:photos], current_user.id)
+        post = ForumPost.new_post(params[:id], post_as_user(params).id, params[:text], params[:photos], current_user.id)
         if post.valid?
-          @forum.save
+          post.save
           render json: { status: 'ok', forum_post: post.decorate.to_hash(current_user, nil, request_options) }
         else
           render status: :bad_request, json: { status: 'error', errors: post.errors.full_messages }
@@ -107,37 +107,37 @@ module Api
       end
 
       def load_post
-        render json: { status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options) }
+        render json: { status: 'ok', forum_post: current_post.decorate.to_hash(current_user, nil, request_options) }
       end
 
       def update_post
-        unless (@post.author == current_user.id) || tho?
+        unless (current_post.author == current_user.id) || tho?
           render status: :forbidden, json: { status: 'error', error: "You can not edit other users' posts." }
           return
         end
 
-        @post.text = params[:text]
-        if @post.valid?
+        current_post.text = params[:text]
+        if current_post.valid?
           if params[:photos]
-            @post.post_photos.replace(params[:photos].map { |photo| PostPhoto.new(photo_metadata_id: photo) })
+            current_post.post_photos.replace(params[:photos].map { |photo| PostPhoto.new(photo_metadata_id: photo) })
           else
-            @post.post_photos.destroy_all
+            current_post.post_photos.destroy_all
           end
-          @post.save
-          render json: { status: 'ok', forum_post: @post.decorate.to_hash(current_user, nil, request_options) }
+          current_post.save
+          render json: { status: 'ok', forum_post: current_post.decorate.to_hash(current_user, nil, request_options) }
         else
-          render status: :bad_request, json: { status: 'error', errors: @post.errors.full_messages }
+          render status: :bad_request, json: { status: 'error', errors: current_post.errors.full_messages }
         end
       end
 
       def delete_post
-        unless (@post.author == current_user.id) || moderator?
+        unless (current_post.author == current_user.id) || moderator?
           render status: :forbidden, json: { status: 'error', error: "You can not delete other users' posts." }
           return
         end
 
-        @post.destroy
-        thread_deleted = @forum.posts.count == 0
+        current_post.destroy
+        thread_deleted = current_forum.posts.count == 0
 
         render json: { status: 'ok', thread_deleted: thread_deleted }
       end
@@ -154,16 +154,16 @@ module Api
           return
         end
 
-        @post.add_reaction(current_user.id, reaction.id)
-        if @post.valid?
-          render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.post_reactions, current_user.id) }
+        current_post.add_reaction(current_user.id, reaction.id)
+        if current_post.valid?
+          render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(current_post.post_reactions, current_user.id) }
         else
           render status: :bad_request, json: { status: 'error', error: "Invalid reaction: #{params[:type]}" }
         end
       end
 
       def show_reacts
-        render json: { status: 'ok', reactions: @post.post_reactions.map { |x| x.decorate.to_hash } }
+        render json: { status: 'ok', reactions: current_post.post_reactions.map { |x| x.decorate.to_hash } }
       end
 
       def unreact
@@ -178,35 +178,35 @@ module Api
           return
         end
 
-        @post.remove_reaction(current_user.id, reaction.id)
-        render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(@post.post_reactions, current_user.id) }
+        current_post.remove_reaction(current_user.id, reaction.id)
+        render json: { status: 'ok', reactions: BaseDecorator.reaction_summary(current_post.post_reactions, current_user.id) }
       end
 
       def sticky
         begin
-          @forum.sticky = params[:sticky].to_bool
+          current_forum.sticky = params[:sticky].to_bool
         rescue ArgumentError => e
           render status: :bad_request, json: { status: 'error', error: e.message }
           return
         end
-        if @forum.valid? && @forum.save
-          render json: { status: 'ok', sticky: @forum.sticky }
+        if current_forum.valid? && current_forum.save
+          render json: { status: 'ok', sticky: current_forum.sticky }
         else
-          render status: :bad_request, json: { status: 'error', errors: @forum.errors.full_messages }
+          render status: :bad_request, json: { status: 'error', errors: current_forum.errors.full_messages }
         end
       end
 
       def locked
         begin
-          @forum.locked = params[:locked].to_bool
+          current_forum.locked = params[:locked].to_bool
         rescue ArgumentError => e
           render status: :bad_request, json: { status: 'error', error: e.message }
           return
         end
-        if @forum.valid? && @forum.save
-          render json: { status: 'ok', locked: @forum.locked }
+        if current_forum.valid? && current_forum.save
+          render json: { status: 'ok', locked: current_forum.locked }
         else
-          render status: :bad_request, json: { status: 'error', errors: @forum.errors.full_messages }
+          render status: :bad_request, json: { status: 'error', errors: current_forum.errors.full_messages }
         end
       end
 
@@ -224,20 +224,35 @@ module Api
       private
 
       def fetch_forum
-        @forum = Forum.includes(:posts).find(params[:id])
+        current_forum
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Forum thread not found.' }
       end
 
       def fetch_post
-        @post = ForumPost.find(params[:post_id])
+        current_post
       rescue ActiveRecord::RecordNotFound
         render status: :not_found, json: { status: 'error', error: 'Post not found.' }
       end
 
+      def current_forum
+        @current_forum ||= Forum.includes(:posts).find(params[:id])
+      end
+
+      def current_post
+        if @current_forum
+          @current_post ||= @current_forum.posts.find(params[:post_id])
+        else
+          @current_post ||= ForumPost.includes(:forum).references(:forums).find(params[:post_id])
+          @current_forum ||= @current_post.forum
+        end
+
+        @current_post
+      end
+
       def check_locked
         unless moderator?
-          render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if @forum&.locked || @post&.forum&.locked
+          render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if current_forum&.locked
         end
       end
     end

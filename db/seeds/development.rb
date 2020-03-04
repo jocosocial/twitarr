@@ -172,7 +172,7 @@ def add_forum_post(forum, text, author, timestamp, photos)
   #force photos to be an array!
   photos = [photos] unless photos.is_a? Array
   photos = photos.map { |p| p.id }
-  post =  forum.add_post author, text, photos, author
+  post = ForumPost.new_post forum.id, author, text, photos, author
   post.created_at = timestamp
   post.save!
   post

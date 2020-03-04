@@ -43,17 +43,13 @@ class Forum < ApplicationRecord
                       tsearch: { any_word: true, prefix: true }
                   }
 
-  def posts_all
-    posts.includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user]).references(:users, :post_photos, :post_reactions, :photo_metadata, :reactions)
-  end
-
-  def posts_paginated(page_size, offset)
-    posts_all.limit(page_size).offset(offset)
+  def posts_with_data
+    posts.includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user])
   end
 
   def validate_posts
     errors[:base] << 'Must have a post' if posts.empty?
-    posts.each do |post|
+    posts.filter(&:changed?).each do |post|
       post.errors.full_messages.each { |x| errors[:base] << x } unless post.valid?
     end
   end
@@ -79,13 +75,19 @@ class Forum < ApplicationRecord
   end
 
   def post_count_since_last_visit(user)
-    timestamp = user.forum_last_view(id)
+    timestamp = forum_last_view(user.id)
     if timestamp
       Rails.cache.fetch("f:pcs:#{id}:#{user.id}", expires_in: Forum::FORUM_CACHE_TIME) do
         posts.where('forum_posts.created_at > ?', timestamp).count
       end
     else
       forum_posts_count
+    end
+  end
+
+  def forum_last_view(user_id)
+    Rails.cache.fetch("f:lv:#{id}:#{user_id}", expires_in: Forum::FORUM_CACHE_TIME) do
+      forum_views.find_by(user_id: user_id)&.last_viewed
     end
   end
 

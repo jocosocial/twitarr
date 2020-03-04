@@ -48,8 +48,6 @@ class ForumPost < ApplicationRecord
   after_commit :update_cache
   delegate :update_cache, to: :forum
 
-  default_scope { includes(:user, post_photos: :photo_metadata, post_reactions: [:reaction, :user]).references(:users, :post_photos, :photo_metadata, :post_reactions, :reactions) }
-
   def self.new_post(forum_id, author, text, photos, original_author)
     post = ForumPost.new(forum_id: forum_id, author: author, text: text, original_author: original_author)
     photos&.each do |photo|

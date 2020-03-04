@@ -28,6 +28,7 @@ class Forum < ApplicationRecord
 
   has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum, validate: false
   has_many :users, through: :posts
+  has_many :forum_views, inverse_of: :forum, foreign_key: :forum_id, dependent: :destroy, class_name: 'UserForumView'
   belongs_to :last_post_user, class_name: 'User', foreign_key: :last_post_user_id, inverse_of: :forums_last_poster
 
   validates :subject, presence: true, length: { maximum: 200 }
@@ -68,8 +69,7 @@ class Forum < ApplicationRecord
   def update_cache
     post = last_post
     if last_post
-      user_ids = User.all_user_ids
-      user_ids.each do |user_id|
+      User.all_user_ids.each do |user_id|
         Rails.cache.delete("f:pcs:#{post.forum_id}:#{user_id}")
       end
       update(last_post_time: post.created_at, last_post_user_id: post.author)

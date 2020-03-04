@@ -30,7 +30,7 @@ class ForumDecorator < BaseDecorator
       sticky: sticky,
       locked: locked,
       post_count: forum_posts_count,
-      posts: posts.map { |x| x.decorate.to_hash(current_user, last_view, options) }
+      posts: posts_all.map { |x| x.decorate.to_hash(current_user, last_view, options) }
     }
     ret[:latest_read] = last_view&.to_ms unless current_user.nil?
     ret
@@ -41,9 +41,9 @@ class ForumDecorator < BaseDecorator
     next_page = nil
     prev_page = nil
 
-    next_page = page + 1 if posts.offset((page + 1) * page_size).limit(page_size).to_a.count != 0
+    next_page = page + 1 if forum_posts_count > offset + page_size
     prev_page = page - 1 unless (offset - 1) < 0
-    page_count = (posts.count.to_f / page_size).ceil
+    page_count = (forum_posts_count.to_f / page_size).ceil
 
     last_view = current_user&.forum_last_view(id)
 
@@ -57,7 +57,7 @@ class ForumDecorator < BaseDecorator
       page: page,
       page_count: page_count,
       post_count: forum_posts_count,
-      posts: posts.limit(page_size).offset(offset).map { |x| x.decorate.to_hash(current_user, last_view, options) }
+      posts: posts_paginated(page_size, offset).map { |x| x.decorate.to_hash(current_user, last_view, options) }
     }
     ret[:latest_read] = last_view&.to_ms unless current_user.nil?
     ret

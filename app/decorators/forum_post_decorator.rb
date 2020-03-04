@@ -10,7 +10,7 @@ class ForumPostDecorator < BaseDecorator
         text: format_text(text, options),
         timestamp: created_at.to_ms,
         photos: decorate_photos,
-        reactions: BaseDecorator.reaction_summary(post_reactions, current_user&.username)
+        reactions: BaseDecorator.reaction_summary(post_reactions, current_user&.id)
     }
     ret[:new] = (created_at > last_view) unless last_view.nil?
     ret
@@ -19,11 +19,11 @@ class ForumPostDecorator < BaseDecorator
   def decorate_photos
     return [] unless post_photos
 
-    photo_metadatas.map do |img|
+    post_photos.map do |img|
       {
-        id: img.id,
-        animated: img.animated,
-        sizes: img.sizes
+        id: img.photo_metadata.id,
+        animated: img.photo_metadata.animated,
+        sizes: img.photo_metadata.sizes
       }
     end.compact
   end

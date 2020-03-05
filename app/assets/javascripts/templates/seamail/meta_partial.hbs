@@ -6,12 +6,9 @@
 
   <div class="form">
     {{#each user in model.users}}
-      <span class="pull-left" style="padding: 0.5em;">
-          {{pretty-username user.username user.display_name}}
-        <div style="text-align: center;">
-          {{user-picture user.username user.last_photo_updated}}
-        </div>
-        </span>
+      <span class="pull-left seamail" style="padding: 0.5em;">
+        {{user-picture user.username user.last_photo_updated}} {{pretty-username user.username user.display_name}}
+      </span>
     {{/each}}
   </div>
   <div class="controls">

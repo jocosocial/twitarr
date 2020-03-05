@@ -9,11 +9,8 @@
   <div class="card-section">
     {{#each user in model.users}}
       {{#link-to 'user.profile' user.username}}
-        <span class="pull-left" style="padding: 0.5em;">
-          {{pretty-username user.username user.display_name user.pronouns}}
-          <div style="text-align: center;">
-            {{user-picture user.username user.last_photo_updated}}
-          </div>
+        <span class="pull-left seamail" style="padding: 0.5em;">
+          {{user-picture user.username user.last_photo_updated}} {{pretty-username user.username user.display_name user.pronouns}}
         </span>
       {{/link-to}}
     {{/each}}

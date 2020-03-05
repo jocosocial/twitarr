@@ -4,21 +4,21 @@
 #
 #  id              :bigint           not null, primary key
 #  author          :bigint           not null
+#  hash_tags       :string           default([]), not null, is an Array
+#  mentions        :string           default([]), not null, is an Array
 #  original_author :bigint           not null
 #  text            :string           not null
-#  mentions        :string           default([]), not null, is an Array
-#  hash_tags       :string           default([]), not null, is an Array
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  forum_id        :bigint           not null
 #
 # Indexes
 #
-#  index_forum_posts_on_author      (author)
-#  index_forum_posts_on_created_at  (created_at)
-#  index_forum_posts_on_hash_tags   (hash_tags) USING gin
-#  index_forum_posts_on_mentions    (mentions) USING gin
-#  index_forum_posts_text           (to_tsvector('english'::regconfig, (text)::text)) USING gin
+#  index_forum_posts_on_author                   (author)
+#  index_forum_posts_on_forum_id_and_created_at  (forum_id,created_at)
+#  index_forum_posts_on_hash_tags                (hash_tags) USING gin
+#  index_forum_posts_on_mentions                 (mentions) USING gin
+#  index_forum_posts_text                        (to_tsvector('english'::regconfig, (text)::text)) USING gin
 #
 # Foreign Keys
 #

@@ -13,7 +13,8 @@ module Api
           render status: :not_found, json: { status: 'error', error: 'Seamail not found' }
           return
         end
-        render status: :not_found, json: { status: 'error', error: 'Seamail not found' } unless @seamail.user_seamails.where(user_id: current_user.id).any? || (moderator? && @seamail.user_seamails.where(user_id: moderator_user.id).any?) || (admin? && @seamail.user_seamails.where(user_id: admin_user.id).any?)
+        @user_seamail = @seamail.user_seamails.find_by(user_id: as_user.id)
+        render status: :not_found, json: { status: 'error', error: 'Seamail not found' } unless @user_seamail
       end
 
       def as_user
@@ -43,7 +44,7 @@ module Api
           output = 'seamail_threads'
           options = request_options
           options[:exclude_read_messages] = true if @exclude_read_messages
-          mails = mails.includes(:seamail_messages).references(:seamail_messages).map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
+          mails = mails.includes(seamail_messages: [:user, user_seamails: :user]).references(:seamail_messages, :users, :user_seamails).map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
         else
           output = 'seamail_meta'
           mails = mails.map { |x| x.decorate.to_meta_hash(as_user.id, counting_unread) }
@@ -59,8 +60,8 @@ module Api
       end
 
       def show
-        mails = @seamail.decorate.to_hash(request_options, as_user.id)
-        @seamail.mark_as_read as_user.id unless params[:skip_mark_read]
+        mails = @seamail.decorate.to_hash(request_options, as_user.id, false, @user_seamail.last_viewed)
+        @user_seamail.update(last_viewed: DateTime.now) unless params[:skip_mark_read]
         render json: { status: 'ok', seamail: mails }
       end
 

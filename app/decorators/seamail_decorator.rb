@@ -14,8 +14,8 @@ class SeamailDecorator < Draper::Decorator
     }
   end
 
-  def to_hash(options = {}, current_user_id = 0, count_is_unread = false)
-    viewed_date = last_viewed(current_user_id)
+  def to_hash(options = {}, current_user_id = 0, count_is_unread = false, viewed_date = nil)
+    viewed_date ||= last_viewed(current_user_id)
     {
         id: id.to_s,
         users: users.map { |x| x.decorate.gui_hash },

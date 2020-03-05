@@ -250,7 +250,7 @@ CREATE TABLE public.photo_metadata (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     original_filename character varying NOT NULL,
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL
+    id uuid DEFAULT public.uuid_generate_v1mc() NOT NULL
 );
 
 
@@ -1113,10 +1113,10 @@ CREATE INDEX index_forum_posts_on_author ON public.forum_posts USING btree (auth
 
 
 --
--- Name: index_forum_posts_on_created_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_forum_posts_on_forum_id_and_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_forum_posts_on_created_at ON public.forum_posts USING btree (created_at DESC);
+CREATE INDEX index_forum_posts_on_forum_id_and_created_at ON public.forum_posts USING btree (forum_id, created_at);
 
 
 --
@@ -1673,6 +1673,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200227055744'),
 ('20200302024606'),
 ('20200302032059'),
-('20200304060935');
+('20200304060935'),
+('20200304233439'),
+('20200304234553');
 
 

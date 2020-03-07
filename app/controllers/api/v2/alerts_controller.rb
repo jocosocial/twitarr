@@ -55,10 +55,10 @@ module Api
           return
         end
 
-        if last_checked_time >= Time.now
-          render status: :bad_request, json: { status: 'error', error: 'Timestamp must be in the past.' }
-          return
-        end
+        # if last_checked_time >= Time.now + 1.minute
+        #   render status: :bad_request, json: { status: 'error', error: 'Timestamp must be in the past.' }
+        #   return
+        # end
 
         current_user.reset_last_viewed_alerts(last_checked_time)
         current_user.save!

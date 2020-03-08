@@ -16,7 +16,11 @@ module Api
           return
         end
 
-        query = { filter_author: params[:author], filter_hashtag: params[:hashtag], filter_mentions: params[:mentions], mentions_only: !params[:include_author] }
+        author = params[:author]&.sub('@', '')
+        hashtag = params[:hashtag]&.sub('#', '')
+        mentions = params[:mentions]&.sub('@', '')
+
+        query = { filter_author: author, filter_hashtag: hashtag, filter_mentions: mentions, mentions_only: !params[:include_author] }
 
         begin
           param_newer_posts = params.key?(:newer_posts) && params[:newer_posts].to_bool

@@ -61,7 +61,7 @@ class Event < ApplicationRecord
     event = Event.find_or_initialize_by(id: ics_event.uid)
 
     event.title = ics_event.summary.force_encoding('utf-8')
-    event.description = ics_event.description.force_encoding('utf-8')
+    event.description = ics_event.description.force_encoding('utf-8') || ''
     event.start_time = ics_event.dtstart
     event.end_time = ics_event.dtend unless ics_event.dtend.nil?
     # if ics_event.dtstart <= DST_START

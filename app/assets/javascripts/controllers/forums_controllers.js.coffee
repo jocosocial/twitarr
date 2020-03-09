@@ -93,23 +93,25 @@ Twitarr.ForumsDetailController = Twitarr.Controller.extend Twitarr.MultiplePhoto
           @transitionToRoute('forums.page', 0)
         )
     toggle_sticky: ->
-      $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/sticky/#{!@get('model.forum.sticky')}").fail((response) =>
-        if response.responseJSON?.error?
-          alert response.responseJSON.error
-        else
-          alert 'Could not toggle sticky. Please try again later. Or try again someplace without so many seamonkeys.'
-      ).then((response) =>
-        @set('model.forum.sticky', response.sticky)
-      )
+      if confirm('Are you sure you want to sticky/unsticky this thread?')
+        $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/sticky/#{!@get('model.forum.sticky')}").fail((response) =>
+          if response.responseJSON?.error?
+            alert response.responseJSON.error
+          else
+            alert 'Could not toggle sticky. Please try again later. Or try again someplace without so many seamonkeys.'
+        ).then((response) =>
+          @set('model.forum.sticky', response.sticky)
+        )
     toggle_locked: ->
-      $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/locked/#{!@get('model.forum.locked')}").fail((response) =>
-        if response.responseJSON?.error?
-          alert response.responseJSON.error
-        else
-          alert 'Could not toggle locked. Please try again later. Or try again someplace without so many seamonkeys.'
-      ).then((response) =>
-        @set('model.forum.locked', response.locked)
-      )
+      if confirm('Are you sure you want to lock/unlock this thread?')
+        $.post("#{Twitarr.api_path}/forum/#{@get('model.forum.id')}/locked/#{!@get('model.forum.locked')}").fail((response) =>
+          if response.responseJSON?.error?
+            alert response.responseJSON.error
+          else
+            alert 'Could not toggle locked. Please try again later. Or try again someplace without so many seamonkeys.'
+        ).then((response) =>
+          @set('model.forum.locked', response.locked)
+        )
 
 Twitarr.ForumsPostPartialController = Twitarr.Controller.extend
   actions:

@@ -16,12 +16,16 @@ module Api
           return
         end
 
-        query = { filter_author: params[:author], filter_hashtag: params[:hashtag], filter_mentions: params[:mentions], mentions_only: !params[:include_author] }
+        author = params[:author]&.sub('@', '')
+        hashtag = params[:hashtag]&.sub('#', '')
+        mentions = params[:mentions]&.sub('@', '')
+
+        query = { filter_author: author, filter_hashtag: hashtag, filter_mentions: mentions, mentions_only: !params[:include_author] }
 
         begin
           param_newer_posts = params.key?(:newer_posts) && params[:newer_posts].to_bool
           query[:filter_authors] = current_user.starred_users.reject { |x| x.id == current_user.id }.pluck(:id) if params.key?(:starred) && params[:starred].to_bool
-          query[:filter_reactions] = current_username if params.key?(:reacted) && params[:reacted].to_bool
+          query[:filter_reactions] = current_user&.id if params.key?(:reacted) && params[:reacted].to_bool
         rescue ArgumentError => e
           render status: :bad_request, json: { status: 'error', error: e.message }
           return

@@ -20,7 +20,7 @@ class RegistrationCode < ApplicationRecord
   end
 
   def self.valid_code?(code)
-    regcode = RegistrationCode.where(code: code)
+    regcode = RegistrationCode.where(code: code.upcase.gsub(/[^A-Z0-9]/, ''))
     regcode.exists?
   end
 end

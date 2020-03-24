@@ -17733,7 +17733,6 @@ Postmodern Jukebox	All Of Me
 Postmodern Jukebox	All The Small Things
 Postmodern Jukebox	Bad Romance
 Postmodern Jukebox	Blank Space
-Postmodern Jukebox	Blurred Lines
 Postmodern Jukebox	Burn
 Postmodern Jukebox	Careless Whisper
 Postmodern Jukebox	Chandelier
@@ -19179,7 +19178,6 @@ Rolling Stones, The	Angie
 Rolling Stones, The	As Tears Go By
 Rolling Stones, The	Beast Of Burden
 Rolling Stones, The	Bitch
-Rolling Stones, The	Brown Sugar
 Rolling Stones, The	Can't You Hear Me Knockin'
 Rolling Stones, The	Citadel	M
 Rolling Stones, The	Come On
@@ -22600,7 +22598,6 @@ They Might Be Giants	Boss of Me	VR
 They Might Be Giants	Istanbul (Not Constantinople)
 They Might Be Giants	Letterbox
 They Might Be Giants	Particle Man
-Thicke, Robin	Blurred Lines
 Thicke, Robin	Can U Believe (Radio Version)
 Thicke, Robin	Get Her Back	VR
 Thicke, Robin	Lost Without U

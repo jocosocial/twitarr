@@ -30,7 +30,10 @@
           {{/each}}
         </ul>
         <span class="controls">
-          <div>Please remember to abide by the {{#link-to 'conduct' target='_blank'}}Code of Conduct{{/link-to}}</div>
+          <div>
+            Please remember to abide by the {{#link-to 'conduct' target='_blank'}}Code of Conduct{{/link-to}}
+            <br/><br/><br/>
+          </div>
           <div>
             {{#if role_admin}}
               {{input checked=model.as_admin type='checkbox' id='as_admin'}} <label for='as_admin'>Post as TwitarrTeam</label>

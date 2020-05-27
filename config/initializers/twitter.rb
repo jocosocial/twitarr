@@ -19,31 +19,6 @@ module Twitter
 
         invisible_tag_attrs: DEFAULT_INVISIBLE_TAG_ATTRS
       }.freeze
-
-      # Monkey patching auto_link_entities so that it doesn't strip out emoji
-      def auto_link_entities(text, entities, options = {}, &block)
-        return text if entities.empty?
-
-        # NOTE deprecate these attributes not options keys in options hash, then use html_attrs
-        options = DEFAULT_OPTIONS.merge(options)
-        options[:html_attrs] = extract_html_attrs_from_options!(options)
-        options[:html_attrs][:rel] ||= 'nofollow' unless options[:suppress_no_follow]
-        options[:html_attrs][:target] = '_blank' if options[:target_blank] == true
-
-        Twitter::TwitterText::Rewriter.rewrite_entities(text.dup, entities) do |entity, chars|
-          if entity[:url]
-            link_to_url(entity, chars, options, &block)
-          elsif entity[:hashtag]
-            link_to_hashtag(entity, chars, options, &block)
-          elsif entity[:screen_name]
-            link_to_screen_name(entity, chars, options, &block)
-          elsif entity[:cashtag]
-            link_to_cashtag(entity, chars, options, &block)
-          elsif entity[:emoji]
-            entity[:emoji]
-          end
-        end
-      end
     end
   end
 end

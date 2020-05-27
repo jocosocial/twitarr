@@ -64,7 +64,7 @@ class StreamPost < ApplicationRecord
     query = where('stream_posts.created_at <= ?', Time.at(ms_since_epoch.to_i / 1000.0))
     query = query.where('stream_posts.author IN (?)', options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
     query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
-    query = query.joins(:post_reactions).where(post_reactions: { user_id: options[:filter_reactions]}) if options.key?(:filter_reactions) && !options[:filter_reactions].nil?
+    query = query.joins(:post_reactions).where(post_reactions: { user_id: options[:filter_reactions] }) if options.key?(:filter_reactions) && !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
     if options.key?(:filter_mentions) && !options[:filter_mentions].nil?
       query = if options[:mentions_only]
@@ -80,7 +80,7 @@ class StreamPost < ApplicationRecord
     query = where('stream_posts.created_at >= ?', Time.at(ms_since_epoch.to_i / 1000.0))
     query = query.where(:author.in => options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
     query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
-    query = query.joins(:post_reactions).where(post_reactions: { user_id: options[:filter_reactions]}) if options.key?(:filter_reactions) && !options[:filter_reactions].nil?
+    query = query.joins(:post_reactions).where(post_reactions: { user_id: options[:filter_reactions] }) if options.key?(:filter_reactions) && !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
     if options.key?(:filter_mentions) && !options[:filter_mentions].nil?
       query = if options[:mentions_only]

@@ -85,11 +85,11 @@ module Api
 
       private
 
-      def do_search(params, collection, enabled = true)
+      def do_search(params, collection, enabled = true, &block)
         if enabled
           query = collection.search(params)
           count = query.limit(nil).count
-          matches = query.map { |e| yield e }
+          matches = query.map(&block)
           more = count > (query.limit_value + (query.offset_value || 0))
           { matches: matches, count: count, more: more }
         else

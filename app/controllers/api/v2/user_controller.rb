@@ -79,7 +79,7 @@ module Api
       def auto_complete
         params[:query] ||= ''
         query = params[:query].downcase
-        query = query[1..-1] if query[0] == '@'
+        query = query[1..] if query[0] == '@'
 
         unless query && query.size >= User::MIN_AUTO_COMPLETE_LEN
           render status: :bad_request, json: { status: 'error', error: "Minimum length is #{User::MIN_AUTO_COMPLETE_LEN}" }

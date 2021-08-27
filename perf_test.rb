@@ -9,7 +9,7 @@ SERVER_URL = 'http://localhost:3000'.freeze
 
 requests = [
   Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/posts/all')
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/posts/all")
     Rails.logger.info "ALL: #{response.msg}"
     data = JSON.parse(response.body)
     photos = data['list'].map { |x| x['data']['photos'] }.flatten.compact!
@@ -20,7 +20,7 @@ requests = [
     1 + photos.size
   end,
   Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/posts/popular')
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/posts/popular")
     Rails.logger.info "POPULAR: #{response.msg}"
     data = JSON.parse(response.body)
     photos = data['list'].map { |x| x['data']['photos'] }.flatten.compact!
@@ -31,12 +31,12 @@ requests = [
     1 + photos.size
   end,
   Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/user/ac?string=g')
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/user/ac?string=g")
     Rails.logger.info "AUTOCOMPLETE: #{response.msg}"
     1
   end,
   Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/api/v1/user/auth?username=kvort&password=foobar')
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/api/v1/user/auth?username=kvort&password=foobar")
     Rails.logger.info "AUTH: #{response.msg}"
     1
   end

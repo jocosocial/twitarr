@@ -47,10 +47,10 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   # config.cache_store = :memory_store
-  
+
   # For memcache running natively:
   config.cache_store = :mem_cache_store
-  
+
   # For memcache running under docker:
   # config.cache_store = :mem_cache_store, 'memcached:11211'
 
@@ -73,7 +73,7 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
   if ENV['RAILS_LOG_TO_STDOUT'].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger           = ActiveSupport::Logger.new($stdout)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end

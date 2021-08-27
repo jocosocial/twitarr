@@ -66,21 +66,21 @@ module Api
         end
 
         begin
-          Rails.logger.info 'deleting ' + PhotoStore.instance.photo_path(@photo.store_filename)
+          Rails.logger.info "deleting #{PhotoStore.instance.photo_path(@photo.store_filename)}"
           File.delete PhotoStore.instance.photo_path(@photo.store_filename)
         rescue StandardError => e
           Rails.logger.error "Error deleting file: #{e}"
         end
 
         begin
-          Rails.logger.info 'deleting ' + PhotoStore.instance.sm_thumb_path(@photo.store_filename)
+          Rails.logger.info "deleting #{PhotoStore.instance.sm_thumb_path(@photo.store_filename)}"
           File.delete PhotoStore.instance.sm_thumb_path(@photo.store_filename)
         rescue StandardError => e
           Rails.logger.error "Error deleting file: #{e}"
         end
 
         begin
-          Rails.logger.info 'deleting ' + PhotoStore.instance.md_thumb_path(@photo.store_filename)
+          Rails.logger.info "deleting #{PhotoStore.instance.md_thumb_path(@photo.store_filename)}"
           File.delete PhotoStore.instance.md_thumb_path(@photo.store_filename)
         rescue StandardError => e
           Rails.logger.error "Error deleting file: #{e}"

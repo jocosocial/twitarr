@@ -16,8 +16,7 @@ class Reaction < ApplicationRecord
 
   def self.add_reaction(reaction)
 
-    doc = Reaction.find_or_create_by(name: reaction)
-    doc
+    Reaction.find_or_create_by(name: reaction)
   rescue StandardError => e
     logger.error e
 

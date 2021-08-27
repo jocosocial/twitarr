@@ -64,8 +64,8 @@ class User < ApplicationRecord
 
   USERNAME_CACHE_TIME = 30.minutes
 
-  USERNAME_REGEX = /^[\w]{3,40}$/.freeze
-  DISPLAY_NAME_REGEX = /^[\w\. &-]{3,40}$/.freeze
+  USERNAME_REGEX = /^\w{3,40}$/.freeze
+  DISPLAY_NAME_REGEX = /^[\w. &-]{3,40}$/.freeze
 
   ACTIVE_STATUS = 'active'.freeze
   RESET_PASSWORD = 'seamonkey'.freeze
@@ -186,10 +186,6 @@ class User < ApplicationRecord
 
   def username=(val)
     super User.format_username val
-  end
-
-  def current_location=(loc)
-    super loc
   end
 
   def display_name=(val)

@@ -21,7 +21,7 @@ class Hashtag < ApplicationRecord
   validates :name, length: { maximum: MAX_LENGTH }
 
   def self.add_tag(hashtag)
-    hashtag = hashtag[1..-1] if hashtag[0] == '#'
+    hashtag = hashtag[1..] if hashtag[0] == '#'
     begin
       doc = Hashtag.find_or_create_by(name: hashtag.downcase.strip)
     rescue ActiveRecord::RecordNotUnique

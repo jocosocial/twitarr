@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
     expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
 
     digest = OpenSSL::HMAC.hexdigest(
-      OpenSSL::Digest::SHA1.new,
+      OpenSSL::Digest.new('SHA1'),
       Rails.application.secrets.secret_key_base,
       "#{name}#{hashed_password}#{expiration}"
     )

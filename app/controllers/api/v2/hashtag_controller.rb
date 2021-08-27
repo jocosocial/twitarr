@@ -11,7 +11,7 @@ module Api
 
       def auto_complete
         query = params[:query]
-        query = query[1..-1] if query[0] == '#'
+        query = query[1..] if query[0] == '#'
         unless query && query.size >= Hashtag::MIN_AUTO_COMPLETE_LEN
           render status: :bad_request, json: { status: 'error', error: "Minimum length is #{Hashtag::MIN_AUTO_COMPLETE_LEN}" }
           return

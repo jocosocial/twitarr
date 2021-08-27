@@ -20,9 +20,10 @@ class BaseDecorator < Draper::Decorator
   end
 
   def replace_emoji(text, options = {})
-    if options[:app] == 'CM'
+    case options[:app]
+    when 'CM'
       text.gsub(EMOJI_REGEX, EMOJI_REPLACE_CM)
-    elsif options[:app] == 'plain'
+    when 'plain'
       text
     else
       text.gsub(EMOJI_REGEX, EMOJI_REPLACE)
@@ -43,9 +44,10 @@ class BaseDecorator < Draper::Decorator
   end
 
   def twitarr_auto_linker(text, options = {})
-    if options[:app] == 'CM'
+    case options[:app]
+    when 'CM'
       cm_auto_link text
-    elsif options[:app] == 'plain'
+    when 'plain'
       # plain wants us to not do any markup
       text
     else

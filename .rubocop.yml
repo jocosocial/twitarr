@@ -25,9 +25,6 @@ Rails/UniqBeforePluck:
 Style/Documentation:
   Enabled: false
 
-Style/SoleNestedConditional:
-  Enabled: false
-
 Style/OptionalBooleanParameter:
   Enabled: false
 

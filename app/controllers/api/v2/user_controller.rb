@@ -142,6 +142,7 @@ module Api
           current_user.display_name = current_user.username if current_user.display_name.blank?
         end
 
+        # rubocop:disable Style/SoleNestedConditional
         if params.key?(:email)
           current_user.email = params[:email] unless muted_change ||= (muted? && params[:email].present? && current_user.email != params[:email])
         end
@@ -163,6 +164,7 @@ module Api
         if params.key?(:room_number)
           current_user.room_number = params[:room_number] unless muted_change ||= (muted? && params[:room_number].present? && current_user.room_number != params[:room_number])
         end
+        # rubocop:enable Style/SoleNestedConditional
 
         if !current_user.valid? || muted_change
           current_user.errors.add(:general, 'You have been muted. You may set fields to blank, but you may not otherwise change them.') if muted_change

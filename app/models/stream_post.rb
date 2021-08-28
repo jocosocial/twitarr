@@ -58,7 +58,7 @@ class StreamPost < ApplicationRecord
                   against: :text,
                   associated_against: { user: [:username, :display_name] },
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   def self.at_or_before(ms_since_epoch, options = {})

@@ -42,7 +42,7 @@ class Forum < ApplicationRecord
                   against: :subject,
                   associated_against: { posts: :text },
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   def posts_with_data

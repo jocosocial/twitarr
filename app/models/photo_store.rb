@@ -182,7 +182,7 @@ class PhotoStore
   end
 
   class UploadFile
-    PHOTO_CONTENT_TYPES = %w(image/png image/jpeg image/gif).freeze
+    PHOTO_CONTENT_TYPES = %w[image/png image/jpeg image/gif].freeze
 
     def initialize(file)
       Rails.logger.debug { "content type = #{file.content_type}" }

@@ -5,8 +5,8 @@ class PostReactionDecorator < Draper::Decorator
 
   def to_hash
     {
-        reaction: reaction.name,
-        user: user.decorate.gui_hash
+      reaction: reaction.name,
+      user: user.decorate.gui_hash
     }
   end
 end

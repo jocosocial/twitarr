@@ -6,11 +6,11 @@ require 'siphash'
 # creates an Identicon using Image Magick
 module Identicon
   DEFAULT_OPTIONS = {
-      border_size: 35,
-      square_size: 50,
-      grid_size: 7,
-      background_color: 'transparent',
-      key: '1234567890abcdef'
+    border_size: 35,
+    square_size: 50,
+    grid_size: 7,
+    background_color: 'transparent',
+    key: '1234567890abcdef'
   }.freeze
 
   # create an identicon image
@@ -28,8 +28,8 @@ module Identicon
     raise 'title cannot be nil' if title.nil?
     raise 'key is nil or less than 16 bytes' if options[:key].nil? || options[:key].length < 16
     raise 'grid_size must be between 4 and 9' if options[:grid_size] < 4 || options[:grid_size] > 9
-    raise 'invalid border size' if options[:border_size] < 0
-    raise 'invalid square size' if options[:square_size] < 0
+    raise 'invalid border size' if (options[:border_size]).negative?
+    raise 'invalid square size' if (options[:square_size]).negative?
 
     hash = SipHash.digest(options[:key], title)
 

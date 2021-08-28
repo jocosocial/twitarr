@@ -15,7 +15,7 @@ class Integer
   def to_bool
     return true if self == 1
 
-    return false if self == 0
+    return false if zero?
 
     raise ArgumentError.new("Invalid value for Boolean: #{self}")
   end

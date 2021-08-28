@@ -5,9 +5,9 @@ class SectionDecorator < BaseDecorator
 
   def to_hash
     {
-        name: name.to_s,
-        category: category.to_s,
-        enabled: enabled
+      name: name.to_s,
+      category: category.to_s,
+      enabled: enabled
     }
   end
 end

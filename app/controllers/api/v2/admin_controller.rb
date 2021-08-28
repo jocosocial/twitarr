@@ -63,7 +63,7 @@ module Api
         @user.mute_reason = params[:mute_reason] if params.key? :mute_reason
         @user.ban_reason = params[:ban_reason] if params.key? :ban_reason
 
-        if !@user.valid? || role_errors.count > 0
+        if !@user.valid? || role_errors.count.positive?
           role_errors.each do |x|
             @user.errors.add(:role, x)
           end

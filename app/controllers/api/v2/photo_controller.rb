@@ -24,7 +24,7 @@ module Api
         errors.push 'Limit must be greater than 0' if limit < 1
 
         page = (params[:page] || 0).to_i
-        errors.push 'Page must be greater than or equal to 0' if page < 0
+        errors.push 'Page must be greater than or equal to 0' if page.negative?
 
         sort_by = (params[:sort_by] || 'created_at').to_sym
         errors.push 'Invalid field name for sort_by' unless [:id, :animated, :store_filename, :md5_hash, :content_type, :user_id, :created_at].include? sort_by

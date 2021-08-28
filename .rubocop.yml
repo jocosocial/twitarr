@@ -21,49 +21,8 @@ Style/SoleNestedConditional:
 Style/OptionalBooleanParameter:
   Enabled: false
 
-Style/GuardClause:
-  Enabled: false
-
-# does not make sense to enable this without AlignHash
-Layout/FirstHashElementIndentation:
-  Enabled: false
-
-Style/Lambda:
-  Enabled: false
-
-Style/ModuleFunction:
-  EnforcedStyle: extend_self
-
-Style/MultilineBlockChain:
-  Enabled: false
-
-Layout/MultilineMethodCallIndentation:
-  Enabled: false
-
-Layout/MultilineOperationIndentation:
-  Enabled: false
-
-Layout/MultilineBlockLayout:
-  Enabled: false
-
-# Disabling line length enforcement since annotate generates
-# some pretty long lines
+# Line length enforcement is dumb
 Layout/LineLength:
-  Enabled: false
-
-# This cop complains about values like 05.
-Style/NumericLiteralPrefix:
-  Enabled: false
-
-# This cop is problematic when nil may be compared with 0.
-Style/NumericPredicate:
-  Enabled: false
-
-# This cop is unstable.
-Style/PercentLiteralDelimiters:
-  Enabled: false
-
-Style/Proc:
   Enabled: false
 
 Style/RaiseArgs:

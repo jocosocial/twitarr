@@ -17,7 +17,7 @@ module Searchable
       start = (params[:page] || 0).to_i * limit
       # Rails.logger.info "Start = #{start}"
       criteria = criteria.limit(limit)
-      criteria = criteria.offset(start) if start > 0
+      criteria = criteria.offset(start) if start.positive?
       criteria
     end
   end

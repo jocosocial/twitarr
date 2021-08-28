@@ -22,7 +22,7 @@ module CruiseMonkeyHelper
   end
 
   CRUISE_MONKEY_OPTIONS = {
-      link_attribute_block: lambda { |entity, attributes| prepare_cruise_monkey_link(entity, attributes) },
-      username_include_symbol: false
+    link_attribute_block: ->(entity, attributes) { prepare_cruise_monkey_link(entity, attributes) },
+    username_include_symbol: false
   }.freeze
 end

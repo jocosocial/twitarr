@@ -47,7 +47,7 @@ class User < ApplicationRecord
     MUTED = 1
     BANNED = 0
 
-    STRINGS = %w(banned muted user moderator tho admin).freeze
+    STRINGS = %w[banned muted user moderator tho admin].freeze
 
     def self.as_string(role)
       STRINGS[role]
@@ -110,7 +110,7 @@ class User < ApplicationRecord
   pg_search_scope :pg_search,
                   against: [:username, :display_name, :real_name],
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   def valid_role?
@@ -207,7 +207,7 @@ class User < ApplicationRecord
 
   def upcoming_events(alerts = false, unnoticed = false)
     upcoming = user_events.includes(:event).references(:events)
-                   .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', Time.now - 1.hour, Time.now + 2.hours, Time.now)
+                          .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', Time.now - 1.hour, Time.now + 2.hours, Time.now)
 
     if unnoticed
       upcoming = upcoming.where(acknowledged_alert: false)
@@ -305,7 +305,7 @@ class User < ApplicationRecord
 
   def unnoticed_mentions
     @unnoticed_mentions ||= StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
-      Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
+                            Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
   end
 
   def update_forum_view(forum_id)
@@ -350,7 +350,7 @@ class User < ApplicationRecord
   end
 
   def unnoticed_alerts
-    @unnoticed_alerts ||= (unnoticed_mentions || 0) > 0 || (seamail_unread_count || 0) > 0 || unnoticed_announcements >= 1 || unnoticed_upcoming_events >= 1
+    @unnoticed_alerts ||= (unnoticed_mentions || 0).positive? || (seamail_unread_count || 0).positive? || unnoticed_announcements >= 1 || unnoticed_upcoming_events >= 1
   end
 
   def self.display_name_from_username(username)
@@ -472,7 +472,7 @@ class User < ApplicationRecord
       user.save
     end
 
-    unless User.exist? 'moderator'
+    unless User.exist? 'moderator' # rubocop:disable Style/GuardClause
       user = User.new username: 'moderator', display_name: 'moderator', password: Rails.application.secrets.initial_admin_password,
                       role: User::Role::MODERATOR, status: User::ACTIVE_STATUS, registration_code: 'code3'
       user.change_password user.password

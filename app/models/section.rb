@@ -34,17 +34,17 @@ class Section < ApplicationRecord
 
   def self.toggle(section, enabled)
     doc = Section.find_by(name: section)
-    if doc
-      doc.enabled = enabled
-      doc.save
-      doc
-    end
+    return unless doc
+
+    doc.enabled = enabled
+    doc.save
+    doc
   end
 
   def self.repopulate_sections
     Section.delete_all
-    sections = %w(forums stream seamail calendar deck_plans games karaoke search registration)
-    categories = %w(global Kraken cruise_monkey rainbow_monkey)
+    sections = %w[forums stream seamail calendar deck_plans games karaoke search registration]
+    categories = %w[global Kraken cruise_monkey rainbow_monkey]
     categories.each do |category|
       sections.each do |section|
         name = section

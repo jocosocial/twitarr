@@ -110,7 +110,7 @@ class ApplicationController < ActionController::Base
   end
 
   def build_key(name, hashed_password, expiration = 0)
-    expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
+    expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration.zero?
 
     digest = OpenSSL::HMAC.hexdigest(
       OpenSSL::Digest.new('SHA1'),
@@ -127,55 +127,53 @@ class ApplicationController < ActionController::Base
   end
 
   def post_as_user(params)
-    if params.key?(:as_mod) && params[:as_mod].to_bool && moderator?
-      return moderator_user
-    elsif params.key?(:as_admin) && params[:as_admin].to_bool && admin?
-      return admin_user
-    end
+    return moderator_user if params.key?(:as_mod) && params[:as_mod].to_bool && moderator?
+
+    return admin_user if params.key?(:as_admin) && params[:as_admin].to_bool && admin?
 
     current_user
   end
 
   def forums_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Forums are currently disabled.' } unless Section.enabled?(:forums)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Forums are currently disabled.' } unless Section.enabled?(:forums)
   end
 
   def stream_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Stream is currently disabled.' } unless Section.enabled?(:stream)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Stream is currently disabled.' } unless Section.enabled?(:stream)
   end
 
   def seamail_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Seamail is currently disabled.' } unless Section.enabled?(:seamail)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Seamail is currently disabled.' } unless Section.enabled?(:seamail)
   end
 
   def events_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Calendar is currently disabled.' } unless Section.enabled?(:calendar)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Calendar is currently disabled.' } unless Section.enabled?(:calendar)
   end
 
   def search_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Search is currently disabled.' } unless Section.enabled?(:search)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Search is currently disabled.' } unless Section.enabled?(:search)
   end
 
   def registration_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Registration is currently disabled.' } unless Section.enabled?(:registration)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Registration is currently disabled.' } unless Section.enabled?(:registration)
   end
 
   def profile_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'User profiles are currently disabled.' } unless Section.enabled?(:user_profile)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'User profiles are currently disabled.' } unless Section.enabled?(:user_profile)
   end
 
   private

@@ -20,7 +20,7 @@ module Api
         errors = []
         errors.push 'Limit must be greater than zero.' if page_size <= 0
 
-        errors.push 'Page must be greater than or equal to zero.' if page < 0
+        errors.push 'Page must be greater than or equal to zero.' if page.negative?
 
         query = Forum.all
 
@@ -35,7 +35,7 @@ module Api
           end
         end
 
-        if errors.count > 0
+        if errors.count.positive?
           render status: :bad_request, json: { status: 'error', errors: errors }
           return
         end
@@ -45,15 +45,15 @@ module Api
         page_count = (thread_count.to_f / page_size).ceil
 
         next_page = (page + 1 if thread_count > (page + 1) * page_size)
-        prev_page = (page - 1 if page > 0)
+        prev_page = (page - 1 if page.positive?)
         render json: {
-            status: 'ok',
-            forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) },
-            next_page: next_page,
-            prev_page: prev_page,
-            thread_count: thread_count,
-            page: page,
-            page_count: page_count
+          status: 'ok',
+          forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) },
+          next_page: next_page,
+          prev_page: prev_page,
+          thread_count: thread_count,
+          page: page,
+          page_count: page_count
         }
       end
 
@@ -64,9 +64,9 @@ module Api
         errors = []
         errors.push 'Limit must be greater than zero.' if limit <= 0
 
-        errors.push 'Page must be greater than or equal to zero.' if page < 0
+        errors.push 'Page must be greater than or equal to zero.' if page.negative?
 
-        if errors.count > 0
+        if errors.count.positive?
           render status: :bad_request, json: { status: 'error', errors: errors }
           return
         end
@@ -142,7 +142,7 @@ module Api
         end
 
         current_post.destroy
-        thread_deleted = current_forum.posts.count == 0
+        thread_deleted = current_forum.posts.count.zero?
 
         render json: { status: 'ok', thread_deleted: thread_deleted }
       end
@@ -256,9 +256,9 @@ module Api
       end
 
       def check_locked
-        unless moderator?
-          render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if current_forum&.locked
-        end
+        return if moderator?
+
+        render status: :forbidden, json: { status: 'error', error: 'Forum thread is locked.' } if current_forum&.locked
       end
     end
   end

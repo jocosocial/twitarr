@@ -105,9 +105,9 @@ module Api
 
         errors.push 'Limit must be greater than 0.' if !params[:limit].nil? && params[:limit].to_i < 1
 
-        errors.push 'Page must be greater than or equal to 0.' if !params[:page].nil? && params[:page].to_i < 0
+        errors.push 'Page must be greater than or equal to 0.' if !params[:page].nil? && params[:page].to_i.negative?
 
-        if errors.count > 0
+        if errors.count.positive?
           render status: :bad_request, json: { status: 'error', errors: errors }
           return false
         end

@@ -32,7 +32,7 @@ class Event < ApplicationRecord
   pg_search_scope :pg_search,
                   against: [:description, :location, :title],
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   default_scope { order(start_time: :asc, title: :asc) }

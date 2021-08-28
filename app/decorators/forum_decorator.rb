@@ -6,18 +6,18 @@ class ForumDecorator < BaseDecorator
 
   def to_meta_hash(current_user = nil, page_size = Forum::PAGE_SIZE)
     ret = {
-        id: id.to_s,
-        subject: subject,
-        sticky: sticky,
-        locked: locked,
-        last_post_author: last_post_user.decorate.gui_hash,
-        posts: forum_posts_count,
-        timestamp: last_post_time.to_ms,
-        last_post_page: 0
+      id: id.to_s,
+      subject: subject,
+      sticky: sticky,
+      locked: locked,
+      last_post_author: last_post_user.decorate.gui_hash,
+      posts: forum_posts_count,
+      timestamp: last_post_time.to_ms,
+      last_post_page: 0
     }
     unless current_user.nil?
       count = post_count_since_last_visit(current_user)
-      ret[:new_posts] = count if count > 0
+      ret[:new_posts] = count if count.positive?
       ret[:last_post_page] = (forum_posts_count - count) / page_size
     end
     ret
@@ -44,7 +44,7 @@ class ForumDecorator < BaseDecorator
     prev_page = nil
 
     next_page = page + 1 if forum_posts_count > offset + page_size
-    prev_page = page - 1 unless (offset - 1) < 0
+    prev_page = page - 1 unless (offset - 1).negative?
     page_count = (forum_posts_count.to_f / page_size).ceil
 
     last_view = current_user ? Forum.forum_last_view(id, current_user.id) : nil

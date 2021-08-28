@@ -30,7 +30,7 @@ class Seamail < ApplicationRecord
                   against: :subject,
                   associated_against: { users: [:username, :display_name], seamail_messages: :text },
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   def validate_users
@@ -57,9 +57,9 @@ class Seamail < ApplicationRecord
   end
 
   def seamail_count(count_is_unread = false, user_id = 0)
-    if count_is_unread && user_id > 0
+    if count_is_unread && user_id.positive?
       seamail_messages.includes(:user_seamails).references(:user_seamails)
-          .where('user_seamails.user_id = ? AND (user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed)', user_id).count
+                      .where('user_seamails.user_id = ? AND (user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed)', user_id).count
     else
       seamail_messages.count
     end
@@ -119,14 +119,14 @@ class Seamail < ApplicationRecord
   end
 
   def self.create_moderator_seamail
-    unless Seamail.any?
-      Seamail.create_new_seamail(
-        'twitarrteam',
-        %w(official moderator),
-        'Moderator Discussion',
-        'This seamail is for discussion of Twit-arr moderation.',
-        'TwitarrTeam'
-      )
-    end
+    return if Seamail.any?
+
+    Seamail.create_new_seamail(
+      'twitarrteam',
+      %w[official moderator],
+      'Moderator Discussion',
+      'This seamail is for discussion of Twit-arr moderation.',
+      'TwitarrTeam'
+    )
   end
 end

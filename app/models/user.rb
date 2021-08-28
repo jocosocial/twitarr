@@ -65,8 +65,8 @@ class User < ApplicationRecord
 
   USERNAME_CACHE_TIME = 30.minutes
 
-  USERNAME_REGEX = /^\w{3,40}$/.freeze
-  DISPLAY_NAME_REGEX = /^[\w. &-]{3,40}$/.freeze
+  USERNAME_REGEX = /^\w{3,40}$/
+  DISPLAY_NAME_REGEX = /^[\w. &-]{3,40}$/
 
   ACTIVE_STATUS = 'active'
   RESET_PASSWORD = 'seamonkey'

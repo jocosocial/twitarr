@@ -1,4 +1,4 @@
-FROM ruby:2.6.8
+FROM ruby:3.0.2
 
 COPY Gemfile* /tmp/
 COPY docker-prereqs.sh /tmp/
@@ -6,7 +6,7 @@ WORKDIR /tmp
 
 RUN ./docker-prereqs.sh
 
-RUN gem install bundler:2.1.4
+RUN gem install bundler:2.2.22
 
 # If running in development, remove this line
 RUN bundle config set without 'development test'

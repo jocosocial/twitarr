@@ -12,6 +12,15 @@ AllCops:
     - 'tmp/**/*'
     - 'vendor/**/*'
 
+Rails:
+  Enabled: true
+
+Rails/HttpPositionalArguments:
+  Enabled: true
+
+Rails/UniqBeforePluck:
+  EnforcedStyle: aggressive
+
 Style/Documentation:
   Enabled: false
 
@@ -25,36 +34,7 @@ Style/OptionalBooleanParameter:
 Layout/LineLength:
   Enabled: false
 
-Style/RaiseArgs:
-  EnforcedStyle: compact
-
-Style/RegexpLiteral:
-  Enabled: false
-
-Style/SafeNavigation:
-  Enabled: false
-
-Style/SignalException:
-  EnforcedStyle: only_raise
-
-Style/SingleLineBlockParams:
-  Enabled: false
-
-# This cop doesn't work properly if you a have a block with
-# arguments split across multiple lines
-Layout/SpaceAroundBlockParameters:
-  Enabled: false
-
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
-  Exclude:
-    - 'spec/**/*'
-
-# We don't require %i() for an array of symbols.
 Style/SymbolArray:
-  Enabled: false
-
-Naming/VariableNumber:
   Enabled: false
 
 Metrics/AbcSize:
@@ -84,21 +64,8 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Enabled: false
 
-Rails:
-  Enabled: true
-
-Rails/HttpPositionalArguments:
-  Enabled: true
-
-Rails/UniqBeforePluck:
-  EnforcedStyle: aggressive
-
-# This cop is too greedy I dont
-# want to underscore my timestamps.
+# Who uses underscores in numbers, anyway?
 Style/NumericLiterals:
-  Enabled: false
-
-Style/StructInheritance:
   Enabled: false
 
 Rails/TimeZone:

@@ -27,7 +27,7 @@ module Api
         extra_query = {}
         counting_unread = false
         begin
-          if params[:unread] && params[:unread].to_bool
+          if params[:unread]&.to_bool
             extra_query[:unread] = true
             counting_unread = true
           end

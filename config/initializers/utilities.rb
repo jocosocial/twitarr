@@ -7,7 +7,7 @@ class String
 
     return false if self == false || blank? || self =~ /^(false|f|no|n|0)$/i
 
-    raise ArgumentError.new("Invalid value for Boolean: #{self}")
+    raise ArgumentError, "Invalid value for Boolean: #{self}"
   end
 end
 
@@ -17,7 +17,7 @@ class Integer
 
     return false if zero?
 
-    raise ArgumentError.new("Invalid value for Boolean: #{self}")
+    raise ArgumentError, "Invalid value for Boolean: #{self}"
   end
 end
 

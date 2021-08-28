@@ -20,7 +20,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install gem dependencies
+    - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libidn11-dev libmagickwand-dev libpq-dev
 
     - name: Set up Ruby
@@ -29,10 +29,7 @@ jobs:
         ruby-version: 2.6.8
         bundler-cache: true
 
-    - name: Install Code Scanning integration
-      run: bundle add code-scanning-rubocop --skip-install
-
-    - name: Rubocop run
+    - name: Run RuboCop
       run: |
         bash -c "
           bundle exec rubocop --require code_scanning --format CodeScanning::SarifFormatter -o rubocop.sarif

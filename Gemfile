@@ -55,7 +55,7 @@ gem 'icalendar', '>= 2.3.0'
 gem 'lograge'
 
 # Used for the github rubocop action
-gem 'code-scanning-rubocop'
+gem 'code-scanning-rubocop', require: false
 
 group :development do
   gem 'annotate'

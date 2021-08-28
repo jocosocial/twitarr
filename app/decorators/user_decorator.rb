@@ -34,7 +34,7 @@ class UserDecorator < Draper::Decorator
   end
 
   def admin_hash
-    ts = if last_login == Time.at(0)
+    ts = if last_login == Time.zone.at(0)
            0
          else
            last_login.to_ms

@@ -6,7 +6,7 @@ module Api
       before_action :login_required, only: [:last_checked]
 
       def index
-        current_time = Time.now
+        current_time = Time.zone.now
 
         announcements = Announcement.valid_announcements.map { |x| x.decorate.to_hash(request_options) }
         if logged_in?
@@ -26,7 +26,7 @@ module Api
           end
           last_checked_time = current_user[:last_viewed_alerts]
         else
-          last_checked_time = session[:last_viewed_alerts] || Time.from_param(params[:last_checked_time]) || Time.at(0)
+          last_checked_time = session[:last_viewed_alerts] || Time.from_param(params[:last_checked_time]) || Time.zone.at(0)
           tweet_mentions = []
           forum_mentions = []
           unread_seamail = []
@@ -44,7 +44,7 @@ module Api
         if logged_in?
           render json: { status: 'ok', user_alerts: current_user.decorate.alerts_meta }
         else
-          last_checked_time = session[:last_viewed_alerts] || Time.from_param(params[:last_checked_time]) || Time.at(0)
+          last_checked_time = session[:last_viewed_alerts] || Time.from_param(params[:last_checked_time]) || Time.zone.at(0)
           render json: { status: 'ok', user_alerts: { unnoticed_announcements: Announcement.new_announcements(last_checked_time).count } }
         end
       end

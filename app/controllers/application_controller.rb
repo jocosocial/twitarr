@@ -110,7 +110,7 @@ class ApplicationController < ActionController::Base
   end
 
   def build_key(name, hashed_password, expiration = 0)
-    expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration.zero?
+    expiration = (Time.zone.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration.zero?
 
     digest = OpenSSL::HMAC.hexdigest(
       OpenSSL::Digest.new('SHA1'),
@@ -196,7 +196,7 @@ class ApplicationController < ActionController::Base
     return false if username.nil? || expiration.nil? || digest.nil?
 
     begin
-      return false if Time.from_param(expiration) < Time.now # Key expiration is in the past, abort
+      return false if Time.from_param(expiration) < Time.zone.now # Key expiration is in the past, abort
     rescue StandardError
       return false # Couldn't parse the expiration, abort
     end

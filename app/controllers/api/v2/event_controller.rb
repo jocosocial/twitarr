@@ -102,7 +102,7 @@ module Api
       end
 
       def mine_soon_query(minutes)
-        Event.includes(:user_events).references(:user_events).where('user_events.user_id = ? AND start_time >= ? AND start_time <= ?', current_user.id, Time.now, Time.now + minutes.minutes)
+        Event.includes(:user_events).references(:user_events).where('user_events.user_id = ? AND start_time >= ? AND start_time <= ?', current_user.id, Time.zone.now, Time.zone.now + minutes.minutes)
       end
 
       def event_list_output(day, events)

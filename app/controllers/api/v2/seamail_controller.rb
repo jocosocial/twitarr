@@ -52,7 +52,7 @@ module Api
           mails = mails.map { |x| x.decorate.to_meta_hash(as_user.id, counting_unread) }
         end
 
-        render json: { status: 'ok', output => mails, last_checked: Time.now.to_ms }
+        render json: { status: 'ok', output => mails, last_checked: Time.zone.now.to_ms }
       end
 
       def threads

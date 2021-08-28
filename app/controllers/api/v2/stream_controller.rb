@@ -283,7 +283,7 @@ module Api
       end
 
       def newest_posts(query)
-        start = Time.now.to_ms
+        start = Time.zone.now.to_ms
         params[:start] = start
         older_posts(query)
       end

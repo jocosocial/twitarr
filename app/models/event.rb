@@ -55,7 +55,7 @@ class Event < ApplicationRecord
     event.location = options[:location] unless options[:location].nil?
     event.official = options[:official] unless options[:official].nil?
     # Time.parse should occur on the controller side, but I haven't got time to straighten this out right now
-    event.end_time = Time.parse(options[:end_time]) unless options[:end_time].nil?
+    event.end_time = Time.zone.parse(options[:end_time]) unless options[:end_time].nil?
     event
   end
 

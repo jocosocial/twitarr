@@ -102,7 +102,7 @@ module Api
       end
 
       def new_announcement
-        time = Time.now
+        time = Time.zone.now
         errors = []
 
         errors.push('Text is required.') if params[:text].blank?
@@ -131,7 +131,7 @@ module Api
       end
 
       def update_announcement
-        time = Time.now
+        time = Time.zone.now
         errors = []
 
         errors.push('Text is required.') if params[:text].blank?

@@ -18,7 +18,7 @@ module Api
       end
 
       def time
-        now = Time.now
+        now = Time.zone.now
         render json: {
           status: 'ok',
           epoch: now.to_ms,

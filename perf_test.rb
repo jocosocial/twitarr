@@ -55,7 +55,7 @@ if $PROGRAM_NAME == __FILE__
   signal = false
   lock = Mutex.new
   total_count = 0
-  start_time = Time.now
+  start_time = Time.zone.now
 
   Rails.logger.info 'Starting requests'
 
@@ -80,7 +80,7 @@ if $PROGRAM_NAME == __FILE__
     rescue StandardError => e
       Rails.logger.error e.inspect
     end
-    end_time = Time.now
+    end_time = Time.zone.now
     Rails.logger.info "TOTAL COUNT: #{total_count} in time: #{end_time - start_time} seconds"
     exit
   end

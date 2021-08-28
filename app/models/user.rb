@@ -181,7 +181,7 @@ class User < ApplicationRecord
   end
 
   def update_last_login
-    self.last_login = Time.now
+    self.last_login = Time.zone.now
     self
   end
 
@@ -207,7 +207,7 @@ class User < ApplicationRecord
 
   def upcoming_events(alerts = false, unnoticed = false)
     upcoming = user_events.includes(:event).references(:events)
-                          .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', Time.now - 1.hour, Time.now + 2.hours, Time.now)
+                          .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', Time.zone.now - 1.hour, Time.zone.now + 2.hours, Time.zone.now)
 
     if unnoticed
       upcoming = upcoming.where(acknowledged_alert: false)
@@ -275,7 +275,7 @@ class User < ApplicationRecord
     result = PhotoStore.instance.reset_profile_photo username
     if result[:status] == 'ok'
       self.photo_hash = result[:md5_hash]
-      self.last_photo_updated = Time.now
+      self.last_photo_updated = Time.zone.now
       save
     end
     result
@@ -285,7 +285,7 @@ class User < ApplicationRecord
     result = PhotoStore.instance.upload_profile_photo(file, username)
     if result[:status] == 'ok'
       self.photo_hash = result[:md5_hash]
-      self.last_photo_updated = Time.now
+      self.last_photo_updated = Time.zone.now
       save
     end
     result
@@ -309,7 +309,7 @@ class User < ApplicationRecord
   end
 
   def update_forum_view(forum_id)
-    now = Time.now
+    now = Time.zone.now
 
     # rubocop:disable Rails/SkipsModelValidations
     UserForumView.upsert({ user_id: id, forum_id: forum_id, last_viewed: now }, unique_by: [:user_id, :forum_id])
@@ -322,7 +322,7 @@ class User < ApplicationRecord
     query = Forum.unscoped.all
     query = query.includes(:posts).where(forum_posts: { author: id }).references(:forum_posts) if participated_only
 
-    now = Time.now
+    now = Time.zone.now
     timestamps = query.pluck(:id).map do |forum_id|
       clear_forum_view_cache(forum_id, now)
       { user_id: id, forum_id: forum_id, last_viewed: now }
@@ -341,7 +341,7 @@ class User < ApplicationRecord
     end
   end
 
-  def reset_last_viewed_alerts(time = Time.now)
+  def reset_last_viewed_alerts(time = Time.zone.now)
     self.last_viewed_alerts = time
   end
 
@@ -378,7 +378,7 @@ class User < ApplicationRecord
 
   def last_forum_view(forum_id)
     ts = forum_view_timestamps.find_by(forum_id: forum_id)
-    ts ? ts.view_time : Time.new(0)
+    ts ? ts.view_time : Time.zone.local(0)
   end
 
   def self.search(params = {})

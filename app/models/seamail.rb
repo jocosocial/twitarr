@@ -74,7 +74,7 @@ class Seamail < ApplicationRecord
   end
 
   def self.create_new_seamail(author, to_users, subject, first_message_text, original_author)
-    right_now = Time.now
+    right_now = Time.zone.now
     to_users ||= []
     to_users = to_users.map(&:downcase).uniq
     to_users << author unless to_users.include? author
@@ -101,7 +101,7 @@ class Seamail < ApplicationRecord
   end
 
   def add_message(author, text, original_author)
-    right_now = Time.now
+    right_now = Time.zone.now
     self.last_update = right_now
     author_id = User.get(author).id
     new_message = SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id, created_at: right_now)

@@ -62,9 +62,9 @@ class Time
     if input.respond_to?(:strftime)
       input
     elsif input.is_a?(Integer) || input =~ /^\d+$/
-      Time.at(input.to_i / 1000.0)
+      Time.zone.at(input.to_i / 1000.0)
     else
-      Time.parse(input)
+      Time.zone.parse(input)
     end
   end
 end

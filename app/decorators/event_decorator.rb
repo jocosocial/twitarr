@@ -16,7 +16,7 @@ class EventDecorator < BaseDecorator
     }
     # If DST hasn't started yet and we're viewing events that begin after DST starts,
     # adjust the displayed event start/end times to appear as if DST had not yet begun
-    if Time.new < Event::DST_START && start_time >= Event::DST_START
+    if Time.zone.now < Event::DST_START && start_time >= Event::DST_START
       result[:start_time] = (start_time + 1.hour).to_ms
       result[:end_time] = (end_time + 1.hour).to_ms if end_time.present?
     else

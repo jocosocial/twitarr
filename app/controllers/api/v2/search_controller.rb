@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class SearchController < ApiController
@@ -19,7 +21,7 @@ module Api
         render json: {
           status: 'ok',
           query: params[:query],
-          users:  do_search(params, User, Section.enabled?(:user_profile)) { |e| e.decorate.gui_hash },
+          users: do_search(params, User, Section.enabled?(:user_profile)) { |e| e.decorate.gui_hash },
           seamails: do_search(params, Seamail, Section.enabled?(:seamail)) { |e| e.decorate.to_meta_hash(current_user.id) },
           tweets: do_search(params, StreamPost, Section.enabled?(:stream)) { |e| e.decorate.to_hash(current_user, request_options) },
           forums: do_search(params, Forum, Section.enabled?(:forums)) { |e| e.decorate.to_meta_hash(current_user) },

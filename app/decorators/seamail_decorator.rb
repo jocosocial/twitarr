@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SeamailDecorator < Draper::Decorator
   delegate_all
   include ActionView::Helpers::TextHelper
@@ -27,5 +29,4 @@ class SeamailDecorator < Draper::Decorator
         count_is_unread: count_is_unread && current_user_id > 0
     }
   end
-
 end

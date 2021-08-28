@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '2.6.8'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'dalli'
@@ -12,8 +14,6 @@ gem 'sprockets-rails'
 gem 'bcrypt'
 gem 'bootsnap'
 gem 'coffee-rails'
-
-gem 'therubyracer'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'

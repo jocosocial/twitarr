@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class AdminController < ApiController
@@ -181,7 +183,7 @@ module Api
         query = Section.all
         if params[:category]
           categories = ['global', params[:category]]
-          query = query.where('category in (?)', categories)
+          query = query.where(category: categories)
         end
 
         render json: { status: 'ok', sections: query.map { |x| x.decorate.to_hash } }

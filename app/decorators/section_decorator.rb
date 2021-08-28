@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SectionDecorator < BaseDecorator
   delegate_all
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StreamPostDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::DateHelper

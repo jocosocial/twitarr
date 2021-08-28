@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class ForumsController < ApiController
@@ -26,7 +28,7 @@ module Api
           query = query.includes(:forum_views).references(:user_forum_views)
           if params.key?(:participated) && params[:participated].to_bool
             begin
-              query = query.includes(:posts).where('forum_posts.author = ?', current_user.id).references(:forum_posts)
+              query = query.includes(:posts).where(forum_posts: { author: current_user.id }).references(:forum_posts)
             rescue ArgumentError => e
               errors.push e.message
             end

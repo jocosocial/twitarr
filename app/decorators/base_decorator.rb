@@ -1,11 +1,12 @@
-class BaseDecorator < Draper::Decorator
+# frozen_string_literal: true
 
+class BaseDecorator < Draper::Decorator
   include Twitter::TwitterText::Autolink
   include CruiseMonkeyHelper
 
   EMOJI_REGEX = Regexp.new('\:(buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie)\:')
-  EMOJI_REPLACE = '<img src="/img/emoji/small/\1.png" class="emoji" />'.freeze
-  EMOJI_REPLACE_CM = '<cm-emoji type="\1" />'.freeze
+  EMOJI_REPLACE = '<img src="/img/emoji/small/\1.png" class="emoji" />'
+  EMOJI_REPLACE_CM = '<cm-emoji type="\1" />'
 
   def format_text(text, options = {})
     twitarr_auto_linker(replace_emoji(clean_text_with_cr(text, options), options), options)
@@ -31,7 +32,7 @@ class BaseDecorator < Draper::Decorator
   end
 
   def self.reaction_summary(post_reactions, user_id)
-    summary = Hash.new
+    summary = {}
     post_reactions.each do |x|
       reaction = x.reaction.name
       summary[reaction] = if summary.key?(reaction)
@@ -54,5 +55,4 @@ class BaseDecorator < Draper::Decorator
       auto_link text
     end
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: forums
@@ -28,8 +30,8 @@ class Forum < ApplicationRecord
 
   has_many :posts, -> { order(:created_at) }, class_name: 'ForumPost', dependent: :destroy, inverse_of: :forum, validate: false
   has_many :users, through: :posts
-  has_many :forum_views, inverse_of: :forum, foreign_key: :forum_id, dependent: :destroy, class_name: 'UserForumView'
-  belongs_to :last_post_user, class_name: 'User', foreign_key: :last_post_user_id, inverse_of: :forums_last_poster
+  has_many :forum_views, inverse_of: :forum, dependent: :destroy, class_name: 'UserForumView'
+  belongs_to :last_post_user, class_name: 'User', inverse_of: :forums_last_poster
 
   validates :subject, presence: true, length: { maximum: 200 }
   validate :validate_posts
@@ -112,7 +114,7 @@ class Forum < ApplicationRecord
     query = if params[:mentions_only]
               query.where('forum_posts.mentions @> ?', "{#{query_string}}")
             else
-              user_id = User.find_by_username(query_string).id
+              user_id = User.find_by(username: query_string).id
               query.where('forum_posts.mentions @> ? or forum_posts.author = ?', "{#{query_string}}", user_id)
             end
     if params[:after]

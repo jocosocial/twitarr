@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: seamails
@@ -112,7 +114,7 @@ class Seamail < ApplicationRecord
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
     user_id = params[:current_user_id]
-    query = Seamail.pg_search(search_text).joins(:user_seamails).where('user_seamails_seamails.user_id = ?', user_id)
+    query = Seamail.pg_search(search_text).joins(:user_seamails).where(user_seamails_seamails: { user_id: user_id })
     limit_criteria(query, params)
   end
 
@@ -127,5 +129,4 @@ class Seamail < ApplicationRecord
       )
     end
   end
-
 end

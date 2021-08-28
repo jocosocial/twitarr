@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PostReactionDecorator < Draper::Decorator
   delegate_all
 

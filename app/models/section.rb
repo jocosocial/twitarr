@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: sections
@@ -25,13 +27,13 @@ class Section < ApplicationRecord
   end
 
   def self.enabled?(section)
-    section.blank? || Section.find_by_name(section).enabled
+    section.blank? || Section.find_by(name: section).enabled
   rescue StandardError
     true
   end
 
   def self.toggle(section, enabled)
-    doc = Section.find_by_name(section)
+    doc = Section.find_by(name: section)
     if doc
       doc.enabled = enabled
       doc.save

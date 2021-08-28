@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'nokogiri'
 require 'open-uri'
 require 'net/http'
 require 'json'
 require 'peach'
 
-SERVER_URL = 'http://localhost:3000'.freeze
+SERVER_URL = 'http://localhost:3000'
 # SERVER_URL = 'https://twitarr.rylath.net'
 
 requests = [

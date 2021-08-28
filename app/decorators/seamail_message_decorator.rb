@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SeamailMessageDecorator < BaseDecorator
   delegate_all
 

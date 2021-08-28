@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ForumPostDecorator < BaseDecorator
   delegate_all
 

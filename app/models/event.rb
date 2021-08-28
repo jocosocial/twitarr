@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: events
@@ -71,7 +73,7 @@ class Event < ApplicationRecord
     #  event.start_time = ics_event.dtstart
     #  event.end_time = ics_event.dtend unless ics_event.dtend.nil?
     # end
-    event.official = !ics_event.categories.include?('SHADOW CRUISE')
+    event.official = ics_event.categories.exclude?('SHADOW CRUISE')
     # locations tend to have trailing commas for some reason
     event.location = ics_event.location.force_encoding('utf-8').strip.gsub(/,$/, '')
     event.save
@@ -96,5 +98,4 @@ class Event < ApplicationRecord
     doc = user_events.find_by(user_id: user_id)
     user_events.delete(doc) if doc
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class HashtagController < ApiController
@@ -16,10 +18,9 @@ module Api
           render status: :bad_request, json: { status: 'error', error: "Minimum length is #{Hashtag::MIN_AUTO_COMPLETE_LEN}" }
           return
         end
-        values = Hashtag.auto_complete(query).map { |e|e[:name] }
+        values = Hashtag.auto_complete(query).pluck(:name)
         render json: { values: values }
       end
-
     end
   end
 end

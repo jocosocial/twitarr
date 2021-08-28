@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: user_comments
@@ -20,8 +22,8 @@
 #
 
 class UserComment < ApplicationRecord
-  belongs_to :user, class_name: 'User', foreign_key: :user_id, inverse_of: :user_comments
-  belongs_to :commented_user, class_name: 'User', foreign_key: :commented_user_id, inverse_of: :commented_by_users
+  belongs_to :user, class_name: 'User', inverse_of: :user_comments
+  belongs_to :commented_user, class_name: 'User', inverse_of: :commented_by_users
 
   validates :comment, length: { maximum: 5000 }
 end

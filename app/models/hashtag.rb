@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: hashtags
@@ -13,7 +15,6 @@
 #
 
 class Hashtag < ApplicationRecord
-
   MIN_AUTO_COMPLETE_LEN = 3
   AUTO_COMPLETE_LIMIT = 10
   MAX_LENGTH = 100

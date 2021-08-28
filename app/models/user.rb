@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -37,7 +39,6 @@
 require 'bcrypt'
 
 class User < ApplicationRecord
-
   class Role
     ADMIN = 5
     THO = 4
@@ -67,8 +68,8 @@ class User < ApplicationRecord
   USERNAME_REGEX = /^\w{3,40}$/.freeze
   DISPLAY_NAME_REGEX = /^[\w. &-]{3,40}$/.freeze
 
-  ACTIVE_STATUS = 'active'.freeze
-  RESET_PASSWORD = 'seamonkey'.freeze
+  ACTIVE_STATUS = 'active'
+  RESET_PASSWORD = 'seamonkey'
 
   # TODO: Create these as separate tables
   # field :pc, as: :personal_comments, type: Hash, default: {}
@@ -76,16 +77,16 @@ class User < ApplicationRecord
   has_many :stream_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
   has_many :forum_posts, inverse_of: :user, foreign_key: :author, dependent: :destroy
   has_many :announcements, inverse_of: :user, foreign_key: :author, dependent: :destroy
-  has_many :post_reactions, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'PostReaction'
-  has_many :forum_views, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserForumView'
+  has_many :post_reactions, inverse_of: :user, dependent: :destroy, class_name: 'PostReaction'
+  has_many :forum_views, inverse_of: :user, dependent: :destroy, class_name: 'UserForumView'
   has_many :user_seamails, inverse_of: :user, dependent: :destroy
   has_many :seamails, through: :user_seamails
   has_many :seamail_messages, through: :seamails
   has_many :seamail_messages_authored, inverse_of: :user, foreign_key: :author, dependent: :destroy, class_name: 'SeamailMessage'
-  has_many :user_stars, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserStar'
+  has_many :user_stars, inverse_of: :user, dependent: :destroy, class_name: 'UserStar'
   has_many :starred_users, through: :user_stars
   has_many :starred_by_users, inverse_of: :starred_user, foreign_key: :starred_user_id, dependent: :destroy, class_name: 'UserStar'
-  has_many :user_comments, inverse_of: :user, foreign_key: :user_id, dependent: :destroy, class_name: 'UserComment'
+  has_many :user_comments, inverse_of: :user, dependent: :destroy, class_name: 'UserComment'
   has_many :commented_by_users, inverse_of: :commented_user, foreign_key: :commented_user_id, dependent: :destroy, class_name: 'UserComment'
   has_many :user_events, inverse_of: :user, dependent: :destroy
   has_many :events, through: :user_events
@@ -132,7 +133,7 @@ class User < ApplicationRecord
 
   def valid_username?
     errors.add(:username, 'Username must be three to forty characters long, and can only include letters, numbers, and underscore.') unless User.valid_username?(username)
-    errors.add :username, 'An account with this username already exists.' if new_record? && User.where(username: username).exists?
+    errors.add :username, 'An account with this username already exists.' if new_record? && User.exists?(username: username)
   end
 
   def valid_password?
@@ -143,7 +144,7 @@ class User < ApplicationRecord
   def valid_registration_code?
     return true if Rails.configuration.disable_registration_codes
 
-    errors.add(:registration_code, 'Invalid registration code.') if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.where(registration_code: registration_code).exists?)
+    errors.add(:registration_code, 'Invalid registration code.') if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.exists?(registration_code: registration_code))
   end
 
   def self.valid_display_name?(name)
@@ -263,7 +264,7 @@ class User < ApplicationRecord
   end
 
   def self.exist?(username)
-    where(username: format_username(username)).exists?
+    exists?(username: format_username(username))
   end
 
   def self.get(username)
@@ -303,30 +304,32 @@ class User < ApplicationRecord
   end
 
   def unnoticed_mentions
-    @unnoticed_mentions ||= begin
-      StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
+    @unnoticed_mentions ||= StreamPost.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count +
       Forum.view_mentions(query: username, after: last_viewed_alerts, mentions_only: true).count
-    end
   end
 
   def update_forum_view(forum_id)
     now = Time.now
 
+    # rubocop:disable Rails/SkipsModelValidations
     UserForumView.upsert({ user_id: id, forum_id: forum_id, last_viewed: now }, unique_by: [:user_id, :forum_id])
+    # rubocop:enable Rails/SkipsModelValidations
 
     clear_forum_view_cache(forum_id, now)
   end
 
   def mark_all_forums_read(participated_only)
     query = Forum.unscoped.all
-    query = query.includes(:posts).where('forum_posts.author = ?', id).references(:forum_posts) if participated_only
+    query = query.includes(:posts).where(forum_posts: { author: id }).references(:forum_posts) if participated_only
 
     now = Time.now
     timestamps = query.pluck(:id).map do |forum_id|
       clear_forum_view_cache(forum_id, now)
       { user_id: id, forum_id: forum_id, last_viewed: now }
     end
+    # rubocop:disable Rails/SkipsModelValidations
     UserForumView.upsert_all(timestamps, unique_by: [:user_id, :forum_id])
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def clear_forum_view_cache(forum_id, now)

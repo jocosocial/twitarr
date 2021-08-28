@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   protect_from_forgery unless: -> { request.format.json? }
 
-  def index
-  end
+  def index; end
 
   def route_not_found
     render status: :not_found, json: { status: :error, error: 'Route not found.' }
@@ -71,12 +72,10 @@ class ApplicationController < ActionController::Base
     result = { user: user }
     if user.nil?
       result[:error] = 'Invalid username or password.'
-    elsif user.password.blank? # We need to check this condition before comparing passwords
+    elsif user.password.blank? || user.status != User::ACTIVE_STATUS # We need to check this condition before comparing passwords
       result[:error] = 'User account has been disabled.'
-    elsif !user.correct_password?(password)
+    elsif !user.correct_password?(password) # rubocop:disable Lint/DuplicateBranch
       result[:error] = 'Invalid username or password.'
-    elsif user.status != User::ACTIVE_STATUS # If a user's password is set, we only want to report they're locked if they have the right password
-      result[:error] = 'User account has been disabled.'
     elsif user.role == User::Role::BANNED
       result[:error] = "User account has been banned. Reason: #{user.ban_reason}"
     else
@@ -215,5 +214,4 @@ class ApplicationController < ActionController::Base
   end
 
   KEY_EXPIRATION_DAYS = 10
-
 end

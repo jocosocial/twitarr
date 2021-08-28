@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'singleton'
 
@@ -183,7 +185,7 @@ class PhotoStore
     PHOTO_CONTENT_TYPES = %w(image/png image/jpeg image/gif).freeze
 
     def initialize(file)
-      Rails.logger.debug("content type = #{file.content_type}")
+      Rails.logger.debug { "content type = #{file.content_type}" }
       case file.content_type
       when 'image/png'
         ext = '.png'
@@ -193,7 +195,7 @@ class PhotoStore
         ext = '.gif'
       end
       file.original_filename = SecureRandom.uuid.to_s + ext
-      Rails.logger.debug("filename = #{file.original_filename}")
+      Rails.logger.debug { "filename = #{file.original_filename}" }
       @file = file
     end
 

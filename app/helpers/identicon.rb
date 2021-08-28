@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rmagick'
 require 'siphash'
 
@@ -37,7 +39,6 @@ module Identicon
       self.background_color = options[:background_color] if options[:background_color] && (options[:background_color] != 'transparent')
     end
     blocks = Magick::Draw.new
-
 
     # set the stroke color based off of the hash
     # set the foreground color by using the first three bytes of the hash value

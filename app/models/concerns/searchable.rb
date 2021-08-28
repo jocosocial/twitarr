@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Searchable
   def self.included(base)
     base.send :include, PgSearch::Model
@@ -6,7 +8,6 @@ module Searchable
   end
 
   module InstanceMethods
-
   end
 
   module ClassMethods
@@ -20,5 +21,4 @@ module Searchable
       criteria
     end
   end
-
 end

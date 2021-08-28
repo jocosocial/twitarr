@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Postable
   def self.included(base)
     base.send :include, InstanceMethods
@@ -11,10 +13,7 @@ module Postable
       if text
         entities = extract_entities_with_indices text
         entities.each do |entity|
-          entity = entity.inject({}) do |x, (k, v)|
-            x[k.to_sym] = v
-            x
-          end
+          entity = entity.transform_keys(&:to_sym)
           if entity.key?(:hashtag)
             hash_tag = entity[:hashtag].downcase
             if hash_tag.length > Hashtag::MAX_LENGTH

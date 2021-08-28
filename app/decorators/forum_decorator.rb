@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ForumDecorator < BaseDecorator
   delegate_all
   include ActionView::Helpers::TextHelper
@@ -62,5 +64,4 @@ class ForumDecorator < BaseDecorator
     ret[:latest_read] = last_view&.to_ms unless current_user.nil?
     ret
   end
-
 end

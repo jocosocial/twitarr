@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AnnouncementDecorator < BaseDecorator
   delegate_all
   include Twitter::TwitterText::Autolink
@@ -20,5 +22,4 @@ class AnnouncementDecorator < BaseDecorator
         valid_until: valid_until.to_ms
     }
   end
-
 end

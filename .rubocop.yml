@@ -2,6 +2,7 @@ require: rubocop-rails
 
 AllCops:
   DisplayCopNames: true
+  SuggestExtensions: false
   Exclude:
     - 'bin/**/*'
     - 'coverage/**/*'
@@ -11,64 +12,13 @@ AllCops:
     - 'tmp/**/*'
     - 'vendor/**/*'
 
-Rails/DynamicFindBy:
-  Enabled: false
-
-# This cop has poor handling for the common case of a lambda arg in a DSL
-Lint/AmbiguousBlockAssociation:
-  Enabled: false
-
-Lint/AmbiguousOperator:
-  Enabled: false
-
-Style/Alias:
-  EnforcedStyle: prefer_alias_method
-
-Layout/HashAlignment:
-  Enabled: false
-
 Style/Documentation:
   Enabled: false
 
-Style/DoubleNegation:
+Style/SoleNestedConditional:
   Enabled: false
 
-# auto-correct is broken for this cop:
-# https://github.com/bbatsov/rubocop/issues/3271
-Style/EachForSimpleLoop:
-  AutoCorrect: false
-
-Style/EachWithObject:
-  Enabled: false
-
-Layout/EmptyLines:
-  Enabled: false
-
-Layout/EmptyLinesAroundBlockBody:
-  Enabled: false
-
-Layout/EmptyLinesAroundClassBody:
-  Enabled: false
-
-Layout/EmptyLinesAroundModuleBody:
-  Enabled: false
-
-Layout/EmptyLinesAroundMethodBody:
-  Enabled: false
-
-Style/EmptyLiteral:
-  Enabled: false
-
-Style/EmptyMethod:
-  Enabled: false
-
-# The Exclude list is not additive. Projects that exclude file names will
-# need to re-add Appraisals.
-Naming/FileName:
-  Exclude:
-    - 'Appraisals'
-
-Style/FrozenStringLiteralComment:
+Style/OptionalBooleanParameter:
   Enabled: false
 
 Style/GuardClause:
@@ -195,105 +145,125 @@ Style/StructInheritance:
 Rails/TimeZone:
   Enabled: false
 
-Layout/BeginEndAlignment: # (new in 0.91)
+Gemspec/DateAssignment: # new in 1.10
   Enabled: true
-Layout/EmptyLinesAroundAttributeAccessor: # (new in 0.83)
+Layout/LineEndStringConcatenationIndentation: # new in 1.18
   Enabled: true
-Layout/SpaceAroundMethodCallOperator: # (new in 0.82)
+Layout/SpaceBeforeBrackets: # new in 1.7
   Enabled: true
-Lint/BinaryOperatorWithIdenticalOperands: # (new in 0.89)
+Lint/AmbiguousAssignment: # new in 1.7
   Enabled: true
-Lint/ConstantDefinitionInBlock: # (new in 0.91)
+Lint/AmbiguousRange: # new in 1.19
   Enabled: true
-Lint/DeprecatedOpenSSLConstant: # (new in 0.84)
+Lint/DeprecatedConstants: # new in 1.8
   Enabled: true
-Lint/DuplicateElsifCondition: # (new in 0.88)
+Lint/DuplicateBranch: # new in 1.3
   Enabled: true
-Lint/DuplicateRequire: # (new in 0.90)
+Lint/DuplicateRegexpCharacterClassElement: # new in 1.1
   Enabled: true
-Lint/DuplicateRescueException: # (new in 0.89)
+Lint/EmptyBlock: # new in 1.1
   Enabled: true
-Lint/EmptyConditionalBody: # (new in 0.89)
+Lint/EmptyClass: # new in 1.3
   Enabled: true
-Lint/EmptyFile: # (new in 0.90)
+Lint/EmptyInPattern: # new in 1.16
   Enabled: true
-Lint/FloatComparison: # (new in 0.89)
+Lint/LambdaWithoutLiteralBlock: # new in 1.8
   Enabled: true
-Lint/HashCompareByIdentity: # (new in 0.93)
+Lint/NoReturnInBeginEndBlocks: # new in 1.2
   Enabled: true
-Lint/IdentityComparison: # (new in 0.91)
+Lint/NumberedParameterAssignment: # new in 1.9
   Enabled: true
-Lint/MissingSuper: # (new in 0.89)
+Lint/OrAssignmentToConstant: # new in 1.9
   Enabled: true
-Lint/MixedRegexpCaptureTypes: # (new in 0.85)
+Lint/RedundantDirGlobSort: # new in 1.8
   Enabled: true
-Lint/OutOfRangeRegexpRef: # (new in 0.89)
+Lint/SymbolConversion: # new in 1.9
   Enabled: true
-Lint/RaiseException: # (new in 0.81)
+Lint/ToEnumArguments: # new in 1.1
   Enabled: true
-Lint/RedundantSafeNavigation: # (new in 0.93)
+Lint/TripleQuotes: # new in 1.9
   Enabled: true
-Lint/SelfAssignment: # (new in 0.89)
+Lint/UnexpectedBlockArity: # new in 1.5
   Enabled: true
-Lint/StructNewOverride: # (new in 0.81)
+Lint/UnmodifiedReduceAccumulator: # new in 1.1
   Enabled: true
-Lint/TopLevelReturnWithArgument: # (new in 0.89)
+Naming/InclusiveLanguage: # new in 1.18
   Enabled: true
-Lint/TrailingCommaInAttributeDeclaration: # (new in 0.90)
+Style/ArgumentsForwarding: # new in 1.1
   Enabled: true
-Lint/UnreachableLoop: # (new in 0.89)
+Style/CollectionCompact: # new in 1.2
   Enabled: true
-Lint/UselessMethodDefinition: # (new in 0.90)
+Style/DocumentDynamicEvalDefinition: # new in 1.1
   Enabled: true
-Lint/UselessTimes: # (new in 0.91)
+Style/EndlessMethod: # new in 1.8
   Enabled: true
-Style/AccessorGrouping: # (new in 0.87)
+Style/HashConversion: # new in 1.10
   Enabled: true
-Style/BisectedAttrAccessor: # (new in 0.87)
+Style/HashExcept: # new in 1.7
   Enabled: true
-Style/CaseLikeIf: # (new in 0.88)
+Style/IfWithBooleanLiteralBranches: # new in 1.9
   Enabled: true
-Style/ClassEqualityComparison: # (new in 0.93)
+Style/InPatternThen: # new in 1.16
   Enabled: true
-Style/CombinableLoops: # (new in 0.90)
+Style/MultilineInPatternThen: # new in 1.16
   Enabled: true
-Style/ExplicitBlockArgument: # (new in 0.89)
+Style/NegatedIfElseCondition: # new in 1.2
   Enabled: true
-Style/ExponentialNotation: # (new in 0.82)
+Style/NilLambda: # new in 1.3
   Enabled: true
-Style/GlobalStdStream: # (new in 0.89)
+Style/QuotedSymbols: # new in 1.16
   Enabled: true
-Style/HashAsLastArrayItem: # (new in 0.88)
+Style/RedundantArgument: # new in 1.4
   Enabled: true
-Style/HashEachMethods: # (new in 0.80)
+Style/RedundantSelfAssignmentBranch: # new in 1.19
   Enabled: true
-Style/HashLikeCase: # (new in 0.88)
+Style/StringChars: # new in 1.12
   Enabled: true
-Style/HashTransformKeys: # (new in 0.80)
+Style/SwapValues: # new in 1.1
   Enabled: true
-Style/HashTransformValues: # (new in 0.80)
+Rails/ActiveRecordCallbacksOrder: # new in 2.7
   Enabled: true
-Style/KeywordParametersOrder: # (new in 0.90)
+Rails/AddColumnIndex: # new in 2.11
   Enabled: true
-Style/OptionalBooleanParameter: # (new in 0.89)
-  Enabled: false
-Style/RedundantAssignment: # (new in 0.87)
+Rails/AfterCommitOverride: # new in 2.8
   Enabled: true
-Style/RedundantFetchBlock: # (new in 0.86)
+Rails/AttributeDefaultBlockValue: # new in 2.9
   Enabled: true
-Style/RedundantFileExtensionInRequire: # (new in 0.88)
+Rails/EagerEvaluationLogMessage: # new in 2.11
   Enabled: true
-Style/RedundantRegexpCharacterClass: # (new in 0.85)
+Rails/ExpandedDateRange: # new in 2.11
   Enabled: true
-Style/RedundantRegexpEscape: # (new in 0.85)
+Rails/FindById: # new in 2.7
   Enabled: true
-Style/RedundantSelfAssignment: # (new in 0.90)
+Rails/I18nLocaleAssignment: # new in 2.11
   Enabled: true
-Style/SingleArgumentDig: # (new in 0.89)
+Rails/Inquiry: # new in 2.7
   Enabled: true
-Style/SlicingWithRange: # (new in 0.83)
+Rails/MailerName: # new in 2.7
   Enabled: true
-Style/SoleNestedConditional: # (new in 0.89)
-  Enabled: false
-Style/StringConcatenation: # (new in 0.89)
+Rails/MatchRoute: # new in 2.7
+  Enabled: true
+Rails/NegateInclude: # new in 2.7
+  Enabled: true
+Rails/Pluck: # new in 2.7
+  Enabled: true
+Rails/PluckInWhere: # new in 2.7
+  Enabled: true
+Rails/RenderInline: # new in 2.7
+  Enabled: true
+Rails/RenderPlainText: # new in 2.7
+  Enabled: true
+Rails/ShortI18n: # new in 2.7
+  Enabled: true
+Rails/SquishedSQLHeredocs: # new in 2.8
+  Enabled: true
+Rails/TimeZoneAssignment: # new in 2.10
+  Enabled: true
+Rails/UnusedIgnoredColumns: # new in 2.11
+  Enabled: true
+Rails/WhereEquals: # new in 2.9
+  Enabled: true
+Rails/WhereExists: # new in 2.7
+  Enabled: true
+Rails/WhereNot: # new in 2.8
   Enabled: true

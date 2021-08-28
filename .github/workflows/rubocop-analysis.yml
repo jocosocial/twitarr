@@ -20,18 +20,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # If running on a self-hosted runner, check it meets the requirements
-    # listed at https://github.com/ruby/setup-ruby#using-self-hosted-runners
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.6.8
+        bundler-cache: true
 
-    # This step is not necessary if you add the gem to your Gemfile
+    - name: Install dependencies
+      run: sudo apt-get update && apt-get install -y libidn11-dev libmagickwand-dev build-essential postgresql-client libpq-dev
+
     - name: Install Code Scanning integration
       run: bundle add code-scanning-rubocop --skip-install
 
-    - name: Install dependencies
+    - name: Install gems
       run: bundle install
 
     - name: Rubocop run

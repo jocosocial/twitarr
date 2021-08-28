@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
 
     digest = OpenSSL::HMAC.hexdigest(
       OpenSSL::Digest.new('SHA1'),
-      Rails.application.secrets.secret_key_base,
+      Rails.application.secret_key_base,
       "#{name}#{hashed_password}#{expiration}"
     )
     "#{name}:#{expiration}:#{digest}"

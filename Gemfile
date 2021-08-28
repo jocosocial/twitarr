@@ -3,7 +3,6 @@
 source 'https://rubygems.org'
 ruby '3.0.2'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'dalli'
 gem 'puma'
 gem 'rails', '~> 6.1'
@@ -20,10 +19,6 @@ gem 'uglifier'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-gem 'underscore-rails'
-
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder'
 
 # handle CORS
 gem 'rack-cors', require: 'rack/cors'

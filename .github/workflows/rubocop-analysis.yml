@@ -20,7 +20,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Install gem dependencies
       run: sudo apt-get update && sudo apt-get install -y libidn11-dev libmagickwand-dev libpq-dev
 
     - name: Set up Ruby
@@ -31,9 +31,6 @@ jobs:
 
     - name: Install Code Scanning integration
       run: bundle add code-scanning-rubocop --skip-install
-
-    - name: Install gems
-      run: bundle install
 
     - name: Rubocop run
       run: |

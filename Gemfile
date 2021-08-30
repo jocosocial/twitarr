@@ -51,6 +51,7 @@ gem 'lograge'
 
 # Used for the github rubocop action
 gem 'code-scanning-rubocop', require: false
+gem 'dotenv-rails', groups: [:development, :test]
 
 group :development do
   gem 'annotate'
@@ -64,7 +65,6 @@ group :development do
 end
 
 group :test do
-  # these versions are based on: http://stackoverflow.com/a/21639154
   gem 'minitest'
   gem 'minitest-spec-rails'
   gem 'mocha', require: false

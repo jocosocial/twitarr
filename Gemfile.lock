@@ -114,6 +114,10 @@ GEM
     diff-lcs (1.4.4)
     discard (1.2.0)
       activerecord (>= 4.2, < 7)
+    dotenv (2.7.6)
+    dotenv-rails (2.7.6)
+      dotenv (= 2.7.6)
+      railties (>= 3.2)
     draper (4.0.2)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
@@ -342,6 +346,7 @@ DEPENDENCIES
   coffee-rails
   dalli
   discard
+  dotenv-rails
   draper
   ember-data-source (~> 1.13.0)
   ember-rails (~> 0.21.0)

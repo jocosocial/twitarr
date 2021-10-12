@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Be sure to restart your server when you modify this file.
 class String
   def to_bool
@@ -5,7 +7,7 @@ class String
 
     return false if self == false || blank? || self =~ /^(false|f|no|n|0)$/i
 
-    raise ArgumentError.new("Invalid value for Boolean: #{self}")
+    raise ArgumentError, "Invalid value for Boolean: #{self}"
   end
 end
 
@@ -13,9 +15,9 @@ class Integer
   def to_bool
     return true if self == 1
 
-    return false if self == 0
+    return false if zero?
 
-    raise ArgumentError.new("Invalid value for Boolean: #{self}")
+    raise ArgumentError, "Invalid value for Boolean: #{self}"
   end
 end
 
@@ -60,9 +62,9 @@ class Time
     if input.respond_to?(:strftime)
       input
     elsif input.is_a?(Integer) || input =~ /^\d+$/
-      Time.at(input.to_i / 1000.0)
+      Time.zone.at(input.to_i / 1000.0)
     else
-      Time.parse(input)
+      Time.zone.parse(input)
     end
   end
 end

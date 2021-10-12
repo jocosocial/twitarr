@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: seamails
@@ -28,7 +30,7 @@ class Seamail < ApplicationRecord
                   against: :subject,
                   associated_against: { users: [:username, :display_name], seamail_messages: :text },
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   def validate_users
@@ -55,9 +57,9 @@ class Seamail < ApplicationRecord
   end
 
   def seamail_count(count_is_unread = false, user_id = 0)
-    if count_is_unread && user_id > 0
+    if count_is_unread && user_id.positive?
       seamail_messages.includes(:user_seamails).references(:user_seamails)
-          .where('user_seamails.user_id = ? AND (user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed)', user_id).count
+                      .where('user_seamails.user_id = ? AND (user_seamails.last_viewed is null OR seamail_messages.created_at > user_seamails.last_viewed)', user_id).count
     else
       seamail_messages.count
     end
@@ -72,7 +74,7 @@ class Seamail < ApplicationRecord
   end
 
   def self.create_new_seamail(author, to_users, subject, first_message_text, original_author)
-    right_now = Time.now
+    right_now = Time.zone.now
     to_users ||= []
     to_users = to_users.map(&:downcase).uniq
     to_users << author unless to_users.include? author
@@ -99,7 +101,7 @@ class Seamail < ApplicationRecord
   end
 
   def add_message(author, text, original_author)
-    right_now = Time.now
+    right_now = Time.zone.now
     self.last_update = right_now
     author_id = User.get(author).id
     new_message = SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id, created_at: right_now)
@@ -112,20 +114,19 @@ class Seamail < ApplicationRecord
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
     user_id = params[:current_user_id]
-    query = Seamail.pg_search(search_text).joins(:user_seamails).where('user_seamails_seamails.user_id = ?', user_id)
+    query = Seamail.pg_search(search_text).joins(:user_seamails).where(user_seamails_seamails: { user_id: user_id })
     limit_criteria(query, params)
   end
 
   def self.create_moderator_seamail
-    unless Seamail.any?
-      Seamail.create_new_seamail(
-        'twitarrteam',
-        %w(official moderator),
-        'Moderator Discussion',
-        'This seamail is for discussion of Twit-arr moderation.',
-        'TwitarrTeam'
-      )
-    end
-  end
+    return if Seamail.any?
 
+    Seamail.create_new_seamail(
+      'twitarrteam',
+      %w[official moderator],
+      'Moderator Discussion',
+      'This seamail is for discussion of Twit-arr moderation.',
+      'TwitarrTeam'
+    )
+  end
 end

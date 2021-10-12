@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Searchable
   def self.included(base)
     base.send :include, PgSearch::Model
@@ -6,7 +8,6 @@ module Searchable
   end
 
   module InstanceMethods
-
   end
 
   module ClassMethods
@@ -16,9 +17,8 @@ module Searchable
       start = (params[:page] || 0).to_i * limit
       # Rails.logger.info "Start = #{start}"
       criteria = criteria.limit(limit)
-      criteria = criteria.offset(start) if start > 0
+      criteria = criteria.offset(start) if start.positive?
       criteria
     end
   end
-
 end

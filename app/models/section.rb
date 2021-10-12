@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: sections
@@ -25,24 +27,24 @@ class Section < ApplicationRecord
   end
 
   def self.enabled?(section)
-    section.blank? || Section.find_by_name(section).enabled
+    section.blank? || Section.find_by(name: section).enabled
   rescue StandardError
     true
   end
 
   def self.toggle(section, enabled)
-    doc = Section.find_by_name(section)
-    if doc
-      doc.enabled = enabled
-      doc.save
-      doc
-    end
+    doc = Section.find_by(name: section)
+    return unless doc
+
+    doc.enabled = enabled
+    doc.save
+    doc
   end
 
   def self.repopulate_sections
     Section.delete_all
-    sections = %w(forums stream seamail calendar deck_plans games karaoke search registration)
-    categories = %w(global Kraken cruise_monkey rainbow_monkey)
+    sections = %w[forums stream seamail calendar deck_plans games karaoke search registration]
+    categories = %w[global Kraken cruise_monkey rainbow_monkey]
     categories.each do |category|
       sections.each do |section|
         name = section

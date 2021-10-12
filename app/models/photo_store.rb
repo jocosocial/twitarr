@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'singleton'
 
@@ -137,11 +139,11 @@ class PhotoStore
     @root = Rails.root.join(Rails.configuration.photo_store)
     @mutex = Mutex.new
 
-    @full = @root + 'full'
-    @thumb = @root + 'thumb'
-    @profiles = @root + 'profiles/'
-    @profiles_small = @profiles + 'small'
-    @profiles_full = @profiles + 'full'
+    @full = @root.join('full')
+    @thumb = @root.join('thumb')
+    @profiles = @root.join('profiles')
+    @profiles_small = @profiles.join('small')
+    @profiles_full = @profiles.join('full')
     @full.mkdir unless @full.exist?
     @thumb.mkdir unless @thumb.exist?
     @profiles.mkdir unless @profiles.exist?
@@ -154,11 +156,11 @@ class PhotoStore
   end
 
   def sm_thumb_path(filename)
-    (build_directory(@thumb, filename) + ('sm_' + filename)).to_s
+    (build_directory(@thumb, filename) + "sm_#{filename}").to_s
   end
 
   def md_thumb_path(filename)
-    (build_directory(@thumb, filename) + ('md_' + filename)).to_s
+    (build_directory(@thumb, filename) + "md_#{filename}").to_s
   end
 
   def small_profile_path(username)
@@ -180,19 +182,20 @@ class PhotoStore
   end
 
   class UploadFile
-    PHOTO_CONTENT_TYPES = %w(image/png image/jpeg image/gif).freeze
+    PHOTO_CONTENT_TYPES = %w[image/png image/jpeg image/gif].freeze
 
     def initialize(file)
-      Rails.logger.debug('content type = ' + file.content_type)
-      if file.content_type == 'image/png'
+      Rails.logger.debug { "content type = #{file.content_type}" }
+      case file.content_type
+      when 'image/png'
         ext = '.png'
-      elsif file.content_type == 'image/jpeg'
+      when 'image/jpeg'
         ext = '.jpg'
-      elsif file.content_type == 'image/gif'
+      when 'image/gif'
         ext = '.gif'
       end
       file.original_filename = SecureRandom.uuid.to_s + ext
-      Rails.logger.debug('filename = ' + file.original_filename)
+      Rails.logger.debug { "filename = #{file.original_filename}" }
       @file = file
     end
 

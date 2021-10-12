@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class UserController < ApiController
@@ -79,7 +81,7 @@ module Api
       def auto_complete
         params[:query] ||= ''
         query = params[:query].downcase
-        query = query[1..-1] if query[0] == '@'
+        query = query[1..] if query[0] == '@'
 
         unless query && query.size >= User::MIN_AUTO_COMPLETE_LEN
           render status: :bad_request, json: { status: 'error', error: "Minimum length is #{User::MIN_AUTO_COMPLETE_LEN}" }
@@ -140,6 +142,7 @@ module Api
           current_user.display_name = current_user.username if current_user.display_name.blank?
         end
 
+        # rubocop:disable Style/SoleNestedConditional
         if params.key?(:email)
           current_user.email = params[:email] unless muted_change ||= (muted? && params[:email].present? && current_user.email != params[:email])
         end
@@ -161,6 +164,7 @@ module Api
         if params.key?(:room_number)
           current_user.room_number = params[:room_number] unless muted_change ||= (muted? && params[:room_number].present? && current_user.room_number != params[:room_number])
         end
+        # rubocop:enable Style/SoleNestedConditional
 
         if !current_user.valid? || muted_change
           current_user.errors.add(:general, 'You have been muted. You may set fields to blank, but you may not otherwise change them.') if muted_change

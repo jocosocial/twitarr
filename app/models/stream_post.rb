@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: stream_posts
@@ -48,21 +50,20 @@ class StreamPost < ApplicationRecord
   validates :text, presence: true, length: { maximum: 2000 }
   # validate :validate_location
 
-  after_destroy :reparent_children
-
   before_validation :parse_hash_tags
   before_save :post_create_operations
+  after_destroy :reparent_children
 
   pg_search_scope :pg_search,
                   against: :text,
                   associated_against: { user: [:username, :display_name] },
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   def self.at_or_before(ms_since_epoch, options = {})
-    query = where('stream_posts.created_at <= ?', Time.at(ms_since_epoch.to_i / 1000.0))
-    query = query.where('stream_posts.author IN (?)', options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
+    query = where('stream_posts.created_at <= ?', Time.zone.at(ms_since_epoch.to_i / 1000.0))
+    query = query.where(stream_posts: { author: options[:filter_authors] }) if options.key?(:filter_authors) && !options[:filter_authors].nil?
     query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
     query = query.joins(:post_reactions).where(post_reactions: { user_id: options[:filter_reactions] }) if options.key?(:filter_reactions) && !options[:filter_reactions].nil?
     # query = query.where(hash_tags: options[:filter_hashtag]) if options.has_key? :filter_hashtag and !options[:filter_hashtag].nil?
@@ -77,7 +78,7 @@ class StreamPost < ApplicationRecord
   end
 
   def self.at_or_after(ms_since_epoch, options = {})
-    query = where('stream_posts.created_at >= ?', Time.at(ms_since_epoch.to_i / 1000.0))
+    query = where('stream_posts.created_at >= ?', Time.zone.at(ms_since_epoch.to_i / 1000.0))
     query = query.where(:author.in => options[:filter_authors]) if options.key?(:filter_authors) && !options[:filter_authors].nil?
     query = query.joins(:user).where(users: { username: options[:filter_author] }) if options.key?(:filter_author) && !options[:filter_author].nil?
     query = query.joins(:post_reactions).where(post_reactions: { user_id: options[:filter_reactions] }) if options.key?(:filter_reactions) && !options[:filter_reactions].nil?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'csv'
 module Api
   module V2
@@ -77,7 +79,7 @@ module Api
 
       def mine
         day = Time.from_param(params[:day])
-        events = day_query(day).where('user_events.user_id = ?', current_user.id)
+        events = day_query(day).where(user_events: { user_id: current_user.id })
         render json: event_list_output(day, events)
       end
 
@@ -100,7 +102,7 @@ module Api
       end
 
       def mine_soon_query(minutes)
-        Event.includes(:user_events).references(:user_events).where('user_events.user_id = ? AND start_time >= ? AND start_time <= ?', current_user.id, Time.now, Time.now + minutes.minutes)
+        Event.includes(:user_events).references(:user_events).where('user_events.user_id = ? AND start_time >= ? AND start_time <= ?', current_user.id, Time.zone.now, Time.zone.now + minutes.minutes)
       end
 
       def event_list_output(day, events)

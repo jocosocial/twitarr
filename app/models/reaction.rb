@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reactions
@@ -11,19 +13,15 @@
 #
 
 class Reaction < ApplicationRecord
-
-  has_many :post_reactions, class_name: 'PostReaction', foreign_key: :reaction_id, inverse_of: :reaction, dependent: :destroy
+  has_many :post_reactions, class_name: 'PostReaction', inverse_of: :reaction, dependent: :destroy
 
   def self.add_reaction(reaction)
-
-    doc = Reaction.find_or_create_by(name: reaction)
-    doc
+    Reaction.find_or_create_by(name: reaction)
   rescue StandardError => e
     logger.error e
-
   end
 
   def self.valid_reaction?(reaction)
-    reaction.blank? || Reaction.where(name: reaction).exists?
+    reaction.blank? || Reaction.exists?(name: reaction)
   end
 end

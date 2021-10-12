@@ -1,10 +1,11 @@
-source 'https://rubygems.org'
-ruby '2.6.5'
+# frozen_string_literal: true
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+source 'https://rubygems.org'
+ruby '3.0.2'
+
 gem 'dalli'
 gem 'puma'
-gem 'rails', '6.0.3.1'
+gem 'rails', '~> 6.1'
 gem 'sassc-rails'
 gem 'sprockets'
 gem 'sprockets-rails'
@@ -13,17 +14,11 @@ gem 'bcrypt'
 gem 'bootsnap'
 gem 'coffee-rails'
 
-gem 'therubyracer'
-
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-gem 'underscore-rails'
-
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder'
 
 # handle CORS
 gem 'rack-cors', require: 'rack/cors'
@@ -54,6 +49,10 @@ gem 'icalendar', '>= 2.3.0'
 
 gem 'lograge'
 
+# Used for the github rubocop action
+gem 'code-scanning-rubocop', require: false
+gem 'dotenv-rails', groups: [:development, :test]
+
 group :development do
   gem 'annotate'
   gem 'better_errors'
@@ -66,7 +65,6 @@ group :development do
 end
 
 group :test do
-  # these versions are based on: http://stackoverflow.com/a/21639154
   gem 'minitest'
   gem 'minitest-spec-rails'
   gem 'mocha', require: false

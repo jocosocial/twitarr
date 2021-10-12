@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: events
@@ -30,7 +32,7 @@ class Event < ApplicationRecord
   pg_search_scope :pg_search,
                   against: [:description, :location, :title],
                   using: {
-                      tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: true, prefix: true }
                   }
 
   default_scope { order(start_time: :asc, title: :asc) }
@@ -53,7 +55,7 @@ class Event < ApplicationRecord
     event.location = options[:location] unless options[:location].nil?
     event.official = options[:official] unless options[:official].nil?
     # Time.parse should occur on the controller side, but I haven't got time to straighten this out right now
-    event.end_time = Time.parse(options[:end_time]) unless options[:end_time].nil?
+    event.end_time = Time.zone.parse(options[:end_time]) unless options[:end_time].nil?
     event
   end
 
@@ -71,7 +73,7 @@ class Event < ApplicationRecord
     #  event.start_time = ics_event.dtstart
     #  event.end_time = ics_event.dtend unless ics_event.dtend.nil?
     # end
-    event.official = !ics_event.categories.include?('SHADOW CRUISE')
+    event.official = ics_event.categories.exclude?('SHADOW CRUISE')
     # locations tend to have trailing commas for some reason
     event.location = ics_event.location.force_encoding('utf-8').strip.gsub(/,$/, '')
     event.save
@@ -96,5 +98,4 @@ class Event < ApplicationRecord
     doc = user_events.find_by(user_id: user_id)
     user_events.delete(doc) if doc
   end
-
 end

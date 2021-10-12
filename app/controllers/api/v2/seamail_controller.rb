@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class SeamailController < ApiController
@@ -25,7 +27,7 @@ module Api
         extra_query = {}
         counting_unread = false
         begin
-          if params[:unread] && params[:unread].to_bool
+          if params[:unread]&.to_bool
             extra_query[:unread] = true
             counting_unread = true
           end
@@ -44,13 +46,13 @@ module Api
           output = 'seamail_threads'
           options = request_options
           options[:exclude_read_messages] = true if @exclude_read_messages
-          mails = mails.includes(seamail_messages: [:user, user_seamails: :user]).references(:seamail_messages, :users, :user_seamails).map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
+          mails = mails.includes(seamail_messages: [:user, { user_seamails: :user }]).references(:seamail_messages, :users, :user_seamails).map { |x| x.decorate.to_hash(options, as_user.id, counting_unread) }
         else
           output = 'seamail_meta'
           mails = mails.map { |x| x.decorate.to_meta_hash(as_user.id, counting_unread) }
         end
 
-        render json: { status: 'ok', output => mails, last_checked: Time.now.to_ms }
+        render json: { status: 'ok', output => mails, last_checked: Time.zone.now.to_ms }
       end
 
       def threads

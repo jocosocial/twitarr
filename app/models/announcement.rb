@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: announcements
@@ -24,7 +26,7 @@
 class Announcement < ApplicationRecord
   belongs_to :user, class_name: 'User', foreign_key: :author, inverse_of: :announcements
 
-  scope :valid_announcements, -> { where('valid_until > ?', Time.now) }
+  scope :valid_announcements, -> { where('valid_until > ?', Time.zone.now) }
 
   def self.new_announcements(since_ts)
     valid_announcements.where('updated_at > ?', since_ts).limit(1)

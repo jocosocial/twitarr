@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tempfile'
 
 module Api
@@ -22,7 +24,7 @@ module Api
         errors.push 'Limit must be greater than 0' if limit < 1
 
         page = (params[:page] || 0).to_i
-        errors.push 'Page must be greater than or equal to 0' if page < 0
+        errors.push 'Page must be greater than or equal to 0' if page.negative?
 
         sort_by = (params[:sort_by] || 'created_at').to_sym
         errors.push 'Invalid field name for sort_by' unless [:id, :animated, :store_filename, :md5_hash, :content_type, :user_id, :created_at].include? sort_by
@@ -66,21 +68,21 @@ module Api
         end
 
         begin
-          Rails.logger.info 'deleting ' + PhotoStore.instance.photo_path(@photo.store_filename)
+          Rails.logger.info "deleting #{PhotoStore.instance.photo_path(@photo.store_filename)}"
           File.delete PhotoStore.instance.photo_path(@photo.store_filename)
         rescue StandardError => e
           Rails.logger.error "Error deleting file: #{e}"
         end
 
         begin
-          Rails.logger.info 'deleting ' + PhotoStore.instance.sm_thumb_path(@photo.store_filename)
+          Rails.logger.info "deleting #{PhotoStore.instance.sm_thumb_path(@photo.store_filename)}"
           File.delete PhotoStore.instance.sm_thumb_path(@photo.store_filename)
         rescue StandardError => e
           Rails.logger.error "Error deleting file: #{e}"
         end
 
         begin
-          Rails.logger.info 'deleting ' + PhotoStore.instance.md_thumb_path(@photo.store_filename)
+          Rails.logger.info "deleting #{PhotoStore.instance.md_thumb_path(@photo.store_filename)}"
           File.delete PhotoStore.instance.md_thumb_path(@photo.store_filename)
         rescue StandardError => e
           Rails.logger.error "Error deleting file: #{e}"

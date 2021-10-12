@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 environment 'boat'
 
 directory '/var/www/twitarr'

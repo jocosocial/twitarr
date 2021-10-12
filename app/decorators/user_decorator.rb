@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserDecorator < Draper::Decorator
   delegate_all
 
@@ -16,7 +18,7 @@ class UserDecorator < Draper::Decorator
       last_photo_updated: last_photo_updated.to_ms
     }
     unless current_user.nil?
-      ret[:starred] = current_user.user_stars.where(starred_user_id: id).exists?
+      ret[:starred] = current_user.user_stars.exists?(starred_user_id: id)
       ret[:comment] = current_user.user_comments.find_by(commented_user_id: id)&.comment
     end
     ret
@@ -32,10 +34,10 @@ class UserDecorator < Draper::Decorator
   end
 
   def admin_hash
-    ts = if last_login != Time.at(0)
-           last_login.to_ms
-         else
+    ts = if last_login == Time.zone.at(0)
            0
+         else
+           last_login.to_ms
          end
     {
       username: username,
@@ -73,5 +75,4 @@ class UserDecorator < Draper::Decorator
       unnoticed_upcoming_events: unnoticed_upcoming_events
     }
   end
-
 end

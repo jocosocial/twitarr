@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   protect_from_forgery unless: -> { request.format.json? }
 
-  def index
-  end
+  def index; end
 
   def route_not_found
     render status: :not_found, json: { status: :error, error: 'Route not found.' }
@@ -71,12 +72,10 @@ class ApplicationController < ActionController::Base
     result = { user: user }
     if user.nil?
       result[:error] = 'Invalid username or password.'
-    elsif user.password.blank? # We need to check this condition before comparing passwords
+    elsif user.password.blank? || user.status != User::ACTIVE_STATUS # We need to check this condition before comparing passwords
       result[:error] = 'User account has been disabled.'
-    elsif !user.correct_password?(password)
+    elsif !user.correct_password?(password) # rubocop:disable Lint/DuplicateBranch
       result[:error] = 'Invalid username or password.'
-    elsif user.status != User::ACTIVE_STATUS # If a user's password is set, we only want to report they're locked if they have the right password
-      result[:error] = 'User account has been disabled.'
     elsif user.role == User::Role::BANNED
       result[:error] = "User account has been banned. Reason: #{user.ban_reason}"
     else
@@ -111,11 +110,11 @@ class ApplicationController < ActionController::Base
   end
 
   def build_key(name, hashed_password, expiration = 0)
-    expiration = (Time.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration == 0
+    expiration = (Time.zone.now + KEY_EXPIRATION_DAYS.days).to_ms if expiration.zero?
 
     digest = OpenSSL::HMAC.hexdigest(
-      OpenSSL::Digest::SHA1.new,
-      Rails.application.secrets.secret_key_base,
+      OpenSSL::Digest.new('SHA1'),
+      Rails.application.secret_key_base,
       "#{name}#{hashed_password}#{expiration}"
     )
     "#{name}:#{expiration}:#{digest}"
@@ -128,55 +127,53 @@ class ApplicationController < ActionController::Base
   end
 
   def post_as_user(params)
-    if params.key?(:as_mod) && params[:as_mod].to_bool && moderator?
-      return moderator_user
-    elsif params.key?(:as_admin) && params[:as_admin].to_bool && admin?
-      return admin_user
-    end
+    return moderator_user if params.key?(:as_mod) && params[:as_mod].to_bool && moderator?
+
+    return admin_user if params.key?(:as_admin) && params[:as_admin].to_bool && admin?
 
     current_user
   end
 
   def forums_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Forums are currently disabled.' } unless Section.enabled?(:forums)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Forums are currently disabled.' } unless Section.enabled?(:forums)
   end
 
   def stream_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Stream is currently disabled.' } unless Section.enabled?(:stream)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Stream is currently disabled.' } unless Section.enabled?(:stream)
   end
 
   def seamail_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Seamail is currently disabled.' } unless Section.enabled?(:seamail)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Seamail is currently disabled.' } unless Section.enabled?(:seamail)
   end
 
   def events_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Calendar is currently disabled.' } unless Section.enabled?(:calendar)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Calendar is currently disabled.' } unless Section.enabled?(:calendar)
   end
 
   def search_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Search is currently disabled.' } unless Section.enabled?(:search)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Search is currently disabled.' } unless Section.enabled?(:search)
   end
 
   def registration_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'Registration is currently disabled.' } unless Section.enabled?(:registration)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'Registration is currently disabled.' } unless Section.enabled?(:registration)
   end
 
   def profile_enabled
-    unless moderator?
-      render status: :service_unavailable, json: { status: 'error', error: 'User profiles are currently disabled.' } unless Section.enabled?(:user_profile)
-    end
+    return if moderator?
+
+    render status: :service_unavailable, json: { status: 'error', error: 'User profiles are currently disabled.' } unless Section.enabled?(:user_profile)
   end
 
   private
@@ -199,7 +196,7 @@ class ApplicationController < ActionController::Base
     return false if username.nil? || expiration.nil? || digest.nil?
 
     begin
-      return false if Time.from_param(expiration) < Time.now # Key expiration is in the past, abort
+      return false if Time.from_param(expiration) < Time.zone.now # Key expiration is in the past, abort
     rescue StandardError
       return false # Couldn't parse the expiration, abort
     end
@@ -215,5 +212,4 @@ class ApplicationController < ActionController::Base
   end
 
   KEY_EXPIRATION_DAYS = 10
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class TextController < ApiController
@@ -16,7 +18,7 @@ module Api
       end
 
       def time
-        now = Time.now
+        now = Time.zone.now
         render json: {
           status: 'ok',
           epoch: now.to_ms,

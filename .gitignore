@@ -13,8 +13,6 @@
 node_modules
 yarn.lock
 
-/config/secrets.yml
-
 /public/img/photos/*
 /public/cm/*
 /public/assets/*
@@ -46,3 +44,7 @@ start.sh
 /photo_storage/thumb/*
 /photo_storage/profiles/*
 db/seeds/twkeys.txt
+
+/config/master.key
+/config/secrets.yml
+/config/credentials.yml.enc

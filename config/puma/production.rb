@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 environment 'production'
 
 directory '/home/jccadmin/twitarr'

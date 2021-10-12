@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 require 'nokogiri'
 require 'open-uri'
 require 'net/http'
 require 'json'
 require 'peach'
 
-SERVER_URL = 'http://localhost:3000'.freeze
+SERVER_URL = 'http://localhost:3000'
 # SERVER_URL = 'https://twitarr.rylath.net'
 
 requests = [
-  Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/posts/all')
+  proc do |http|
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/posts/all")
     Rails.logger.info "ALL: #{response.msg}"
     data = JSON.parse(response.body)
     photos = data['list'].map { |x| x['data']['photos'] }.flatten.compact!
@@ -19,8 +21,8 @@ requests = [
     end
     1 + photos.size
   end,
-  Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/posts/popular')
+  proc do |http|
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/posts/popular")
     Rails.logger.info "POPULAR: #{response.msg}"
     data = JSON.parse(response.body)
     photos = data['list'].map { |x| x['data']['photos'] }.flatten.compact!
@@ -30,13 +32,13 @@ requests = [
     end
     1 + photos.size
   end,
-  Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/user/ac?string=g')
+  proc do |http|
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/user/ac?string=g")
     Rails.logger.info "AUTOCOMPLETE: #{response.msg}"
     1
   end,
-  Proc.new do |http|
-    response = http.request Net::HTTP::Get.new(SERVER_URL + '/api/v1/user/auth?username=kvort&password=foobar')
+  proc do |http|
+    response = http.request Net::HTTP::Get.new("#{SERVER_URL}/api/v1/user/auth?username=kvort&password=foobar")
     Rails.logger.info "AUTH: #{response.msg}"
     1
   end
@@ -53,7 +55,7 @@ if $PROGRAM_NAME == __FILE__
   signal = false
   lock = Mutex.new
   total_count = 0
-  start_time = Time.now
+  start_time = Time.zone.now
 
   Rails.logger.info 'Starting requests'
 
@@ -78,7 +80,7 @@ if $PROGRAM_NAME == __FILE__
     rescue StandardError => e
       Rails.logger.error e.inspect
     end
-    end_time = Time.now
+    end_time = Time.zone.now
     Rails.logger.info "TOTAL COUNT: #{total_count} in time: #{end_time - start_time} seconds"
     exit
   end

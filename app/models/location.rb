@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: locations
@@ -23,7 +25,7 @@ class Location < ApplicationRecord
   end
 
   def self.valid_location?(location)
-    location.blank? || Location.where(name: location).exists?
+    location.blank? || Location.exists?(name: location)
   end
 
   def self.auto_complete(prefix)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V2
     class StreamController < ApiController
@@ -72,7 +74,7 @@ module Api
       def show
         limit = (params[:limit] || PAGE_LENGTH).to_i
         start_loc = (params[:page] || 0).to_i
-        if limit < 1 || start_loc < 0
+        if limit < 1 || start_loc.negative?
           render status: :bad_request, json: { status: 'error', error: 'Limit must be greater than 0, Page must be greater than or equal to 0' }
           return
         end
@@ -121,7 +123,7 @@ module Api
 
         params[:page] = (params[:page] || 0).to_i
         params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
-        if params[:limit] < 1 || params[:page] < 0
+        if params[:limit] < 1 || params[:page].negative?
           render status: :bad_request, json: { status: 'error', error: 'Limit must be greater than 0, Page must be greater than or equal to 0' }
           return
         end
@@ -137,7 +139,7 @@ module Api
 
         params[:page] = (params[:page] || 0).to_i
         params[:limit] = (params[:limit] || PAGE_LENGTH).to_i
-        if params[:limit] < 1 || params[:page] < 0
+        if params[:limit] < 1 || params[:page].negative?
           render status: :bad_request, json: { status: 'error', error: 'Limit must be greater than 0, Page must be greater than or equal to 0' }
           return
         end
@@ -281,7 +283,7 @@ module Api
       end
 
       def newest_posts(query)
-        start = Time.now.to_ms
+        start = Time.zone.now.to_ms
         params[:start] = start
         older_posts(query)
       end
@@ -309,9 +311,9 @@ module Api
       end
 
       def check_locked
-        unless moderator?
-          render status: :forbidden, json: { status: 'error', error: 'Post is locked.' } if @post.locked
-        end
+        return if moderator?
+
+        render status: :forbidden, json: { status: 'error', error: 'Post is locked.' } if @post.locked
       end
     end
   end

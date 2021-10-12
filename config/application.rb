@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 require 'rails'
 
@@ -62,5 +64,7 @@ module Twitarr
 
     # The event schedule gets wonky if we don't set our own DST start time
     config.dst_start = Time.new(2020, 3, 8, 2, 0, 0, '-05:00')
+
+    config.secure_cookies = false
   end
 end

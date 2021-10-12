@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: hashtags
@@ -13,7 +15,6 @@
 #
 
 class Hashtag < ApplicationRecord
-
   MIN_AUTO_COMPLETE_LEN = 3
   AUTO_COMPLETE_LIMIT = 10
   MAX_LENGTH = 100
@@ -21,7 +22,7 @@ class Hashtag < ApplicationRecord
   validates :name, length: { maximum: MAX_LENGTH }
 
   def self.add_tag(hashtag)
-    hashtag = hashtag[1..-1] if hashtag[0] == '#'
+    hashtag = hashtag[1..] if hashtag[0] == '#'
     begin
       doc = Hashtag.find_or_create_by(name: hashtag.downcase.strip)
     rescue ActiveRecord::RecordNotUnique

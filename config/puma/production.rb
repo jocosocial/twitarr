@@ -2,9 +2,13 @@
 
 environment 'production'
 
-directory '/home/jccadmin/twitarr'
 pidfile 'tmp/puma.pid'
-bind 'unix:///home/jccadmin/twitarr/tmp/puma.sock'
+bind 'unix:///tmp/puma.sock'
 quiet
-workers 50
-threads 20, 20
+workers 24
+threads 5, 5
+
+preload_app!
+on_worker_boot do
+  ActiveRecord::Base.establish_connection
+end

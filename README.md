@@ -1,6 +1,6 @@
 # twitarr
 
-Twit-arr is a micro-blogging site that is set up for [JoCo Cruise](https://jococruise.com/). Originally developed by [walkeriniraq](https://github.com/walkeriniraq/twitarr).
+Twit-arr is a micro-blogging site that is set up for [JoCo Cruise](https://jococruise.com/). Originally developed by [walkeriniraq](https://github.com/walkeriniraq/twitarr). This version is no longer in active development, but is being kept around as a fallback. Development on the new version is currently taking place here: https://github.com/challfry/swiftarr/
 
 ## Description
 
@@ -17,17 +17,20 @@ You'll need the Docker [toolbox](https://www.docker.com/docker-toolbox).  I (Joe
 
 ### Configuration
 * Create a `secrets.yml` file based on the `secrets_example.yml` file. The tokens are just random hex strings. You can generate a secret using `rails secret`.
+* Create a `master.key` file adjacent to `secrets.yml` (in the `/config` directory) containing a sufficiently long random hex string. Consider using `rails secret` to generate.
 * If you want to run with local changes (so that you can change the Ruby code and not have to rebuild the world each time), modify docker-compose accordingly:
 ```
   volumes:   # Remove this for production use
-   - /Users/Joey/twitarr:/srv/app
+   - ./:/srv/app
 ```
 
 ### Building the docker images
 Run:
 ```
-   $ docker-compose build
+   $ docker-compose build [--no-cache]
    $ docker-compose up
+   # When you're done
+   $ docker-compose down [-v]
 ```
 
 This will create a docker image based on ruby, as well as download a postgres image.
@@ -43,6 +46,11 @@ Once it completes you should be able to reach twitarr via http://localhost:3000.
 
    ```
    sudo apt-get install git gnupg2 curl imagemagick libmagickwand-dev libidn11-dev libpq-dev postgresql postgresql-contrib nodejs
+   ```
+   
+   Fedora 34:
+   ```
+   sudo dnf install git gnupg2 curl imagemagick ImageMagick-devel libidn-devel libpq-devel postgresql postgresql-contrib nodejs
    ```
 2. Set your postgres password
 

@@ -1,4 +1,5 @@
-FROM ruby:3.0.2
+# A distro upgrade requires changes here and in docker-prereqs.sh
+FROM ruby:3.0.2-bullseye
 
 COPY Gemfile* /tmp/
 COPY docker-prereqs.sh /tmp/

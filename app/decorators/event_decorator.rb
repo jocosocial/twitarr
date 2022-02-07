@@ -5,12 +5,12 @@ class EventDecorator < BaseDecorator
 
   def to_hash(current_user = nil, options = {})
     result = {
-      id: id,
-      title: title,
-      location: location,
+      id:,
+      title:,
+      location:,
       start_time: nil,
       end_time: nil,
-      official: official,
+      official:,
       description: '',
       following: current_user.present? && user_events.any? { |x| x.user_id == current_user.id }
     }

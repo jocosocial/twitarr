@@ -46,5 +46,5 @@ start.sh
 db/seeds/twkeys.txt
 
 /config/master.key
-/config/secrets.yml
 /config/credentials.yml.enc
+/config/default_users.yml

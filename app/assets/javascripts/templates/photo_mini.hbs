@@ -1,10 +1,10 @@
 {{#if model.animated}}
   <div class="imageContainer">
-    <img src="{{sm_photo_path}}" class="photo layered"/>
-    <img src="/img/play_overlay.png" {{action 'display_photo' model bubbles=false}} class="photo layered" />
+    <img src="{{sm_photo_path}}" loading="lazy" class="photo layered"/>
+    <img src="/img/play_overlay.png" loading="lazy" {{action 'display_photo' model bubbles=false}} class="photo layered" />
   </div>
 {{else}}
   <div class="imageContainer">
-    <img src="{{sm_photo_path}}" {{action 'display_photo' model bubbles=false}} class="photo"/>
+    <img src="{{sm_photo_path}}" loading="lazy" {{action 'display_photo' model bubbles=false}} class="photo"/>
   </div>
 {{/if}}

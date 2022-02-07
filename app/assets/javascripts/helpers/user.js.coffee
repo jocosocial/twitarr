@@ -1,5 +1,5 @@
 Twitarr.UserPictureHelper = Ember.Helper.helper((params) ->
-  new Ember.Handlebars.SafeString("<img class='profile_photo' src='#{Twitarr.api_path}/user/photo/#{params[0]}?bust=#{params[1]}'/>")
+  new Ember.Handlebars.SafeString("<img class='profile_photo' loading='lazy' src='#{Twitarr.api_path}/user/photo/#{params[0]}?bust=#{params[1]}'/>")
 )
 
 Twitarr.PrettyUsernameHelper = Ember.Helper.helper((params) ->

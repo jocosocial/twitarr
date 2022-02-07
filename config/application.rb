@@ -49,9 +49,6 @@ module Twitarr
       initializer.name == 'draper.setup_active_model_serializers'
     end
 
-    config.assets.precompile += ['respond.js']
-    config.assets.precompile = ['manifest.js']
-
     config.autoload_paths += Dir[Rails.root.join('app/contexts/{**}')]
 
     config.action_dispatch.perform_deep_munge = false
@@ -66,5 +63,7 @@ module Twitarr
     config.dst_start = Time.new(2020, 3, 8, 2, 0, 0, '-05:00')
 
     config.secure_cookies = false
+
+    config.default_users = config_for(:default_users)
   end
 end

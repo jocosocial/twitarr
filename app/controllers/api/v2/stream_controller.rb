@@ -61,7 +61,7 @@ module Api
           next_page += 1 # Since we're moving in the opposite direction, undo previous next_page calculation, and add an additional ms
         end
 
-        results = { status: 'ok', stream_posts: posts.map { |x| x.decorate.to_hash(current_user, request_options) }, has_next_page: has_next_page, next_page: next_page }
+        results = { status: 'ok', stream_posts: posts.map { |x| x.decorate.to_hash(current_user, request_options) }, has_next_page:, next_page: }
 
         # If pulled the newest posts, and newer_posts=true, it means we are getting the newest posts,
         # and expect the next_page to be posts that are even further in the future.
@@ -91,7 +91,7 @@ module Api
         post_result = @post.decorate.to_hash(current_user, request_options)
         post_result[:children] = children unless children&.empty?
 
-        render json: { status: 'ok', post: post_result, has_next_page: has_next_page }
+        render json: { status: 'ok', post: post_result, has_next_page: }
       end
 
       def locked
@@ -131,7 +131,7 @@ module Api
         query = StreamPost.view_mentions params
         count = query.count
         has_next_page = count > ((params[:page] + 1) * params[:limit])
-        render json: { status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_user, request_options) }, total_mentions: count, has_next_page: has_next_page }
+        render json: { status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_user, request_options) }, total_mentions: count, has_next_page: }
       end
 
       def view_hash_tag
@@ -147,7 +147,7 @@ module Api
         query = StreamPost.view_hashtags(params)
         count = query.count
         has_next_page = count > ((params[:page] + 1) * params[:limit])
-        render json: { status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_user, request_options) }, total_mentions: count, has_next_page: has_next_page }
+        render json: { status: 'ok', posts: query.map { |x| x.decorate.to_hash(current_user, request_options) }, total_mentions: count, has_next_page: }
       end
 
       def delete
@@ -185,7 +185,7 @@ module Api
         post = StreamPost.new(
           text: params[:text],
           author: post_as_user(params).id,
-          parent_chain: parent_chain,
+          parent_chain:,
           location_id: params[:location],
           original_author: current_user.id,
           locked: parent_locked

@@ -54,8 +54,8 @@ Rails.application.configure do
   # For memcache running natively:
   # config.cache_store = :mem_cache_store
 
-  # For memcache running under docker:
-  config.cache_store = :mem_cache_store, 'memcached:11211'
+  # For redis running under docker:
+  config.cache_store = :redis_cache_store, { url: ENV.fetch('REDIS_URL_CACHING', 'redis://localhost:6379/0') }
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque

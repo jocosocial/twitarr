@@ -86,7 +86,7 @@ module Api
       def mine_soon
         minutes = params[:minutes]&.to_i
         events = mine_soon_query(minutes)
-        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, minutes: minutes, now: DateTime.current.to_ms }
+        render json: { status: 'ok', events: events.map { |x| x.decorate.to_hash(current_user, request_options) }, minutes:, now: DateTime.current.to_ms }
       end
 
       def day

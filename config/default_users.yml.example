@@ -1,0 +1,19 @@
+defaults: &defaults
+  admin_password: ADMIN_PASS_HERE
+  admin_regcode: ADMIN_REGCODE_HERE
+  moderator_password: MODERATOR_PASS_HERE
+  moderator_regcode: MODERATOR_REGCODE_HERE
+  official_password: OFFICIAL_PASS_HERE
+  official_regcode: OFFICIAL_REGCODE_HERE
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+docker:
+  <<: *defaults
+
+production:
+  <<: *defaults

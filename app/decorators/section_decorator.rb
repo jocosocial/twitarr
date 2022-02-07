@@ -7,7 +7,7 @@ class SectionDecorator < BaseDecorator
     {
       name: name.to_s,
       category: category.to_s,
-      enabled: enabled
+      enabled:
     }
   end
 end

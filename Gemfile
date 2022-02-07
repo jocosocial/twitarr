@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '3.0.2'
+ruby '3.1.0'
 
-gem 'dalli'
+gem 'hiredis'
 gem 'puma'
 gem 'rails', '~> 6.1'
+gem 'redis'
+gem 'redis-actionpack'
+gem 'redis-rails'
 gem 'sassc-rails'
 gem 'sprockets'
 gem 'sprockets-rails'

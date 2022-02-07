@@ -7,9 +7,9 @@ class ForumDecorator < BaseDecorator
   def to_meta_hash(current_user = nil, page_size = Forum::PAGE_SIZE)
     ret = {
       id: id.to_s,
-      subject: subject,
-      sticky: sticky,
-      locked: locked,
+      subject:,
+      sticky:,
+      locked:,
       last_post_author: last_post_user.decorate.gui_hash,
       posts: forum_posts_count,
       timestamp: last_post_time.to_ms,
@@ -28,9 +28,9 @@ class ForumDecorator < BaseDecorator
 
     ret = {
       id: id.to_s,
-      subject: subject,
-      sticky: sticky,
-      locked: locked,
+      subject:,
+      sticky:,
+      locked:,
       post_count: forum_posts_count,
       posts: posts_with_data.map { |x| x.decorate.to_hash(current_user, last_view, options) }
     }
@@ -51,13 +51,13 @@ class ForumDecorator < BaseDecorator
 
     ret = {
       id: id.to_s,
-      subject: subject,
-      sticky: sticky,
-      locked: locked,
-      next_page: next_page,
-      prev_page: prev_page,
-      page: page,
-      page_count: page_count,
+      subject:,
+      sticky:,
+      locked:,
+      next_page:,
+      prev_page:,
+      page:,
+      page_count:,
       post_count: forum_posts_count,
       posts: posts_with_data.limit(page_size).offset(offset).map { |x| x.decorate.to_hash(current_user, last_view, options) }
     }

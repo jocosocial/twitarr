@@ -16,7 +16,7 @@ If you're not running on linux, or just want an isolated environment, you can ru
 You'll need the Docker [toolbox](https://www.docker.com/docker-toolbox).  I (Joey) used version 1.16.1.  The default install on a Mac is Just Fine; not sure about other platforms.
 
 ### Configuration
-* Create a `secrets.yml` file based on the `secrets_example.yml` file. The tokens are just random hex strings. You can generate a secret using `rails secret`.
+* Create a `default_users.yml` file based on the `default_users.yml.example` file. Set the reg codes to alphanumeric strings (all uppercase). Pick strong passwords of your choice.
 * Create a `master.key` file adjacent to `secrets.yml` (in the `/config` directory) containing a sufficiently long random hex string. Consider using `rails secret` to generate.
 * If you want to run with local changes (so that you can change the Ruby code and not have to rebuild the world each time), modify docker-compose accordingly:
 ```
@@ -45,12 +45,12 @@ Once it completes you should be able to reach twitarr via http://localhost:3000.
    Debian 11:
 
    ```
-   sudo apt-get install git gnupg2 curl imagemagick libmagickwand-dev libidn11-dev libpq-dev postgresql postgresql-contrib nodejs
+   sudo apt-get install git gnupg2 curl imagemagick libmagickwand-dev libidn11-dev libpq-dev postgresql postgresql-contrib nodejs redis
    ```
    
    Fedora 34:
    ```
-   sudo dnf install git gnupg2 curl imagemagick ImageMagick-devel libidn-devel libpq-devel postgresql postgresql-contrib nodejs
+   sudo dnf install git gnupg2 curl imagemagick ImageMagick-devel libidn-devel libpq-devel postgresql postgresql-contrib nodejs redis
    ```
 2. Set your postgres password
 
@@ -65,7 +65,7 @@ Once it completes you should be able to reach twitarr via http://localhost:3000.
 4. Clone the repository, cd into it
 5. If pompted by RVM, install the required version of ruby, then leave and re-enter the directory to create the gemset
    ```
-   rvm install ruby-3.0.2
+   rvm install ruby-3.1.0
    ```
 6. Install gems
    ```
@@ -74,6 +74,10 @@ Once it completes you should be able to reach twitarr via http://localhost:3000.
 7. Copy the dev environment file. If you used a different postgres password, or need ot change the postgres connection info, edit the `.env` file after copying it:
    ```
    cp .env-example .env
+   ```
+   Also copy the default users file, and edit it. Set the reg codes to alphanumeric strings (all uppercase). Pick strong passwords of your choice:
+   ```
+   cp config/default_users.yml.example config/default_users.yml
    ```
 8. Populate the database
    ```

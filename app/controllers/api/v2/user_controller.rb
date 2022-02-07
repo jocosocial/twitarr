@@ -20,7 +20,7 @@ module Api
         new_username = params[:new_username].present? ? params[:new_username].downcase : ''
         display_name = params[:display_name]
         display_name = params[:new_username] if params[:display_name].blank?
-        user = User.new(username: new_username, display_name: display_name, password: params[:new_password],
+        user = User.new(username: new_username, display_name:, password: params[:new_password],
                         role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: params[:registration_code])
 
         if user.invalid?
@@ -190,7 +190,7 @@ module Api
           current_user.save
           render json: { status: 'ok', key: build_key(current_user.username, current_user.password) }
         else
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
         end
       end
 

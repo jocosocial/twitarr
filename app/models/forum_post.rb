@@ -51,7 +51,7 @@ class ForumPost < ApplicationRecord
   delegate :update_cache, to: :forum
 
   def self.new_post(forum_id, author, text, photos, original_author)
-    post = ForumPost.new(forum_id: forum_id, author: author, text: text, original_author: original_author)
+    post = ForumPost.new(forum_id:, author:, text:, original_author:)
     photos&.each do |photo|
       post.post_photos << PostPhoto.new(photo_metadata_id: photo)
     end

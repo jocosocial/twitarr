@@ -8,7 +8,7 @@ module Api
       def populate_hashtags
         Hashtag.repopulate_hashtags
         values = Hashtag.all.map(&:name)
-        render json: { values: values }
+        render json: { values: }
       end
 
       def auto_complete
@@ -19,7 +19,7 @@ module Api
           return
         end
         values = Hashtag.auto_complete(query).pluck(:name)
-        render json: { values: values }
+        render json: { values: }
       end
     end
   end

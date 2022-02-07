@@ -10,6 +10,11 @@ end
 puts "Creating registration codes..."
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
+  # stub codes for built-in accounts
+  create_registration_code Rails.configuration.default_users.admin_regcode
+  create_registration_code Rails.configuration.default_users.official_regcode
+  create_registration_code Rails.configuration.default_users.moderator_regcode
+
   (1..100).each { |i|
     create_registration_code "code#{i}"
   }
@@ -21,7 +26,7 @@ User.create_default_users
 unless User.exist? 'kvort'
   puts 'Creating user kvort'
   user = User.new username: 'kvort', display_name: 'kvort', password: 'kvort1',
-    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code4'
+    role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
   user.change_password 'kvort'
   user.save
 end
@@ -29,7 +34,7 @@ end
 unless User.exist? 'james'
   puts 'Creating user james'
   user = User.new username: 'james', display_name: 'james', password: 'james1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code5'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code2'
   user.change_password 'james'
   user.save
 end
@@ -37,7 +42,7 @@ end
 unless User.exist? 'steve'
   puts 'Creating user steve'
   user = User.new username: 'steve', display_name: 'steve', password: 'steve1',
-    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code6'
+    role: User::Role::USER, status: User::ACTIVE_STATUS, registration_code: 'code3'
   user.change_password 'steve'
   user.save
 end

@@ -57,7 +57,7 @@ Once it completes you should be able to reach twitarr via http://localhost:3000.
 4. Clone the repository, cd into it
 5. If pompted by RVM, install the required version of ruby, then leave and re-enter the directory to create the gemset
    ```
-   rvm install ruby-3.0.2
+   rvm install ruby-3.1.0
    ```
 6. Install gems
    ```

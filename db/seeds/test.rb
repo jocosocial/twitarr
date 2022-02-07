@@ -1,5 +1,22 @@
 require 'securerandom'
 
+def create_registration_code(code)
+  RegistrationCode.add_code code
+end
+
+puts "Creating registration codes..."
+RegistrationCode.delete_all
+if RegistrationCode.count == 0
+  # stub codes for built-in accounts
+  create_registration_code Rails.configuration.default_users.admin_regcode
+  create_registration_code Rails.configuration.default_users.official_regcode
+  create_registration_code Rails.configuration.default_users.moderator_regcode
+
+  (1..10).each { |i|
+    create_registration_code "code#{i}"
+  }
+end
+
 puts 'Creating default users...'
 User.create_default_users
 

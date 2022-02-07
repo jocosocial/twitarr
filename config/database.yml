@@ -1,4 +1,4 @@
-default: &default
+defaults: &defaults
   adapter: postgresql
   encoding: unicode
   # For details on connection pooling, see rails configuration guide
@@ -13,15 +13,15 @@ default: &default
     statement_timeout: <%= ENV.fetch("DB_STATEMENT_TIMEOUT", 0) %>
 
 development:
-  <<: *default
+  <<: *defaults
   database: twitarr_development
 
 test:
-  <<: *default
+  <<: *defaults
   database: twitarr_test
 
 production: &production
-  <<: *default
+  <<: *defaults
   database: twitarr_production
   pool: 20
 

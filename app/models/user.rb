@@ -459,22 +459,22 @@ class User < ApplicationRecord
 
   def self.create_default_users
     unless User.exist? 'twitarrteam'
-      user = User.new username: 'twitarrteam', display_name: 'TwitarrTeam', password: Rails.application.secrets.initial_admin_password,
-                      role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: 'code1'
+      user = User.new username: 'twitarrteam', display_name: 'TwitarrTeam', password: Rails.configuration.default_users.admin_password,
+                      role: User::Role::ADMIN, status: User::ACTIVE_STATUS, registration_code: Rails.configuration.default_users.admin_regcode
       user.change_password user.password
       user.save
     end
 
     unless User.exist? 'official'
-      user = User.new username: 'official', display_name: 'official', password: SecureRandom.hex,
-                      role: User::Role::THO, status: User::ACTIVE_STATUS, registration_code: 'code2'
+      user = User.new username: 'official', display_name: 'official', password: Rails.configuration.default_users.official_password,
+                      role: User::Role::THO, status: User::ACTIVE_STATUS, registration_code: Rails.configuration.default_users.official_regcode
       user.change_password user.password
       user.save
     end
 
     unless User.exist? 'moderator' # rubocop:disable Style/GuardClause
-      user = User.new username: 'moderator', display_name: 'moderator', password: Rails.application.secrets.initial_admin_password,
-                      role: User::Role::MODERATOR, status: User::ACTIVE_STATUS, registration_code: 'code3'
+      user = User.new username: 'moderator', display_name: 'moderator', password: Rails.configuration.default_users.moderator_password,
+                      role: User::Role::MODERATOR, status: User::ACTIVE_STATUS, registration_code: Rails.configuration.default_users.moderator_regcode
       user.change_password user.password
       user.save
     end

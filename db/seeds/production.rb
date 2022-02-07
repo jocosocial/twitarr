@@ -13,9 +13,9 @@ puts "Creating registration codes..."
 RegistrationCode.delete_all
 if RegistrationCode.count == 0
   # stub codes for built-in accounts
-  for i in 1..3 do
-    create_registration_code "code#{i}"
-  end
+  create_registration_code Rails.configuration.default_users.admin_regcode
+  create_registration_code Rails.configuration.default_users.official_regcode
+  create_registration_code Rails.configuration.default_users.moderator_regcode
 
   # if the twkeys.txt file exists, also import those codes
   keys_filename = "db/seeds/twkeys.txt"

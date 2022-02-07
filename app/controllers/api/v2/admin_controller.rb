@@ -16,7 +16,7 @@ module Api
       def user
         search_text = params[:query].strip.downcase.gsub(/[^\w&\s-]/, '')
         user_query = User.search(params)
-        render json: { status: 'ok', search_text: search_text, users: user_query.map { |x| x.decorate.admin_hash } }
+        render json: { status: 'ok', search_text:, users: user_query.map { |x| x.decorate.admin_hash } }
       end
 
       def profile
@@ -119,10 +119,10 @@ module Api
         errors.push('Only admins may post as TwitarrTeam.') if !admin? || (as_user.id == moderator_user.id)
 
         if errors.empty?
-          announcement = Announcement.create(author: as_user.id, text: params[:text], valid_until: valid_until, original_author: current_user.id)
+          announcement = Announcement.create(author: as_user.id, text: params[:text], valid_until:, original_author: current_user.id)
           render json: { status: 'ok', announcement: announcement.decorate.to_admin_hash(request_options) }
         else
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
         end
       end
 
@@ -145,7 +145,7 @@ module Api
         end
 
         if errors.any?
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
           return
         end
 

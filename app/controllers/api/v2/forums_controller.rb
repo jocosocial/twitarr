@@ -36,7 +36,7 @@ module Api
         end
 
         if errors.count.positive?
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
           return
         end
 
@@ -49,11 +49,11 @@ module Api
         render json: {
           status: 'ok',
           forum_threads: query.map { |x| x.decorate.to_meta_hash(logged_in? ? current_user : nil, page_size) },
-          next_page: next_page,
-          prev_page: prev_page,
-          thread_count: thread_count,
-          page: page,
-          page_count: page_count
+          next_page:,
+          prev_page:,
+          thread_count:,
+          page:,
+          page_count:
         }
       end
 
@@ -67,7 +67,7 @@ module Api
         errors.push 'Page must be greater than or equal to zero.' if page.negative?
 
         if errors.count.positive?
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
           return
         end
 
@@ -144,7 +144,7 @@ module Api
         current_post.destroy
         thread_deleted = current_forum.posts.count.zero?
 
-        render json: { status: 'ok', thread_deleted: thread_deleted }
+        render json: { status: 'ok', thread_deleted: }
       end
 
       def react

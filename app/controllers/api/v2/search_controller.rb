@@ -87,13 +87,13 @@ module Api
 
       private
 
-      def do_search(params, collection, enabled = true, &block)
+      def do_search(params, collection, enabled = true, &)
         if enabled
           query = collection.search(params)
           count = query.limit(nil).count
-          matches = query.map(&block)
+          matches = query.map(&)
           more = count > (query.limit_value + (query.offset_value || 0))
-          { matches: matches, count: count, more: more }
+          { matches:, count:, more: }
         else
           { matches: [], count: 0, more: false }
         end
@@ -108,7 +108,7 @@ module Api
         errors.push 'Page must be greater than or equal to 0.' if !params[:page].nil? && params[:page].to_i.negative?
 
         if errors.count.positive?
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
           return false
         end
         true

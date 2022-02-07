@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
 
   def validate_login(username, password)
     user = User.get username
-    result = { user: user }
+    result = { user: }
     if user.nil?
       result[:error] = 'Invalid username or password.'
     elsif user.password.blank? || user.status != User::ACTIVE_STATUS # We need to check this condition before comparing passwords

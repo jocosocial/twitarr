@@ -70,7 +70,7 @@ class Seamail < ApplicationRecord
   end
 
   def last_viewed(user_id)
-    user_seamails.find_by(user_id: user_id).last_viewed
+    user_seamails.find_by(user_id:).last_viewed
   end
 
   def self.create_new_seamail(author, to_users, subject, first_message_text, original_author)
@@ -79,7 +79,7 @@ class Seamail < ApplicationRecord
     to_users = to_users.map(&:downcase).uniq
     to_users << author unless to_users.include? author
 
-    seamail = Seamail.new(subject: subject, last_update: right_now)
+    seamail = Seamail.new(subject:, last_update: right_now)
     seamail.seamail_messages << SeamailMessage.new(author: User.get(author).id, text: first_message_text, original_author: User.get(original_author).id, created_at: right_now)
 
     recipients = User.where(username: to_users)
@@ -104,7 +104,7 @@ class Seamail < ApplicationRecord
     right_now = Time.zone.now
     self.last_update = right_now
     author_id = User.get(author).id
-    new_message = SeamailMessage.new(author: author_id, text: text, original_author: User.get(original_author).id, created_at: right_now)
+    new_message = SeamailMessage.new(author: author_id, text:, original_author: User.get(original_author).id, created_at: right_now)
     seamail_messages << new_message
     user_seamails.where(user_id: author_id).update(last_viewed: right_now)
     save if valid?
@@ -114,7 +114,7 @@ class Seamail < ApplicationRecord
   def self.search(params = {})
     search_text = params[:query].strip.downcase.gsub(/[^\w&\s@-]/, '')
     user_id = params[:current_user_id]
-    query = Seamail.pg_search(search_text).joins(:user_seamails).where(user_seamails_seamails: { user_id: user_id })
+    query = Seamail.pg_search(search_text).joins(:user_seamails).where(user_seamails_seamails: { user_id: })
     limit_criteria(query, params)
   end
 

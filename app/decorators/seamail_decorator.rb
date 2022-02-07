@@ -8,7 +8,7 @@ class SeamailDecorator < Draper::Decorator
     {
       id: id.to_s,
       users: users.map { |x| x.decorate.gui_hash },
-      subject: subject,
+      subject:,
       message_count: seamail_count(count_is_unread, current_user_id),
       timestamp: last_message.to_ms,
       is_unread: unread_for_user?(current_user_id),
@@ -21,7 +21,7 @@ class SeamailDecorator < Draper::Decorator
     {
       id: id.to_s,
       users: users.map { |x| x.decorate.gui_hash },
-      subject: subject,
+      subject:,
       messages: seamail_messages.map { |x| x.decorate.to_hash(options, current_user_id, viewed_date) }.compact,
       message_count: seamail_count(count_is_unread, current_user_id),
       timestamp: last_message.to_ms,

@@ -35,9 +35,9 @@ module Api
         if errors.empty?
           query = PhotoMetadata.all.includes(:user).references(:users).order(sort_by => order).offset(limit * page).limit(limit)
           count = query.length
-          render json: { status: 'ok', total_count: count, page: page, photos: query.map { |x| x.decorate.to_hash } }
+          render json: { status: 'ok', total_count: count, page:, photos: query.map { |x| x.decorate.to_hash } }
         else
-          render status: :bad_request, json: { status: 'error', errors: errors }
+          render status: :bad_request, json: { status: 'error', errors: }
         end
       end
 

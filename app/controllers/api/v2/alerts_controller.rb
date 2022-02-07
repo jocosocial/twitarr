@@ -36,8 +36,8 @@ module Api
             last_checked_time = session[:last_viewed_alerts]
           end
         end
-        render json: { status: 'ok', announcements: announcements, tweet_mentions: tweet_mentions, forum_mentions: forum_mentions,
-                       unread_seamail: unread_seamail, upcoming_events: upcoming_events, last_checked_time: last_checked_time.to_ms, query_time: current_time.to_ms }
+        render json: { status: 'ok', announcements:, tweet_mentions:, forum_mentions:,
+                       unread_seamail:, upcoming_events:, last_checked_time: last_checked_time.to_ms, query_time: current_time.to_ms }
       end
 
       def check

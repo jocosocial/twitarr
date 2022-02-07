@@ -56,7 +56,7 @@ Rails.application.configure do
   # config.cache_store = :memory_store
 
   # For redis running natively:
-  config.cache_store = :redis_cache_store, { url: 'redis://localhost:6379' }
+  config.cache_store = :redis_cache_store, { url: ENV.fetch('REDIS_URL_CACHING', 'redis://localhost:6379/0') }
 
   # For memcache running under docker:
   # config.cache_store = :mem_cache_store, 'memcached:11211'

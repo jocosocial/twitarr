@@ -21,7 +21,7 @@ class Section < ApplicationRecord
   default_scope { order(category: :asc, name: :asc) }
 
   def self.add(section, category)
-    Section.find_or_create_by(name: section, category: category)
+    Section.find_or_create_by(name: section, category:)
   rescue StandardError => e
     logger.error e
   end

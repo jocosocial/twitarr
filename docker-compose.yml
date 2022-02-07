@@ -7,12 +7,17 @@ services:
     ports:
       - '54320:5432'
     environment:
-      - 'POSTGRES_PASSWORD=postgres'
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  memcached:
-    image: memcached
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis:/data
     restart: always
 
   web:
@@ -21,17 +26,20 @@ services:
       - '3000:3000'
     links:
       - db
-      - memcached
+      - redis
     restart: always
 # For development, use a path on your docker-host for /dev/twitarr
 # This loads your host files into the container, getting updates without a rebuild.
 #    volumes:
 #      - ./:/srv/app
     environment:
-      - 'PGHOST=db'
-      - 'PGDATABASE=postgres'
-      - 'PGUSER=postgres'
-      - 'PGPASSWORD=postgres'
+      - PGHOST=db
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - REDIS_URL_CACHING=redis://redis:6379/0
+      - REDIS_URL_SESSION=redis://redis:6379/0/session
 
 volumes:
   db_data:
+  redis:

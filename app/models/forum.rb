@@ -92,12 +92,12 @@ class Forum < ApplicationRecord
   end
 
   def self.forum_last_view(forum_id, user_id)
-    UserForumView.find_by(forum_id: forum_id, user_id: user_id)&.last_viewed
+    UserForumView.find_by(forum_id:, user_id:)&.last_viewed
   end
 
   def self.create_new_forum(author, subject, first_post_text, photos, original_author)
-    forum = Forum.new(subject: subject, last_post_user_id: author)
-    post = ForumPost.new(author: author, text: first_post_text, original_author: original_author)
+    forum = Forum.new(subject:, last_post_user_id: author)
+    post = ForumPost.new(author:, text: first_post_text, original_author:)
     photos&.each do |photo|
       post.post_photos << PostPhoto.new(photo_metadata_id: photo)
     end

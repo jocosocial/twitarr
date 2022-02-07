@@ -47,11 +47,11 @@ module Postable
     end
 
     def add_reaction(user_id, reaction_id)
-      post_reactions.find_or_create_by(user_id: user_id, reaction_id: reaction_id)
+      post_reactions.find_or_create_by(user_id:, reaction_id:)
     end
 
     def remove_reaction(user_id, reaction_id)
-      doc = post_reactions.find_by(user_id: user_id, reaction_id: reaction_id)
+      doc = post_reactions.find_by(user_id:, reaction_id:)
       if doc
         doc.destroy
         reload

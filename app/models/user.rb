@@ -133,7 +133,7 @@ class User < ApplicationRecord
 
   def valid_username?
     errors.add(:username, 'Username must be three to forty characters long, and can only include letters, numbers, and underscore.') unless User.valid_username?(username)
-    errors.add :username, 'An account with this username already exists.' if new_record? && User.exists?(username: username)
+    errors.add :username, 'An account with this username already exists.' if new_record? && User.exists?(username:)
   end
 
   def valid_password?
@@ -144,7 +144,7 @@ class User < ApplicationRecord
   def valid_registration_code?
     return true if Rails.configuration.disable_registration_codes
 
-    errors.add(:registration_code, 'Invalid registration code.') if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.exists?(registration_code: registration_code))
+    errors.add(:registration_code, 'Invalid registration code.') if new_record? && (!RegistrationCode.valid_code?(registration_code) || User.exists?(registration_code:))
   end
 
   def self.valid_display_name?(name)
@@ -207,7 +207,7 @@ class User < ApplicationRecord
 
   def upcoming_events(alerts = false, unnoticed = false)
     upcoming = user_events.includes(:event).references(:events)
-                          .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', Time.zone.now - 1.hour, Time.zone.now + 2.hours, Time.zone.now)
+                          .where('events.start_time >= ? AND events.start_time <= ? AND (events.end_time is null OR events.end_time <= ?)', 1.hour.ago, 2.hours.from_now, Time.zone.now)
 
     if unnoticed
       upcoming = upcoming.where(acknowledged_alert: false)
@@ -312,7 +312,7 @@ class User < ApplicationRecord
     now = Time.zone.now
 
     # rubocop:disable Rails/SkipsModelValidations
-    UserForumView.upsert({ user_id: id, forum_id: forum_id, last_viewed: now }, unique_by: [:user_id, :forum_id])
+    UserForumView.upsert({ user_id: id, forum_id:, last_viewed: now }, unique_by: [:user_id, :forum_id])
     # rubocop:enable Rails/SkipsModelValidations
 
     clear_forum_view_cache(forum_id, now)
@@ -325,7 +325,7 @@ class User < ApplicationRecord
     now = Time.zone.now
     timestamps = query.pluck(:id).map do |forum_id|
       clear_forum_view_cache(forum_id, now)
-      { user_id: id, forum_id: forum_id, last_viewed: now }
+      { user_id: id, forum_id:, last_viewed: now }
     end
     # rubocop:disable Rails/SkipsModelValidations
     UserForumView.upsert_all(timestamps, unique_by: [:user_id, :forum_id])
@@ -356,14 +356,14 @@ class User < ApplicationRecord
   def self.display_name_from_username(username)
     username = format_username(username)
     Rails.cache.fetch("dn:#{username}", expires_in: USERNAME_CACHE_TIME) do
-      User.find_by(username: username).display_name
+      User.find_by(username:).display_name
     end
   end
 
   def self.last_photo_updated_from_username(username)
     username = format_username(username)
     Rails.cache.fetch("lpu:#{username}", expires_in: USERNAME_CACHE_TIME) do
-      User.find_by(username: username).last_photo_updated
+      User.find_by(username:).last_photo_updated
     end
   end
 
@@ -377,7 +377,7 @@ class User < ApplicationRecord
   end
 
   def last_forum_view(forum_id)
-    ts = forum_view_timestamps.find_by(forum_id: forum_id)
+    ts = forum_view_timestamps.find_by(forum_id:)
     ts ? ts.view_time : Time.zone.local(0)
   end
 

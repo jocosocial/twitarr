@@ -50,7 +50,7 @@ class Event < ApplicationRecord
   end
 
   def self.create_new_event(_author, title, start_time, options = {})
-    event = Event.new(title: title, start_time: start_time)
+    event = Event.new(title:, start_time:)
     event.description = options[:description] unless options[:description].nil?
     event.location = options[:location] unless options[:location].nil?
     event.official = options[:official] unless options[:official].nil?
@@ -87,15 +87,15 @@ class Event < ApplicationRecord
 
     return unless event
 
-    event.user_events.find_or_create_by(user_id: user_id)
+    event.user_events.find_or_create_by(user_id:)
   end
 
   def follow(user_id)
-    user_events.find_or_create_by(user_id: user_id)
+    user_events.find_or_create_by(user_id:)
   end
 
   def unfollow(user_id)
-    doc = user_events.find_by(user_id: user_id)
+    doc = user_events.find_by(user_id:)
     user_events.delete(doc) if doc
   end
 end

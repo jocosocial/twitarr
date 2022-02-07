@@ -45,12 +45,12 @@ Once it completes you should be able to reach twitarr via http://localhost:3000.
    Debian 11:
 
    ```
-   sudo apt-get install git gnupg2 curl imagemagick libmagickwand-dev libidn11-dev libpq-dev postgresql postgresql-contrib nodejs
+   sudo apt-get install git gnupg2 curl imagemagick libmagickwand-dev libidn11-dev libpq-dev postgresql postgresql-contrib nodejs redis
    ```
    
    Fedora 34:
    ```
-   sudo dnf install git gnupg2 curl imagemagick ImageMagick-devel libidn-devel libpq-devel postgresql postgresql-contrib nodejs
+   sudo dnf install git gnupg2 curl imagemagick ImageMagick-devel libidn-devel libpq-devel postgresql postgresql-contrib nodejs redis
    ```
 2. Set your postgres password
 

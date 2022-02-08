@@ -1,0 +1,20 @@
+# systemd configuration for twitarr
+# before installing this service, make sure the user and paths are correct
+
+[Unit]
+Description=Twit-arr Server
+Requires=network.target postgresql.service redis.service
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=simple
+User=jccadmin
+WorkingDirectory=/home/jccadmin/twitarr
+Environment=RAILS_ENV=production
+
+ExecStart=/home/jccadmin/.rvm/wrappers/ruby-3.1.0@twitarr/bundle exec rails server
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

@@ -29,7 +29,6 @@ class PostReaction < ApplicationRecord
   belongs_to :stream_post, inverse_of: :post_reactions, optional: true
   belongs_to :user, inverse_of: :post_reactions
 
-  validates :reaction_id, :user_id
   validate :validate_association
 
   default_scope { includes(:user, :reaction).references(:users, :reactions) }

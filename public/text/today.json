@@ -1,50 +1,49 @@
 [
 	{
-		"date": "2020-03-07",
-		"theme": "Welcome, New Monkeys!",
-		"theme_description": " An annual tradition, on Day 1 we plan numerous activities designed to welcome our first-timers into the JoCo Cruise experience. Please make a particular effort on this day to seek out new Monkeys and help show them what a great decision they've made by joining us!",
+		"date": "2022-03-05",
+		"theme": "Welcome, New Cruisers!",
+		"theme_description": "We'll be holding events specifically designed to make our first-time JoCo Cruisers feel welcome and to help them ease into the swing of things. Make a particular effort on this day to seek out new attendees and help show them what a great decision they've made by joining us!",
 		"port": "Fort Lauderdale",
 		"departs": "5 pm"
 	},
 	{
-		"date": "2020-03-08",
-		"theme": "Heroes Day",
-		"theme_description": " Heroes come in all stripes. Some wear capes, some wear lab coats; some achieve great renown, some just quietly help others without fanfare. On this day, celebrate your own favorite heroes as you choose to—cosplay as them, hold a Shadow Cruise event to tell others about them, or whatever floats your proverbial boat.",
-		"port": "Half Moon Cay, Bahamas",
+		"date": "2023-03-06",
+		"port": "Nassau, Bahamas",
 		"arrives": "8 am",
-		"departs": "5 pm"
+		"departs": "2:30 pm"
 	},
 	{
-		"date": "2020-03-09",
+		"date": "2022-03-07",
 		"theme": "Cosplay Day",
-		"theme_description": "Today is the day to really let your cosplay flag fly! While you're welcome to cosplay any and all days of the cruise, this is your day for pulling out all the stops."
+		"theme_description": "We have a bunch of terrifically talented cosplayers every year, and today is your day to really pull out all the stops. Sky's the limit; show off your best!"
 	},
 	{
-		"date": "2020-03-10",
-		"port": "Santo Domingo, Dominican Republic",
-		"arrives": "10 am"
+		"date": "2022-03-08",
+		"port": "Frederiksted, St. Croix, U.S. Virgin Islands",
+		"arrives": "1 pm",
+		"departs": "8 pm"
 	},
 	{
-		"date": "2020-03-11",
+		"date": "2022-03-09",
 		"theme": "Formal Night",
 		"theme_description": "Formal wear is encouraged, <i>but not required</i>, at dinner.",
-		"theme_description_extra": "<ul><li>\"Formal wear\" is defined VERY flexibly. Tuxedo and cocktail dress? Fine. Sport coat and slacks? Sure. Starfleet uniform? Awesome. Full Scottish regalia? Bonnie. Your best t-shirt? Skrelnik. You get the idea.</li><li>Fezzes, tiaras and mustaches are encouraged—but again, not required. (The wearing of fezzes and tiaras on Formal Night has become a JoCo Cruise tradition for many.)</li><li>The only restriction: no full face masks (HAL regulation).</li>",
-		"port": "Santo Domingo, Dominican Republic",
-		"departs": "1 am"
+		"theme_description_extra": "\"Formal wear\" is defined VERY flexibly. Tuxedo and cocktail dress? Fine. Sport coat and slacks? Sure. Starfleet uniform? Awesome. Full Scottish regalia? Bonnie. You get the idea. Fancy headwear (tiaras, hats, etc.—a sort of JCC tradition for many) welcomed, but not required."
 	},
 	{
-		"date": "2020-03-12",
-		"port": "Grand Turk, Turks and Caicos",
-		"arrives": "8 am",
-		"departs": "5 pm"
+		"date": "2022-03-10",
+		"theme": "Birthday Day",
+		"theme_description": "Every single one of us has had at least one birthday since the last JoCo Cruise—most of us, two—and many of us were forced by the pandemic to forego any proper celebration of the day. Well, we're gonna fix that today, because we declare that TODAY IS EVERYONE'S BIRTHDAY!",
 	},
 	{
-		"date": "2020-03-13",
+		"date": "2022-03-11",
 		"theme": "Jammies Day",
-		"theme_description": " Everyone's running out of clean clothes anyway, so today is one big day-long celebration of the fact that nobody can make us put on \"real\" clothes if we don't want to!"
+		"theme_description": " Everyone's running out of clean clothes anyway, so today is one big day-long celebration of the fact that nobody can make us put on \"real\" clothes if we don't want to!",
+		"port": "Half Moon Cay, Bahamas",
+		"arrives": "7 am",
+		"departs": "3 pm"
 	},
 	{
-		"date": "2020-03-14",
+		"date": "2022-03-12",
 		"theme": "Sadness (Observed)",
 		"port": "Fort Lauderdale",
 		"arrives": "7 am"

@@ -4,7 +4,7 @@ class BaseDecorator < Draper::Decorator
   include Twitter::TwitterText::Autolink
   include CruiseMonkeyHelper
 
-  EMOJI_REGEX = Regexp.new('\:(buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie)\:')
+  EMOJI_REGEX = Regexp.new('\:(buffet|die-ship|die|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie)\:')
   EMOJI_REPLACE = '<img src="/img/emoji/small/\1.png" class="emoji" />'
   EMOJI_REPLACE_CM = '<cm-emoji type="\1" />'
 

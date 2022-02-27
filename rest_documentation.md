@@ -41,7 +41,7 @@ These output types are used throughout the API
     * `<a class="tweet-url username" href="#/user/some_user">@some_user</a>`
   * img - Emoji. Example for the emoji, :buffet:
     * `<img src="/img/emoji/small/buffet.png" class="emoji" />`
-    * Possible emoji: buffet|die-ship|die|fez|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie
+    * Possible emoji: buffet|die-ship|die|hottub|joco|pirate|ship-front|ship|towel-monkey|tropical-drink|zombie
   * br - Line breaks
     * `<br />`
     * If using app=plain, these will instead be returned as newline `\n`
